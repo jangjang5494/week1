@@ -1,5 +1,27 @@
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Theme Toggle Logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Check for saved theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    body.setAttribute('data-theme', savedTheme);
+    updateToggleButton(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateToggleButton(newTheme);
+    });
+
+    function updateToggleButton(theme) {
+        themeToggle.textContent = theme === 'light' ? '다크 모드' : '라이트 모드';
+    }
+
     const startButton = document.querySelector('.hero-content button');
     if (startButton) {
         startButton.addEventListener('click', () => {

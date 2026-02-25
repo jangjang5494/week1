@@ -1,14 +1,44 @@
+/* Theme Variables */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --header-bg: #ffffff;
+    --footer-bg: #343a40;
+    --footer-text: #ffffff;
+    --section-bg-alt: #f8f9fa;
+    --nav-text: inherit;
+    --card-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #ccc;
+    --primary-color: #007bff;
+    --secondary-color: #28a745;
+}
+
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #f0f0f0;
+    --header-bg: #2d2d2d;
+    --footer-bg: #121212;
+    --section-bg-alt: #242424;
+    --nav-text: #f0f0f0;
+    --card-bg: #333333;
+    --input-bg: #333333;
+    --input-border: #444;
+}
+
 /* Basic Styles */
 body {
     font-family: 'Noto Sans KR', sans-serif;
     margin: 0;
     line-height: 1.6;
-    color: #333;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 a {
     text-decoration: none;
-    color: inherit;
+    color: var(--nav-text);
 }
 
 ul {
@@ -19,7 +49,7 @@ ul {
 
 /* Header */
 header {
-    background-color: #fff;
+    background-color: var(--header-bg);
     padding: 1rem 2rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -29,12 +59,20 @@ header {
     width: 100%;
     top: 0;
     z-index: 1000;
+    box-sizing: border-box;
+    transition: background-color 0.3s;
 }
 
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #007bff;
+    color: var(--primary-color);
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
 }
 
 nav ul {
@@ -45,6 +83,23 @@ nav ul li {
     margin-left: 2rem;
 }
 
+/* Theme Toggle */
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
 /* Main Content */
 main {
     padding-top: 80px; /* Header height */
@@ -52,7 +107,7 @@ main {
 
 /* Hero Section */
 .hero {
-    background-image: url('https://images.unsplash.com/photo-1560518883-ce09059ee41f?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1560518883-ce09059ee41f?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
     background-size: cover;
     background-position: center;
     height: 60vh;
@@ -74,7 +129,7 @@ main {
 }
 
 .hero-content button {
-    background-color: #007bff;
+    background-color: var(--primary-color);
     color: #fff;
     padding: 1rem 2rem;
     border: none;
@@ -124,9 +179,10 @@ main {
 
 /* Subscribe Section */
 .subscribe {
-    background-color: #f8f9fa;
+    background-color: var(--section-bg-alt);
     padding: 4rem 2rem;
     text-align: center;
+    transition: background-color 0.3s;
 }
 
 .subscribe h2 {
@@ -147,13 +203,16 @@ main {
 
 .subscribe input {
     padding: 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border);
     border-radius: 5px;
     width: 250px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: all 0.3s;
 }
 
 .subscribe button {
-    background-color: #28a745;
+    background-color: var(--secondary-color);
     color: #fff;
     padding: 1rem 2rem;
     border: none;
@@ -169,8 +228,9 @@ main {
 
 /* Footer */
 footer {
-    background-color: #343a40;
-    color: #fff;
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
     text-align: center;
     padding: 1rem 0;
+    transition: background-color 0.3s;
 }
