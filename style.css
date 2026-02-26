@@ -69,6 +69,11 @@ header {
     color: var(--primary-color);
 }
 
+.nav-controls {
+    display: flex;
+    gap: 10px;
+}
+
 nav {
     display: flex;
     align-items: center;
@@ -83,8 +88,8 @@ nav ul li {
     margin-left: 2rem;
 }
 
-/* Theme Toggle */
-.theme-toggle {
+/* Theme & Language Toggles */
+.theme-toggle, .lang-toggle {
     background: none;
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
@@ -93,9 +98,10 @@ nav ul li {
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.3s;
+    white-space: nowrap;
 }
 
-.theme-toggle:hover {
+.theme-toggle:hover, .lang-toggle:hover {
     background-color: var(--primary-color);
     color: white;
 }
