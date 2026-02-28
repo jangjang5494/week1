@@ -143,6 +143,17 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label for="housing-status">주택 소유 및 세대주 여부</label>
+                    <select id="housing-status" required>
+                        <option value="">상태 선택</option>
+                        <option value="homeless-head">무주택 세대주 (본인 명의 집 없음 + 세대주)</option>
+                        <option value="homeless-member">무주택 세대원 (본인 명의 집 없음 + 세대원)</option>
+                        <option value="homeowner">유주택자 (본인 또는 세대원 명의 집 있음)</option>
+                    </select>
+                    <span class="helper-text">공공임대/분양은 대부분 '무주택 세대주'가 필수 조건입니다.</span>
+                </div>
                 
                 <div class="form-group">
                     <div class="label-row">
