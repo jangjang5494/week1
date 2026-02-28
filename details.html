@@ -45,6 +45,13 @@
             color: var(--primary-color);
             cursor: pointer;
         }
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
     </style>
 </head>
 <body data-theme="light">
@@ -60,55 +67,90 @@
     <main style="padding-top: 100px;">
         <div class="details-container">
             <a href="index.html" class="back-btn">← 돌아가기</a>
-            <h1>상세 정보 입력</h1>
-            <p style="text-align: center; margin-bottom: 2rem;">더 정확한 AI 매칭을 위해 상세 정보를 입력해주세요.</p>
+            <h1>상세 자격 확인</h1>
+            <p style="text-align: center; margin-bottom: 2rem;">정확한 분석을 위해 상세한 정보를 입력해주세요.</p>
             
             <form class="details-form" onsubmit="handleSubmit(event)">
-                <div class="form-group">
-                    <label for="age">나이 (만)</label>
-                    <input type="number" id="age" placeholder="예: 28" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="age">나이 (만)</label>
+                        <input type="number" id="age" placeholder="예: 28" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="marital">혼인 상태</label>
+                        <select id="marital" required>
+                            <option value="single">미혼</option>
+                            <option value="married">기혼</option>
+                            <option value="newlywed">예비 신혼부부</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="region">희망 거주 지역</label>
+                    <label for="income">월평균 소득 (세전)</label>
+                    <select id="income" required>
+                        <option value="">소득 구간 선택</option>
+                        <option value="1">250만원 이하</option>
+                        <option value="2">250만원 ~ 350만원</option>
+                        <option value="3">350만원 ~ 450만원</option>
+                        <option value="4">450만원 ~ 550만원</option>
+                        <option value="5">550만원 이상</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="assets">총 자산 (부채 제외)</label>
+                    <select id="assets" required>
+                        <option value="">자산 규모 선택</option>
+                        <option value="1">5,000만원 이하</option>
+                        <option value="2">5,000만원 ~ 1억원</option>
+                        <option value="3">1억원 ~ 2억원</option>
+                        <option value="4">2억원 ~ 3.6억원</option>
+                        <option value="5">3.6억원 이상</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="car">자동차 가액</label>
+                        <select id="car" required>
+                            <option value="none">없음</option>
+                            <option value="under">3,700만원 이하</option>
+                            <option value="over">3,700만원 초과</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeless">무주택 기간</label>
+                        <select id="homeless" required>
+                            <option value="1">1년 미만</option>
+                            <option value="2">1년 ~ 3년</option>
+                            <option value="3">3년 ~ 5년</option>
+                            <option value="4">5년 이상</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subscription">청약통장 납입 횟수</label>
+                    <select id="subscription" required>
+                        <option value="1">12회 미만</option>
+                        <option value="2">12회 ~ 24회</option>
+                        <option value="3">24회 ~ 60회</option>
+                        <option value="4">60회 이상</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="region">관심 자치구 (최대 3개)</label>
                     <select id="region" required>
-                        <option value="">지역 선택</option>
-                        <option value="gangnam">강남권 (강남, 서초, 송파, 강동)</option>
-                        <option value="gangbuk">강북권 (마포, 용산, 성동 등)</option>
-                        <option value="etc">기타 서울 지역</option>
+                        <option value="all">서울 전체</option>
+                        <option value="gangnam">강남/서초/송파</option>
+                        <option value="mapo">마포/용산/성동</option>
+                        <option value="etc">그 외 지역</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="house-type">관심 주택 유형</label>
-                    <select id="house-type" required>
-                        <option value="">유형 선택</option>
-                        <option value="longterm">장기전세주택</option>
-                        <option value="happy">행복주택</option>
-                        <option value="youth">역세권 청년주택</option>
-                        <option value="public">공공분양</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="household">가구원 수</label>
-                    <select id="household" required>
-                        <option value="1">1인 가구</option>
-                        <option value="2">2인 가구</option>
-                        <option value="3">3인 이상</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="marital">혼인 여부</label>
-                    <select id="marital" required>
-                        <option value="single">미혼</option>
-                        <option value="married">기혼</option>
-                        <option value="newlywed">예비 신혼부부</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="hero-content button" style="width: 100%; padding: 1rem; background-color: var(--secondary-color); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem;">AI 맞춤 분석 시작</button>
+                <button type="submit" class="hero-content button" style="width: 100%; padding: 1rem; background-color: var(--secondary-color); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem; margin-top: 1rem;">AI 맞춤 분석 결과 보기</button>
             </form>
         </div>
     </main>
@@ -126,11 +168,14 @@
         // Apply saved theme
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.body.setAttribute('data-theme', savedTheme);
-        document.querySelector('.theme-toggle').textContent = savedTheme === 'light' ? '다크 모드' : '라이트 모드';
+        const themeToggle = document.querySelector('.theme-toggle');
+        if (themeToggle) {
+            themeToggle.textContent = savedTheme === 'light' ? '다크 모드' : '라이트 모드';
+        }
 
         function handleSubmit(e) {
             e.preventDefault();
-            alert('상세 분석을 시작합니다! 곧 결과를 알려드릴게요.');
+            alert('입력하신 정보를 바탕으로 상세 분석을 완료했습니다! 맞춤 공고가 뜨면 바로 알려드릴게요.');
             window.location.href = 'index.html';
         }
     </script>

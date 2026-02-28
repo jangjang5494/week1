@@ -98,11 +98,10 @@
 
         <section id="subscribe" class="subscribe">
             <h2 data-i18n="subscribe_h2">지금 바로 구독하고 내집마련의 꿈을 현실로!</h2>
-            <p data-i18n="subscribe_p">아래 정보를 입력해주시면, AI가 분석하여 맞춤형 정보를 제공해드립니다.</p>
+            <p data-i18n="subscribe_p">이메일과 핸드폰 번호를 입력해주시면, 맞춤형 주택 정보를 보내드립니다.</p>
             <form id="subscribe-form">
-                <input type="text" id="input-job" placeholder="직업" data-i18n-placeholder="form_job">
-                <input type="number" id="input-salary" placeholder="연봉 (만원)" data-i18n-placeholder="form_salary">
-                <input type="number" id="input-assets" placeholder="자산 (만원)" data-i18n-placeholder="form_assets">
+                <input type="email" id="input-email" placeholder="이메일 주소" required data-i18n-placeholder="form_email">
+                <input type="tel" id="input-phone" placeholder="핸드폰 번호" required data-i18n-placeholder="form_phone">
                 <div class="form-buttons">
                     <button type="submit" data-i18n="form_btn">맞춤 정보 받기</button>
                     <button type="button" id="btn-experience" data-i18n="form_exp_btn">체험하기</button>
