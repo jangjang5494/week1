@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상세 정보 입력 - 내집구독</title>
+    <link href="/style.css" rel="stylesheet">
+    <style>
+        .details-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .details-container h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+        }
+        .details-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            padding: 0.8rem;
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <header>
+        <nav>
+            <div class="logo">내집구독</div>
+            <div class="nav-controls">
+                <button class="theme-toggle" onclick="toggleTheme()">다크 모드</button>
+            </div>
+        </nav>
+    </header>
+
+    <main style="padding-top: 100px;">
+        <div class="details-container">
+            <a href="index.html" class="back-btn">← 돌아가기</a>
+            <h1>상세 정보 입력</h1>
+            <p style="text-align: center; margin-bottom: 2rem;">더 정확한 AI 매칭을 위해 상세 정보를 입력해주세요.</p>
+            
+            <form class="details-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="age">나이 (만)</label>
+                    <input type="number" id="age" placeholder="예: 28" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="region">희망 거주 지역</label>
+                    <select id="region" required>
+                        <option value="">지역 선택</option>
+                        <option value="gangnam">강남권 (강남, 서초, 송파, 강동)</option>
+                        <option value="gangbuk">강북권 (마포, 용산, 성동 등)</option>
+                        <option value="etc">기타 서울 지역</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="house-type">관심 주택 유형</label>
+                    <select id="house-type" required>
+                        <option value="">유형 선택</option>
+                        <option value="longterm">장기전세주택</option>
+                        <option value="happy">행복주택</option>
+                        <option value="youth">역세권 청년주택</option>
+                        <option value="public">공공분양</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="household">가구원 수</label>
+                    <select id="household" required>
+                        <option value="1">1인 가구</option>
+                        <option value="2">2인 가구</option>
+                        <option value="3">3인 이상</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="marital">혼인 여부</label>
+                    <select id="marital" required>
+                        <option value="single">미혼</option>
+                        <option value="married">기혼</option>
+                        <option value="newlywed">예비 신혼부부</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="hero-content button" style="width: 100%; padding: 1rem; background-color: var(--secondary-color); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem;">AI 맞춤 분석 시작</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.querySelector('.theme-toggle').textContent = newTheme === 'light' ? '다크 모드' : '라이트 모드';
+        }
+
+        // Apply saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        document.querySelector('.theme-toggle').textContent = savedTheme === 'light' ? '다크 모드' : '라이트 모드';
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            alert('상세 분석을 시작합니다! 곧 결과를 알려드릴게요.');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
