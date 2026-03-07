@@ -56,15 +56,32 @@
             transition: background 0.15s;
         }
         .info-btn:hover { background: #c7d2fe; }
-        .type-detail-btn {
-            display: inline-flex; align-items: center; gap: 0.3rem;
-            margin-top: 0.8rem; padding: 0.45rem 0.9rem;
-            background: #ede9fe; color: #4f46e5; border: none;
-            border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+        .card-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.8rem; }
+        .type-detail-btn, .apply-guide-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem;
+            padding: 0.45rem 0.6rem; border: none;
+            border-radius: 8px; font-size: 0.8rem; font-weight: 600;
             cursor: pointer; transition: background 0.15s; width: 100%;
-            justify-content: center;
         }
-        .type-detail-btn:hover { background: #c7d2fe; }
+        .type-detail-btn  { background: #ede9fe; color: #4f46e5; }
+        .type-detail-btn:hover  { background: #c7d2fe; }
+        .apply-guide-btn  { background: #dcfce7; color: #15803d; }
+        .apply-guide-btn:hover  { background: #bbf7d0; }
+        [data-theme="dark"] .apply-guide-btn { background: #052e16; color: #4ade80; }
+        [data-theme="dark"] .apply-guide-btn:hover { background: #14532d; }
+
+        /* 신청 가이드 모달 전용 스타일 */
+        .guide-step { display: flex; gap: 0.8rem; margin-bottom: 1rem; }
+        .guide-step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary-color,#4f46e5); color:#fff; font-size:0.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:0.1rem; }
+        .guide-step-body h4 { font-size: 0.87rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text-color,#111); }
+        .guide-step-body p, .guide-step-body li { font-size: 0.84rem; color: #4b5563; line-height: 1.6; }
+        .guide-step-body ul { padding-left: 1rem; margin: 0.25rem 0; }
+        .guide-docs { background: #f8fafc; border-radius: 8px; padding: 0.7rem 0.9rem; margin-top: 0.5rem; }
+        .guide-docs-title { font-size: 0.75rem; font-weight: 700; color: #64748b; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
+        .guide-doc-item { font-size: 0.82rem; color: #374151; margin-bottom: 0.2rem; }
+        .guide-doc-item::before { content: "📄 "; }
+        [data-theme="dark"] .guide-docs { background: #1e293b; }
+        [data-theme="dark"] .guide-step-body p, [data-theme="dark"] .guide-step-body li { color: #9ca3af; }
         .hint { font-size: 0.75rem; color: #9ca3af; margin-top: 0.35rem; line-height: 1.5; }
         .hint.warn { color: #d97706; background: #fffbeb; border-radius: 6px; padding: 0.4rem 0.6rem; margin-top: 0.4rem; }
         .fg input[type="number"], .fg select {
@@ -1489,7 +1506,10 @@ function runAnalysis() {
             </div>
             ${!isE&&r.reasons.length?`<div class="result-reason">⚠ ${r.reasons.join(' · ')}</div>`:''}
             ${announceHtml}
-            ${isE?`<button class="type-detail-btn" onclick="openTypeDetail('${safeName}')">📋 이 유형 상세보기</button>`:''}
+            ${isE?`<div class="card-btn-row">
+                <button class="type-detail-btn" onclick="openTypeDetail('${safeName}')">📋 이 유형 상세보기</button>
+                <button class="apply-guide-btn" onclick="openApplyGuide('${safeName}')">📝 신청 가이드</button>
+            </div>`:''}
         </div>`;
     }
 
@@ -2063,6 +2083,372 @@ const typeDetailData = {
         <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울시 청년안심주택 안내</a>`
     }
 };
+
+// ===== 유형별 신청 가이드 =====
+const applyGuideData = {
+    '장기전세주택 (시프트)': {
+        title: '장기전세주택 (시프트) 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지 → 공고/모집 → 임대주택 공고에서 시프트 공고 확인. 공고마다 신청 자격·단지가 다르므로 반드시 해당 공고문 숙독.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약 신청</h4><p>SH공사 홈페이지 내 <strong>「인터넷 청약」</strong> 메뉴에서 청약 진행. 공인인증서(공동인증서) 또는 간편인증 필요.</p><p class="hint">신청 기간 외에는 청약창이 열리지 않습니다.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>서류 제출</h4><p>당첨 후 공고에 명시된 서류를 SH공사 해당 지사에 방문 제출. 기간 내 미제출 시 당첨 취소.</p>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대 전체 포함)</div>
+                    <div class="guide-doc-item">가족관계증명서</div>
+                    <div class="guide-doc-item">무주택 확인서 (세대원 전체)</div>
+                    <div class="guide-doc-item">건강보험료 납부확인서</div>
+                    <div class="guide-doc-item">소득 확인 서류 (근로소득: 근로소득원천징수영수증 / 사업소득: 종합소득세 신고서)</div>
+                    <div class="guide-doc-item">자산 확인 서류 (재산세 과세증명서, 금융정보 제공 동의서)</div>
+                </div>
+                <p class="hint warn">취업 1년 미만이라 원천징수 서류가 없는 경우 → 재직증명서 + 급여명세서 + 고용보험 가입 이력 제출.</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>SH공사 서류 심사 후 최종 당첨자 발표. 계약 체결 시 보증금(전세보증금)의 일부를 준비해야 합니다.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '미리내집': {
+        title: '미리내집 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지 → 임대주택 공고에서 「미리내집」 공고 확인. 미리내집은 장기전세 2차형으로 분양 전환 없이 20년 거주 가능.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>SH공사 인터넷 청약 시스템에서 청약 신청. 공동인증서 필요.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>서류 제출</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
+                    <div class="guide-doc-item">가족관계증명서</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                    <div class="guide-doc-item">소득·자산 확인 서류</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>당첨자 발표 후 지정 기간 내 계약 체결.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '희망하우징': {
+        title: '희망하우징 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 희망하우징 공고 확인. 대학(원)생 대상 저렴한 임대주택.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청 방법</h4><p>공고에 따라 <strong>방문 접수 또는 온라인 신청</strong>. 재학증명서 등 학생 자격 서류 필수.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">재학증명서 (또는 입학허가서)</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">부모(또는 세대주) 소득 확인 서류</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+                <p class="hint warn">취업 전 학생이므로 본인 소득 서류 대신 부모 소득 서류로 대체 가능.</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>계약</h4><p>합격 후 계약. 재계약 시 재학 여부 재확인.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '청년안심주택': {
+        title: '청년안심주택 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 청년안심주택 공고 확인. 민간사업자가 운영하는 단지도 있어 신청처가 다를 수 있음.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 또는 방문 신청</h4><p>SH공사 직영 단지: 인터넷 청약. 민간 단지: 해당 사업자 홈페이지 또는 방문 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">신분증 사본</div>
+                    <div class="guide-doc-item">소득 확인 서류 (건강보험료 납부확인서 또는 근로소득원천징수영수증)</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                    <div class="guide-doc-item">재직증명서 (직장인) / 사업자등록증 사본 (사업자)</div>
+                </div>
+                <p class="hint warn">취업 1년 미만으로 원천징수 서류가 없다면 → 재직증명서 + 급여명세서 3개월치로 대체 신청 가능.</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>서류 심사 후 당첨자 발표. 보증금·월세 계약 체결.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '장기안심주택': {
+        title: '장기안심주택 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 장기안심주택 공고 확인. 기존주택을 SH가 매입·임대하는 방식.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청 방법</h4><p>공고 기간 내 <strong>방문 또는 우편 신청</strong>. 신청서는 SH공사 홈페이지에서 다운로드.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">임차인 신청서 (SH 양식)</div>
+                    <div class="guide-doc-item">주민등록등본 (세대 전체)</div>
+                    <div class="guide-doc-item">현 임차 계약서 사본</div>
+                    <div class="guide-doc-item">소득 확인 서류</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>현장 조사 → 계약</h4><p>SH공사 직원이 해당 주택 현장 조사 후 적격 판정 시 계약 진행.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '행복주택 (신혼부부)': {
+        title: '행복주택 (신혼부부) 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지 또는 <strong>마이홈포털(myhome.go.kr)</strong>에서 행복주택 공고 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>마이홈포털 → 임대주택 → 청약신청. 또는 SH공사 인터넷 청약 시스템 이용.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (부부 모두)</div>
+                    <div class="guide-doc-item">가족관계증명서 (혼인관계 확인)</div>
+                    <div class="guide-doc-item">혼인관계증명서 (결혼 7년 이내 증빙)</div>
+                    <div class="guide-doc-item">소득 확인 서류 (근로소득원천징수영수증 또는 건강보험료 납부확인서)</div>
+                    <div class="guide-doc-item">무주택 서약서 (부부 모두)</div>
+                    <div class="guide-doc-item">출생증명서 (자녀 있는 경우)</div>
+                </div>
+                <p class="hint warn">신혼부부 중 한 명이 취업 초기라면 → 재직증명서 + 급여명세서로 소득 증빙 가능.</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>서류 심사 → 당첨 → 계약</h4><p>순위 내 추첨 → 서류 심사 → 계약 (임대보증금 + 월임대료).</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '행복주택 (청년)': {
+        title: '행복주택 (청년) 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지 또는 마이홈포털(myhome.go.kr)에서 행복주택(청년) 공고 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>마이홈포털 또는 SH공사 인터넷 청약 시스템에서 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">재직증명서 또는 재학증명서</div>
+                    <div class="guide-doc-item">소득 확인 (근로소득원천징수영수증 / 건강보험료 납부확인서)</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+                <p class="hint warn">취업 1년 미만 → 재직증명서 + 급여명세서 3개월치 제출. 소득이 없는 취준생은 부모 소득 서류가 요구될 수 있음.</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 내 추첨 또는 심사 → 계약. 청년 유형은 거주 기간 최대 6년.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '행복주택 (대학생)': {
+        title: '행복주택 (대학생) 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지 또는 마이홈포털에서 행복주택(대학생) 공고 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>마이홈포털 또는 SH공사 인터넷 청약 시스템에서 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">재학증명서 (또는 입학허가서)</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">부모 소득 확인 서류 (건강보험료 납부확인서)</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+                <p class="hint">대학생은 본인 소득 없어도 됨. 부모 소득·자산 기준 심사.</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>합격 후 계약. 재계약마다 재학 여부 확인 (최대 6년 또는 졸업 시까지).</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '신혼·신생아 매입임대 Ⅱ형': {
+        title: '신혼·신생아 매입임대 Ⅱ형 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 「신혼·신생아 매입임대 Ⅱ형」 공고 확인. Ⅱ형은 소득기준이 Ⅰ형보다 완화.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청 방법</h4><p>공고 기간 내 SH공사 인터넷 청약 또는 해당 지사 방문 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
+                    <div class="guide-doc-item">가족관계증명서</div>
+                    <div class="guide-doc-item">혼인관계증명서 (해당 시)</div>
+                    <div class="guide-doc-item">출생증명서 (신생아 있는 경우)</div>
+                    <div class="guide-doc-item">소득 확인 서류</div>
+                    <div class="guide-doc-item">자산 확인 서류 (금융정보 제공 동의서 포함)</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 내 선정 → 서류 심사 → 임대차 계약.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '신혼·신생아 매입임대 Ⅰ형': {
+        title: '신혼·신생아 매입임대 Ⅰ형 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 「신혼·신생아 매입임대 Ⅰ형」 공고 확인. Ⅰ형은 소득기준이 더 낮아 취약계층 우선.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청 방법</h4><p>SH공사 인터넷 청약 또는 방문 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
+                    <div class="guide-doc-item">가족관계증명서</div>
+                    <div class="guide-doc-item">혼인관계증명서</div>
+                    <div class="guide-doc-item">소득 확인 서류 (낮은 소득 증빙 필요)</div>
+                    <div class="guide-doc-item">자산 확인 서류</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>소득·자산 심사 후 순위 선정 → 계약.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '신혼·신생아 전세임대 Ⅱ형': {
+        title: '신혼·신생아 전세임대 Ⅱ형 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인 및 신청</h4><p>SH공사 홈페이지에서 공고 확인 후 신청. 전세임대는 SH가 집주인과 계약 후 입주자에게 재임대하는 방식.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>입주 희망 주택 탐색</h4><p>당첨 후 본인이 원하는 전세 주택을 직접 구해와야 함. SH공사 지원 한도(전세금 지원 한도) 이내의 주택으로 선정.</p><p class="hint warn">전세 한도 초과 금액은 본인 부담. 서울 기준 지원 한도는 공고마다 다름 (보통 2억~3억 원 수준).</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">가족관계증명서 / 혼인관계증명서</div>
+                    <div class="guide-doc-item">소득 확인 서류</div>
+                    <div class="guide-doc-item">전세 계약 희망 주택 등기부등본</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>SH 주택 검토 → 계약</h4><p>SH공사가 해당 주택 적정성 확인 후 집주인과 전세 계약. 입주자는 SH공사와 전대차 계약.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '신혼·신생아 전세임대 Ⅰ형': {
+        title: '신혼·신생아 전세임대 Ⅰ형 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인 및 신청</h4><p>SH공사 홈페이지 공고 확인. Ⅰ형은 소득기준이 더 엄격하며 저소득층 우선 배정.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>주택 탐색</h4><p>당첨 후 전세 주택을 본인이 직접 찾아와야 함. 지원 한도 이내로 선정.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">소득 확인 서류 (낮은 소득 증빙)</div>
+                    <div class="guide-doc-item">가족관계증명서 / 혼인관계증명서</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>SH 검토 → 계약</h4><p>주택 적정성 검토 후 계약 진행.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '청년 매입임대주택': {
+        title: '청년 매입임대주택 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 「청년 매입임대」 공고 확인. 청년형 특화형(쉐어하우스 등 포함)은 사업자가 별도 운영할 수 있으니 공고문 확인 필수.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청 방법</h4><p>SH공사 인터넷 청약 또는 공고에 명시된 신청처 이용. 특화형의 경우 운영 사업자에게 직접 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">신분증 사본</div>
+                    <div class="guide-doc-item">소득 확인 서류 (건강보험료 납부확인서)</div>
+                    <div class="guide-doc-item">재직증명서 또는 재학증명서</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+                <p class="hint warn">취업 1년 미만이면 원천징수 서류 대신 재직증명서 + 급여명세서로 대체. 무직·구직자는 고용보험 수급 서류 등 상황에 따라 다름 → SH 콜센터(1600-3456) 확인 권장.</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>서류 심사 후 계약. 저렴한 월세(시세 40~50% 수준)로 최대 6년 거주 가능.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '장기미임대': {
+        title: '장기미임대 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 「장기미임대」 공고 확인. 장기간 공실인 임대주택을 재공급하는 유형으로 상시 모집하는 경우도 있음.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청</h4><p>SH공사 해당 지사 방문 또는 온라인 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">소득·자산 확인 서류</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>자격 확인 후 계약. 기존 임대주택 유형(국민임대, 매입임대 등)과 유사한 조건 적용.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '전세임대형 든든주택': {
+        title: '전세임대형 든든주택 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 「든든주택」 공고 확인. 전세 방식으로 장기 거주를 지원하는 신규 유형.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청</h4><p>공고 기간 내 SH공사 인터넷 청약 또는 방문 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
+                    <div class="guide-doc-item">소득·자산 확인 서류</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                    <div class="guide-doc-item">해당 공고의 추가 서류 확인 필수</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>자격 심사 → 전세 계약 체결.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '기존주택 전세임대': {
+        title: '기존주택 전세임대 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인 및 신청</h4><p>SH공사 홈페이지에서 「기존주택 전세임대」 공고 확인 후 신청. 입주자가 살 집을 직접 구해오는 방식.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>주택 탐색 (당첨 후)</h4><p>지원 한도 이내의 전세 주택을 직접 구해야 함. 부동산 중개소를 통해 구한 뒤 SH공사에 신청.</p><p class="hint warn">지원 한도 초과 금액은 본인 부담. 주택 요건(면적, 건물 상태 등) 충족 여부 SH 사전 확인 권장.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">소득 확인 서류</div>
+                    <div class="guide-doc-item">자산 확인 서류</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                    <div class="guide-doc-item">입주 희망 주택 등기부등본</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>SH 검토 → 계약</h4><p>SH공사가 해당 주택 검토 후 집주인과 전세 계약. 입주자는 SH와 전대차 계약.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '국민임대주택': {
+        title: '국민임대주택 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 「국민임대」 공고 확인. 장기 저렴한 임대(최대 30년)로 소득 4분위 이하 대상.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>SH공사 인터넷 청약 시스템에서 신청. 단지별로 신청 기간이 다르므로 공고 확인 필수.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
+                    <div class="guide-doc-item">가족관계증명서</div>
+                    <div class="guide-doc-item">소득 확인 서류 (건강보험료 납부확인서 또는 근로소득원천징수영수증)</div>
+                    <div class="guide-doc-item">무주택기간 확인 서류 (주민등록 이력 등)</div>
+                    <div class="guide-doc-item">자산 확인 서류 (재산세 과세증명서)</div>
+                </div>
+                <p class="hint warn">무주택기간을 모를 경우 → 주민센터에서 주민등록 이력 발급. 과거 주택 소유 이력은 정부24 부동산 소유 이력으로 확인.</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>순위 산정 → 당첨 → 계약</h4><p>무주택기간·자녀 수·나이 등으로 순위 산정 → 당첨자 발표 → 계약.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    '일반 매입임대주택': {
+        title: '일반 매입임대주택 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 「일반 매입임대」 공고 확인. SH공사가 기존 주택을 매입해 임대하는 방식.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청</h4><p>공고 기간 내 SH공사 인터넷 청약 또는 방문 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
+                    <div class="guide-doc-item">가족관계증명서</div>
+                    <div class="guide-doc-item">소득·자산 확인 서류</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                    <div class="guide-doc-item">장애인·국가유공자 등 우선순위 해당 시 관련 서류</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>우선순위 확인 후 계약. 보증금 + 월세 방식.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+};
+
+function openApplyGuide(name) {
+    const data = applyGuideData[name];
+    if (!data) {
+        document.getElementById('help-title').textContent = name + ' 신청 가이드';
+        document.getElementById('help-body').innerHTML = `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 해당 유형 공고를 확인하세요.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 또는 방문 신청</h4><p>공고에 명시된 신청 방법 및 기간을 따르세요.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>문의</h4><p>SH공사 콜센터: <strong>1600-3456</strong></p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지 바로가기</a>`;
+    } else {
+        document.getElementById('help-title').textContent = data.title;
+        document.getElementById('help-body').innerHTML = data.body;
+    }
+    document.getElementById('helpOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
 
 function openTypeDetail(name) {
     const data = typeDetailData[name];
