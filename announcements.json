@@ -1,6 +1,6 @@
 {
   "updated": "2026-03-07",
-  "count": 10,
+  "count": 9,
   "announcements": [
     {
       "seq": "301179",
@@ -45,7 +45,9 @@
         "일반 매입임대주택"
       ],
       "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301016&multi_itm_seq=2",
-      "status": "확인필요"
+      "status": "예정",
+      "apply_start": "2026-03-16",
+      "apply_end": "2026-03-30"
     },
     {
       "seq": "300514",
@@ -69,16 +71,6 @@
       "status": "확인필요"
     },
     {
-      "seq": "300421",
-      "title": "2026년 기존주택 전세임대 입주자 모집공고",
-      "date": "2026-02-11",
-      "types": [
-        "기존주택 전세임대"
-      ],
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=300421&multi_itm_seq=2",
-      "status": "확인필요"
-    },
-    {
       "seq": "300109",
       "title": "[청년형] 특화형 매입임대주택 입주자 모집 공고(운영기관 : 한지붕 협동조합)",
       "date": "2026-02-11",
@@ -97,7 +89,9 @@
         "신혼·신생아 매입임대 Ⅰ형"
       ],
       "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=300390&multi_itm_seq=2",
-      "status": "확인필요"
+      "status": "예정",
+      "apply_start": "2026-03-23",
+      "apply_end": "2026-05-22"
     },
     {
       "seq": "300344",

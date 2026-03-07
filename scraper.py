@@ -118,29 +118,38 @@ def extract_apply_dates(html):
     idx = html.find('class="cont"')
     if idx < 0:
         return None, None
-    content = html[idx:idx+6000]
+    content = html[idx:idx+8000]
     content = re.sub(r"<[^>]+>", " ", content)
+    content = re.sub(r"&nbsp;", " ", content)
+    content = re.sub(r"&[a-z]+;", "", content)
     content = re.sub(r"\s+", " ", content)
 
-    # "YYYY.MM.DD ~ YYYY.MM.DD" 또는 "YYYY.M.D~YYYY.M.D" 패턴 탐색
-    # 접수, 신청, 모집 키워드 근처에서 우선 찾기
-    DATE_PAT = r"(\d{4})[.\-](\d{1,2})[.\-](\d{1,2})"
-    RANGE_PAT = DATE_PAT + r"[^\d]{0,20}?~[^\d]{0,10}?" + DATE_PAT
+    # SH공사 날짜 형식 다양:
+    #   2026.03.18  /  2026. 3.18  /  2026. 3. 18.  /  2026-03-18
+    # 공백 허용 패턴
+    DATE_PAT = r"(\d{4})\s*[.\-]\s*(\d{1,2})\s*[.\-]\s*(\d{1,2})"
+    RANGE_PAT = DATE_PAT + r"[^0-9]{0,30}?~[^0-9]{0,15}?" + DATE_PAT
 
-    keywords = ["접수일", "접수기간", "신청기간", "신청일", "모집기간", "공고기간", "청약기간"]
+    keywords = ["신청기간", "접수기간", "접수일", "신청일", "모집기간", "청약기간", "공고기간", "청약 기간", "신청 기간"]
     for kw in keywords:
         pos = content.find(kw)
         if pos < 0:
             continue
-        segment = content[pos:pos+300]
+        segment = content[pos:pos+400]
         m = re.search(RANGE_PAT, segment)
         if m:
             start = parse_date(m.group(1), m.group(2), m.group(3))
             end   = parse_date(m.group(4), m.group(5), m.group(6))
             if start and end and end >= start:
                 return start, end
+        # 범위가 아닌 경우: 키워드 뒤 첫 날짜만 있으면 start만 추출 (fallback)
+        sm = re.search(DATE_PAT, segment)
+        if sm:
+            start = parse_date(sm.group(1), sm.group(2), sm.group(3))
+            if start:
+                return start, start + timedelta(days=14)  # 14일 예상 마감
 
-    # 키워드 없이 전체에서 첫 범위 날짜 추출 (fallback)
+    # 키워드 없이 전체에서 첫 날짜 범위 추출 (fallback)
     m = re.search(RANGE_PAT, content)
     if m:
         start = parse_date(m.group(1), m.group(2), m.group(3))
