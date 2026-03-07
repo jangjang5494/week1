@@ -120,6 +120,19 @@
         .notice-box { background: #fef9c3; border: 1px solid #fde047; border-radius: 10px; padding: 0.9rem 1.1rem; font-size: 0.8rem; color: #854d0e; margin-top: 1.5rem; line-height: 1.6; }
         [data-theme="dark"] .notice-box { background: #422006; border-color: #92400e; color: #fcd34d; }
 
+        /* 공고 배지 */
+        .announce-box { margin-top: 0.75rem; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 0.65rem 0.9rem; }
+        .announce-box-title { font-size: 0.75rem; font-weight: 700; color: #15803d; margin-bottom: 0.4rem; }
+        .announce-item { display: flex; align-items: flex-start; gap: 0.4rem; margin-bottom: 0.3rem; }
+        .announce-item:last-child { margin-bottom: 0; }
+        .announce-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; margin-top: 0.4rem; flex-shrink: 0; }
+        .announce-link { font-size: 0.8rem; color: #166534; text-decoration: none; line-height: 1.45; }
+        .announce-link:hover { text-decoration: underline; }
+        .announce-date { font-size: 0.72rem; color: #4ade80; margin-left: 0.3rem; white-space: nowrap; }
+        [data-theme="dark"] .announce-box { background: #052e16; border-color: #166534; }
+        [data-theme="dark"] .announce-box-title { color: #4ade80; }
+        [data-theme="dark"] .announce-link { color: #86efac; }
+
         /* ===== Help Modal ===== */
         .help-modal-overlay {
             display: none; position: fixed; inset: 0; z-index: 3000;
@@ -537,6 +550,17 @@
 </div>
 
 <script>
+// ===== 공고 데이터 로딩 =====
+let announcementsData = [];
+fetch('announcements.json')
+    .then(r => r.ok ? r.json() : null)
+    .then(json => { if (json) announcementsData = json.announcements || []; })
+    .catch(() => {});
+
+function getMatchingAnnouncements(typeName) {
+    return announcementsData.filter(a => a.types && a.types.includes(typeName));
+}
+
 // ===== Theme =====
 const savedTheme = localStorage.getItem('theme') || 'light';
 document.body.setAttribute('data-theme', savedTheme);
@@ -1404,6 +1428,26 @@ function runAnalysis() {
     function card(r, isE) {
         const rc = r.rank.includes('1순위')?'rank-1':r.rank.includes('2순위')?'rank-2':r.rank.includes('3순위')?'rank-3':isE?'rank-ok':'rank-na';
         const safeName = r.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+
+        // 공고 매칭
+        let announceHtml = '';
+        if (isE) {
+            const matches = getMatchingAnnouncements(r.name);
+            if (matches.length > 0) {
+                const items = matches.slice(0, 3).map(a => {
+                    const title = a.title.length > 38 ? a.title.slice(0, 38) + '…' : a.title;
+                    return `<div class="announce-item">
+                        <div class="announce-dot"></div>
+                        <div><a class="announce-link" href="${a.url}" target="_blank">${title}</a><span class="announce-date">${a.date}</span></div>
+                    </div>`;
+                }).join('');
+                announceHtml = `<div class="announce-box">
+                    <div class="announce-box-title">📢 현재 진행 중인 공고</div>
+                    ${items}
+                </div>`;
+            }
+        }
+
         return `<div class="result-card ${isE?'':'ineligible'}">
             <div class="result-card-header">
                 <div class="result-card-name">${r.name}</div>
@@ -1415,6 +1459,7 @@ function runAnalysis() {
                 <span class="result-tag">${r.period}</span>
             </div>
             ${!isE&&r.reasons.length?`<div class="result-reason">⚠ ${r.reasons.join(' · ')}</div>`:''}
+            ${announceHtml}
             ${isE?`<button class="type-detail-btn" onclick="openTypeDetail('${safeName}')">📋 이 유형 상세보기</button>`:''}
         </div>`;
     }
