@@ -56,6 +56,15 @@
             transition: background 0.15s;
         }
         .info-btn:hover { background: #c7d2fe; }
+        .type-detail-btn {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            margin-top: 0.8rem; padding: 0.45rem 0.9rem;
+            background: #ede9fe; color: #4f46e5; border: none;
+            border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+            cursor: pointer; transition: background 0.15s; width: 100%;
+            justify-content: center;
+        }
+        .type-detail-btn:hover { background: #c7d2fe; }
         .hint { font-size: 0.75rem; color: #9ca3af; margin-top: 0.35rem; line-height: 1.5; }
         .hint.warn { color: #d97706; background: #fffbeb; border-radius: 6px; padding: 0.4rem 0.6rem; margin-top: 0.4rem; }
         .fg input[type="number"], .fg select {
@@ -621,22 +630,38 @@ const helpData = {
             </div>`
     },
     homeless_years: {
-        title: '무주택 기간 계산 방법',
+        title: '무주택 기간 — 내가 얼마인지 모르겠어요',
         body: `
             <div class="help-section">
-                <h4>기산점 (시작일)</h4>
+                <h4>📌 내 무주택 기간 시작일은 언제인가요?</h4>
+                <p>아래 해당하는 경우 중 <strong>가장 최근 날짜</strong>가 무주택 시작일입니다.</p>
                 <ul>
-                    <li>마지막으로 주택을 처분(매도·증여)한 날</li>
-                    <li>또는 유주택 세대에서 세대 분리(전입신고)한 날</li>
-                    <li>또는 만 30세가 된 날 (30세 이전에 미혼으로 부모와 동거했다면)</li>
+                    <li>①주택을 마지막으로 팔거나 증여한 날 (등기 이전일)</li>
+                    <li>②부모 집에서 독립(전입신고)한 날 — 단, 부모가 주택 소유한 경우만</li>
+                    <li>③만 30세 생일 (30세 전에 미혼으로 부모와 같은 세대에 있었다면)</li>
+                    <li>④혼인신고일 (배우자가 주택을 소유한 경우)</li>
                 </ul>
             </div>
             <div class="help-section">
-                <h4>주의사항</h4>
-                <div class="help-case warn">⚠ 미리내집(장기전세2) 가점 항목에서 무주택 기간이 점수화됩니다. 정확히 계산하세요.</div>
-                <p>확인: 주민등록초본(세대별, 주소 변경 이력 포함)으로 확인 가능</p>
+                <h4>💡 경우별 판단 (클릭 전 먼저 확인)</h4>
+                <div class="help-case">✅ <strong>평생 주택 소유한 적 없고, 부모가 무주택이거나 독립 세대인 경우</strong><br>→ 태어난 날부터 무주택. 통상 현재 나이 기준 계산. 5년 이상 선택 가능성 높음</div>
+                <div class="help-case">✅ <strong>부모가 주택 있는데 내가 부모와 같은 세대</strong><br>→ 세대 분리(독립 전입신고)한 날부터 기산. 분리 전에는 0년</div>
+                <div class="help-case warn">⚠ <strong>나는 무주택인데 배우자가 과거에 집이 있었던 경우</strong><br>→ 배우자가 집을 처분한 날부터 기산 (부부는 함께 심사)</div>
             </div>
-            <a class="help-link" href="https://www.gov.kr" target="_blank">🔗 정부24 — 주민등록초본 발급</a>`
+            <div class="help-section">
+                <h4>확인 방법 (서류)</h4>
+                <p>주민등록초본(주소 변경 이력 전체 포함)으로 전입일 확인 → 부동산등기부등본으로 처분일 확인</p>
+                <a class="help-link" href="https://www.gov.kr" target="_blank">🔗 정부24 — 주민등록초본 발급</a>
+                <a class="help-link" href="https://www.iros.go.kr" target="_blank">🔗 인터넷등기소 — 등기부등본 발급</a>
+            </div>
+            <div class="help-section">
+                <h4>왜 중요한가?</h4>
+                <ul>
+                    <li>미리내집(장기전세2): 무주택 기간 5년 이상 → 가점 +3점</li>
+                    <li>장기전세 일반공급: 무주택 기간이 가점 주요 항목</li>
+                    <li>불확실하면 <strong>짧게(보수적으로)</strong> 선택하는 것이 안전</li>
+                </ul>
+            </div>`
     },
     seoul_years: {
         title: '서울 거주 기간 확인',
@@ -776,31 +801,38 @@ const helpData = {
             </div>`
     },
     income: {
-        title: '월평균 소득 확인 방법',
+        title: '월평균 소득 — 얼마를 어디서 확인하나요?',
         body: `
             <div class="help-section">
-                <h4>직장인 (가장 빠른 방법)</h4>
-                <p>건강보험공단에서 보수월액(세전 월급)을 확인합니다.</p>
-                <a class="help-link" href="https://www.nhis.or.kr" target="_blank">🔗 국민건강보험공단</a>
-                <p style="margin-top:0.5rem;font-size:0.83rem;">접속 → 민원여기요 → 개인민원 → 보험료 조회 → 직장보험료 조회</p>
-            </div>
-            <div class="help-section">
-                <h4>자영업자 / 프리랜서</h4>
-                <a class="help-link" href="https://www.hometax.go.kr" target="_blank">🔗 홈택스</a>
-                <p style="margin-top:0.5rem;font-size:0.83rem;">국세증명 → 소득금액증명서 발급 → 연간 소득 ÷ 12 = 월 소득</p>
+                <h4>📌 여기에 쓰는 금액은 "세전 월급" (만원 단위)</h4>
+                <p>세금 떼기 전 총액입니다. 실수령액(세후)이 아닙니다.</p>
+                <div class="help-case">예) 연봉 3,000만원 → 월 250 입력<br>연봉 3,600만원 → 월 300 입력<br>연봉 4,200만원 → 월 350 입력<br>연봉 4,800만원 → 월 400 입력</div>
             </div>
             <div class="help-divider"></div>
             <div class="help-section">
-                <h4>취업 3개월차라면?</h4>
-                <div class="help-case">✅ 연봉 ÷ 12 를 월 소득으로 입력하세요.<br>예) 연봉 3,600만원 → 300만원 입력<br><br>근로소득 원천징수영수증이 없을 경우 급여명세서로 대체 가능합니다.</div>
+                <h4>① 직장인 — 건강보험공단에서 확인 (가장 빠름)</h4>
+                <p><strong>보수월액</strong> = 회사에 신고된 세전 월급. 가장 정확한 기준입니다.</p>
+                <a class="help-link" href="https://www.nhis.or.kr" target="_blank">🔗 국민건강보험공단</a>
+                <p style="margin-top:0.4rem;font-size:0.83rem;">접속 → 로그인 → 민원여기요 → 개인민원 → 보험료 조회 → 직장보험료 조회 → <strong>"보수월액"</strong> 숫자 확인</p>
             </div>
             <div class="help-section">
-                <h4>소득이 없거나 불규칙한 경우</h4>
-                <div class="help-case">아르바이트: 실제 수령액 기준으로 입력<br>무직: 0 입력<br>프리랜서: 최근 3개월 평균을 입력</div>
+                <h4>② 취업한 지 얼마 안 됐거나 원천징수영수증이 없는 경우</h4>
+                <div class="help-case">✅ <strong>근로계약서 or 급여명세서</strong>의 기본급+수당 합계를 입력하세요<br>→ 연봉 ÷ 12 = 월 소득 (가장 간단)<br><br>서류 없으면? → 실제 받는 월급여를 1.1~1.2배 해서 세전으로 역산 가능<br>(실수령 250만원이면 세전 약 280~300만원으로 추정)</div>
+                <div class="help-case warn">⚠ 취업 첫달이라 아직 건강보험 직장가입이 안 됐어도 괜찮습니다. 계약서 기준으로 입력하면 됩니다.</div>
             </div>
             <div class="help-section">
-                <h4>맞벌이 합산 기준</h4>
-                <p>부부의 소득을 합산해서 입력하세요. 부부 각각의 건강보험 보수월액을 더하면 됩니다.</p>
+                <h4>③ 자영업자 / 프리랜서</h4>
+                <a class="help-link" href="https://www.hometax.go.kr" target="_blank">🔗 홈택스 — 소득금액증명서</a>
+                <p style="margin-top:0.4rem;font-size:0.83rem;">로그인 → 국세증명·사업자등록 → 소득금액증명서 → 연간 소득 ÷ 12<br>신규 사업자라 증명서 없으면: 최근 3개월 평균 수입 입력</p>
+            </div>
+            <div class="help-section">
+                <h4>④ 소득이 없거나 불규칙한 경우</h4>
+                <div class="help-case">무직 / 백수: <strong>0</strong> 입력<br>아르바이트: 월 실제 수령액 기준<br>육아휴직 중: 육아휴직급여 월액 기준<br>실업급여 수령 중: 0으로 입력 (실업급여는 소득으로 미산정)</div>
+            </div>
+            <div class="help-section">
+                <h4>⑤ 맞벌이 합산 방법</h4>
+                <p>배우자 포함 부부 각각의 보수월액을 더한 값을 입력합니다.</p>
+                <div class="help-case">예) 본인 250 + 배우자 200 = 450 입력</div>
             </div>`
     },
     total_assets: {
@@ -1371,6 +1403,7 @@ function runAnalysis() {
 
     function card(r, isE) {
         const rc = r.rank.includes('1순위')?'rank-1':r.rank.includes('2순위')?'rank-2':r.rank.includes('3순위')?'rank-3':isE?'rank-ok':'rank-na';
+        const safeName = r.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
         return `<div class="result-card ${isE?'':'ineligible'}">
             <div class="result-card-header">
                 <div class="result-card-name">${r.name}</div>
@@ -1382,6 +1415,7 @@ function runAnalysis() {
                 <span class="result-tag">${r.period}</span>
             </div>
             ${!isE&&r.reasons.length?`<div class="result-reason">⚠ ${r.reasons.join(' · ')}</div>`:''}
+            ${isE?`<button class="type-detail-btn" onclick="openTypeDetail('${safeName}')">📋 이 유형 상세보기</button>`:''}
         </div>`;
     }
 
@@ -1401,6 +1435,572 @@ function restart() {
     document.getElementById('step-indicator').style.display='';
     document.getElementById('results').style.display='none';
     goTo(1);
+}
+
+// ===== 유형별 상세 정보 =====
+const typeDetailData = {
+    '장기전세주택 (시프트)': {
+        title: '장기전세주택 (시프트)',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>SH가 주변 시세의 <strong>80% 이하</strong>로 전세 형태로 공급하는 공공주택입니다. 보증금만 내고 월세 없이 거주합니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 시세 80% 이하 전세 보증금</li>
+                <li>거주 기간: 최초 2년, 재계약으로 최장 <strong>20년</strong></li>
+                <li>평형: 전용 85㎡ 이하 (특별공급 포함)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>부동산 21,550만원 이하 / 자동차 3,803만원 이하</li>
+                <li>일반공급: 소득 100% 이하 (특별공급 별도)</li>
+                <li>60㎡ 초과형은 소득 무관 신청 가능</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">월세 없이 전세 형태로 오래 안정적으로 살고 싶은 분. 자녀 계획 있는 신혼부부, 장애인·국가유공자 특별공급도 있음.</div>
+        </div>
+        <div class="help-section">
+            <h4>신청 방법</h4>
+            <p>공고 시 SH공사 홈페이지 인터넷 청약 또는 현장 접수</p>
+            <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>
+            <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약Home</a>
+        </div>`
+    },
+    '미리내집 (장기전세2)': {
+        title: '미리내집 (장기전세2)',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>10년 거주 후 <strong>분양전환(내 집 마련)</strong> 기회가 주어지는 장기전세 유형입니다. 시프트의 업그레이드 버전.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 시세 80% 이하 전세</li>
+                <li>거주 기간: 10년 후 분양전환 가능</li>
+                <li>분양가: 최초 입주 당시 감정가 기준 (시세 상승분 반영 안 됨 → 큰 혜택)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>총자산 35,400만원 이하 / 자동차 3,803만원 이하</li>
+                <li>소득 130% 이하 (맞벌이 200% 이하)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>가점 항목 (경쟁 시 유리한 조건)</h4>
+            <ul>
+                <li>무주택 기간 5년 이상 → +3점</li>
+                <li>서울 거주 기간 5년 이상 → +3점</li>
+                <li>미성년 자녀 수 → 자녀 1명당 +1점</li>
+                <li>신생아 가구 → +2점</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">10년 후 내 집으로 만들고 싶은 분. 신혼부부 특별공급 있어 신혼부부에게 특히 유리.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '국민임대주택': {
+        title: '국민임대주택',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>저소득 무주택 가구를 위해 시세 60~80%의 임대료로 <strong>기간 제한 없이</strong> 거주할 수 있는 장기 임대주택입니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 시세 60~80% (보증금+월세 형태)</li>
+                <li>거주 기간: 2년 단위 재계약, <strong>기간 제한 없음</strong></li>
+                <li>면적: 전용 60㎡ 이하</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>총자산 33,700만원 이하 / 자동차 3,803만원 이하</li>
+                <li>1순위: 수급자·차상위·한부모·장애인 (소득 50% 이하)</li>
+                <li>2순위: 소득 50% 이하 일반 가구</li>
+                <li>3순위: 소득 70% 이하 (50~60㎡형)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>2025 소득 50% 기준 (세전 월)</h4>
+            <div class="help-case">1인: 약 252만원 / 2인: 약 329만원 / 3인: 약 381만원 / 4인: 약 429만원</div>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">장기간 안정적으로 저렴하게 살고 싶은 저소득 가구. 수급자·장애인 우선 혜택 있음.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '일반 매입임대주택': {
+        title: '일반 매입임대주택',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>SH가 기존 주택을 사서 저소득 가구에 저렴하게 임대하는 유형입니다. 시세 30~70%로 공급.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 시세 30~70% (소득에 따라 차등)</li>
+                <li>거주 기간: 2년 단위 재계약, 기간 제한 없음</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>총자산: 자녀 없으면 23,700만원 / 자녀 1명 26,100만원 / 2명 이상 28,400만원 이하</li>
+                <li>소득 50% 이하: 1순위 / 소득 70% 이하: 2순위 / 장애인은 100% 이하까지</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">저소득 일반 가구, 수급자·한부모·장애인 등 우대 대상자.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '청년 매입임대주택': {
+        title: '청년 매입임대주택',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>만 19~39세 청년, 대학생, 취업준비생을 위해 시세 30~50%에 공급하는 원룸·소형 주택입니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>1순위(우대 대상): 시세 30%, 보증금 100만원 고정</li>
+                <li>2·3순위 일반: 시세 50%</li>
+                <li>거주 기간: 최장 10년 (2년+2년+2년+2년+2년)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>만 19~39세 청년 또는 대학(원)생·취업준비생</li>
+                <li>서울 거주 무주택</li>
+                <li>2순위(부모합산): 소득 100% 이하, 자산 33,700만원 이하</li>
+                <li>3순위(본인만): 소득 100% 이하, 자산 25,400만원 이하</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">자취 시작하는 청년·대학생. 보증금 부담 없이(100만원 고정) 시작 가능한 1순위 대상자에게 특히 유리.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '신혼·신생아 매입임대 Ⅰ형': {
+        title: '신혼·신생아 매입임대 Ⅰ형',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>신혼부부·신생아 가구에게 시세 30~50%의 매입임대 주택을 공급하는 유형입니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>소득 50% 이하: 시세 30%</li>
+                <li>소득 50~70%: 시세 50%</li>
+                <li>거주 기간: 최장 20년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>신혼부부(혼인 7년 이내), 예비신혼부부, 신생아 가구, 6세이하 자녀 한부모 중 하나 해당</li>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>총자산 33,700만원 이하 / 자동차 3,803만원 이하</li>
+                <li>소득 70% 이하 (맞벌이 90% 이하)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>순위</h4>
+            <div class="help-case">1순위: 신생아 가구, 보호대상 한부모가족<br>2순위: 미성년 자녀 있는 신혼부부<br>3순위: 자녀 없는 신혼부부</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '신혼·신생아 매입임대 Ⅱ형': {
+        title: '신혼·신생아 매입임대 Ⅱ형',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>신혼·신생아 Ⅰ형보다 소득 기준이 완화된 유형. 소득 80% 이하면 시세 60%, 130% 이하면 70%에 공급.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>소득 80% 이하: 시세 60%</li>
+                <li>소득 130% 이하: 시세 70%</li>
+                <li>맞벌이 200% 이하까지 신청 가능</li>
+                <li>거주 기간: 최장 14년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>혼인 가구, 신생아 가구, 한부모 가족 중 하나 해당</li>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>총자산 35,400만원 이하 (자녀 수에 따라 증가)</li>
+                <li>소득 130% 이하 (맞벌이 200% 이하)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">Ⅰ형보다 소득이 높은 신혼부부. 맞벌이 고소득 가구도 200%까지 신청 가능.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '장기미임대': {
+        title: '장기미임대주택',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>오랫동안 빈 채로 있던 공공임대 주택을 소득 기준을 낮춰 공급하는 유형입니다. 경쟁이 낮아 당첨 가능성이 높습니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 시세 30~70%</li>
+                <li>거주 기간: 최장 4년 (재계약 가능)</li>
+                <li>우편 접수 가능 (현장 방문 불필요)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 거주 무주택 세대구성원, 만 19세 이상</li>
+                <li>소득·자산 요건이 일반 유형보다 완화되어 있음</li>
+                <li>소득 130% 초과도 2순위로 신청 가능</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">다른 유형에서 계속 낙첨된 분. 경쟁률이 낮아 당첨 확률이 상대적으로 높음.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '희망하우징': {
+        title: '희망하우징',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>서울 소재 대학교(원) 재학생·입학예정자를 위한 기숙사형 공공주택입니다. 월 7.9~14.5만원의 매우 저렴한 임대료.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 월 79,000~145,000원 (공과금 별도)</li>
+                <li>거주 기간: 최장 6년 (재학 중 한정)</li>
+                <li>주요 단지: 공릉·내발산·고덕·녹번 등</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 소재 대학(원) 재학·복학·입학예정자 (일부 단지는 수도권 대학 포함)</li>
+                <li>미혼 단독 세대 (기혼 불가)</li>
+                <li>서울 거주 무주택</li>
+                <li>2순위: 소득 100% 이하, 자산 33,700만원 이하 (부모 합산)</li>
+                <li>3순위: 소득 100% 이하, 자산 10,400만원 이하, <strong>자동차 무소유</strong></li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">자취비 부담이 큰 대학생. 서울 집값 대비 압도적으로 저렴한 임대료.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '장기안심주택': {
+        title: '장기안심주택',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>SH가 전세 보증금의 최대 30%(최대 6,000만원)를 무이자로 지원해주는 전세 지원 사업입니다. 일반 민간 전세 시장에서 본인이 집을 구합니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>SH가 보증금의 30%를 무이자 지원 (최대 6,000만원)</li>
+                <li>본인은 보증금의 70% 부담 (SH와 공동 임차인)</li>
+                <li>거주 기간: 최장 10년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>부동산 21,550만원 이하 / 자동차 3,803만원 이하</li>
+                <li>소득 100% 이하 (신혼 120%, 맞벌이 신혼 180% 이하)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">이미 살고 싶은 동네와 집이 있는데 보증금이 부족한 분. SH가 지원금으로 보증금 일부를 채워줌.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '행복주택 (대학생)': {
+        title: '행복주택 (대학생)',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>대학생·취업준비생을 위한 소형 공공주택. 역세권·직주근접 위치에 시세 60~80%로 공급.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 시세 60~80%</li>
+                <li>거주 기간: 재학 기간 한정, 최장 6년 (취업 시 청년 유형으로 전환 가능)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 소재 대학(원)생 또는 졸업 후 2년 이내 취업준비생</li>
+                <li>미혼 / 서울 거주 무주택</li>
+                <li>소득 100% 이하, 총자산 33,700만원 이하</li>
+                <li><strong>주택청약저축 가입 필수</strong> (가점 영향)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>청약저축 가점</h4>
+            <div class="help-case">24회 이상 납입: 3점 / 12~24회: 2점 / 6~12회: 1점<br>→ 청약저축 가입 후 매달 2만원 이상 넣으면 됩니다.</div>
+        </div>
+        <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약Home — 행복주택 청약</a>`
+    },
+    '행복주택 (청년)': {
+        title: '행복주택 (청년)',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>만 19~39세 청년 1~2인 가구를 위한 소형 공공주택. 역세권·직장 인근에 시세 60~80%로 공급.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 시세 60~80%</li>
+                <li>거주 기간: 최장 10년 (6년 후 2년 단위 연장, 결혼 시 신혼 유형 전환)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>만 19~39세 / 미혼 또는 한부모가족</li>
+                <li>서울 거주 무주택</li>
+                <li>소득 100% 이하 (1인 가구 120% 이하), 총자산 33,700만원 이하</li>
+                <li>주택청약저축 가입 필수</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">직장 근처에서 월세 부담 줄이고 싶은 취업한 청년. 최대 10년 거주 가능.</div>
+        </div>
+        <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약Home — 행복주택 청약</a>`
+    },
+    '행복주택 (신혼부부)': {
+        title: '행복주택 (신혼부부)',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>혼인 7년 이내 신혼부부, 예비신혼부부를 위한 공공주택. 자녀 있으면 거주 기간 연장 가능.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 시세 60~80%</li>
+                <li>거주 기간: 기본 6년, 자녀 1명 시 8년, 2명 이상 시 최장 14년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>혼인 7년 이내 신혼 / 예비신혼 / 6세이하 자녀 한부모</li>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>소득: 외벌이 100% 이하 / 맞벌이 120% 이하</li>
+                <li>총자산 33,700만원 이하 / 주택청약저축 가입 필수</li>
+            </ul>
+        </div>
+        <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약Home — 행복주택 청약</a>`
+    },
+    '기존주택 전세임대': {
+        title: '기존주택 전세임대',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>입주자가 직접 원하는 집을 찾으면 SH가 집주인과 전세 계약을 맺고, 입주자에게 재임대하는 방식입니다. 보증금의 5%만 부담하면 됩니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>지원 한도: 최대 1억 2천만원 (수도권 기준)</li>
+                <li>본인 부담: 전세 보증금의 5%</li>
+                <li>거주 기간: 2년 단위 재계약, 최장 30년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>총자산 23,700만원 이하 / 자동차 3,803만원 이하</li>
+                <li>1순위: 수급자·차상위·한부모·장애인</li>
+                <li>2순위: 소득 50% 이하 / 장애인 소득 100% 이하</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">특정 지역·학교 근처에 살아야 하는 저소득 가구. 본인이 원하는 집을 직접 고를 수 있음.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '신혼·신생아 전세임대 Ⅰ형': {
+        title: '신혼·신생아 전세임대 Ⅰ형',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>신혼부부·신생아 가구를 위한 기존주택 전세임대. SH가 최대 1.38억원을 지원하고 본인은 5%만 부담.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>SH 지원 한도: 최대 1억 3,800만원</li>
+                <li>본인 부담: 전세 보증금의 5%</li>
+                <li>거주 기간: 최장 20년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>신혼(7년 이내), 예비신혼, 신생아 가구, 6세이하 자녀 한부모 중 해당</li>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>총자산 33,700만원 이하 / 자동차 3,803만원 이하</li>
+                <li>소득 70% 이하 (맞벌이 90% 이하)</li>
+            </ul>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '신혼·신생아 전세임대 Ⅱ형': {
+        title: '신혼·신생아 전세임대 Ⅱ형',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>Ⅰ형보다 소득 기준이 완화된 전세임대 유형. SH가 최대 6억원까지 지원, 본인은 보증금의 20% 부담.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>SH 지원 한도: 최대 6억원</li>
+                <li>본인 부담: 전세 보증금의 20%</li>
+                <li>거주 기간: 최장 14년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>혼인 가구, 신생아 가구, 한부모가족 중 해당</li>
+                <li>서울 거주 무주택 세대구성원</li>
+                <li>총자산 35,400만원 이하</li>
+                <li>소득 130% 이하 (맞벌이 200% 이하)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">더 넓은 집이 필요하거나 소득이 높은 신혼·신생아 가구. 6억까지 지원으로 서울 중형 아파트도 가능.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '전세임대형 든든주택': {
+        title: '전세임대형 든든주택',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>소득·자산 요건 없이 신청 가능한 전세임대 유형입니다. SH가 최대 2억원을 지원하고 본인은 20% 부담. 서울 시내 원하는 집을 직접 구할 수 있습니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>SH 지원 한도: 최대 2억원</li>
+                <li>본인 부담: 전세 보증금의 20%</li>
+                <li>거주 기간: 최장 8년 (2년 단위 재계약)</li>
+                <li><strong>소득·자산 무관 신청 가능</strong></li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>서울 주민등록 + 무주택 세대구성원이면 기본 신청 가능</li>
+                <li>1순위: 신생아 가구, 다자녀(2명 이상)</li>
+                <li>2순위: 신혼부부, 예비신혼부부</li>
+                <li>3순위: 일반 (모든 무주택 세대구성원)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">소득이 높아 다른 공공임대 소득 기준을 넘어서 탈락했던 분. 소득·자산 기준 없이 신청 가능한 희귀한 유형.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    '청년안심주택': {
+        title: '청년안심주택',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>역세권·간선도로변에 공급되는 청년·신혼부부용 공공지원 민간임대주택입니다. SH가 민간 사업자와 협력해 시세 이하로 공급.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 주변 시세 이하 (공고별 상이)</li>
+                <li>거주 기간: 통상 10년 (공고별 상이)</li>
+                <li>위치: 역세권(250~350m 이내) 또는 간선도로변</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>만 19~39세 청년 또는 신혼부부(7년이내)·예비신혼</li>
+                <li>서울 거주 무주택</li>
+                <li>청년 2순위: 소득 100% 이하 (부모 합산)</li>
+                <li>청년 3순위: 소득 100% 이하 (본인만)</li>
+                <li>신혼 Ⅰ형: 소득 70% 이하 (맞벌이 90%)</li>
+                <li>신혼 Ⅱ형: 소득 130% 이하 (맞벌이 200%)</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">역세권 신축 또는 준신축에서 살고 싶은 청년·신혼부부. 공공임대보다 입지와 품질이 좋은 편.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>
+        <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울시 청년안심주택 안내</a>`
+    }
+};
+
+function openTypeDetail(name) {
+    const data = typeDetailData[name];
+    if (!data) {
+        document.getElementById('help-title').textContent = name;
+        document.getElementById('help-body').innerHTML = `<div class="help-section"><p>상세 정보를 준비 중입니다.</p><a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지에서 확인</a></div>`;
+    } else {
+        document.getElementById('help-title').textContent = data.title;
+        document.getElementById('help-body').innerHTML = data.body;
+    }
+    document.getElementById('helpOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
 }
 </script>
 </body>

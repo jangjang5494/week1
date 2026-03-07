@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "firebase-debug.log",
+      "blueprint.md",
+      "sh 임대주택"
+    ]
+  }
+}
