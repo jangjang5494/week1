@@ -14,10 +14,6 @@
             --card-eligible-border: #86efac;
             --card-ineligible: #f9fafb;
             --card-ineligible-border: #e5e7eb;
-            --rank-1: #ef4444;
-            --rank-2: #f97316;
-            --rank-3: #eab308;
-            --rank-g: #6366f1;
         }
         [data-theme="dark"] {
             --card-eligible: #052e16;
@@ -26,324 +22,121 @@
             --card-ineligible-border: #374151;
         }
 
-        .page-wrapper {
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 100px 1.5rem 4rem;
-        }
-
-        .page-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--primary-color, #4f46e5);
-            margin-bottom: 0.3rem;
-        }
-        .page-subtitle {
-            color: #6b7280;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-        }
+        .page-wrapper { max-width: 760px; margin: 0 auto; padding: 100px 1.5rem 4rem; }
+        .page-title { font-size: 1.6rem; font-weight: 800; color: var(--primary-color, #4f46e5); margin-bottom: 0.3rem; }
+        .page-subtitle { color: #6b7280; margin-bottom: 2rem; font-size: 0.95rem; }
 
         /* Step indicator */
-        .steps {
-            display: flex;
-            align-items: center;
-            margin-bottom: 2.5rem;
-            gap: 0;
-        }
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
-        .step-circle {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
-            background: var(--step-inactive);
-            color: #fff;
-            transition: background 0.3s;
-            position: relative;
-            z-index: 1;
-        }
+        .steps { display: flex; align-items: center; margin-bottom: 2.5rem; }
+        .step { display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .step-circle { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; background: var(--step-inactive); color: #fff; transition: background 0.3s; z-index: 1; }
         .step.active .step-circle { background: var(--step-active); }
         .step.done .step-circle { background: var(--step-done); }
-        .step-label {
-            font-size: 0.72rem;
-            margin-top: 0.3rem;
-            color: #9ca3af;
-            white-space: nowrap;
-        }
+        .step-label { font-size: 0.72rem; margin-top: 0.3rem; color: #9ca3af; white-space: nowrap; }
         .step.active .step-label { color: var(--step-active); font-weight: 600; }
         .step.done .step-label { color: var(--step-done); }
-        .step-line {
-            flex: 1;
-            height: 3px;
-            background: var(--step-inactive);
-            margin-bottom: 1.3rem;
-            transition: background 0.3s;
-        }
+        .step-line { flex: 1; height: 3px; background: var(--step-inactive); margin-bottom: 1.3rem; transition: background 0.3s; }
         .step-line.done { background: var(--step-done); }
 
         /* Form card */
-        .form-card {
-            background: var(--card-bg, #fff);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            margin-bottom: 1.5rem;
-        }
-        .form-card h2 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--text-color, #111);
-            padding-bottom: 0.8rem;
-            border-bottom: 2px solid var(--primary-color, #4f46e5);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
+        .form-card { background: var(--card-bg, #fff); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+        .form-card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-color, #111); padding-bottom: 0.8rem; border-bottom: 2px solid var(--primary-color, #4f46e5); display: flex; align-items: center; gap: 0.5rem; }
         .step-panel { display: none; }
         .step-panel.active { display: block; }
 
         /* Form groups */
-        .fg { margin-bottom: 1.3rem; }
-        .fg label {
-            display: block;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.4rem;
-            color: var(--text-color, #111);
+        .fg { margin-bottom: 1.4rem; }
+        .fg-label-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+        .fg label { font-weight: 600; font-size: 0.9rem; color: var(--text-color, #111); }
+        .info-btn {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            font-size: 0.72rem; color: #4f46e5; background: #ede9fe;
+            border: none; border-radius: 6px; padding: 0.15rem 0.55rem;
+            cursor: pointer; font-weight: 600; white-space: nowrap;
+            transition: background 0.15s;
         }
-        .fg .hint {
-            font-size: 0.75rem;
-            color: #9ca3af;
-            margin-top: 0.3rem;
+        .info-btn:hover { background: #c7d2fe; }
+        .hint { font-size: 0.75rem; color: #9ca3af; margin-top: 0.35rem; line-height: 1.5; }
+        .hint.warn { color: #d97706; background: #fffbeb; border-radius: 6px; padding: 0.4rem 0.6rem; margin-top: 0.4rem; }
+        .fg input[type="number"], .fg select {
+            width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--input-border, #e5e7eb);
+            border-radius: 10px; background: var(--input-bg, #f9fafb); color: var(--text-color, #111);
+            font-size: 0.95rem; transition: border-color 0.2s; box-sizing: border-box;
         }
-        .fg input[type="number"],
-        .fg select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1.5px solid var(--input-border, #e5e7eb);
-            border-radius: 10px;
-            background: var(--input-bg, #f9fafb);
-            color: var(--text-color, #111);
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
-            box-sizing: border-box;
-        }
-        .fg input:focus, .fg select:focus {
-            outline: none;
-            border-color: var(--primary-color, #4f46e5);
-        }
+        .fg input:focus, .fg select:focus { outline: none; border-color: var(--primary-color, #4f46e5); }
 
         /* Toggle buttons */
-        .toggle-group {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
+        .toggle-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .toggle-btn {
-            padding: 0.5rem 1.2rem;
-            border: 1.5px solid var(--input-border, #e5e7eb);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            background: var(--input-bg, #f9fafb);
-            color: var(--text-color, #111);
-            transition: all 0.2s;
-            font-weight: 500;
+            padding: 0.5rem 1.1rem; border: 1.5px solid var(--input-border, #e5e7eb);
+            border-radius: 8px; cursor: pointer; font-size: 0.88rem;
+            background: var(--input-bg, #f9fafb); color: var(--text-color, #111);
+            transition: all 0.2s; font-weight: 500;
         }
-        .toggle-btn.selected {
-            background: var(--primary-color, #4f46e5);
-            border-color: var(--primary-color, #4f46e5);
-            color: #fff;
-        }
+        .toggle-btn.selected { background: var(--primary-color, #4f46e5); border-color: var(--primary-color, #4f46e5); color: #fff; }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
 
-        /* Navigation buttons */
-        .nav-btns {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .btn-prev {
-            padding: 0.8rem 1.8rem;
-            border: 1.5px solid var(--input-border, #e5e7eb);
-            border-radius: 10px;
-            background: transparent;
-            cursor: pointer;
-            font-size: 0.95rem;
-            color: var(--text-color, #111);
-            font-weight: 600;
-        }
-        .btn-next, .btn-analyze {
-            flex: 1;
-            padding: 0.9rem;
-            border: none;
-            border-radius: 10px;
-            background: var(--primary-color, #4f46e5);
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .btn-analyze {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            font-size: 1.05rem;
-        }
+        /* Nav buttons */
+        .nav-btns { display: flex; gap: 1rem; margin-top: 1rem; }
+        .btn-prev { padding: 0.8rem 1.8rem; border: 1.5px solid var(--input-border, #e5e7eb); border-radius: 10px; background: transparent; cursor: pointer; font-size: 0.95rem; color: var(--text-color, #111); font-weight: 600; }
+        .btn-next, .btn-analyze { flex: 1; padding: 0.9rem; border: none; border-radius: 10px; background: var(--primary-color, #4f46e5); color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+        .btn-analyze { background: linear-gradient(135deg, #4f46e5, #7c3aed); font-size: 1.05rem; }
         .btn-next:hover, .btn-analyze:hover { opacity: 0.88; }
 
         /* Results */
         #results { display: none; }
-        .results-header {
-            text-align: center;
-            padding: 1.5rem 0 0.5rem;
-        }
-        .results-header h2 {
-            font-size: 1.4rem;
-            font-weight: 800;
-        }
-        .results-header .score-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: #fff;
-            border-radius: 999px;
-            padding: 0.4rem 1.2rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin: 0.5rem 0;
-        }
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: 700;
-            margin: 1.5rem 0 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .section-title .count-badge {
-            background: var(--primary-color, #4f46e5);
-            color: #fff;
-            border-radius: 999px;
-            padding: 0.1rem 0.6rem;
-            font-size: 0.8rem;
-        }
-
-        .result-grid {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .result-card {
-            border-radius: 14px;
-            padding: 1.2rem 1.4rem;
-            border: 1.5px solid;
-            background: var(--card-eligible);
-            border-color: var(--card-eligible-border);
-            position: relative;
-            overflow: hidden;
-        }
-        .result-card.ineligible {
-            background: var(--card-ineligible);
-            border-color: var(--card-ineligible-border);
-            opacity: 0.75;
-        }
-        .result-card-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 0.5rem;
-        }
-        .result-card-name {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--text-color, #111);
-        }
-        .rank-badge {
-            display: inline-block;
-            border-radius: 6px;
-            padding: 0.2rem 0.7rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            white-space: nowrap;
-        }
+        .results-header { text-align: center; padding: 1.5rem 0 0.5rem; }
+        .results-header h2 { font-size: 1.4rem; font-weight: 800; }
+        .score-badge { display: inline-block; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; border-radius: 999px; padding: 0.4rem 1.2rem; font-weight: 700; font-size: 1.1rem; margin: 0.5rem 0; }
+        .section-title { font-size: 1rem; font-weight: 700; margin: 1.5rem 0 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+        .section-title .count-badge { background: var(--primary-color, #4f46e5); color: #fff; border-radius: 999px; padding: 0.1rem 0.6rem; font-size: 0.8rem; }
+        .result-grid { display: grid; gap: 1rem; }
+        .result-card { border-radius: 14px; padding: 1.2rem 1.4rem; border: 1.5px solid; background: var(--card-eligible); border-color: var(--card-eligible-border); }
+        .result-card.ineligible { background: var(--card-ineligible); border-color: var(--card-ineligible-border); opacity: 0.75; }
+        .result-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+        .result-card-name { font-weight: 700; font-size: 1rem; color: var(--text-color, #111); }
+        .rank-badge { display: inline-block; border-radius: 6px; padding: 0.2rem 0.7rem; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
         .rank-1 { background: #fee2e2; color: #b91c1c; }
         .rank-2 { background: #ffedd5; color: #c2410c; }
         .rank-3 { background: #fef9c3; color: #92400e; }
-        .rank-g { background: #ede9fe; color: #5b21b6; }
         .rank-ok { background: #dcfce7; color: #15803d; }
         .rank-na { background: #f1f5f9; color: #64748b; }
+        .result-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.7rem; }
+        .result-tag { background: rgba(79,70,229,0.08); color: var(--primary-color, #4f46e5); border-radius: 6px; padding: 0.2rem 0.6rem; font-size: 0.78rem; font-weight: 600; }
+        .result-card.ineligible .result-tag { background: rgba(107,114,128,0.1); color: #6b7280; }
+        .result-reason { margin-top: 0.6rem; font-size: 0.8rem; color: #9ca3af; }
+        .restart-btn { display: block; width: 100%; margin-top: 2rem; padding: 0.9rem; border: 1.5px solid var(--primary-color, #4f46e5); border-radius: 10px; background: transparent; color: var(--primary-color, #4f46e5); font-size: 0.95rem; font-weight: 700; cursor: pointer; }
+        .notice-box { background: #fef9c3; border: 1px solid #fde047; border-radius: 10px; padding: 0.9rem 1.1rem; font-size: 0.8rem; color: #854d0e; margin-top: 1.5rem; line-height: 1.6; }
+        [data-theme="dark"] .notice-box { background: #422006; border-color: #92400e; color: #fcd34d; }
 
-        .result-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-top: 0.7rem;
+        /* ===== Help Modal ===== */
+        .help-modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 3000;
+            background: rgba(0,0,0,0.5); padding: 1rem;
+            align-items: center; justify-content: center;
         }
-        .result-tag {
-            background: rgba(79,70,229,0.08);
-            color: var(--primary-color, #4f46e5);
-            border-radius: 6px;
-            padding: 0.2rem 0.6rem;
-            font-size: 0.78rem;
-            font-weight: 600;
+        .help-modal-overlay.open { display: flex; }
+        .help-modal {
+            background: var(--card-bg, #fff); border-radius: 18px;
+            padding: 1.8rem; max-width: 520px; width: 100%;
+            max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
         }
-        .result-card.ineligible .result-tag {
-            background: rgba(107,114,128,0.1);
-            color: #6b7280;
-        }
-        .result-reason {
-            margin-top: 0.6rem;
-            font-size: 0.8rem;
-            color: #9ca3af;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.3rem;
-        }
-
-        .restart-btn {
-            display: block;
-            width: 100%;
-            margin-top: 2rem;
-            padding: 0.9rem;
-            border: 1.5px solid var(--primary-color, #4f46e5);
-            border-radius: 10px;
-            background: transparent;
-            color: var(--primary-color, #4f46e5);
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .notice-box {
-            background: #fef9c3;
-            border: 1px solid #fde047;
-            border-radius: 10px;
-            padding: 0.9rem 1.1rem;
-            font-size: 0.8rem;
-            color: #854d0e;
-            margin-top: 1.5rem;
-            line-height: 1.6;
-        }
-        [data-theme="dark"] .notice-box {
-            background: #422006;
-            border-color: #92400e;
-            color: #fcd34d;
-        }
+        .help-modal h3 { font-size: 1.05rem; font-weight: 800; color: var(--primary-color, #4f46e5); margin-bottom: 1rem; padding-right: 2rem; }
+        .help-modal .close-modal { position: absolute; top: 1.2rem; right: 1.2rem; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #6b7280; }
+        .help-section { margin-bottom: 1.1rem; }
+        .help-section h4 { font-size: 0.82rem; font-weight: 700; color: #374151; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.03em; }
+        .help-section p, .help-section li { font-size: 0.88rem; color: var(--text-color, #374151); line-height: 1.65; }
+        .help-section ul { padding-left: 1.1rem; margin: 0.3rem 0; }
+        .help-section li { margin-bottom: 0.3rem; }
+        .help-case { background: #f0fdf4; border-left: 3px solid #22c55e; border-radius: 0 8px 8px 0; padding: 0.6rem 0.8rem; margin: 0.5rem 0; font-size: 0.85rem; }
+        .help-case.warn { background: #fffbeb; border-color: #f59e0b; }
+        .help-link { display: inline-flex; align-items: center; gap: 0.3rem; background: #ede9fe; color: #4f46e5; border-radius: 7px; padding: 0.4rem 0.8rem; font-size: 0.82rem; font-weight: 600; text-decoration: none; margin: 0.2rem 0.2rem 0.2rem 0; }
+        .help-link:hover { background: #c7d2fe; }
+        .help-divider { height: 1px; background: #f3f4f6; margin: 1rem 0; }
     </style>
 </head>
 <body data-theme="light">
@@ -357,76 +150,80 @@
 </header>
 
 <main>
-    <div class="page-wrapper">
-        <a href="index.html" style="color:var(--primary-color,#4f46e5); font-weight:600; font-size:0.9rem;">← 홈으로</a>
-        <div style="height:1rem;"></div>
-        <h1 class="page-title">SH 임대주택 정밀 분석</h1>
-        <p class="page-subtitle">2025년 기준 · 최대 15가지 유형 · 신청 가능 순위까지 안내</p>
+<div class="page-wrapper">
+    <a href="index.html" style="color:var(--primary-color,#4f46e5);font-weight:600;font-size:0.9rem;">← 홈으로</a>
+    <div style="height:1rem;"></div>
+    <h1 class="page-title">SH 임대주택 정밀 분석</h1>
+    <p class="page-subtitle">2025년 기준 · 최대 18가지 유형 · 궁금한 항목은 <strong>상세보기</strong>를 눌러보세요</p>
 
-        <!-- Step indicator -->
-        <div class="steps" id="step-indicator">
-            <div class="step active" data-step="1">
-                <div class="step-circle">1</div>
-                <div class="step-label">기본 정보</div>
-            </div>
-            <div class="step-line" id="line-1-2"></div>
-            <div class="step active" data-step="2" style="">
-                <div class="step-circle">2</div>
-                <div class="step-label">가구 구성</div>
-            </div>
-            <div class="step-line" id="line-2-3"></div>
-            <div class="step" data-step="3">
-                <div class="step-circle">3</div>
-                <div class="step-label">소득 · 자산</div>
-            </div>
-            <div class="step-line" id="line-3-4"></div>
-            <div class="step" data-step="4">
-                <div class="step-circle">4</div>
-                <div class="step-label">우대 자격</div>
-            </div>
-        </div>
+    <!-- Step indicator -->
+    <div class="steps" id="step-indicator">
+        <div class="step active" data-step="1"><div class="step-circle">1</div><div class="step-label">기본 정보</div></div>
+        <div class="step-line" id="line-1-2"></div>
+        <div class="step" data-step="2"><div class="step-circle">2</div><div class="step-label">가구 구성</div></div>
+        <div class="step-line" id="line-2-3"></div>
+        <div class="step" data-step="3"><div class="step-circle">3</div><div class="step-label">소득 · 자산</div></div>
+        <div class="step-line" id="line-3-4"></div>
+        <div class="step" data-step="4"><div class="step-circle">4</div><div class="step-label">우대 자격</div></div>
+    </div>
 
-        <!-- Step 1 -->
-        <div class="step-panel active" id="panel-1">
-            <div class="form-card">
-                <h2>📋 기본 정보</h2>
+    <!-- ===================== STEP 1 ===================== -->
+    <div class="step-panel active" id="panel-1">
+        <div class="form-card">
+            <h2>📋 기본 정보</h2>
 
-                <div class="form-row">
-                    <div class="fg">
+            <div class="form-row">
+                <div class="fg">
+                    <div class="fg-label-row">
                         <label>만 나이</label>
-                        <input type="number" id="age" placeholder="예: 28" min="1" max="99">
+                        <button class="info-btn" onclick="openHelp('age')">ℹ 상세보기</button>
                     </div>
-                    <div class="fg">
+                    <input type="number" id="age" placeholder="예: 28" min="1" max="99">
+                    <p class="hint">공고일 기준 만 나이. 생일 전이면 올해 − 출생연도 − 1</p>
+                </div>
+                <div class="fg">
+                    <div class="fg-label-row">
                         <label>현재 서울 거주 여부</label>
-                        <div class="toggle-group" id="tg-seoul">
-                            <button class="toggle-btn selected" data-val="yes">예, 서울 거주</button>
-                            <button class="toggle-btn" data-val="no">아니오</button>
-                        </div>
                     </div>
+                    <div class="toggle-group" id="tg-seoul">
+                        <button class="toggle-btn selected" data-val="yes">예, 서울 거주</button>
+                        <button class="toggle-btn" data-val="no">아니오</button>
+                    </div>
+                    <p class="hint">주민등록등본상 서울 주소 기준</p>
                 </div>
+            </div>
 
-                <div class="fg">
+            <div class="fg">
+                <div class="fg-label-row">
                     <label>무주택 세대구성원 여부</label>
-                    <div class="toggle-group" id="tg-homeless">
-                        <button class="toggle-btn selected" data-val="yes">무주택 (본인+세대원 모두)</button>
-                        <button class="toggle-btn" data-val="no">주택 소유 (유주택자)</button>
-                    </div>
-                    <p class="hint">본인 또는 세대원(배우자, 직계가족 동거인) 중 누구도 주택을 소유하지 않아야 합니다.</p>
+                    <button class="info-btn" onclick="openHelp('homeless_member')">ℹ 상세보기 (세대주와 다름)</button>
                 </div>
+                <div class="toggle-group" id="tg-homeless">
+                    <button class="toggle-btn selected" data-val="yes">예 — 본인·세대원 모두 무주택</button>
+                    <button class="toggle-btn" data-val="no">아니오 — 유주택자 포함</button>
+                </div>
+                <p class="hint warn">⚠ 세대주가 아니어도 됩니다. 단, 같은 세대의 모든 구성원이 무주택이어야 합니다.</p>
+            </div>
 
+            <div class="form-row">
                 <div class="fg">
-                    <label>무주택 기간</label>
+                    <div class="fg-label-row">
+                        <label>무주택 기간</label>
+                        <button class="info-btn" onclick="openHelp('homeless_years')">ℹ 상세보기</button>
+                    </div>
                     <select id="homeless-years">
                         <option value="0">1년 미만</option>
                         <option value="1">1년 이상 ~ 3년 미만</option>
                         <option value="3">3년 이상 ~ 5년 미만</option>
                         <option value="5" selected>5년 이상</option>
                     </select>
-                    <p class="hint">최초 주택 매도 또는 세대 분리 시점부터 계산합니다.</p>
+                    <p class="hint">주택을 마지막으로 처분하거나 세대 분리한 날부터 계산</p>
                 </div>
-
                 <div class="fg">
-                    <label>서울 거주 기간 (만 19세 이후)</label>
+                    <div class="fg-label-row">
+                        <label>서울 거주 기간 (만 19세 이후)</label>
+                        <button class="info-btn" onclick="openHelp('seoul_years')">ℹ 상세보기</button>
+                    </div>
                     <select id="seoul-years">
                         <option value="0">1년 미만</option>
                         <option value="1">1년 이상 ~ 3년 미만</option>
@@ -435,240 +232,300 @@
                     </select>
                 </div>
             </div>
-
-            <div class="nav-btns">
-                <button class="btn-next" onclick="goTo(2)">다음 단계 →</button>
-            </div>
         </div>
 
-        <!-- Step 2 -->
-        <div class="step-panel" id="panel-2">
-            <div class="form-card">
-                <h2>👨‍👩‍👧 가구 구성</h2>
+        <div class="nav-btns">
+            <button class="btn-next" onclick="goTo(2)">다음 단계 →</button>
+        </div>
+    </div>
 
-                <div class="fg">
+    <!-- ===================== STEP 2 ===================== -->
+    <div class="step-panel" id="panel-2">
+        <div class="form-card">
+            <h2>👨‍👩‍👧 가구 구성</h2>
+
+            <div class="fg">
+                <div class="fg-label-row">
                     <label>혼인 상태</label>
-                    <div class="toggle-group" id="tg-marital">
-                        <button class="toggle-btn selected" data-val="single">미혼</button>
-                        <button class="toggle-btn" data-val="prenuptial">예비신혼</button>
-                        <button class="toggle-btn" data-val="newlywed">신혼 (7년 이내)</button>
-                        <button class="toggle-btn" data-val="married">기혼 (7년 초과)</button>
-                        <button class="toggle-btn" data-val="divorced">이혼/사별</button>
-                    </div>
+                    <button class="info-btn" onclick="openHelp('marital')">ℹ 상세보기 (7년 기준 등)</button>
                 </div>
-
-                <div class="form-row">
-                    <div class="fg">
-                        <label>가구원 수 (본인 포함)</label>
-                        <select id="household-size">
-                            <option value="1" selected>1인</option>
-                            <option value="2">2인</option>
-                            <option value="3">3인</option>
-                            <option value="4">4인</option>
-                            <option value="5">5인</option>
-                            <option value="6">6인</option>
-                            <option value="7">7인 이상</option>
-                        </select>
-                    </div>
-                    <div class="fg">
-                        <label>미성년 자녀 수</label>
-                        <select id="children-count">
-                            <option value="0" selected>없음</option>
-                            <option value="1">1명</option>
-                            <option value="2">2명</option>
-                            <option value="3">3명 이상</option>
-                        </select>
-                    </div>
+                <div class="toggle-group" id="tg-marital">
+                    <button class="toggle-btn selected" data-val="single">미혼</button>
+                    <button class="toggle-btn" data-val="prenuptial">예비신혼</button>
+                    <button class="toggle-btn" data-val="newlywed">신혼 (7년 이내)</button>
+                    <button class="toggle-btn" data-val="married">기혼 (7년 초과)</button>
+                    <button class="toggle-btn" data-val="divorced">이혼 / 사별</button>
                 </div>
+                <p class="hint">신혼 7년 = 혼인신고일 기준. 예비신혼 = 공고일 기준 6개월 이내 결혼 예정</p>
+            </div>
 
+            <div class="form-row">
                 <div class="fg">
-                    <label>6세 이하 자녀 여부</label>
+                    <div class="fg-label-row">
+                        <label>가구원 수 (본인 포함)</label>
+                        <button class="info-btn" onclick="openHelp('household_size')">ℹ 상세보기</button>
+                    </div>
+                    <select id="household-size">
+                        <option value="1" selected>1인</option>
+                        <option value="2">2인</option>
+                        <option value="3">3인</option>
+                        <option value="4">4인</option>
+                        <option value="5">5인</option>
+                        <option value="6">6인</option>
+                        <option value="7">7인 이상</option>
+                    </select>
+                    <p class="hint">소득기준 계산에 직접 영향. 주민등록상 세대원 기준</p>
+                </div>
+                <div class="fg">
+                    <div class="fg-label-row">
+                        <label>미성년 자녀 수</label>
+                    </div>
+                    <select id="children-count">
+                        <option value="0" selected>없음</option>
+                        <option value="1">1명</option>
+                        <option value="2">2명</option>
+                        <option value="3">3명 이상</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="fg">
+                    <div class="fg-label-row">
+                        <label>6세 이하 자녀 여부</label>
+                    </div>
                     <div class="toggle-group" id="tg-youngchild">
                         <button class="toggle-btn selected" data-val="no">없음</button>
-                        <button class="toggle-btn" data-val="yes">있음 (6세 이하)</button>
+                        <button class="toggle-btn" data-val="yes">있음</button>
                     </div>
                 </div>
-
                 <div class="fg">
-                    <label>최근 2년 이내 출산 · 입양 여부 (신생아 가구)</label>
+                    <div class="fg-label-row">
+                        <label>신생아 가구 여부</label>
+                        <button class="info-btn" onclick="openHelp('infant')">ℹ 상세보기</button>
+                    </div>
                     <div class="toggle-group" id="tg-infant">
                         <button class="toggle-btn selected" data-val="no">해당 없음</button>
-                        <button class="toggle-btn" data-val="yes">해당 (신생아 가구)</button>
-                    </div>
-                    <p class="hint">2023년 1월 이후 출생·입양 자녀가 있는 경우 다수 유형에서 1순위 혜택이 있습니다.</p>
-                </div>
-
-                <div class="fg">
-                    <label>맞벌이 여부 (기혼의 경우)</label>
-                    <div class="toggle-group" id="tg-dual">
-                        <button class="toggle-btn selected" data-val="no">해당 없음 / 외벌이</button>
-                        <button class="toggle-btn" data-val="yes">맞벌이</button>
-                    </div>
-                    <p class="hint">맞벌이 시 소득기준 완화 적용 (유형별 20~70%p 상향)</p>
-                </div>
-
-                <div class="fg">
-                    <label>대학생 여부 (서울 소재 대학 재학 · 복학 · 입학예정)</label>
-                    <div class="toggle-group" id="tg-student">
-                        <button class="toggle-btn selected" data-val="no">아니오</button>
-                        <button class="toggle-btn" data-val="yes">예, 대학(원)생</button>
-                    </div>
-                </div>
-
-                <div class="fg">
-                    <label>취업준비생 여부 (졸업 · 중퇴 후 2년 이내, 미취업)</label>
-                    <div class="toggle-group" id="tg-jobseeker">
-                        <button class="toggle-btn selected" data-val="no">아니오</button>
-                        <button class="toggle-btn" data-val="yes">예, 취업준비생</button>
+                        <button class="toggle-btn" data-val="yes">해당 (2년 이내 출산·입양)</button>
                     </div>
                 </div>
             </div>
 
-            <div class="nav-btns">
-                <button class="btn-prev" onclick="goTo(1)">← 이전</button>
-                <button class="btn-next" onclick="goTo(3)">다음 단계 →</button>
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>맞벌이 여부</label>
+                    <button class="info-btn" onclick="openHelp('dual_income')">ℹ 상세보기</button>
+                </div>
+                <div class="toggle-group" id="tg-dual">
+                    <button class="toggle-btn selected" data-val="no">외벌이 / 해당 없음</button>
+                    <button class="toggle-btn" data-val="yes">맞벌이 (부부 모두 소득)</button>
+                </div>
+                <p class="hint">맞벌이 선택 시 소득기준이 20~70%p 완화됩니다</p>
+            </div>
+
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>대학(원)생 여부</label>
+                    <button class="info-btn" onclick="openHelp('student')">ℹ 상세보기</button>
+                </div>
+                <div class="toggle-group" id="tg-student">
+                    <button class="toggle-btn selected" data-val="no">아니오</button>
+                    <button class="toggle-btn" data-val="yes">예 — 서울 소재 대학(원) 재학·복학·입학예정</button>
+                </div>
+                <p class="hint">희망하우징·청년매입임대 대학생 우선공급 적용 여부</p>
+            </div>
+
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>취업준비생 여부</label>
+                    <button class="info-btn" onclick="openHelp('jobseeker')">ℹ 상세보기 (취업 3개월차라면?)</button>
+                </div>
+                <div class="toggle-group" id="tg-jobseeker">
+                    <button class="toggle-btn selected" data-val="no">아니오</button>
+                    <button class="toggle-btn" data-val="yes">예 — 졸업·중퇴 후 2년 이내, 현재 미취업</button>
+                </div>
+                <p class="hint warn">⚠ 취업 중이라면 취업준비생이 아닙니다. 만약 취업한 지 3개월이라면 '아니오' 선택 후 소득에 현재 월급 입력</p>
             </div>
         </div>
 
-        <!-- Step 3 -->
-        <div class="step-panel" id="panel-3">
-            <div class="form-card">
-                <h2>💰 소득 · 자산</h2>
+        <div class="nav-btns">
+            <button class="btn-prev" onclick="goTo(1)">← 이전</button>
+            <button class="btn-next" onclick="goTo(3)">다음 단계 →</button>
+        </div>
+    </div>
 
-                <div class="fg">
+    <!-- ===================== STEP 3 ===================== -->
+    <div class="step-panel" id="panel-3">
+        <div class="form-card">
+            <h2>💰 소득 · 자산</h2>
+
+            <div class="fg">
+                <div class="fg-label-row">
                     <label>가구 월평균 소득 (세전, 만원)</label>
-                    <input type="number" id="income" placeholder="예: 300 → 300만원" min="0" max="5000">
-                    <p class="hint">건강보험 보수월액 또는 세전 급여 기준. 맞벌이는 부부 합산. 소득 없음 → 0 입력</p>
+                    <button class="info-btn" onclick="openHelp('income')">ℹ 어디서 확인하나요?</button>
                 </div>
+                <input type="number" id="income" placeholder="예: 300 → 월 300만원" min="0" max="9999">
+                <p class="hint">직장인: 세전 급여 기준 / 맞벌이: 부부 합산 / 소득 없으면 0 입력</p>
+                <p class="hint warn">⚠ 취업 3개월차라면? → 연봉 ÷ 12 로 나눈 월급을 입력하세요 (예: 연봉 3,600만원 → 300 입력)</p>
+            </div>
 
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>총 자산 (만원)</label>
+                    <button class="info-btn" onclick="openHelp('total_assets')">ℹ 무엇을 합산하나요?</button>
+                </div>
+                <input type="number" id="total-assets" placeholder="예: 8000 → 8,000만원" min="0">
+                <p class="hint">부동산(공시가) + 금융자산(예적금·주식·보험환급금) 합산. 부채는 차감하지 않음</p>
+            </div>
+
+            <div class="form-row">
                 <div class="fg">
-                    <label>총 자산 (만원, 부채 제외)</label>
-                    <input type="number" id="total-assets" placeholder="예: 8000 → 8,000만원" min="0">
-                    <p class="hint">부동산(공시가), 예적금, 주식, 보험해약환급금 합산. 부채는 차감하지 않습니다.</p>
-                </div>
-
-                <div class="form-row">
-                    <div class="fg">
-                        <label>부동산 가액 (만원, 공시가격)</label>
-                        <input type="number" id="real-estate" placeholder="예: 15000" min="0" value="0">
-                        <p class="hint">토지 + 건물 공시가격 합산</p>
+                    <div class="fg-label-row">
+                        <label>부동산 가액 (만원)</label>
+                        <button class="info-btn" onclick="openHelp('real_estate')">ℹ 상세보기</button>
                     </div>
-                    <div class="fg">
+                    <input type="number" id="real-estate" placeholder="없으면 0" min="0" value="0">
+                    <p class="hint">공시가격 기준 (실거래가 아님)</p>
+                </div>
+                <div class="fg">
+                    <div class="fg-label-row">
                         <label>자동차 가액 (만원)</label>
-                        <input type="number" id="car-value" placeholder="예: 2500" min="0" value="0">
-                        <p class="hint">보험개발원 차량기준가액 기준, 없으면 0</p>
+                        <button class="info-btn" onclick="openHelp('car_value')">ℹ 어디서 확인?</button>
                     </div>
-                </div>
-
-                <div class="fg">
-                    <label>부모 소득 합산 여부 (청년 유형 일부 적용)</label>
-                    <div class="toggle-group" id="tg-parent-income">
-                        <button class="toggle-btn selected" data-val="no">부모와 별도 세대 / 독립</button>
-                        <button class="toggle-btn" data-val="yes">부모와 합산 필요 (동거 등)</button>
-                    </div>
-                    <p class="hint">청년 매입임대·희망하우징 2순위는 본인+부모 합산 소득 적용</p>
+                    <input type="number" id="car-value" placeholder="없으면 0" min="0" value="0">
+                    <p class="hint">보험개발원 기준가액 (시세, 감가반영)</p>
                 </div>
             </div>
 
-            <div class="nav-btns">
-                <button class="btn-prev" onclick="goTo(2)">← 이전</button>
-                <button class="btn-next" onclick="goTo(4)">다음 단계 →</button>
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>부모 소득 합산 기준 적용 여부</label>
+                    <button class="info-btn" onclick="openHelp('parent_income')">ℹ 언제 합산하나요?</button>
+                </div>
+                <div class="toggle-group" id="tg-parent-income">
+                    <button class="toggle-btn selected" data-val="no">본인 소득만 (독립 세대)</button>
+                    <button class="toggle-btn" data-val="yes">부모와 합산 (동거·부양 중)</button>
+                </div>
+                <p class="hint">청년 매입임대·희망하우징 2순위는 본인+부모 합산 소득 적용</p>
             </div>
         </div>
 
-        <!-- Step 4 -->
-        <div class="step-panel" id="panel-4">
-            <div class="form-card">
-                <h2>⭐ 우대 자격</h2>
+        <div class="nav-btns">
+            <button class="btn-prev" onclick="goTo(2)">← 이전</button>
+            <button class="btn-next" onclick="goTo(4)">다음 단계 →</button>
+        </div>
+    </div>
 
-                <div class="fg">
-                    <label>사회적 취약 계층 해당 여부</label>
-                    <div class="toggle-group" id="tg-priority">
-                        <button class="toggle-btn selected" data-val="none">해당 없음</button>
-                        <button class="toggle-btn" data-val="basic">생계급여 수급자</button>
-                        <button class="toggle-btn" data-val="medical">의료급여 수급자</button>
-                        <button class="toggle-btn" data-val="housing">주거급여 수급자</button>
-                        <button class="toggle-btn" data-val="nearlow">차상위계층</button>
-                    </div>
-                    <p class="hint">수급자 · 차상위 해당 시 대부분 유형 1순위 자동 적용, 소득·자산 심사 완화</p>
+    <!-- ===================== STEP 4 ===================== -->
+    <div class="step-panel" id="panel-4">
+        <div class="form-card">
+            <h2>⭐ 우대 자격</h2>
+
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>수급자 / 차상위 여부</label>
+                    <button class="info-btn" onclick="openHelp('priority')">ℹ 상세보기 (1순위 혜택)</button>
                 </div>
+                <div class="toggle-group" id="tg-priority">
+                    <button class="toggle-btn selected" data-val="none">해당 없음</button>
+                    <button class="toggle-btn" data-val="basic">생계급여 수급자</button>
+                    <button class="toggle-btn" data-val="medical">의료급여 수급자</button>
+                    <button class="toggle-btn" data-val="housing">주거급여 수급자</button>
+                    <button class="toggle-btn" data-val="nearlow">차상위계층</button>
+                </div>
+                <p class="hint">해당 시 대부분 유형 1순위 자동 적용 + 소득·자산 심사 완화</p>
+            </div>
 
+            <div class="form-row">
                 <div class="fg">
-                    <label>한부모가족 보호 대상 여부</label>
+                    <div class="fg-label-row">
+                        <label>한부모가족 보호 대상</label>
+                        <button class="info-btn" onclick="openHelp('single_parent')">ℹ 상세보기</button>
+                    </div>
                     <div class="toggle-group" id="tg-singleparent">
                         <button class="toggle-btn selected" data-val="no">해당 없음</button>
-                        <button class="toggle-btn" data-val="yes">보호대상 한부모가족</button>
+                        <button class="toggle-btn" data-val="yes">해당함</button>
                     </div>
                 </div>
-
                 <div class="fg">
-                    <label>장애인 여부</label>
+                    <div class="fg-label-row">
+                        <label>장애인 여부</label>
+                    </div>
                     <div class="toggle-group" id="tg-disabled">
                         <button class="toggle-btn selected" data-val="no">해당 없음</button>
                         <button class="toggle-btn" data-val="yes">장애인 등록증 소지</button>
                     </div>
                 </div>
+            </div>
 
+            <div class="form-row">
                 <div class="fg">
-                    <label>국가유공자 · 유족 여부</label>
+                    <div class="fg-label-row">
+                        <label>국가유공자 · 유족</label>
+                    </div>
                     <div class="toggle-group" id="tg-veteran">
                         <button class="toggle-btn selected" data-val="no">해당 없음</button>
-                        <button class="toggle-btn" data-val="yes">국가유공자 · 유족</button>
+                        <button class="toggle-btn" data-val="yes">해당함</button>
                     </div>
                 </div>
-
-                <div class="form-row">
-                    <div class="fg">
-                        <label>청약 납입 횟수</label>
-                        <select id="subscription">
-                            <option value="0">없음 / 6회 미만</option>
-                            <option value="6">6회 이상 ~ 12회 미만</option>
-                            <option value="12">12회 이상 ~ 24회 미만</option>
-                            <option value="24" selected>24회 이상</option>
-                        </select>
-                        <p class="hint">가점 산정에 활용됩니다.</p>
+                <div class="fg">
+                    <div class="fg-label-row">
+                        <label>부모 모두 무주택 (청년 가점)</label>
                     </div>
-                    <div class="fg">
-                        <label>부모 무주택 여부 (청년 가점)</label>
-                        <div class="toggle-group" id="tg-parent-homeless">
-                            <button class="toggle-btn selected" data-val="no">해당 없음</button>
-                            <button class="toggle-btn" data-val="yes">부모 모두 무주택</button>
-                        </div>
+                    <div class="toggle-group" id="tg-parent-homeless">
+                        <button class="toggle-btn selected" data-val="no">아니오</button>
+                        <button class="toggle-btn" data-val="yes">예 (가점 +2점)</button>
                     </div>
                 </div>
             </div>
 
-            <div class="nav-btns">
-                <button class="btn-prev" onclick="goTo(3)">← 이전</button>
-                <button class="btn-analyze" onclick="runAnalysis()">🔍 분석 시작</button>
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>청약 납입 횟수</label>
+                    <button class="info-btn" onclick="openHelp('subscription')">ℹ 상세보기</button>
+                </div>
+                <select id="subscription">
+                    <option value="0">없음 / 6회 미만</option>
+                    <option value="6">6회 이상 ~ 12회 미만</option>
+                    <option value="12">12회 이상 ~ 24회 미만</option>
+                    <option value="24" selected>24회 이상</option>
+                </select>
+                <p class="hint">행복주택·청년매입임대 가점에 영향. 청약저축 통장 앱에서 확인 가능</p>
             </div>
         </div>
 
-        <!-- Results -->
-        <div id="results">
-            <div class="results-header">
-                <h2>분석 결과</h2>
-                <div class="score-badge" id="eligible-count-badge">신청 가능 유형 분석 중...</div>
-            </div>
-
-            <div class="section-title">
-                ✅ 신청 가능 유형 <span class="count-badge" id="count-eligible">0</span>
-            </div>
-            <div class="result-grid" id="grid-eligible"></div>
-
-            <div class="section-title">
-                ❌ 조건 미충족 유형 <span class="count-badge" id="count-ineligible">0</span>
-            </div>
-            <div class="result-grid" id="grid-ineligible"></div>
-
-            <div class="notice-box">
-                ⚠ 본 분석은 2025년 기준 SH공사 임대주택 공고를 바탕으로 한 참고용 결과입니다. 실제 신청 시 공고문 원문 확인 및 SH공사 콜센터(1600-3456) 상담을 권장합니다. 소득·자산 기준은 공고일 기준으로 변경될 수 있습니다.
-            </div>
-
-            <button class="restart-btn" onclick="restart()">↩ 다시 분석하기</button>
+        <div class="nav-btns">
+            <button class="btn-prev" onclick="goTo(3)">← 이전</button>
+            <button class="btn-analyze" onclick="runAnalysis()">🔍 분석 시작</button>
         </div>
     </div>
+
+    <!-- ===================== RESULTS ===================== -->
+    <div id="results">
+        <div class="results-header">
+            <h2>분석 결과</h2>
+            <div class="score-badge" id="eligible-count-badge">신청 가능 유형 분석 중...</div>
+        </div>
+        <div class="section-title">✅ 신청 가능 유형 <span class="count-badge" id="count-eligible">0</span></div>
+        <div class="result-grid" id="grid-eligible"></div>
+        <div class="section-title">❌ 조건 미충족 유형 <span class="count-badge" id="count-ineligible">0</span></div>
+        <div class="result-grid" id="grid-ineligible"></div>
+        <div class="notice-box">
+            ⚠ 본 분석은 2025년 기준 SH공사 임대주택 공고를 바탕으로 한 참고용입니다. 실제 신청 전 공고문 원문 확인 및 SH공사 콜센터 <strong>1600-3456</strong> 상담을 권장합니다.
+        </div>
+        <button class="restart-btn" onclick="restart()">↩ 다시 분석하기</button>
+    </div>
+</div>
 </main>
+
+<!-- ===================== HELP MODAL ===================== -->
+<div class="help-modal-overlay" id="helpOverlay" onclick="closeHelp(event)">
+    <div class="help-modal" id="helpModal">
+        <button class="close-modal" onclick="closeHelpDirect()">✕</button>
+        <h3 id="help-title"></h3>
+        <div id="help-body"></div>
+    </div>
+</div>
 
 <script>
 // ===== Theme =====
@@ -693,40 +550,432 @@ document.querySelectorAll('.toggle-group').forEach(group => {
         });
     });
 });
-
 function getToggle(id) {
     const btn = document.querySelector(`#${id} .toggle-btn.selected`);
     return btn ? btn.dataset.val : null;
 }
 
 // ===== Step navigation =====
-let currentStep = 1;
-
 function goTo(step) {
     document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
     document.getElementById(`panel-${step}`).classList.add('active');
-
     document.querySelectorAll('.step[data-step]').forEach(s => {
         const n = parseInt(s.dataset.step);
         s.classList.remove('active', 'done');
         if (n === step) s.classList.add('active');
         else if (n < step) s.classList.add('done');
     });
-
     for (let i = 1; i <= 3; i++) {
         const line = document.getElementById(`line-${i}-${i+1}`);
         if (line) line.classList.toggle('done', i < step);
     }
-
-    currentStep = step;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-// Mark step 2 as inactive initially
 goTo(1);
 
-// ===== Income thresholds (2025, 원 단위) =====
-// Index 0 = 1인, 1 = 2인, ..., 6 = 7인
+// ===== Help Modal Content =====
+const helpData = {
+    age: {
+        title: '만 나이 계산 방법',
+        body: `
+            <div class="help-section">
+                <h4>만 나이란?</h4>
+                <p>생일이 지났으면: 올해연도 − 출생연도<br>생일이 아직 안 지났으면: 올해연도 − 출생연도 − 1</p>
+                <div class="help-case">예) 2000년 9월생 → 2025년 6월 현재 기준 → 만 24세</div>
+            </div>
+            <div class="help-section">
+                <h4>왜 중요한가?</h4>
+                <ul>
+                    <li>청년 매입임대·청년안심주택: <strong>만 19~39세</strong> 필수</li>
+                    <li>행복주택 청년: <strong>만 19~39세</strong></li>
+                    <li>행복주택 고령자: <strong>만 65세 이상</strong></li>
+                </ul>
+            </div>`
+    },
+    homeless_member: {
+        title: '무주택 세대구성원이란?',
+        body: `
+            <div class="help-section">
+                <h4>세대주 ≠ 세대구성원</h4>
+                <p><strong>세대주</strong>는 주민등록상 세대의 대표자(보통 부모 또는 본인)이고,<br>
+                <strong>세대구성원</strong>은 같은 세대에 속한 모든 사람(본인 포함)입니다.</p>
+                <div class="help-case">✅ 세대주가 아니어도 신청 가능합니다. 본인이 세대원이어도 됩니다.</div>
+            </div>
+            <div class="help-section">
+                <h4>무주택 세대구성원 조건</h4>
+                <ul>
+                    <li>본인 명의 주택 없음</li>
+                    <li>같은 세대에 등록된 모든 구성원 (배우자, 직계존비속) 명의 주택 없음</li>
+                    <li>배우자는 <strong>별도 세대여도</strong> 포함 (다른 주소에 살아도 배우자면 함께 심사)</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>자주 헷갈리는 경우</h4>
+                <div class="help-case warn">⚠ 부모가 주택을 소유하고 있고, 본인이 부모와 같은 세대로 등록되어 있으면 → 유주택 세대구성원으로 간주될 수 있습니다.</div>
+                <div class="help-case">✅ 부모가 집이 있더라도 본인이 <strong>독립 세대(전입신고)</strong>를 해서 별도 세대로 분리되어 있으면 본인은 무주택으로 인정됩니다.</div>
+            </div>
+            <div class="help-section">
+                <h4>확인 방법</h4>
+                <a class="help-link" href="https://www.gov.kr" target="_blank">🔗 정부24 — 주민등록등본 발급</a>
+                <a class="help-link" href="https://www.realtyprice.kr" target="_blank">🔗 부동산 공시가격 알리미 — 소유 주택 확인</a>
+            </div>`
+    },
+    homeless_years: {
+        title: '무주택 기간 계산 방법',
+        body: `
+            <div class="help-section">
+                <h4>기산점 (시작일)</h4>
+                <ul>
+                    <li>마지막으로 주택을 처분(매도·증여)한 날</li>
+                    <li>또는 유주택 세대에서 세대 분리(전입신고)한 날</li>
+                    <li>또는 만 30세가 된 날 (30세 이전에 미혼으로 부모와 동거했다면)</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>주의사항</h4>
+                <div class="help-case warn">⚠ 미리내집(장기전세2) 가점 항목에서 무주택 기간이 점수화됩니다. 정확히 계산하세요.</div>
+                <p>확인: 주민등록초본(세대별, 주소 변경 이력 포함)으로 확인 가능</p>
+            </div>
+            <a class="help-link" href="https://www.gov.kr" target="_blank">🔗 정부24 — 주민등록초본 발급</a>`
+    },
+    seoul_years: {
+        title: '서울 거주 기간 확인',
+        body: `
+            <div class="help-section">
+                <h4>언제부터 계산하나요?</h4>
+                <p>만 19세 이후 서울 주민등록 기간의 합산입니다. 중간에 서울 외 지역에 거주한 기간은 제외됩니다.</p>
+            </div>
+            <div class="help-section">
+                <h4>확인 방법</h4>
+                <p>주민등록초본(주소 변경 이력 포함)에서 서울 주소 기간을 합산하면 됩니다.</p>
+                <a class="help-link" href="https://www.gov.kr" target="_blank">🔗 정부24 — 주민등록초본</a>
+            </div>
+            <div class="help-section">
+                <h4>왜 중요한가?</h4>
+                <ul>
+                    <li>장기안심주택 가점: 5년 이상 3점 / 3~5년 2점 / 1~3년 1점</li>
+                    <li>신혼·신생아 매입임대 가점: 5년 이상 3점</li>
+                    <li>행복주택 청년: 3년 이상 3점</li>
+                </ul>
+            </div>`
+    },
+    marital: {
+        title: '혼인 상태 선택 기준',
+        body: `
+            <div class="help-section">
+                <h4>신혼부부 (7년 이내)</h4>
+                <p>혼인신고일 기준으로 7년이 지나지 않은 경우. 재혼도 포함됩니다.</p>
+                <div class="help-case">예) 2019년 1월 혼인신고 → 2026년 1월까지 신혼</div>
+            </div>
+            <div class="help-section">
+                <h4>예비신혼부부</h4>
+                <p>공고일 기준 6개월 이내에 혼인신고 예정인 예비 부부. 입주 전에 반드시 혼인신고를 완료해야 합니다.</p>
+            </div>
+            <div class="help-section">
+                <h4>이혼 / 사별</h4>
+                <p>이혼·사별한 경우 한부모가족에 해당될 수 있습니다. 6세 이하 자녀가 있다면 신혼유형에서 우선 혜택을 받을 수 있습니다.</p>
+            </div>
+            <div class="help-section">
+                <h4>확인 방법</h4>
+                <a class="help-link" href="https://www.gov.kr" target="_blank">🔗 정부24 — 혼인관계증명서</a>
+            </div>`
+    },
+    household_size: {
+        title: '가구원 수 계산 방법',
+        body: `
+            <div class="help-section">
+                <h4>포함되는 사람</h4>
+                <ul>
+                    <li>본인</li>
+                    <li>배우자 (별도 세대에 살아도 반드시 포함)</li>
+                    <li>주민등록상 동일 세대에 등록된 직계존속(부모, 조부모)·직계비속(자녀, 손자녀)</li>
+                    <li>동거인은 원칙 제외</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>소득기준에 미치는 영향</h4>
+                <p>가구원 수가 많을수록 소득 기준 상한이 높아집니다.</p>
+                <div class="help-case">예) 월 300만원 / 1인 가구 → 소득 70%(324만원) 이하 충족<br>월 300만원 / 3인 가구 → 소득 50%(381만원) 이하도 충족</div>
+            </div>
+            <div class="help-section">
+                <h4>확인 방법</h4>
+                <a class="help-link" href="https://www.gov.kr" target="_blank">🔗 정부24 — 주민등록등본</a>
+            </div>`
+    },
+    infant: {
+        title: '신생아 가구란?',
+        body: `
+            <div class="help-section">
+                <h4>기준</h4>
+                <p>공고일 기준 <strong>최근 2년 이내</strong> 출산하거나 입양한 자녀가 있는 가구</p>
+                <div class="help-case">예) 2025년 6월 공고 → 2023년 6월 이후 출생·입양 자녀가 있으면 해당</div>
+            </div>
+            <div class="help-section">
+                <h4>혜택</h4>
+                <ul>
+                    <li>신혼·신생아 매입임대 Ⅰ·Ⅱ형: <strong>1순위</strong></li>
+                    <li>전세임대형 든든주택: <strong>1순위</strong></li>
+                    <li>미리내집: 출산 인센티브 (우선배정)</li>
+                    <li>신혼·신생아 전세임대: 1순위 우선</li>
+                </ul>
+            </div>`
+    },
+    dual_income: {
+        title: '맞벌이 소득기준 완화',
+        body: `
+            <div class="help-section">
+                <h4>맞벌이란?</h4>
+                <p>부부 모두 소득이 있는 경우. 한쪽만 소득이 있으면 외벌이</p>
+            </div>
+            <div class="help-section">
+                <h4>유형별 완화 기준</h4>
+                <ul>
+                    <li>신혼·신생아 매입임대 Ⅰ형: 소득 70% → 맞벌이 90%</li>
+                    <li>신혼·신생아 매입임대 Ⅱ형: 소득 130% → 맞벌이 200%</li>
+                    <li>전세임대 신혼Ⅱ형: 130% → 맞벌이 200%</li>
+                    <li>장기안심주택 신혼: 120% → 맞벌이 180%</li>
+                    <li>행복주택 신혼: 외벌이 100% → 맞벌이 120%</li>
+                </ul>
+            </div>`
+    },
+    student: {
+        title: '대학(원)생 자격 확인',
+        body: `
+            <div class="help-section">
+                <h4>해당 조건</h4>
+                <ul>
+                    <li>서울 소재 대학교 또는 대학원 재학 중</li>
+                    <li>복학 예정자 (휴학 중이어도 복학 예정이면 해당)</li>
+                    <li>입학 예정자</li>
+                </ul>
+                <div class="help-case warn">⚠ 희망하우징은 서울 소재 대학만 해당. 단, 내발산동 단지는 수도권(서울·경기·인천) 대학도 가능</div>
+            </div>
+            <div class="help-section">
+                <h4>증빙 서류</h4>
+                <p>재학증명서 또는 입학예정증명서로 확인</p>
+            </div>`
+    },
+    jobseeker: {
+        title: '취업준비생 자격 기준',
+        body: `
+            <div class="help-section">
+                <h4>해당 조건 (모두 충족해야 함)</h4>
+                <ul>
+                    <li>대학교(원) 졸업 또는 중퇴 후 <strong>2년 이내</strong></li>
+                    <li>현재 <strong>미취업</strong> 상태</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>취업 3개월차라면?</h4>
+                <div class="help-case warn">⚠ 이미 취업했다면 취업준비생이 아닙니다. '아니오' 선택하세요.</div>
+                <div class="help-case">✅ 대신 <strong>만 19~39세 청년</strong> 자격으로 청년 매입임대·청년안심주택에 신청 가능합니다. 소득란에 현재 월급을 입력하세요.</div>
+            </div>
+            <div class="help-section">
+                <h4>취업준비생 vs 청년 차이</h4>
+                <p>취업준비생은 청년 매입임대에서 <strong>1순위 대학생·취준생</strong> 조건으로 보증금 100만원 혜택이 있습니다. 취업 후에는 이 혜택은 없지만 일반 청년 자격으로 신청은 가능합니다.</p>
+            </div>`
+    },
+    income: {
+        title: '월평균 소득 확인 방법',
+        body: `
+            <div class="help-section">
+                <h4>직장인 (가장 빠른 방법)</h4>
+                <p>건강보험공단에서 보수월액(세전 월급)을 확인합니다.</p>
+                <a class="help-link" href="https://www.nhis.or.kr" target="_blank">🔗 국민건강보험공단</a>
+                <p style="margin-top:0.5rem;font-size:0.83rem;">접속 → 민원여기요 → 개인민원 → 보험료 조회 → 직장보험료 조회</p>
+            </div>
+            <div class="help-section">
+                <h4>자영업자 / 프리랜서</h4>
+                <a class="help-link" href="https://www.hometax.go.kr" target="_blank">🔗 홈택스</a>
+                <p style="margin-top:0.5rem;font-size:0.83rem;">국세증명 → 소득금액증명서 발급 → 연간 소득 ÷ 12 = 월 소득</p>
+            </div>
+            <div class="help-divider"></div>
+            <div class="help-section">
+                <h4>취업 3개월차라면?</h4>
+                <div class="help-case">✅ 연봉 ÷ 12 를 월 소득으로 입력하세요.<br>예) 연봉 3,600만원 → 300만원 입력<br><br>근로소득 원천징수영수증이 없을 경우 급여명세서로 대체 가능합니다.</div>
+            </div>
+            <div class="help-section">
+                <h4>소득이 없거나 불규칙한 경우</h4>
+                <div class="help-case">아르바이트: 실제 수령액 기준으로 입력<br>무직: 0 입력<br>프리랜서: 최근 3개월 평균을 입력</div>
+            </div>
+            <div class="help-section">
+                <h4>맞벌이 합산 기준</h4>
+                <p>부부의 소득을 합산해서 입력하세요. 부부 각각의 건강보험 보수월액을 더하면 됩니다.</p>
+            </div>`
+    },
+    total_assets: {
+        title: '총 자산 계산 방법',
+        body: `
+            <div class="help-section">
+                <h4>포함되는 자산</h4>
+                <ul>
+                    <li>부동산: 토지 + 건물 <strong>공시가격</strong> (실거래가 아님)</li>
+                    <li>금융자산: 예금, 적금, 주식, 펀드, 보험 해약환급금</li>
+                    <li>기타자산: 골프회원권, 승마회원권 등</li>
+                    <li>자동차: 별도 입력 (일부 유형에서 분리 심사)</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>포함되지 않는 것</h4>
+                <div class="help-case warn">⚠ 부채(대출, 전세보증금)는 차감하지 않습니다. 총 보유액 기준입니다.</div>
+            </div>
+            <div class="help-section">
+                <h4>확인 방법</h4>
+                <a class="help-link" href="https://www.realtyprice.kr" target="_blank">🔗 부동산 공시가격 알리미</a>
+                <a class="help-link" href="https://www.nhis.or.kr" target="_blank">🔗 건강보험공단 — 재산 조회</a>
+                <p style="margin-top:0.5rem;font-size:0.83rem;">토스·카카오뱅크 '내 자산' 기능으로 금융자산 합산 확인 가능</p>
+            </div>`
+    },
+    real_estate: {
+        title: '부동산 가액 확인',
+        body: `
+            <div class="help-section">
+                <h4>공시가격 기준</h4>
+                <p>실거래가(시세)가 아닌 <strong>공시가격</strong>을 사용합니다. 공시가격은 시세의 약 60~70% 수준입니다.</p>
+            </div>
+            <div class="help-section">
+                <h4>확인 방법</h4>
+                <a class="help-link" href="https://www.realtyprice.kr" target="_blank">🔗 부동산 공시가격 알리미</a>
+                <p style="margin-top:0.5rem;font-size:0.83rem;">주소 검색 → 공시가격 확인 (토지·건물 각각 확인 후 합산)</p>
+            </div>
+            <div class="help-section">
+                <h4>어떤 유형에서 중요한가?</h4>
+                <ul>
+                    <li>장기전세주택(시프트): 부동산 <strong>21,550만원 이하</strong></li>
+                    <li>장기안심주택: 부동산 <strong>21,550만원 이하</strong></li>
+                </ul>
+                <div class="help-case">현재 주택이 없으면 0을 입력하세요.</div>
+            </div>`
+    },
+    car_value: {
+        title: '자동차 가액 확인',
+        body: `
+            <div class="help-section">
+                <h4>취득가가 아닌 현재 기준가액</h4>
+                <p>구매 가격이 아니라 보험개발원이 산정한 현재 <strong>기준가액(감가상각 반영)</strong>으로 계산합니다.</p>
+            </div>
+            <div class="help-section">
+                <h4>확인 방법</h4>
+                <a class="help-link" href="https://www.kidi.or.kr" target="_blank">🔗 보험개발원 — 차량기준가액 조회</a>
+                <a class="help-link" href="https://www.hometax.go.kr" target="_blank">🔗 홈택스 — 승용차 가액 조회</a>
+                <p style="margin-top:0.5rem;font-size:0.83rem;">차량번호 입력 → 기준가액 확인</p>
+            </div>
+            <div class="help-section">
+                <h4>기준 (자녀 없는 경우)</h4>
+                <p>대부분 유형: 3,803만원 이하<br>자녀 1명: 4,183만원 이하 / 자녀 2명: 4,563만원 이하</p>
+                <div class="help-case">희망하우징 3순위는 자동차 <strong>무소유</strong> 필수입니다.</div>
+            </div>`
+    },
+    parent_income: {
+        title: '부모 소득 합산 기준',
+        body: `
+            <div class="help-section">
+                <h4>언제 부모 소득을 합산하나요?</h4>
+                <ul>
+                    <li>청년 매입임대주택 <strong>2순위</strong>: 본인 + 부모 소득 합산</li>
+                    <li>희망하우징 <strong>2순위</strong>: 본인 + 부모 소득 합산</li>
+                    <li>청년안심주택 <strong>2순위</strong>: 본인 + 부모 소득 합산</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>부모와 합산하지 않아도 되는 경우 (3순위 적용)</h4>
+                <ul>
+                    <li>청년 매입임대 3순위: <strong>본인 소득만</strong> (자산기준 더 낮아짐)</li>
+                    <li>독립 세대로 분리된 경우 부모 소득 미적용</li>
+                </ul>
+                <div class="help-case">2순위(부모합산)가 조건 미충족이어도 3순위(본인만)로 신청 가능합니다. 자산기준만 다릅니다.</div>
+            </div>`
+    },
+    priority: {
+        title: '수급자 · 차상위 혜택',
+        body: `
+            <div class="help-section">
+                <h4>생계·의료·주거급여 수급자</h4>
+                <p>국민기초생활보장법상 수급자. 소득 인정액이 기준 중위소득 이하인 가구</p>
+                <ul>
+                    <li>국민임대: <strong>1순위</strong></li>
+                    <li>청년 매입임대: <strong>1순위</strong></li>
+                    <li>신혼·신생아 매입임대: 1순위</li>
+                    <li>기존주택 전세임대: 1순위</li>
+                    <li>대부분 유형에서 소득·자산 심사 완화</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>차상위계층</h4>
+                <p>수급자 바로 위 계층. 소득 인정액이 기준 중위소득 50% 이하이나 수급자는 아닌 경우</p>
+                <div class="help-case">청년 매입임대 1순위 해당 / 청년안심주택 1순위 해당</div>
+            </div>
+            <div class="help-section">
+                <h4>확인 방법</h4>
+                <a class="help-link" href="https://www.bokjiro.go.kr" target="_blank">🔗 복지로 — 수급자 자격 확인</a>
+                <a class="help-link" href="https://www.gov.kr" target="_blank">🔗 정부24 — 수급자 증명서 발급</a>
+            </div>`
+    },
+    single_parent: {
+        title: '한부모가족 보호 대상',
+        body: `
+            <div class="help-section">
+                <h4>해당 조건</h4>
+                <p>한부모가족지원법에 따른 보호 대상 한부모가족. 이혼·사별·미혼 등으로 혼자 자녀를 양육하는 가구</p>
+                <ul>
+                    <li>만 18세 미만(재학 중이면 22세) 자녀를 양육</li>
+                    <li>소득 인정액이 기준 중위소득 63% 이하</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>혜택</h4>
+                <ul>
+                    <li>청년 매입임대: 1순위</li>
+                    <li>신혼·신생아 매입임대: 1순위 (6세이하 자녀)</li>
+                    <li>국민임대: 1순위</li>
+                </ul>
+                <a class="help-link" href="https://www.mogef.go.kr" target="_blank">🔗 여성가족부 — 한부모가족 지원 안내</a>
+            </div>`
+    },
+    subscription: {
+        title: '청약 납입 횟수 확인',
+        body: `
+            <div class="help-section">
+                <h4>어디서 확인하나요?</h4>
+                <ul>
+                    <li>가입한 은행 앱 → 청약저축 메뉴</li>
+                    <li>청약Home 앱 / 웹사이트</li>
+                </ul>
+                <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약Home — 납입 확인</a>
+            </div>
+            <div class="help-section">
+                <h4>가점 기준</h4>
+                <ul>
+                    <li>24회 이상: 3점</li>
+                    <li>12회 이상 ~ 24회 미만: 2점</li>
+                    <li>6회 이상 ~ 12회 미만: 1점</li>
+                    <li>6회 미만: 0점</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>어떤 유형에서 필수인가요?</h4>
+                <div class="help-case">행복주택(청년·신혼·대학생): 청약저축 가입 <strong>필수</strong><br>청년 매입임대·청년안심주택: 가점 항목 (필수 아님)</div>
+            </div>`
+    }
+};
+
+function openHelp(key) {
+    const data = helpData[key];
+    if (!data) return;
+    document.getElementById('help-title').textContent = data.title;
+    document.getElementById('help-body').innerHTML = data.body;
+    document.getElementById('helpOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeHelp(e) {
+    if (e.target === document.getElementById('helpOverlay')) closeHelpDirect();
+}
+function closeHelpDirect() {
+    document.getElementById('helpOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// ===== Income thresholds (2025, 원) =====
 const INC = {
     50:  [2518715, 3286202, 3813487, 4289044, 4515524, 4866543, 5217562],
     70:  [3238348, 4381602, 5338881, 6004662, 6321734, 6813160, 7304587],
@@ -739,25 +988,24 @@ const INC = {
 
 function incomeLimit(pct, size) {
     const idx = Math.min(size, 7) - 1;
-    const v = INC[pct][idx];
-    return v !== null && v !== undefined ? v : null;
+    const v = INC[pct] && INC[pct][idx];
+    return (v !== null && v !== undefined) ? v : null;
 }
 
 // ===== Analysis Engine =====
 function runAnalysis() {
-    // Collect all form data
-    const age       = parseInt(document.getElementById('age').value) || 0;
-    const seoulRes  = getToggle('tg-seoul') === 'yes';
-    const homeless  = getToggle('tg-homeless') === 'yes';
+    const age         = parseInt(document.getElementById('age').value) || 0;
+    const seoulRes    = getToggle('tg-seoul') === 'yes';
+    const homeless    = getToggle('tg-homeless') === 'yes';
     const homelessYrs = parseInt(document.getElementById('homeless-years').value) || 0;
-    const seoulYrs  = parseInt(document.getElementById('seoul-years').value) || 0;
-    const marital   = getToggle('tg-marital') || 'single';
-    const hhSize    = parseInt(document.getElementById('household-size').value) || 1;
-    const childCnt  = parseInt(document.getElementById('children-count').value) || 0;
-    const youngChild= getToggle('tg-youngchild') === 'yes';
-    const infant    = getToggle('tg-infant') === 'yes';
-    const dualInc   = getToggle('tg-dual') === 'yes';
-    const isStudent = getToggle('tg-student') === 'yes';
+    const seoulYrs    = parseInt(document.getElementById('seoul-years').value) || 0;
+    const marital     = getToggle('tg-marital') || 'single';
+    const hhSize      = parseInt(document.getElementById('household-size').value) || 1;
+    const childCnt    = parseInt(document.getElementById('children-count').value) || 0;
+    const youngChild  = getToggle('tg-youngchild') === 'yes';
+    const infant      = getToggle('tg-infant') === 'yes';
+    const dualInc     = getToggle('tg-dual') === 'yes';
+    const isStudent   = getToggle('tg-student') === 'yes';
     const isJobSeeker = getToggle('tg-jobseeker') === 'yes';
     const monthlyIncome = parseFloat(document.getElementById('income').value) || 0;
     const totalAssets   = parseFloat(document.getElementById('total-assets').value) || 0;
@@ -769,646 +1017,389 @@ function runAnalysis() {
     const disabled      = getToggle('tg-disabled') === 'yes';
     const veteran       = getToggle('tg-veteran') === 'yes';
     const subCount      = parseInt(document.getElementById('subscription').value) || 0;
-    const parentHomeless = getToggle('tg-parent-homeless') === 'yes';
 
     const incWon = monthlyIncome * 10000;
-    const isRecipient = ['basic','medical','housing'].includes(priority);
-    const isNearLow   = priority === 'nearlow';
-    const is1stPriority = isRecipient || isNearLow || singleParent;
+    const isRecipient  = ['basic','medical','housing'].includes(priority);
+    const isNearLow    = priority === 'nearlow';
+    const is1st        = isRecipient || isNearLow || singleParent;
 
-    const isYouth = age >= 19 && age <= 39;
-    const isNewlywed = ['prenuptial','newlywed'].includes(marital);
-    const isMarried  = ['prenuptial','newlywed','married'].includes(marital);
-    const isNewlywedStrict = marital === 'newlywed' || marital === 'prenuptial'; // 7년 이내
+    const isYouth      = age >= 19 && age <= 39;
+    const isNewlywedStrict = marital === 'newlywed' || marital === 'prenuptial';
+    const isMarried    = ['prenuptial','newlywed','married'].includes(marital);
 
     function under(pct) {
         const lim = incomeLimit(pct, hhSize);
-        if (lim === null) return false;
-        // 맞벌이 소득완화: 신혼부부 유형에 맞벌이+20%p 적용 (파라미터로 별도처리)
-        return incWon <= lim;
+        return lim !== null && incWon <= lim;
     }
-    function underDual(pct, bonusPct) {
-        // 맞벌이일 때 pct+bonusPct 기준 적용
-        const effectivePct = dualInc ? (pct + bonusPct) : pct;
-        const candidates = [50,70,80,90,100,130,200];
-        const closest = candidates.reduce((prev, cur) => Math.abs(cur - effectivePct) < Math.abs(prev - effectivePct) ? cur : prev);
+    function underDual(base, bonus) {
+        const pcts = [50,70,80,90,100,130,200];
+        const target = base + (dualInc ? bonus : 0);
+        const closest = pcts.reduce((p,c) => Math.abs(c-target)<Math.abs(p-target)?c:p);
         const lim = incomeLimit(closest, hhSize);
-        if (lim === null) return incWon <= (incomeLimit(130, hhSize) || Infinity);
-        return incWon <= lim;
+        return lim !== null && incWon <= lim;
     }
 
     const results = [];
-
     function add(name, eligible, rank, rent, period, category, reasons) {
-        results.push({ name, eligible, rank, rent, period, category, reasons: reasons || [] });
+        results.push({ name, eligible, rank: rank||'', rent, period, category, reasons: reasons||[] });
     }
 
-    // ─────────────────────────────────────────────
-    // 공통 기본 자격: 서울 거주 + 무주택
-    // ─────────────────────────────────────────────
     const baseOk = seoulRes && homeless;
 
-    // ─────────────────────────────────────────────
     // 1. 장기전세주택 (시프트)
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        const reOk = realEstate <= 21550;
-        const carOk = carVal <= 3803;
-        if (!reOk) reasons.push(`부동산 21,550만원 이하 (현재 ${realEstate}만원)`);
-        if (!carOk) reasons.push(`자동차 3,803만원 이하 (현재 ${carVal}만원)`);
-
-        let eligible = false;
-        let rank = '';
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const reOk = realEstate <= 21550, carOk = carVal <= 3803;
+        if (!reOk) r.push(`부동산 21,550만원 이하 (현재 ${realEstate}만원)`);
+        if (!carOk) r.push(`자동차 3,803만원 이하 (현재 ${carVal}만원)`);
+        let eligible=false, rank='';
         if (baseOk && reOk && carOk) {
+            eligible = true;
             if (under(100)) {
-                eligible = true;
-                rank = '일반공급 (소득 100% 이하)';
-                // 특별공급 체크
-                if (isNewlywedStrict) rank = '특별공급 신혼부부 가능';
-                if (disabled) rank = '특별공급 장애인 가능';
-                if (veteran) rank = '특별공급 국가유공자 가능';
+                rank = isNewlywedStrict ? '특별공급 신혼부부 가능' : disabled ? '특별공급 장애인 가능' : veteran ? '특별공급 국가유공자 가능' : '일반공급 (소득 100% 이하)';
             } else {
-                // 60㎡ 초과는 소득 무관
-                eligible = true;
                 rank = '60㎡ 초과형 (소득 무관)';
             }
         }
-        add('장기전세주택 (시프트)', eligible, rank, '시세 80% 이하', '최장 20년', 'longterm', reasons);
+        add('장기전세주택 (시프트)', eligible, rank, '시세 80% 이하', '최장 20년', 'longterm', r);
     }
 
-    // ─────────────────────────────────────────────
-    // 2. 미리내집 (장기전세주택2)
-    // ─────────────────────────────────────────────
+    // 2. 미리내집 (장기전세2)
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        const assetsOk = totalAssets <= 35400;
-        const carOk = carVal <= 3803;
-        if (!assetsOk) reasons.push(`총자산 35,400만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) reasons.push(`자동차 3,803만원 이하 (현재 ${carVal}만원)`);
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && assetsOk && carOk) {
-            const incOk = dualInc ? under(200) || under(130) : under(130);
-            if (incOk) {
-                eligible = true;
-                rank = dualInc ? '맞벌이 소득 200% 이하' : '소득 130% 이하';
-                if (isNewlywedStrict) rank = '특별공급 신혼부부 가능';
-            } else {
-                reasons.push(`소득 130%${dualInc ? '(맞벌이 200%)' : ''} 이하 필요`);
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const aOk = totalAssets<=35400, carOk=carVal<=3803;
+        if (!aOk) r.push(`총자산 35,400만원 이하 (현재 ${totalAssets}만원)`);
+        if (!carOk) r.push(`자동차 3,803만원 이하`);
+        let eligible=false, rank='';
+        if (baseOk && aOk && carOk) {
+            const incOk = dualInc ? under(200)||under(130) : under(130);
+            if (incOk) { eligible=true; rank = isNewlywedStrict ? '특별공급 신혼부부 가능' : (dualInc?'맞벌이 200%':'소득 130%')+' 이하'; }
+            else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
         }
-        add('미리내집 (장기전세2)', eligible, rank, '시세 80% 이하', '10년 후 분양전환', 'longterm', reasons);
+        add('미리내집 (장기전세2)', eligible, rank, '시세 80% 이하', '10년 후 분양전환', 'longterm', r);
     }
 
-    // ─────────────────────────────────────────────
     // 3. 국민임대주택
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        const assetsOk = totalAssets <= 33700;
-        const carOk = carVal <= 3803;
-        if (!assetsOk) reasons.push(`총자산 33,700만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) reasons.push(`자동차 3,803만원 이하 (현재 ${carVal}만원)`);
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && assetsOk && carOk) {
-            if (is1stPriority || (disabled && under(50))) {
-                eligible = true;
-                rank = '1순위 (우대 대상)';
-            } else if (under(50)) {
-                eligible = true;
-                rank = '2순위 (소득 50% 이하)';
-            } else if (under(70)) {
-                eligible = true;
-                rank = '3순위 (소득 70% 이하, 50~60㎡형)';
-            } else {
-                reasons.push('소득 70% 이하 필요 (50㎡이상~60㎡이하형)');
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const aOk=totalAssets<=33700, carOk=carVal<=3803;
+        if (!aOk) r.push('총자산 33,700만원 이하 필요');
+        if (!carOk) r.push('자동차 3,803만원 이하 필요');
+        let eligible=false, rank='';
+        if (baseOk && aOk && carOk) {
+            if (is1st||(disabled&&under(50))) { eligible=true; rank='1순위 (우대 대상)'; }
+            else if (under(50)) { eligible=true; rank='2순위 (소득 50% 이하)'; }
+            else if (under(70)) { eligible=true; rank='3순위 (소득 70% 이하, 50~60㎡형)'; }
+            else r.push('소득 70% 이하 필요');
         }
-        add('국민임대주택', eligible, rank, '시세 60~80%', '제한 없음 (계속 재계약)', 'national', reasons);
+        add('국민임대주택', eligible, rank, '시세 60~80%', '제한 없음 (계속 재계약)', 'national', r);
     }
 
-    // ─────────────────────────────────────────────
     // 4. 일반 매입임대주택
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        const childBonus = childCnt >= 2 ? 4700 : childCnt === 1 ? 2400 : 0;
-        const assetsLim = 23700 + childBonus;
-        const carLim = 3803 + (childCnt >= 2 ? 760 : childCnt === 1 ? 380 : 0);
-        const assetsOk = totalAssets <= assetsLim;
-        const carOk = carVal <= carLim;
-        if (!assetsOk) reasons.push(`총자산 ${assetsLim}만원 이하 필요 (현재 ${totalAssets}만원)`);
-        if (!carOk) reasons.push(`자동차 ${carLim}만원 이하 필요`);
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && assetsOk && carOk) {
-            if (is1stPriority || singleParent) {
-                eligible = true;
-                rank = '1순위 (우대 대상)';
-            } else if (under(50)) {
-                eligible = true;
-                rank = '1순위 (소득 50% 이하)';
-            } else if (disabled && under(70)) {
-                eligible = true;
-                rank = '1순위 (장애인, 소득 70% 이하)';
-            } else if (under(70)) {
-                eligible = true;
-                rank = '2순위 (소득 50~70%)';
-            } else if (disabled && under(100)) {
-                eligible = true;
-                rank = '2순위 (장애인, 소득 100% 이하)';
-            } else {
-                reasons.push('소득 70% 이하 필요 (장애인은 100% 이하)');
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const childB = childCnt>=2?4700:childCnt===1?2400:0;
+        const aLim=23700+childB, carLim=3803+(childCnt>=2?760:childCnt===1?380:0);
+        const aOk=totalAssets<=aLim, carOk=carVal<=carLim;
+        if (!aOk) r.push(`총자산 ${aLim}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${carLim}만원 이하 필요`);
+        let eligible=false, rank='';
+        if (baseOk && aOk && carOk) {
+            if (is1st) { eligible=true; rank='1순위 (우대 대상)'; }
+            else if (under(50)) { eligible=true; rank='1순위 (소득 50% 이하)'; }
+            else if (disabled&&under(70)) { eligible=true; rank='1순위 (장애인, 소득 70% 이하)'; }
+            else if (under(70)) { eligible=true; rank='2순위 (소득 50~70%)'; }
+            else if (disabled&&under(100)) { eligible=true; rank='2순위 (장애인, 100% 이하)'; }
+            else r.push('소득 70% 이하 (장애인 100%) 필요');
         }
-        add('일반 매입임대주택', eligible, rank, '시세 30~70%', '최장 제한 없음', 'national', reasons);
+        add('일반 매입임대주택', eligible, rank, '시세 30~70%', '거주 제한 없음', 'national', r);
     }
 
-    // ─────────────────────────────────────────────
     // 5. 청년 매입임대주택
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 필요');
-
-        const isYouthEligible = isYouth || isStudent || isJobSeeker;
-        if (!isYouthEligible) reasons.push('만 19~39세 청년 또는 대학생·취업준비생만 신청 가능');
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && isYouthEligible) {
-            if (is1stPriority || singleParent) {
-                eligible = true;
-                rank = '1순위 (우대 대상)';
-            } else if (under(100)) {
-                // 2순위: 본인+부모 / 3순위: 본인만
-                eligible = true;
-                rank = parentIncome ? '2순위 (본인+부모 소득 100% 이하)' : '3순위 (본인 소득 100% 이하)';
-                if (!parentIncome && totalAssets > 25400) {
-                    eligible = false;
-                    reasons.push('3순위: 총자산 25,400만원 이하 필요');
-                } else if (parentIncome && totalAssets > 33700) {
-                    eligible = false;
-                    reasons.push('2순위: 총자산 33,700만원 이하 필요');
-                }
-            } else {
-                reasons.push('소득 100% 이하 필요');
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 필요');
+        const isYouthElig = isYouth||isStudent||isJobSeeker;
+        if (!isYouthElig) r.push('만 19~39세 청년 또는 대학생·취업준비생만 신청 가능');
+        let eligible=false, rank='', rent='시세 50%';
+        if (baseOk && isYouthElig) {
+            if (is1st) { eligible=true; rank='1순위 (우대 대상)'; rent='시세 30%'; }
+            else if (under(100)) {
+                if (parentIncome&&totalAssets<=33700&&carVal<=3803) { eligible=true; rank='2순위 (본인+부모 소득 100%)'; }
+                else if (!parentIncome&&totalAssets<=25400&&carVal<=3803) { eligible=true; rank='3순위 (본인 소득 100%)'; }
+                else if (!parentIncome&&totalAssets>25400) { r.push('3순위: 총자산 25,400만원 이하 필요'); }
+                else { r.push('총자산 기준 초과'); }
+            } else r.push('소득 100% 이하 필요');
         }
-        add('청년 매입임대주택', eligible, rank,
-            rank.includes('1순위') ? '시세 30% (1순위)' : '시세 50% (2·3순위)',
-            '최장 10년', 'youth', reasons);
+        add('청년 매입임대주택', eligible, rank, rank.includes('1순위')?'시세 30%':'시세 50%', '최장 10년', 'youth', r);
     }
 
-    // ─────────────────────────────────────────────
     // 6. 신혼·신생아 매입임대 Ⅰ형
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-
-        const isEligibleGroup = isNewlywed || infant || (singleParent && youngChild) ||
-                                (youngChild && isMarried);
-        if (!isEligibleGroup) reasons.push('신혼부부(7년이내)·예비신혼·신생아가구·한부모(6세이하)만 해당');
-
-        const assetsOk = totalAssets <= 33700;
-        const carOk = carVal <= 3803;
-        if (!assetsOk) reasons.push(`총자산 33,700만원 이하 필요`);
-        if (!carOk) reasons.push(`자동차 3,803만원 이하 필요`);
-
-        let eligible = false;
-        let rank = '';
-        let rent = '시세 50%';
-        if (baseOk && isEligibleGroup && assetsOk && carOk) {
-            const incLimOk = dualInc ? underDual(70, 20) : under(70);
-            if (infant || (singleParent && !youngChild)) {
-                eligible = true;
-                rank = '1순위 (신생아가구·보호대상한부모)';
-            } else if (incLimOk) {
-                eligible = true;
-                if (childCnt > 0) {
-                    rank = '2순위 (미성년자녀 있는 신혼부부)';
-                } else {
-                    rank = '3순위 (자녀 없는 신혼부부)';
-                }
-                if (under(50)) rent = '시세 30% (소득 50% 이하)';
-                else if (dualInc && underDual(70, 20)) rent = '시세 50% (맞벌이 90% 이하)';
-            } else {
-                reasons.push(`소득 70%${dualInc ? '(맞벌이 90%)' : ''} 이하 필요`);
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const grp = isNewlywedStrict||infant||(singleParent&&youngChild)||(youngChild&&isMarried);
+        if (!grp) r.push('신혼부부(7년이내)·예비신혼·신생아가구·한부모(6세이하)만 해당');
+        const aOk=totalAssets<=33700, carOk=carVal<=3803;
+        if (!aOk) r.push('총자산 33,700만원 이하 필요');
+        if (!carOk) r.push('자동차 3,803만원 이하 필요');
+        let eligible=false, rank='', rent='시세 50%';
+        if (baseOk && grp && aOk && carOk) {
+            if (infant||singleParent) { eligible=true; rank='1순위 (신생아가구·보호대상한부모)'; }
+            else if (dualInc?underDual(70,20):under(70)) {
+                eligible=true;
+                rank = childCnt>0?'2순위 (미성년자녀 있는 신혼부부)':'3순위 (자녀 없는 신혼부부)';
+                if (under(50)) rent='시세 30% (소득 50% 이하)';
+            } else r.push('소득 70%'+(dualInc?'(맞벌이 90%)':'')+' 이하 필요');
         }
-        add('신혼·신생아 매입임대 Ⅰ형', eligible, rank, rent, '최장 20년', 'newlywed', reasons);
+        add('신혼·신생아 매입임대 Ⅰ형', eligible, rank, rent, '최장 20년', 'newlywed', r);
     }
 
-    // ─────────────────────────────────────────────
     // 7. 신혼·신생아 매입임대 Ⅱ형
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-
-        const isEligibleGroup = isMarried || infant || singleParent;
-        if (!isEligibleGroup) reasons.push('혼인 가구·신생아가구·한부모가족만 해당');
-
-        const childBonus = childCnt >= 2 ? 84000 : childCnt === 1 ? 5000 : 0;
-        const assetsLim = 35400 + childBonus;
-        const assetsOk = totalAssets <= assetsLim;
-        if (!assetsOk) reasons.push(`총자산 ${assetsLim}만원 이하 필요`);
-
-        let eligible = false;
-        let rank = '';
-        let rent = '시세 70%';
-        if (baseOk && isEligibleGroup && assetsOk) {
-            const incOk130 = under(130);
-            const incOk200 = dualInc ? under(200) : false;
-            if (infant || singleParent) {
-                if (incOk130 || incOk200) {
-                    eligible = true;
-                    rank = '1순위 (신생아가구·보호대상한부모)';
-                    if (under(80)) rent = '시세 60% (소득 80% 이하)';
-                }
-            } else if (incOk130 || incOk200) {
-                eligible = true;
-                if (childCnt > 0) rank = `2~3순위 (미성년자녀 있는 ${isNewlywedStrict ? '신혼' : '혼인'}부부)`;
-                else rank = `3~5순위 (자녀 없는 ${isNewlywedStrict ? '신혼' : '혼인'}가구)`;
-                if (under(80)) rent = '시세 60% (소득 80% 이하)';
-            } else {
-                reasons.push(`소득 130%${dualInc ? '(맞벌이 200%)' : ''} 이하 필요`);
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const grp = isMarried||infant||singleParent;
+        if (!grp) r.push('혼인가구·신생아가구·한부모가족만 해당');
+        const bonus = childCnt>=2?84000:childCnt===1?5000:0;
+        const aLim=35400+bonus, aOk=totalAssets<=aLim;
+        if (!aOk) r.push(`총자산 ${aLim}만원 이하 필요`);
+        let eligible=false, rank='', rent='시세 70%';
+        if (baseOk && grp && aOk) {
+            const incOk = dualInc?under(200)||under(130):under(130);
+            if (incOk) {
+                eligible=true;
+                rank = infant||singleParent?'1순위 (신생아·한부모)':childCnt>0?'2~3순위 (미성년자녀 있는 신혼)':'3~5순위';
+                if (under(80)) rent='시세 60% (소득 80% 이하)';
+            } else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
         }
-        add('신혼·신생아 매입임대 Ⅱ형', eligible, rank, rent, '최장 14년', 'newlywed', reasons);
+        add('신혼·신생아 매입임대 Ⅱ형', eligible, rank, rent, '최장 14년', 'newlywed', r);
     }
 
-    // ─────────────────────────────────────────────
     // 8. 장기미임대
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        if (age < 19) reasons.push('만 19세 이상 필요');
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && age >= 19) {
-            if (under(130)) {
-                eligible = true;
-                rank = '1순위 (소득 130% 이하)';
-            } else {
-                eligible = true;
-                rank = '2순위 (소득 130% 초과 가능)';
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (age<19) r.push('만 19세 이상 필요');
+        let eligible=false, rank='';
+        if (baseOk && age>=19) {
+            eligible=true;
+            rank = under(130)?'1순위 (소득 130% 이하)':'2순위 (소득 130% 초과도 신청 가능)';
         }
-        add('장기미임대', eligible, rank, '시세 30~70%', '최장 4년 (우편접수 가능)', 'national', reasons);
+        add('장기미임대', eligible, rank, '시세 30~70%', '최장 4년 (우편접수 가능)', 'national', r);
     }
 
-    // ─────────────────────────────────────────────
     // 9. 희망하우징
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 필요');
-        if (!isStudent) reasons.push('서울 소재 대학(원) 재학·복학·입학예정자만 신청 가능 (취업준비생 불가)');
-        if (isMarried) reasons.push('미혼 단독 세대 조건');
-
-        let eligible = false;
-        let rank = '';
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 필요');
+        if (!isStudent) r.push('서울 소재 대학(원) 재학·복학·입학예정자만 신청 가능');
+        if (isMarried) r.push('미혼 단독 세대 조건');
+        let eligible=false, rank='';
         if (baseOk && isStudent && !isMarried) {
-            if (is1stPriority || singleParent) {
-                eligible = true;
-                rank = '1순위 (우대 대상)';
-            } else if (under(100)) {
-                if (parentIncome) {
-                    if (totalAssets <= 33700 && carVal <= 3803) {
-                        eligible = true;
-                        rank = '2순위 (본인+부모 소득 100% 이하)';
-                    } else {
-                        reasons.push('2순위: 총자산 33,700만원 이하, 자동차 3,803만원 이하');
-                    }
-                } else {
-                    if (totalAssets <= 10400 && carVal === 0) {
-                        eligible = true;
-                        rank = '3순위 (본인 소득 100% 이하, 자동차 무소유)';
-                    } else {
-                        if (totalAssets > 10400) reasons.push('3순위: 총자산 10,400만원 이하');
-                        if (carVal > 0) reasons.push('3순위: 자동차 무소유 필수');
-                        if (totalAssets <= 33700 && carVal <= 3803) {
-                            eligible = true;
-                            rank = '2순위 (본인+부모 합산으로 재검토 필요)';
-                        }
-                    }
-                }
-            } else {
-                reasons.push('소득 100% 이하 필요');
-            }
+            if (is1st) { eligible=true; rank='1순위 (우대 대상)'; }
+            else if (under(100)) {
+                if (parentIncome&&totalAssets<=33700&&carVal<=3803) { eligible=true; rank='2순위 (본인+부모 100%)'; }
+                else if (!parentIncome&&totalAssets<=10400&&carVal===0) { eligible=true; rank='3순위 (본인 100%, 자동차 무소유)'; }
+                else if (!parentIncome&&carVal>0) r.push('3순위: 자동차 무소유 필수');
+                else if (!parentIncome&&totalAssets>10400) r.push('3순위: 총자산 10,400만원 이하');
+                else r.push('자산 기준 초과');
+            } else r.push('소득 100% 이하 필요');
         }
-        add('희망하우징', eligible, rank, '월 79,000~145,000원', '최장 6년', 'youth', reasons);
+        add('희망하우징', eligible, rank, '월 79,000~145,000원', '최장 6년', 'youth', r);
     }
 
-    // ─────────────────────────────────────────────
     // 10. 장기안심주택
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        const reOk = realEstate <= 21550;
-        const carOk = carVal <= 3803;
-        if (!reOk) reasons.push(`부동산 21,550만원 이하 필요`);
-        if (!carOk) reasons.push(`자동차 3,803만원 이하 필요`);
-
-        let eligible = false;
-        let rank = '';
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const reOk=realEstate<=21550, carOk=carVal<=3803;
+        if (!reOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 3,803만원 이하 필요');
+        let eligible=false, rank='';
         if (baseOk && reOk && carOk) {
-            const incLim = isNewlywedStrict && dualInc ? 180 : isNewlywedStrict ? 120 : 100;
-            const incMap = {100: under(100), 120: under(130), 180: under(200)};
-            const incOk = incMap[incLim] !== undefined ? incMap[incLim] : under(100);
+            const incOk = isNewlywedStrict&&dualInc ? under(200)||under(130) : isNewlywedStrict ? under(130)||under(100) : under(100);
             if (incOk) {
-                eligible = true;
-                if (isNewlywedStrict) rank = '특별공급 신혼부부 가능';
-                else rank = '일반공급 가점제';
-            } else {
-                reasons.push(`소득 ${incLim}% 이하 필요`);
-            }
+                eligible=true;
+                rank = isNewlywedStrict?'특별공급 신혼부부 가능':'일반공급 가점제';
+            } else r.push('소득 100%'+(isNewlywedStrict?'(신혼 120~180%)':'')+' 이하 필요');
         }
-        add('장기안심주택', eligible, rank, '보증금 30% 무이자 지원 (최대 6천만원)', '최장 10년', 'jeonse', reasons);
+        add('장기안심주택', eligible, rank, '보증금 30% 무이자 지원 (최대 6천만원)', '최장 10년', 'jeonse', r);
     }
 
-    // ─────────────────────────────────────────────
-    // 11. 행복주택 - 대학생
-    // ─────────────────────────────────────────────
+    // 11. 행복주택 (대학생)
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 필요');
-        const isEligible = isStudent || isJobSeeker;
-        if (!isEligible) reasons.push('서울 소재 대학생 또는 졸업 2년이내 취업준비생');
-        if (isMarried) reasons.push('미혼 필요');
-        if (!isEligible || isMarried) {
-            add('행복주택 (대학생)', false, '', '시세 60~80%', '최장 10년', 'youth', reasons);
-        } else {
-            const incOk = under(100);
-            if (!incOk) reasons.push('소득 100%(1인 120%, 2인 110%) 이하 필요');
-            const assetsOk = totalAssets <= 33700;
-            if (!assetsOk) reasons.push('총자산 33,700만원 이하 필요');
-            const eligible = baseOk && isEligible && !isMarried && incOk && assetsOk;
-            const rank = eligible ? (subCount >= 24 ? '청약저축 24회↑ 가점 최상' : '청약저축 필요') : '';
-            add('행복주택 (대학생)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', reasons);
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 필요');
+        const grp=isStudent||isJobSeeker;
+        if (!grp) r.push('서울 소재 대학생 또는 졸업 2년이내 취업준비생');
+        if (isMarried) r.push('미혼 필요');
+        let eligible=false, rank='';
+        if (baseOk && grp && !isMarried) {
+            if (under(100)&&totalAssets<=33700) { eligible=true; rank='청약저축 가입 필요'+(subCount>=24?' (가점 최상)':''); }
+            else { if (!under(100)) r.push('소득 100% 이하 필요'); if (totalAssets>33700) r.push('총자산 33,700만원 이하 필요'); }
         }
+        add('행복주택 (대학생)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r);
     }
 
-    // ─────────────────────────────────────────────
-    // 12. 행복주택 - 청년
-    // ─────────────────────────────────────────────
+    // 12. 행복주택 (청년)
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 필요');
-        if (!isYouth) reasons.push('만 19~39세 필요 (사회초년생: 소득 업무 총 5년이내 나이무관)');
-        if (isMarried && marital !== 'single') reasons.push('미혼 또는 한부모가족');
-
-        const isSingleOrYouth = marital === 'single' || singleParent;
-        let eligible = false;
-        let rank = '';
-        if (baseOk && isYouth && isSingleOrYouth) {
-            const incOk = under(100);
-            const assetsOk = totalAssets <= 33700;
-            if (incOk && assetsOk && subCount >= 0) {
-                eligible = true;
-                rank = subCount >= 24 ? '청약저축 24회↑ 가점 최상' : '청약저축 필요 (가점에 영향)';
-            } else {
-                if (!incOk) reasons.push('소득 100%(1인 120%) 이하 필요');
-                if (!assetsOk) reasons.push('총자산 33,700만원 이하 필요');
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 필요');
+        if (!isYouth) r.push('만 19~39세 필요');
+        if (isMarried&&marital!=='single') r.push('미혼 또는 한부모가족');
+        let eligible=false, rank='';
+        if (baseOk && isYouth && (marital==='single'||singleParent)) {
+            if (under(100)&&totalAssets<=33700) { eligible=true; rank='청약저축 필요'+(subCount>=24?' (가점 최상)':''); }
+            else { if (!under(100)) r.push('소득 100%(1인 120%) 이하 필요'); if (totalAssets>33700) r.push('총자산 33,700만원 이하 필요'); }
         }
-        add('행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', reasons);
+        add('행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r);
     }
 
-    // ─────────────────────────────────────────────
-    // 13. 행복주택 - 신혼부부
-    // ─────────────────────────────────────────────
+    // 13. 행복주택 (신혼부부)
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        const isEligible = isNewlywedStrict || (singleParent && youngChild);
-        if (!isEligible) reasons.push('혼인 7년 이내 신혼부부·예비신혼·6세이하자녀 한부모만 해당');
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && isEligible) {
-            const incLim = dualInc ? 120 : 100;
-            const incOk = dualInc ? under(130) : under(100);
-            const assetsOk = totalAssets <= 33700;
-            if (incOk && assetsOk) {
-                eligible = true;
-                rank = `청약저축 필요 (${dualInc ? '맞벌이 120%' : '외벌이 100%'} 이하)`;
-            } else {
-                if (!incOk) reasons.push(`소득 ${incLim}% 이하 필요`);
-                if (!assetsOk) reasons.push('총자산 33,700만원 이하 필요');
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const grp = isNewlywedStrict||(singleParent&&youngChild);
+        if (!grp) r.push('혼인 7년 이내 신혼부부·예비신혼·6세이하자녀 한부모만 해당');
+        let eligible=false, rank='';
+        if (baseOk && grp) {
+            const incOk = dualInc?under(130):under(100);
+            if (incOk&&totalAssets<=33700) { eligible=true; rank='청약저축 필요'+(dualInc?' (맞벌이 120%)':' (외벌이 100%)'); }
+            else { if (!incOk) r.push(`소득 ${dualInc?'120%':'100%'} 이하 필요`); if (totalAssets>33700) r.push('총자산 33,700만원 이하 필요'); }
         }
-        add('행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', reasons);
+        add('행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', r);
     }
 
-    // ─────────────────────────────────────────────
     // 14. 기존주택 전세임대
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        const assetsOk = totalAssets <= 23700;
-        const carOk = carVal <= 3803;
-        if (!assetsOk) reasons.push(`총자산 23,700만원 이하 필요`);
-        if (!carOk) reasons.push(`자동차 3,803만원 이하 필요`);
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && assetsOk && carOk) {
-            if (is1stPriority || singleParent || (disabled && under(70))) {
-                eligible = true;
-                rank = '1순위 (우대 대상)';
-            } else if (under(50)) {
-                eligible = true;
-                rank = '2순위 (소득 50% 이하)';
-            } else if (disabled && under(100)) {
-                eligible = true;
-                rank = '2순위 (장애인 소득 100% 이하)';
-            } else {
-                reasons.push('소득 50% 이하 (장애인 100%) 또는 우대 대상 필요');
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const aOk=totalAssets<=23700, carOk=carVal<=3803;
+        if (!aOk) r.push('총자산 23,700만원 이하 필요');
+        if (!carOk) r.push('자동차 3,803만원 이하 필요');
+        let eligible=false, rank='';
+        if (baseOk && aOk && carOk) {
+            if (is1st||(disabled&&under(70))) { eligible=true; rank='1순위 (우대 대상)'; }
+            else if (under(50)) { eligible=true; rank='2순위 (소득 50% 이하)'; }
+            else if (disabled&&under(100)) { eligible=true; rank='2순위 (장애인 소득 100%)'; }
+            else r.push('소득 50% 이하 (장애인 100%) 또는 우대 대상 필요');
         }
-        add('기존주택 전세임대', eligible, rank, '보증금 5% 부담 (95% SH지원)', '최장 30년', 'jeonse', reasons);
+        add('기존주택 전세임대', eligible, rank, '보증금 5% 부담 (95% SH지원)', '최장 30년', 'jeonse', r);
     }
 
-    // ─────────────────────────────────────────────
     // 15. 신혼·신생아 전세임대 Ⅰ형
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        const isEligible = isNewlywedStrict || infant || (singleParent && youngChild) || (youngChild && isMarried);
-        if (!isEligible) reasons.push('신혼부부·예비신혼·신생아가구·6세이하자녀 한부모만 해당');
-
-        const assetsOk = totalAssets <= 33700;
-        const carOk = carVal <= 3803;
-        if (!assetsOk) reasons.push('총자산 33,700만원 이하 필요');
-        if (!carOk) reasons.push('자동차 3,803만원 이하 필요');
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && isEligible && assetsOk && carOk) {
-            const incOk = dualInc ? underDual(70, 20) : under(70);
-            if (incOk) {
-                eligible = true;
-                rank = infant ? '1순위 (신생아가구)' : '2~3순위';
-            } else {
-                reasons.push(`소득 70%${dualInc ? '(맞벌이 90%)' : ''} 이하 필요`);
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const grp = isNewlywedStrict||infant||(singleParent&&youngChild)||(youngChild&&isMarried);
+        if (!grp) r.push('신혼부부·예비신혼·신생아가구·6세이하자녀 한부모만 해당');
+        const aOk=totalAssets<=33700, carOk=carVal<=3803;
+        if (!aOk) r.push('총자산 33,700만원 이하 필요');
+        if (!carOk) r.push('자동차 3,803만원 이하 필요');
+        let eligible=false, rank='';
+        if (baseOk && grp && aOk && carOk) {
+            if (dualInc?underDual(70,20):under(70)) { eligible=true; rank=infant?'1순위 (신생아가구)':'2~3순위'; }
+            else r.push('소득 70%'+(dualInc?'(맞벌이 90%)':'')+' 이하 필요');
         }
-        add('신혼·신생아 전세임대 Ⅰ형', eligible, rank, '보증금 5% 부담 / SH 최대 1.38억 지원', '최장 20년', 'jeonse', reasons);
+        add('신혼·신생아 전세임대 Ⅰ형', eligible, rank, '보증금 5% 부담 / SH 최대 1.38억 지원', '최장 20년', 'jeonse', r);
     }
 
-    // ─────────────────────────────────────────────
     // 16. 신혼·신생아 전세임대 Ⅱ형
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 세대구성원 필요');
-        const isEligible = isMarried || infant || singleParent;
-        if (!isEligible) reasons.push('혼인가구·신생아가구·한부모가족만 해당');
-
-        const assetsOk = totalAssets <= 35400;
-        if (!assetsOk) reasons.push('총자산 35,400만원 이하 필요');
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && isEligible && assetsOk) {
-            const incOk = dualInc ? under(200) || under(130) : under(130);
-            if (incOk) {
-                eligible = true;
-                rank = dualInc ? '맞벌이 소득 200% 이하' : '소득 130% 이하';
-                if (infant) rank = '1순위 (신생아가구, ' + rank + ')';
-            } else {
-                reasons.push(`소득 130%${dualInc ? '(맞벌이 200%)' : ''} 이하 필요`);
-            }
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const grp = isMarried||infant||singleParent;
+        if (!grp) r.push('혼인가구·신생아가구·한부모가족만 해당');
+        const aOk=totalAssets<=35400;
+        if (!aOk) r.push('총자산 35,400만원 이하 필요');
+        let eligible=false, rank='';
+        if (baseOk && grp && aOk) {
+            const incOk = dualInc?under(200)||under(130):under(130);
+            if (incOk) { eligible=true; rank=infant?'1순위 (신생아가구, '+( dualInc?'맞벌이 200%':'130%')+')':( dualInc?'맞벌이 200%':'소득 130%')+' 이하'; }
+            else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
         }
-        add('신혼·신생아 전세임대 Ⅱ형', eligible, rank, '보증금 20% 부담 / SH 최대 6억 지원', '최장 14년', 'jeonse', reasons);
+        add('신혼·신생아 전세임대 Ⅱ형', eligible, rank, '보증금 20% 부담 / SH 최대 6억 지원', '최장 14년', 'jeonse', r);
     }
 
-    // ─────────────────────────────────────────────
     // 17. 전세임대형 든든주택
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 주민등록 + 무주택 세대구성원 필요');
-
-        let eligible = false;
-        let rank = '';
+        const r = [];
+        if (!baseOk) r.push('서울 주민등록 + 무주택 세대구성원 필요');
+        let eligible=false, rank='';
         if (baseOk) {
-            eligible = true;
-            if (infant || childCnt >= 2) {
-                rank = '1순위 (신생아가구 또는 다자녀)';
-            } else if (isNewlywedStrict) {
-                rank = '2순위 (신혼부부·예비신혼)';
-            } else {
-                rank = '3순위 (일반)';
-            }
+            eligible=true;
+            rank = infant||childCnt>=2?'1순위 (신생아·다자녀)':isNewlywedStrict?'2순위 (신혼부부·예비신혼)':'3순위 (일반)';
         }
-        add('전세임대형 든든주택', eligible, rank, '보증금 20% 부담 / SH 최대 2억 지원', '최장 8년 (소득·자산 무관)', 'jeonse', reasons);
+        add('전세임대형 든든주택', eligible, rank, '보증금 20% 부담 / SH 최대 2억 (소득·자산 무관)', '최장 8년', 'jeonse', r);
     }
 
-    // ─────────────────────────────────────────────
     // 18. 청년안심주택
-    // ─────────────────────────────────────────────
     {
-        const reasons = [];
-        if (!baseOk) reasons.push('서울 거주 무주택 필요');
-        if (!isYouth && !isNewlywedStrict) reasons.push('만 19~39세 또는 신혼부부·예비신혼 필요');
-
-        let eligible = false;
-        let rank = '';
-        if (baseOk && (isYouth || isNewlywedStrict)) {
-            if (is1stPriority || singleParent) {
-                eligible = true;
-                rank = '1순위 (우대 대상, 소득·자산 심사 완화)';
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 필요');
+        if (!isYouth&&!isNewlywedStrict) r.push('만 19~39세 또는 신혼부부·예비신혼 필요');
+        let eligible=false, rank='';
+        if (baseOk && (isYouth||isNewlywedStrict)) {
+            if (is1st) { eligible=true; rank='1순위 (우대 대상, 소득·자산 완화)'; }
+            else if (isNewlywedStrict) {
+                const i1 = dualInc?underDual(70,20):under(70);
+                const i2 = dualInc?under(200)||under(130):under(130);
+                if (i1) { eligible=true; rank='신혼Ⅰ형 (소득 70~90%)'; }
+                else if (i2) { eligible=true; rank='신혼Ⅱ형 (소득 130%, 맞벌이 200%)'; }
+                else r.push('소득 130% 이하 필요');
             } else if (under(100)) {
-                eligible = true;
-                if (isNewlywedStrict) {
-                    const incOk = dualInc ? underDual(70, 20) : under(70);
-                    rank = incOk ? '신혼 Ⅰ형 (소득 70~90%)' : '신혼 Ⅱ형 (소득 130%)';
-                } else {
-                    rank = parentIncome ? '2순위 (본인+부모 100% 이하)' : '3순위 (본인 100% 이하)';
-                }
-            } else if (isNewlywedStrict && (under(130) || (dualInc && under(200)))) {
-                eligible = true;
-                rank = '신혼 Ⅱ형 (소득 130%, 맞벌이 200%)';
-            } else {
-                reasons.push('소득 100%(청년) 또는 130%(신혼 Ⅱ형) 이하 필요');
-            }
+                eligible=true; rank=parentIncome?'2순위 (본인+부모 100%)':'3순위 (본인 100%)';
+            } else r.push('소득 100% 이하 필요');
         }
-        add('청년안심주택', eligible, rank, '역세권 시세 이하', '공고별 상이 (보통 10년)', 'youth', reasons);
+        add('청년안심주택', eligible, rank, '역세권 시세 이하', '공고별 상이 (보통 10년)', 'youth', r);
     }
 
-    // ─────────────────────────────────────────────
     // Render
-    // ─────────────────────────────────────────────
     const eligible = results.filter(r => r.eligible);
     const ineligible = results.filter(r => !r.eligible);
 
-    document.getElementById('eligible-count-badge').textContent =
-        `신청 가능 유형 ${eligible.length}가지`;
+    document.getElementById('eligible-count-badge').textContent = `신청 가능 유형 ${eligible.length}가지`;
     document.getElementById('count-eligible').textContent = eligible.length;
     document.getElementById('count-ineligible').textContent = ineligible.length;
 
-    const categoryLabel = {
-        youth: '청년', newlywed: '신혼·신생아', longterm: '장기전세',
-        national: '국민·매입임대', jeonse: '전세지원'
-    };
+    const catLabel = { youth:'청년', newlywed:'신혼·신생아', longterm:'장기전세', national:'국민·매입임대', jeonse:'전세지원' };
 
-    function renderCard(r, isEligible) {
-        const rankClass = r.rank.includes('1순위') ? 'rank-1'
-            : r.rank.includes('2순위') ? 'rank-2'
-            : r.rank.includes('3순위') ? 'rank-3'
-            : isEligible ? 'rank-ok' : 'rank-na';
-        const cat = categoryLabel[r.category] || r.category;
-
-        return `<div class="result-card ${isEligible ? '' : 'ineligible'}">
+    function card(r, isE) {
+        const rc = r.rank.includes('1순위')?'rank-1':r.rank.includes('2순위')?'rank-2':r.rank.includes('3순위')?'rank-3':isE?'rank-ok':'rank-na';
+        return `<div class="result-card ${isE?'':'ineligible'}">
             <div class="result-card-header">
                 <div class="result-card-name">${r.name}</div>
-                ${r.rank ? `<span class="rank-badge ${rankClass}">${r.rank}</span>` : ''}
+                ${r.rank?`<span class="rank-badge ${rc}">${r.rank}</span>`:''}
             </div>
             <div class="result-tags">
-                <span class="result-tag">${cat}</span>
+                <span class="result-tag">${catLabel[r.category]||r.category}</span>
                 <span class="result-tag">${r.rent}</span>
                 <span class="result-tag">${r.period}</span>
             </div>
-            ${!isEligible && r.reasons.length ? `<div class="result-reason">⚠ ${r.reasons.join(' · ')}</div>` : ''}
+            ${!isE&&r.reasons.length?`<div class="result-reason">⚠ ${r.reasons.join(' · ')}</div>`:''}
         </div>`;
     }
 
-    document.getElementById('grid-eligible').innerHTML =
-        eligible.length ? eligible.map(r => renderCard(r, true)).join('') :
-        '<div class="result-card ineligible"><div class="result-card-name">신청 가능한 유형이 없습니다.</div><div class="result-reason">서울 거주 무주택 세대구성원인지 확인해 주세요.</div></div>';
+    document.getElementById('grid-eligible').innerHTML = eligible.length
+        ? eligible.map(r=>card(r,true)).join('')
+        : '<div class="result-card ineligible"><div class="result-card-name">신청 가능한 유형이 없습니다.</div><div class="result-reason">서울 거주 무주택 세대구성원인지 확인해 주세요.</div></div>';
+    document.getElementById('grid-ineligible').innerHTML = ineligible.map(r=>card(r,false)).join('');
 
-    document.getElementById('grid-ineligible').innerHTML =
-        ineligible.map(r => renderCard(r, false)).join('');
-
-    // Show results, hide form
-    document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
-    document.getElementById('step-indicator').style.display = 'none';
-    document.getElementById('results').style.display = 'block';
+    document.querySelectorAll('.step-panel').forEach(p => p.style.display='none');
+    document.getElementById('step-indicator').style.display='none';
+    document.getElementById('results').style.display='block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function restart() {
-    document.querySelectorAll('.step-panel').forEach(p => { p.style.display = ''; });
-    document.getElementById('step-indicator').style.display = '';
-    document.getElementById('results').style.display = 'none';
+    document.querySelectorAll('.step-panel').forEach(p => { p.style.display=''; });
+    document.getElementById('step-indicator').style.display='';
+    document.getElementById('results').style.display='none';
     goTo(1);
 }
 </script>
