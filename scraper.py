@@ -92,6 +92,10 @@ def is_recruitment(title):
     title_has_include = any(i in title for i in include)
     return title_has_include and not title_has_exclude
 
+import time
+
+DETAIL_URL = BASE + "/main/lay2/program/S1T294C296/www/brd/m_244/view.do"
+
 def fetch(url, data=None):
     if data:
         data = urllib.parse.urlencode(data).encode()
@@ -103,10 +107,53 @@ def fetch(url, data=None):
         except:
             return raw.decode("euc-kr", errors="replace")
 
+def parse_date(y, m, d):
+    try:
+        return date(int(y), int(m), int(d))
+    except:
+        return None
+
+def extract_apply_dates(html):
+    """상세 페이지에서 신청 시작일·마감일 추출"""
+    idx = html.find('class="cont"')
+    if idx < 0:
+        return None, None
+    content = html[idx:idx+6000]
+    content = re.sub(r"<[^>]+>", " ", content)
+    content = re.sub(r"\s+", " ", content)
+
+    # "YYYY.MM.DD ~ YYYY.MM.DD" 또는 "YYYY.M.D~YYYY.M.D" 패턴 탐색
+    # 접수, 신청, 모집 키워드 근처에서 우선 찾기
+    DATE_PAT = r"(\d{4})[.\-](\d{1,2})[.\-](\d{1,2})"
+    RANGE_PAT = DATE_PAT + r"[^\d]{0,20}?~[^\d]{0,10}?" + DATE_PAT
+
+    keywords = ["접수일", "접수기간", "신청기간", "신청일", "모집기간", "공고기간", "청약기간"]
+    for kw in keywords:
+        pos = content.find(kw)
+        if pos < 0:
+            continue
+        segment = content[pos:pos+300]
+        m = re.search(RANGE_PAT, segment)
+        if m:
+            start = parse_date(m.group(1), m.group(2), m.group(3))
+            end   = parse_date(m.group(4), m.group(5), m.group(6))
+            if start and end and end >= start:
+                return start, end
+
+    # 키워드 없이 전체에서 첫 범위 날짜 추출 (fallback)
+    m = re.search(RANGE_PAT, content)
+    if m:
+        start = parse_date(m.group(1), m.group(2), m.group(3))
+        end   = parse_date(m.group(4), m.group(5), m.group(6))
+        if start and end and end >= start and end.year >= date.today().year:
+            return start, end
+
+    return None, None
+
 def scrape_list(pages=5):
-    results = []
+    candidates = []
     for page in range(1, pages + 1):
-        print(f"Fetching page {page}...")
+        print(f"목록 페이지 {page} 수집 중...")
         html = fetch(LIST_URL, {"multi_itm_seq": "2", "page": str(page)})
         rows = re.findall(
             r'onclick="javascript:getDetailView\(\'(\d+)\'\)[^"]*">(.*?)</a>.*?<td class="num">\s*([\d-]+)\s*</td>',
@@ -116,48 +163,75 @@ def scrape_list(pages=5):
             break
         for seq, title_raw, posted_date in rows:
             title = re.sub(r"<[^>]+>|\s+", " ", title_raw).strip()
-            if not title:
+            if not title or not is_recruitment(title):
                 continue
-            if not is_recruitment(title):
+            candidates.append((seq, title, posted_date.strip()))
+
+    today = date.today()
+    future_limit = today + timedelta(days=31)
+    results = []
+
+    print(f"\n상세 페이지 파싱 중 ({len(candidates)}건)...")
+    for seq, title, posted_date in candidates:
+        try:
+            html = fetch(DETAIL_URL, {"seq": seq, "multi_itm_seq": "2"})
+            apply_start, apply_end = extract_apply_dates(html)
+            time.sleep(0.4)  # 서버 부하 방지
+        except Exception as e:
+            print(f"  seq {seq} 오류: {e}")
+            apply_start, apply_end = None, None
+
+        # 날짜 파싱 성공한 경우: 마감일 >= 오늘 AND 시작일 <= 오늘+31일
+        if apply_start and apply_end:
+            if apply_end >= today and apply_start <= future_limit:
+                status = "진행중" if apply_start <= today <= apply_end else "예정"
+            else:
+                print(f"  [{posted_date}] 마감/미래초과 제외: {title[:40]} ({apply_start}~{apply_end})")
                 continue
-            types = detect_types(title)
-            url = f"{BASE}/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq={seq}&multi_itm_seq=2"
-            results.append({
-                "seq": seq,
-                "title": title,
-                "date": posted_date.strip(),
-                "types": types,
-                "url": url,
-            })
-        # Stop if nothing found this page
-        if not rows:
-            break
+        else:
+            # 날짜 파싱 실패: 게시일 기준 30일 이내만 포함 (보수적 처리)
+            posted = date.fromisoformat(posted_date) if posted_date else today
+            if (today - posted).days > 30:
+                print(f"  [{posted_date}] 게시 30일 초과 제외(날짜미파싱): {title[:40]}")
+                continue
+            apply_start, apply_end = None, None
+            status = "확인필요"
+
+        types = detect_types(title)
+        url = f"{BASE}/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq={seq}&multi_itm_seq=2"
+        item = {
+            "seq": seq,
+            "title": title,
+            "date": posted_date,
+            "types": types,
+            "url": url,
+            "status": status,
+        }
+        if apply_start:
+            item["apply_start"] = apply_start.isoformat()
+            item["apply_end"]   = apply_end.isoformat()
+
+        results.append(item)
+        flag = f"{apply_start}~{apply_end}" if apply_start else "날짜미파싱"
+        print(f"  [{status}] {title[:45]} ({flag})")
+
     return results
 
 def main():
     print("SH공사 공고 크롤링 시작...")
     announcements = scrape_list(pages=5)
-    print(f"모집공고 {len(announcements)}건 수집")
 
     today = date.today().isoformat()
-    cutoff = (date.today() - timedelta(days=60)).isoformat()
-
-    # 60일 이내 공고만 유지
-    recent = [a for a in announcements if a["date"] >= cutoff]
-    print(f"최근 60일 이내: {len(recent)}건")
-
     output = {
         "updated": today,
-        "count": len(recent),
-        "announcements": recent
+        "count": len(announcements),
+        "announcements": announcements
     }
 
     with open("announcements.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print("announcements.json 저장 완료")
-    for a in recent:
-        print(f"  [{a['date']}] {a['title'][:50]} → {a['types']}")
+    print(f"\n완료: {len(announcements)}건 저장 → announcements.json")
 
 if __name__ == "__main__":
     main()
