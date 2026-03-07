@@ -4,185 +4,850 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="서울 2030 청년들을 위한 내집마련 정보 구독 서비스. AI가 나에게 맞는 장기전세주택, 임대주택, 행복주택 등 맞춤형 주택 정보를 찾아 알려드립니다.">
-    <meta name="keywords" content="서울, 청년, 내집마련, 청약, 장기전세주택, 임대주택, 행복주택, 청약정보, 구독서비스, AI 맞춤정보">
+    <meta name="keywords" content="서울, 청년, 내집마련, 청약, 장기전세주택, 임대주택, 행복주택, SH공사, 청약정보, 구독서비스, AI 맞춤정보">
     <meta name="robots" content="index, follow">
     <meta name="google-site-verification" content="rqIhJzvhTUHAjP7r3ooQbsgmkX-qnbpNbNu55FXmaFE" />
     <meta name="naver-site-verification" content="bfe899e4b329b7fa66fb91125608f65bde02dc54" />
     <link rel="canonical" href="https://week1-343.pages.dev/">
-    
-    <!-- Open Graph / Facebook -->
+
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://week1-343.pages.dev/">
     <meta property="og:title" content="내집구독 - 서울 2030 청년 내집마련 구독 서비스">
-    <meta property="og:description" content="AI가 찾아주는 맞춤형 주택 정보! 장기전세주택, 임대주택, 행복주택 공고를 놓치지 말고 받아보세요.">
+    <meta property="og:description" content="AI가 찾아주는 맞춤형 주택 정보! SH공사 15가지 임대주택 유형을 내 자격에 맞게 분석해드립니다.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1560518883-ce09059ee41f?q=80&w=1000&auto=format&fit=crop">
 
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://week1-343.pages.dev/">
     <meta property="twitter:title" content="내집구독 - 서울 2030 청년 내집마련 구독 서비스">
-    <meta property="twitter:description" content="AI가 찾아주는 맞춤형 주택 정보! 장기전세주택, 임대주택, 행복주택 공고를 놓치지 말고 받아보세요.">
+    <meta property="twitter:description" content="AI가 찾아주는 맞춤형 주택 정보! SH공사 15가지 임대주택 유형 분석">
     <meta property="twitter:image" content="https://images.unsplash.com/photo-1560518883-ce09059ee41f?q=80&w=1000&auto=format&fit=crop">
 
     <title>내집구독 - 서울 2030 청년 내집마련 구독 서비스</title>
     <link href="/style.css" rel="stylesheet">
 
-    <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "내집구독 (My Home Finder)",
+      "name": "내집구독",
       "operatingSystem": "All",
       "applicationCategory": "LifeStyleApplication",
-      "description": "서울 2030 청년들을 위한 내집마련 정보 구독 서비스. AI가 나에게 맞는 장기전세주택, 임대주택, 행복주택 등 맞춤형 주택 정보를 찾아 알려드립니다.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "KRW"
-      }
+      "description": "서울 2030 청년들을 위한 내집마련 정보 구독 서비스.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" }
     }
     </script>
 </head>
 <body>
     <header>
         <nav>
-            <div class="logo" data-i18n="logo">내집구독</div>
+            <div class="logo">내집구독</div>
             <ul>
-                <li><a href="#about" data-i18n="nav_about">서비스 소개</a></li>
-                <li><a href="#subscribe" data-i18n="nav_subscribe">구독 신청</a></li>
-                <li><a href="#faq" data-i18n="nav_faq">자주 묻는 질문</a></li>
-                <li><a href="#reviews" data-i18n="nav_reviews">사용자 후기</a></li>
-                <li><a href="#" data-i18n="nav_login">로그인</a></li>
+                <li><a href="#housing-types">임대주택 유형</a></li>
+                <li><a href="#eligibility">자격 체크</a></li>
+                <li><a href="#faq">자주 묻는 질문</a></li>
+                <li><a href="#subscribe">구독 신청</a></li>
             </ul>
             <div class="nav-controls">
-                <button class="lang-toggle" id="lang-toggle">English</button>
                 <button class="theme-toggle" id="theme-toggle">다크 모드</button>
             </div>
         </nav>
     </header>
 
     <main>
+        <!-- Hero -->
         <section class="hero">
             <div class="hero-content">
-                <h1 data-i18n="hero_h1">서울/경기 2030 청년들을 위한<br>내집마련 정보 구독 서비스</h1>
-                <p data-i18n="hero_p">더 이상 복잡한 공고 찾기는 그만! AI가 나에게 맞는 주택 정보를 찾아 알려드려요.</p>
-                <button data-i18n="hero_btn">지금 바로 시작하기</button>
-            </div>
-        </section>
-
-        <section id="why" class="why">
-            <h2 data-i18n="why_h2">왜 내집구독인가요?</h2>
-            <p data-i18n="why_p">흩어져 있는 공공주택 정보를 한눈에 확인하고, 내 자격에 맞는 공고만 받아보세요.</p>
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">🏠</div>
-                    <h3 data-i18n="why_item1_h3">LH·SH·GH·청약홈 통합</h3>
-                    <p data-i18n="why_item1_p">각 공사 사이트를 일일이 방문할 필요가 없습니다. 모든 공공분양 및 임대 정보를 한곳으로 모았습니다.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🔍</div>
-                    <h3 data-i18n="why_item2_h3">나에게만 최적화된 매칭</h3>
-                    <p data-i18n="why_item2_p">수백 개의 공고 중 내가 신청 가능한 것만 골라냅니다. 복잡한 자격 요건 분석은 AI에게 맡기세요.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🔔</div>
-                    <h3 data-i18n="why_item3_h3">놓치지 않는 실시간 알림</h3>
-                    <p data-i18n="why_item3_p">공고가 올라오는 즉시 이메일과 문자로 알려드립니다. 바쁜 일상 속에서도 청약 기회를 놓치지 마세요.</p>
+                <div class="hero-badge">2025년 기준 · SH공사 공식 정보</div>
+                <h1>SH공사 임대주택 15가지<br>내 자격에 맞는 유형을 찾아드립니다</h1>
+                <p>복잡한 자격요건, 흩어진 공고문… AI가 대신 분석해서<br>나에게 맞는 주택 정보만 골라 알려드려요.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="document.getElementById('eligibility').scrollIntoView({behavior:'smooth'})">내 자격 확인하기</button>
+                    <button class="btn-secondary" onclick="document.getElementById('housing-types').scrollIntoView({behavior:'smooth'})">임대주택 유형 보기</button>
                 </div>
             </div>
         </section>
 
+        <!-- Stats Bar -->
+        <section class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-num">15가지</span>
+                <span class="stat-label">SH 임대주택 유형</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">시세 30%~</span>
+                <span class="stat-label">부터 시작하는 임대료</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">최장 30년</span>
+                <span class="stat-label">장기 거주 가능</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">무료</span>
+                <span class="stat-label">서비스 이용료</span>
+            </div>
+        </section>
+
+        <!-- Housing Types Section -->
+        <section id="housing-types" class="housing-types">
+            <div class="section-header">
+                <h2>SH공사 임대주택 15가지 유형</h2>
+                <p>내 상황에 맞는 유형을 확인하세요. 2025년 기준 정보입니다.</p>
+            </div>
+
+            <div class="type-tabs">
+                <button class="tab-btn active" data-tab="youth">청년/대학생</button>
+                <button class="tab-btn" data-tab="newlywed">신혼부부/신생아</button>
+                <button class="tab-btn" data-tab="longterm">장기전세</button>
+                <button class="tab-btn" data-tab="national">국민·공공임대</button>
+                <button class="tab-btn" data-tab="jeonse">전세지원</button>
+            </div>
+
+            <!-- 청년/대학생 -->
+            <div class="tab-content active" data-content="youth">
+                <div class="housing-grid">
+                    <div class="housing-card">
+                        <div class="card-header youth">
+                            <span class="card-tag">청년 전용</span>
+                            <h3>청년 매입임대주택</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">대상</span>
+                                <span class="info-value">만 19~39세 청년 / 대학생 / 취업준비생</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">임대료</span>
+                                <span class="info-value highlight-value">시세 30~50%</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">최장 10년</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">소득기준</span>
+                                <span class="info-value">월평균소득 100% 이하</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">자산기준</span>
+                                <span class="info-value">총자산 2·3순위 기준 상이</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 대학생·취업준비생은 보증금 100~200만원 고정 적용
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header youth">
+                            <span class="card-tag">대학생 전용</span>
+                            <h3>희망하우징</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">대상</span>
+                                <span class="info-value">서울 소재 대학교 재학생 (미혼, 무주택)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">임대료</span>
+                                <span class="info-value highlight-value">월 79,000~145,300원</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">보증금</span>
+                                <span class="info-value">109만원 (기숙사비 12만원)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">최장 6년</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">3순위 자산</span>
+                                <span class="info-value">총자산 1.04억 이하, 자동차 무소유</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 연남·공릉·내발산·정릉·갈현 등 6곳 운영
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header youth">
+                            <span class="card-tag">역세권</span>
+                            <h3>청년안심주택</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">대상</span>
+                                <span class="info-value">만 19~39세 미혼 무주택 청년</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">위치</span>
+                                <span class="info-value highlight-value">대중교통 역세권</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">1순위</span>
+                                <span class="info-value">수급자·한부모·차상위 (소득·자산 심사 없음)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">2순위</span>
+                                <span class="info-value">본인+부모 소득 100% 이하, 국민임대 자산기준</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">특징</span>
+                                <span class="info-value">민관협력, 차량 소유 허용</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 외국인 신청 불가 / 중복신청 전부 무효
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 신혼부부/신생아 -->
+            <div class="tab-content" data-content="newlywed">
+                <div class="housing-grid">
+                    <div class="housing-card">
+                        <div class="card-header newlywed">
+                            <span class="card-tag">신혼·신생아</span>
+                            <h3>신혼·신생아 매입임대Ⅰ</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">대상</span>
+                                <span class="info-value">신혼(7년이내)·신생아가구·예비신혼·한부모</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">임대료</span>
+                                <span class="info-value highlight-value">시세 30~50%</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">최장 20년</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">소득기준</span>
+                                <span class="info-value">70% 이하 (맞벌이 90%)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">자산기준</span>
+                                <span class="info-value">총자산 3.37억 이하</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 2024년 이후 출생 자녀 있으면 자녀 성년까지 계속 재계약 가능
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header newlywed">
+                            <span class="card-tag">신혼·신생아</span>
+                            <h3>신혼·신생아 매입임대Ⅱ</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">대상</span>
+                                <span class="info-value">Ⅰ형 전체 + 기타 혼인가구</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">임대료</span>
+                                <span class="info-value highlight-value">시세 60~70%</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">최장 14년</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">소득기준</span>
+                                <span class="info-value">130% 이하 (맞벌이 200%)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">자산기준</span>
+                                <span class="info-value">총자산 3.54억 이하</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 소득이 높아도 신청 가능한 신혼부부 유형
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header newlywed">
+                            <span class="card-tag">보증금 지원</span>
+                            <h3>장기안심주택</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">지원방식</span>
+                                <span class="info-value highlight-value">보증금 최대 6,000만원 무이자</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">대상주택</span>
+                                <span class="info-value">전용 85㎡이하, 전세 4.9억 이하</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">최장 10년 (2년마다 재계약)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">소득기준</span>
+                                <span class="info-value">월평균소득 100% 이하</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">부동산</span>
+                                <span class="info-value">2.155억 이하</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 1.5억 이하 주택: 보증금 50%, 최대 4,500만원 지원
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 장기전세 -->
+            <div class="tab-content" data-content="longterm">
+                <div class="housing-grid">
+                    <div class="housing-card">
+                        <div class="card-header longterm">
+                            <span class="card-tag">장기전세</span>
+                            <h3>장기전세주택 (시프트)</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">임대보증금</span>
+                                <span class="info-value highlight-value">시세 80% 이하</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">최장 20년 (2년×9회)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">소득기준</span>
+                                <span class="info-value">100% 이하 (60㎡ 초과 제한 없음)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">부동산</span>
+                                <span class="info-value">2.155억 이하</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">분양전환</span>
+                                <span class="info-value">없음</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 전용 60㎡ 초과는 소득제한 없어 고소득자도 신청 가능
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header longterm">
+                            <span class="card-tag">분양전환</span>
+                            <h3>장기전세주택2 (미리내집)</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">핵심</span>
+                                <span class="info-value highlight-value">10년 후 내 집으로 분양전환</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">임대보증금</span>
+                                <span class="info-value">시세 80% 이하</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">소득기준</span>
+                                <span class="info-value">130% 이하 (맞벌이 200%)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">총자산</span>
+                                <span class="info-value">3.54억 이하</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">가점/감점</span>
+                                <span class="info-value">5개 항목 가점 / 5년내 당첨 -3점</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 2024년 이후 출생 자녀 있으면 우선 배정
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header longterm">
+                            <span class="card-tag">자격완화</span>
+                            <h3>장기미임대</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">특징</span>
+                                <span class="info-value highlight-value">자산기준 없음, 소득만 확인</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">대상</span>
+                                <span class="info-value">6개월 이상 공실 주택</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">소득기준</span>
+                                <span class="info-value">1순위 130% 이하 / 2순위 제한없음</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">임대료</span>
+                                <span class="info-value">시세 30~70%</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">최장 4년 (2+1+1)</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 우편접수 가능 (타 유형은 인터넷 전용)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 국민·공공임대 -->
+            <div class="tab-content" data-content="national">
+                <div class="housing-grid">
+                    <div class="housing-card">
+                        <div class="card-header national">
+                            <span class="card-tag">저소득층</span>
+                            <h3>국민임대주택</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">임대료</span>
+                                <span class="info-value highlight-value">시세 60~80%</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">제한 없음 (계속 재계약)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">50㎡ 미만</span>
+                                <span class="info-value">소득 50% 이하, 총자산 3.37억</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">50~60㎡</span>
+                                <span class="info-value">소득 70% 이하, 총자산 3.37억</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 의무거주기간 없이 자격 유지 시 계속 거주 가능
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header national">
+                            <span class="card-tag">다계층</span>
+                            <h3>행복주택</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">임대료</span>
+                                <span class="info-value highlight-value">시세 60~80%</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">대상</span>
+                                <span class="info-value">대학생·청년·신혼부부·고령자·주거급여수급자</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">대학생·청년 10년 / 고령자·수급자 20년</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">소득기준</span>
+                                <span class="info-value">계층별 상이 (100~120% 이하)</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 청약저축 가입 필수 (신혼부부는 부부 중 1인)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header national">
+                            <span class="card-tag">저소득</span>
+                            <h3>일반 매입임대주택</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">1순위</span>
+                                <span class="info-value highlight-value">수급자·한부모·장애인·고령자 등</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">2순위</span>
+                                <span class="info-value">소득 50% 이하 / 장애인 100% 이하</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">총자산</span>
+                                <span class="info-value">2.37억 이하 (자녀수에 따라 가산)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">주택형</span>
+                                <span class="info-value">원룸형·다가구가형·다가구나형</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 2023.3.28 이후 출생자녀 있으면 자산기준 10~20%p 완화
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 전세지원 -->
+            <div class="tab-content" data-content="jeonse">
+                <div class="housing-grid">
+                    <div class="housing-card">
+                        <div class="card-header jeonse">
+                            <span class="card-tag">저소득 전세</span>
+                            <h3>기존주택 전세임대</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">지원방식</span>
+                                <span class="info-value highlight-value">SH가 전세계약 → 재임대</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">지원금액</span>
+                                <span class="info-value">최대 1.235억원 (입주자 5%만 부담)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value highlight-value">최장 30년</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">월임대료</span>
+                                <span class="info-value">연 1.2~2.2% (2025.7월 계약분부터)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">신청방법</span>
+                                <span class="info-value">주민센터 방문접수</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 만 65세 이상·중증장애인·1순위는 재계약 횟수 제한 없음
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header jeonse">
+                            <span class="card-tag">신혼 전세</span>
+                            <h3>신혼·신생아 전세임대Ⅱ</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">지원금액</span>
+                                <span class="info-value highlight-value">최대 1.92억 (기준 2.4억)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">보증금 한도</span>
+                                <span class="info-value">최대 6억원</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">최장 14년 (자녀 있으면 연장)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">소득기준</span>
+                                <span class="info-value">130% 이하 (맞벌이 200%)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">입주자 부담</span>
+                                <span class="info-value">전세보증금의 20%</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 인터넷 청약으로 신청 (방문접수 없음)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="housing-card">
+                        <div class="card-header jeonse">
+                            <span class="card-tag">소득무관</span>
+                            <h3>전세임대형 든든주택</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-info-row">
+                                <span class="info-label">핵심</span>
+                                <span class="info-value highlight-value">소득·자산 기준 없음</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">조건</span>
+                                <span class="info-value">서울 거주 무주택세대구성원</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">지원금액</span>
+                                <span class="info-value">최대 1.6억 (기준 2억)</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">거주기간</span>
+                                <span class="info-value">최장 8년</span>
+                            </div>
+                            <div class="card-info-row">
+                                <span class="info-label">1순위</span>
+                                <span class="info-value">신생아가구·다자녀가구(2명이상)</span>
+                            </div>
+                            <div class="card-tip">
+                                💡 의무관리대상 공동주택(대형아파트단지)은 지원 제외
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Eligibility Check Section -->
+        <section id="eligibility" class="eligibility">
+            <div class="section-header">
+                <h2>간단 자격 체크</h2>
+                <p>몇 가지만 선택하면 신청 가능한 유형을 추려드립니다.</p>
+            </div>
+            <div class="eligibility-container">
+                <div class="check-group">
+                    <label class="check-label">나는 어떤 상황인가요?</label>
+                    <div class="check-options">
+                        <button class="check-btn active" data-group="type" data-value="youth">청년 (19~39세, 미혼)</button>
+                        <button class="check-btn" data-group="type" data-value="student">대학생</button>
+                        <button class="check-btn" data-group="type" data-value="newlywed">신혼부부 (7년 이내)</button>
+                        <button class="check-btn" data-group="type" data-value="newborn">신생아가구 (2년 이내 출산)</button>
+                        <button class="check-btn" data-group="type" data-value="general">일반 가구</button>
+                    </div>
+                </div>
+                <div class="check-group">
+                    <label class="check-label">월 소득 수준은?</label>
+                    <div class="check-options">
+                        <button class="check-btn active" data-group="income" data-value="low">250만원 이하 (50%↓)</button>
+                        <button class="check-btn" data-group="income" data-value="mid">250~430만원 (100%↓)</button>
+                        <button class="check-btn" data-group="income" data-value="high">430~560만원 (130%↓)</button>
+                        <button class="check-btn" data-group="income" data-value="any">제한 없음</button>
+                    </div>
+                </div>
+                <div class="check-group">
+                    <label class="check-label">우대 대상에 해당하시나요?</label>
+                    <div class="check-options">
+                        <button class="check-btn" data-group="priority" data-value="recipient">수급자 (생계·의료·주거급여)</button>
+                        <button class="check-btn" data-group="priority" data-value="nearlow">차상위계층</button>
+                        <button class="check-btn" data-group="priority" data-value="disabled">장애인</button>
+                        <button class="check-btn active" data-group="priority" data-value="none">해당 없음</button>
+                    </div>
+                </div>
+                <div class="eligibility-result" id="eligibility-result">
+                    <h3>추천 임대주택 유형</h3>
+                    <div class="result-list" id="result-list">
+                        <div class="result-item recommended">청년 매입임대주택 <span class="result-badge">2·3순위 신청 가능</span></div>
+                        <div class="result-item recommended">청년안심주택 <span class="result-badge">2·3순위</span></div>
+                        <div class="result-item">행복주택 청년계층 <span class="result-badge secondary">청약저축 필요</span></div>
+                    </div>
+                    <button class="btn-primary" onclick="window.location.href='details.html'">정밀 분석 받기 →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison -->
         <section class="comparison">
-            <h2 data-i18n="table_h2">기존 방식 vs 내집구독</h2>
+            <div class="section-header">
+                <h2>기존 방식 vs 내집구독</h2>
+            </div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th></th>
-                            <th data-i18n="table_manual">기존의 정보 찾기</th>
-                            <th class="highlight" data-i18n="table_auto">내집구독 서비스</th>
+                            <th>기존의 정보 찾기</th>
+                            <th class="highlight">내집구독 서비스</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td data-i18n="nav_about">정보 수집</td>
-                            <td data-i18n="table_check_sites">각 공사 사이트 개별 확인 (LH, SH, GH, 청약홈)</td>
-                            <td class="highlight" data-i18n="table_check_auto">AI가 실시간으로 모든 사이트 통합 수집</td>
+                            <td>정보 수집</td>
+                            <td>SH·LH·GH·청약홈 사이트 개별 확인</td>
+                            <td class="highlight">AI가 실시간으로 모든 사이트 통합 수집</td>
                         </tr>
                         <tr>
-                            <td data-i18n="nav_subscribe">자격 판단</td>
-                            <td data-i18n="table_qual_check">공고문마다 복잡한 자격 요건 직접 계산</td>
-                            <td class="highlight" data-i18n="table_qual_auto">내 정보를 기반으로 AI가 즉시 자격 판정</td>
+                            <td>자격 판단</td>
+                            <td>공고문마다 복잡한 자격 요건 직접 계산</td>
+                            <td class="highlight">내 정보 기반으로 AI가 즉시 자격 판정</td>
                         </tr>
                         <tr>
-                            <td data-i18n="nav_faq">알림 서비스</td>
-                            <td data-i18n="table_alert">매번 직접 들어가서 확인 (기회 놓침 빈번)</td>
-                            <td class="highlight" data-i18n="table_alert_auto">맞춤 공고 발생 시 즉시 Push 알림</td>
+                            <td>알림 서비스</td>
+                            <td>매번 직접 확인 (기회 놓침 빈번)</td>
+                            <td class="highlight">맞춤 공고 발생 시 즉시 Push 알림</td>
+                        </tr>
+                        <tr>
+                            <td>유형 안내</td>
+                            <td>15가지 유형 각각의 조건 직접 비교</td>
+                            <td class="highlight">내 상황에 맞는 유형만 추려서 안내</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <section id="about" class="about">
-            <h2 data-i18n="about_h2">'내집구독'은 어떤 서비스인가요?</h2>
-            <p data-i18n="about_p">
-                서울에서 내 집 마련의 꿈, 너무 멀게만 느껴지시나요?<br>
-                장기전세주택, 임대주택, 행복주택 등 정부 지원 혜택, 정보가 부족해 놓치고 계셨다면 '내집구독'이 도와드릴게요.
-            </p>
-            <div class="features">
-                <div class="feature">
-                    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000&auto=format&fit=crop" alt="AI 기반 맞춤형 주택 정보 매칭 서비스" class="feature-img">
-                    <h3 data-i18n="feature1_h3">AI 기반 맞춤 정보</h3>
-                    <p data-i18n="feature1_p">내 직업, 연봉, 자산을 입력하면 AI가 자격 요건을 분석하여 신청 가능한 주택 정보를 실시간으로 알려드려요.</p>
+        <!-- FAQ Section -->
+        <section id="faq" class="faq-section">
+            <div class="section-header">
+                <h2>자주 묻는 질문</h2>
+                <p>SH공사 임대주택 신청 전 꼭 알아야 할 것들</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        소득이 월 300만원이면 신청 가능한 유형이 있나요?
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>2025년 기준 1인 가구 소득 100% 기준은 <strong>4,317,797원</strong>이므로 월 300만원은 100% 이하에 해당합니다. 신청 가능한 주요 유형은 다음과 같습니다:</p>
+                        <ul>
+                            <li><strong>청년 매입임대주택</strong> (2·3순위) - 시세 50% 임대료, 최장 10년</li>
+                            <li><strong>행복주택 청년계층</strong> - 시세 60~80%, 청약저축 가입 필요</li>
+                            <li><strong>청년안심주택</strong> (2순위) - 역세권 위치</li>
+                        </ul>
+                        <p>※ 자산기준(총자산 33,700만원 이하)도 함께 충족해야 합니다.</p>
+                    </div>
                 </div>
-                <div class="feature">
-                    <img src="https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=1000&auto=format&fit=crop" alt="간편한 주택 청약 신청 서류 준비 가이드" class="feature-img">
-                    <h3 data-i18n="feature2_h3">간편한 신청 준비</h3>
-                    <p data-i18n="feature2_p">복잡한 서류와 절차는 이제 그만! '내집구독'이 알려주는 대로 간편하게 신청만 하세요.</p>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        시프트(장기전세)와 미리내집의 차이가 뭔가요?
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>가장 큰 차이는 <strong>분양전환 여부</strong>입니다.</p>
+                        <ul>
+                            <li><strong>시프트</strong>: 분양전환 없음, 최장 20년 안정 거주, 소득 100% 이하 (60㎡ 초과 무제한), 부동산 2.155억 이하</li>
+                            <li><strong>미리내집</strong>: 10년 거주 후 우선 분양전환 가능, 소득 130% 이하 (맞벌이 200%), 총자산 3.54억 이하, 가점·감점제 적용</li>
+                        </ul>
+                        <p>내 집 마련이 목표라면 <strong>미리내집</strong>, 안정적인 장기 거주가 목표라면 <strong>시프트</strong>를 추천드립니다.</p>
+                    </div>
                 </div>
-                <div class="feature">
-                    <img src="https://images.unsplash.com/photo-1509822929063-6b6cfc9b42f2?q=80&w=1000&auto=format&fit=crop" alt="스마트폰 실시간 청약 공고 알림 서비스" class="feature-img">
-                    <h3 data-i18n="feature3_h3">놓치지 않는 알림</h3>
-                    <p data-i18n="feature3_p">새로운 공고가 올라오면 놓치지 않도록 바로 알려드려요. 이제 청약홈만 바라보지 않아도 괜찮아요.</p>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        신혼부부 맞벌이 소득기준이 어떻게 되나요?
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>2025년 기준 신혼부부 맞벌이 소득기준 (2인 가구 기준):</p>
+                        <ul>
+                            <li><strong>신혼·신생아 매입임대Ⅰ</strong>: 5,477,003원 이하 (90%)</li>
+                            <li><strong>신혼·신생아 매입임대Ⅱ</strong>: 11,501,706원 이하 (200%)</li>
+                            <li><strong>행복주택 신혼부부</strong>: 소득 120% 이하</li>
+                            <li><strong>장기안심주택 신혼부부 특별공급</strong>: 180% 이하</li>
+                            <li><strong>미리내집</strong>: 11,501,706원 이하 (200%)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        희망하우징은 졸업하면 퇴거해야 하나요?
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>희망하우징은 <strong>재학 중인 대학생만</strong> 신청 가능하며, 졸업·중퇴 후에는 입주자격이 유지되지 않습니다.</p>
+                        <ul>
+                            <li>최초 계약 2년, 재계약 2회(각 2년) → 최장 6년</li>
+                            <li>졸업 후에도 재학 중인 기간에 한해 입주자격 인정</li>
+                            <li>졸업 후 취업준비생이라면 → <strong>청년 매입임대주택</strong> (졸업·중퇴 후 2년 이내 미취업자) 신청 가능</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        전세임대주택은 내가 원하는 집에 살 수 있나요?
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>네, <strong>입주자가 직접 원하는 집을 물색</strong>하는 방식입니다.</p>
+                        <ol>
+                            <li>SH공사에 신청 → 입주대상자 선정</li>
+                            <li>본인이 원하는 집 직접 물색 (전용 85㎡ 이하)</li>
+                            <li>SH공사에 주택 심사 요청 (권리분석)</li>
+                            <li>SH공사·집주인·입주자 3자 계약 체결</li>
+                            <li>입주자는 보증금의 5%만 부담 (기존주택 기준)</li>
+                        </ol>
+                        <p>※ 기존주택 전세임대는 <strong>주민센터 방문접수</strong>, 신혼·신생아 전세임대는 <strong>인터넷 청약</strong></p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        든든주택은 소득·자산 기준이 없다고요?
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>네, <strong>전세임대형 든든주택은 소득·자산 기준이 없습니다.</strong> 단, 아래 조건은 반드시 충족해야 합니다:</p>
+                        <ul>
+                            <li>서울특별시에 주민등록이 등재된 무주택세대구성원</li>
+                        </ul>
+                        <p>순위는 있습니다: 1순위 (신생아·다자녀) → 2순위 (신혼·예비신혼) → 3순위 (일반)</p>
+                        <p>⚠️ 「공동주택관리법」상 의무관리대상 공동주택(대형 아파트 단지)은 지원 제외됩니다.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        장기미임대 주택은 왜 자산기준이 없나요?
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>6개월 이상 공실인 주택에 대해 <strong>입주자격을 완화</strong>하여 모집하는 특수 유형이기 때문입니다.</p>
+                        <ul>
+                            <li>총자산·자동차 기준 비적용</li>
+                            <li>소득기준만 적용: 1순위 130% 이하, 2순위 130% 초과도 가능</li>
+                            <li>거주기간: 최장 4년 (2+1+1)</li>
+                            <li>타 유형과 달리 <strong>우편접수도 가능</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        수급자·차상위계층이면 어디에 1순위로 신청 가능한가요?
+                        <span class="faq-arrow">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>수급자(생계·의료급여)·차상위계층은 거의 모든 유형에서 1순위 혜택을 받습니다:</p>
+                        <ul>
+                            <li><strong>청년 매입임대</strong>: 1순위, 시세 30% 임대료</li>
+                            <li><strong>희망하우징</strong>: 1순위</li>
+                            <li><strong>청년안심주택</strong>: 1순위 (소득·자산 심사 없음)</li>
+                            <li><strong>신혼·신생아 매입임대</strong>: 가점 2~3점 부여</li>
+                            <li><strong>기존주택 전세임대</strong>: 1순위</li>
+                            <li><strong>일반 매입임대</strong>: 1순위</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
 
+        <!-- Subscribe Section -->
         <section id="subscribe" class="subscribe">
-            <h2 data-i18n="subscribe_h2">지금 바로 구독하고 내집마련의 꿈을 현실로!</h2>
-            <p data-i18n="subscribe_p">이메일과 핸드폰 번호를 입력해주시면, 맞춤형 주택 정보를 보내드립니다.</p>
+            <h2>맞춤 공고가 뜨면 바로 알려드릴게요</h2>
+            <p>이메일과 핸드폰 번호만 입력하면 내 자격에 맞는 SH 임대주택 공고를 놓치지 않습니다.</p>
             <form id="subscribe-form">
-                <input type="email" id="input-email" placeholder="이메일 주소" required data-i18n-placeholder="form_email">
-                <input type="tel" id="input-phone" placeholder="핸드폰 번호" required data-i18n-placeholder="form_phone">
+                <input type="email" id="input-email" placeholder="이메일 주소" required>
+                <input type="tel" id="input-phone" placeholder="핸드폰 번호" required>
                 <div class="form-buttons">
-                    <button type="submit" data-i18n="form_btn">맞춤 정보 받기</button>
-                    <button type="button" id="btn-experience" data-i18n="form_exp_btn">체험하기</button>
+                    <button type="submit">맞춤 공고 받기</button>
+                    <button type="button" id="btn-experience">상세 자격 체크 →</button>
                 </div>
             </form>
         </section>
 
-        <section id="faq" class="faq">
-            <h2 data-i18n="faq_h2">자주 묻는 질문</h2>
-            <div class="faq-container">
-                <div class="faq-item">
-                    <h3 data-i18n="faq_q1">행복주택과 청년주택의 차이가 무엇인가요?</h3>
-                    <p data-i18n="faq_a1">행복주택은 정부와 공기업(LH, SH)에서 공급하는 저렴한 임대주택이며, 역세권 청년주택은 역세권 근처에 청년과 신혼부부를 위해 특별히 공급되는 주택입니다. 내집구독은 이 모든 공고를 실시간으로 분류해 드립니다.</p>
-                </div>
-                <div class="faq-item">
-                    <h3 data-i18n="faq_q2">신청 자격이 어떻게 되나요?</h3>
-                    <p data-i18n="faq_a2">나이, 소득, 자산 등 조건에 따라 달라집니다. 내집구독 서비스를 이용하시면 본인의 데이터를 바탕으로 신청 가능한 공고만 자동으로 매칭해 드립니다.</p>
-                </div>
-            </div>
-        </section>
-
+        <!-- Reviews -->
         <section id="reviews" class="reviews">
-            <h2 data-i18n="reviews_h2">사용자 후기</h2>
-            <p data-i18n="reviews_p">'내집구독'을 통해 내 집 마련의 꿈을 이룬 분들의 생생한 후기를 확인해보세요.</p>
+            <div class="section-header">
+                <h2>사용자 후기</h2>
+                <p>'내집구독'을 통해 내 집 마련의 꿈을 이룬 분들의 생생한 후기</p>
+            </div>
             <div id="disqus_thread"></div>
             <script>
-                (function() { // DON'T EDIT BELOW THIS LINE
+                (function() {
                 var d = document, s = d.createElement('script');
                 s.src = 'https://https-week1-343-pages-dev-reviews.disqus.com/embed.js';
                 s.setAttribute('data-timestamp', +new Date());
@@ -192,22 +857,33 @@
             <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         </section>
 
+        <!-- Contact -->
         <section id="contact" class="contact">
-            <h2 data-i18n="contact_h2">제휴 및 서비스 문의</h2>
-            <p data-i18n="contact_p">내집구독과 함께하고 싶은 파트너분들의 연락을 기다립니다.</p>
+            <h2>제휴 및 서비스 문의</h2>
+            <p>내집구독과 함께하고 싶은 파트너분들의 연락을 기다립니다.</p>
             <form action="https://formspree.io/f/xnjbwzvq" method="POST" class="contact-form">
-                <input type="text" name="name" placeholder="성함/업체명" required data-i18n-placeholder="contact_name">
-                <input type="email" name="_replyto" placeholder="이메일 주소" required data-i18n-placeholder="contact_email">
-                <textarea name="message" placeholder="문의 내용" required data-i18n-placeholder="contact_message"></textarea>
-                <button type="submit" data-i18n="contact_btn">문의 보내기</button>
+                <input type="text" name="name" placeholder="성함/업체명" required>
+                <input type="email" name="_replyto" placeholder="이메일 주소" required>
+                <textarea name="message" placeholder="문의 내용" required></textarea>
+                <button type="submit">문의 보내기</button>
             </form>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2024 <span data-i18n="logo">내집구독</span>. <span data-i18n="footer_rights">All rights reserved.</span></p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo">내집구독</div>
+                <p>서울 2030 청년을 위한 AI 주택 정보 서비스</p>
+            </div>
+            <div class="footer-info">
+                <p>※ 본 서비스의 모든 정보는 2025년 기준이며, 통계청 발표에 따라 변동될 수 있습니다.</p>
+                <p>최종 확인: <strong>SH공사 홈페이지</strong> i-sh.co.kr | 콜센터 <strong>1600-3456</strong></p>
+            </div>
+        </div>
+        <p class="footer-copy">&copy; 2025 내집구독. All rights reserved.</p>
     </footer>
 
-    <script defer type="text/javascript" src="/main.js"></script>
+    <script defer src="/main.js"></script>
 </body>
 </html>
