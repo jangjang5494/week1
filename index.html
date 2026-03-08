@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="월세 걱정 그만. 나에게 맞는 SH공사 임대주택 유형을 3분 만에 정밀 분석해드립니다.">
+<meta name="description" content="월세 걱정 그만. SH·LH 임대주택 28가지 유형 중 내 자격에 맞는 것만 3분 만에 정밀 분석해드립니다.">
 <meta name="robots" content="index, follow">
 <meta name="google-site-verification" content="rqIhJzvhTUHAjP7r3ooQbsgmkX-qnbpNbNu55FXmaFE" />
 <meta name="naver-site-verification" content="bfe899e4b329b7fa66fb91125608f65bde02dc54" />
 <link rel="canonical" href="https://jangjang5494.github.io/week1/">
-<meta property="og:title" content="내집구독 — 나에게 맞는 임대주택 바로 찾기">
-<meta property="og:description" content="월세 걱정 그만. SH공사 임대주택을 내 자격에 맞게 정밀 분석해드립니다.">
+<meta property="og:title" content="내집구독 — SH·LH 임대주택 28가지 유형 정밀 분석">
+<meta property="og:description" content="월세 걱정 그만. SH·LH 임대주택 28가지 유형 중 내 자격에 맞는 것만 골라드립니다.">
 <meta property="og:image" content="https://images.unsplash.com/photo-1560518883-ce09059ee41f?q=80&w=1200&auto=format&fit=crop">
 <title>내집구독 — 나에게 맞는 임대주택 바로 찾기</title>
 <style>
@@ -421,7 +421,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 <!-- S3 ── 혼란 (word rain) -->
 <section class="scene" id="s3">
   <div class="s3-intro" id="s3intro">
-    <div class="s3-intro-text">그래서 임대주택을 찾아봤습니다.<br><em>유형만 15가지.</em></div>
+    <div class="s3-intro-text">그래서 임대주택을 찾아봤습니다.<br><em>SH·LH 합치면 무려 28가지.</em></div>
   </div>
   <div id="s3-rain">
     <div class="s3-head">
@@ -442,7 +442,7 @@ html,body{width:100%;height:100%;overflow:hidden;
     <div class="s4-cards">
       <div class="s4-card">
         <span class="s4-icon">🎯</span>
-        <div><div class="s4-ct">내 자격에 맞는 유형만 골라드려요</div><div class="s4-cd">나이·소득·자산·혼인 여부 입력하면 지원 가능한 유형만 필터링해드립니다</div></div>
+        <div><div class="s4-ct">내 자격에 맞는 유형만 골라드려요</div><div class="s4-cd">SH·LH 28가지 유형 중 나이·소득·자산·혼인 여부로 지원 가능한 것만 필터링해드립니다</div></div>
       </div>
       <div class="s4-card">
         <span class="s4-icon">📊</span>
@@ -589,11 +589,16 @@ function initS2(){
    S3 — Word Rain
 ════════════════════════════ */
 const WORDS=[
-  {t:'청년 매입임대',sz:28},{t:'희망하우징',sz:32},{t:'청년안심주택',sz:26},
-  {t:'행복주택',sz:36},{t:'시프트',sz:30},{t:'미리내집',sz:29},
-  {t:'국민임대',sz:32},{t:'영구임대',sz:26},{t:'전세임대',sz:30},
-  {t:'신혼매입Ⅰ',sz:27},{t:'신혼매입Ⅱ',sz:27},{t:'장기안심주택',sz:25},
-  {t:'든든주택',sz:29},{t:'일반매입임대',sz:25},{t:'통합공공임대',sz:27},
+  // 공통 유형 (SH·LH 모두)
+  {t:'행복주택',sz:36},{t:'국민임대',sz:34},{t:'청년 매입임대',sz:28},
+  {t:'신혼매입Ⅰ',sz:28},{t:'신혼매입Ⅱ',sz:28},{t:'전세임대',sz:30},
+  {t:'든든주택',sz:30},{t:'일반매입임대',sz:26},{t:'영구임대',sz:28},
+  // SH 전용
+  {t:'희망하우징',sz:32},{t:'청년안심주택',sz:27},{t:'시프트',sz:31},
+  {t:'미리내집',sz:30},{t:'장기안심주택',sz:26},{t:'장기미임대',sz:26},
+  // LH 전용
+  {t:'통합공공임대',sz:28},{t:'기숙사형청년',sz:26},{t:'집주인임대',sz:27},
+  {t:'고령자매입',sz:27},{t:'청년전세임대',sz:27},
 ];
 const COLORS=['rgba(255,255,255,.9)','#7dd3fc','#a78bfa','#fbbf24','#86efac','#fca5a5','#c4b5fd','#6ee7b7','rgba(255,255,255,.75)'];
 const FACES=['🤔','😐','😵','🤯','😵‍💫'];
@@ -603,9 +608,9 @@ function initS3(){
   qt(()=>{$('s3intro').classList.remove('show');$('s3intro').classList.add('hide')},2100);
   qt(()=>{
     $('s3-rain').classList.add('show');
-    WORDS.forEach((w,i)=>qt(()=>dropWord(w,i),i*280));
+    WORDS.forEach((w,i)=>qt(()=>dropWord(w,i),i*160));
   },2600);
-  qt(()=>$('s3-gu').classList.add('show'),2600+(WORDS.length-1)*280+900);
+  qt(()=>$('s3-gu').classList.add('show'),2600+(WORDS.length-1)*160+700);
 }
 
 function dropWord({t,sz},i){
@@ -621,13 +626,13 @@ function dropWord({t,sz},i){
   el.style.fontSize=sz+'px';
   const rot=(Math.random()-.5)*32;
   el.style.setProperty('--r',rot+'deg');
-  el.style.setProperty('--dur',(0.42+Math.random()*.18)+'s');
+  el.style.setProperty('--dur',(0.26+Math.random()*.12)+'s');
   el.style.color=COLORS[i%COLORS.length];
   el.style.zIndex=i;
   rain.appendChild(el);
   requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('go')));
   // Update face
-  const fi=Math.floor((i+1)/3);
+  const fi=Math.floor((i+1)/4);
   if(fi<FACES.length){
     const face=$('s3-face');
     face.textContent=FACES[fi];
