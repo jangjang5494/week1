@@ -1,7 +1,18 @@
 {
-  "updated": "2026-03-08",
-  "count": 9,
+  "updated": "2026-03-09",
+  "count": 10,
   "announcements": [
+    {
+      "seq": "301327",
+      "title": "NEW  [청년형] 특화형 매입임대주택(강동구) 입주자 모집 공고(운영기관 : 협동조합 큰바위얼굴)",
+      "date": "2026-03-09",
+      "types": [
+        "청년 매입임대주택",
+        "일반 매입임대주택"
+      ],
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301327&multi_itm_seq=2",
+      "status": "확인필요"
+    },
     {
       "seq": "301179",
       "title": "[청년형] 특화형 매입임대주택(금천구) 입주자 모집 공고(운영기관 : 한지붕 협동조합)",
