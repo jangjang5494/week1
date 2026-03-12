@@ -1,6 +1,6 @@
 {
-  "updated": "2026-03-11",
-  "count": 10,
+  "updated": "2026-03-12",
+  "count": 9,
   "announcements": [
     {
       "seq": "301327",
@@ -36,14 +36,14 @@
       "status": "확인필요"
     },
     {
-      "seq": "301224",
+      "seq": "301537",
       "title": "2026년 1차 장기미임대 매입임대주택 입주자모집공고(2026.02.27.)",
       "date": "2026-02-27",
       "types": [
         "장기미임대",
         "일반 매입임대주택"
       ],
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301224&multi_itm_seq=2",
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301537&multi_itm_seq=2",
       "status": "예정",
       "apply_start": "2026-03-18",
       "apply_end": "2026-03-20"
@@ -103,16 +103,6 @@
       "status": "예정",
       "apply_start": "2026-03-23",
       "apply_end": "2026-05-22"
-    },
-    {
-      "seq": "300344",
-      "title": "[토지지원 사회주택] 경성리츠(미아동 374-11) 입주자 모집 공고",
-      "date": "2026-02-09",
-      "types": [
-        "기타"
-      ],
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=300344&multi_itm_seq=2",
-      "status": "확인필요"
     }
   ]
 }
