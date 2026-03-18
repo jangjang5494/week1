@@ -1,7 +1,29 @@
 {
-  "updated": "2026-03-17",
-  "count": 7,
+  "updated": "2026-03-18",
+  "count": 9,
   "announcements": [
+    {
+      "seq": "301783",
+      "title": "[토지지원 사회주택] 유니버설디자인하우스 망우 입주자 모집공고",
+      "date": "2026-03-17",
+      "types": [
+        "기타"
+      ],
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301783&multi_itm_seq=2",
+      "status": "진행중",
+      "apply_start": "2026-03-13",
+      "apply_end": "2026-03-22"
+    },
+    {
+      "seq": "301734",
+      "title": "[토지지원 사회주택] 경성리츠 입주자 모집 공고",
+      "date": "2026-03-16",
+      "types": [
+        "기타"
+      ],
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301734&multi_itm_seq=2",
+      "status": "확인필요"
+    },
     {
       "seq": "301327",
       "title": "[청년형] 특화형 매입임대주택(강동구) 입주자 모집 공고(운영기관 : 협동조합 큰바위얼굴)",
@@ -44,7 +66,7 @@
         "일반 매입임대주택"
       ],
       "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301759&multi_itm_seq=2",
-      "status": "예정",
+      "status": "진행중",
       "apply_start": "2026-03-18",
       "apply_end": "2026-03-20"
     },
