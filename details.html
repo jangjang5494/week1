@@ -105,6 +105,11 @@
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
 
+        /* 거주 지역 cascade */
+        .region-district-wrap { margin-top: 0.7rem; }
+        .region-district-wrap select { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--input-border, #e5e7eb); border-radius: 10px; background: var(--input-bg, #f9fafb); color: var(--text-color, #111); font-size: 0.95rem; box-sizing: border-box; margin-top: 0.5rem; }
+        .region-district-wrap select:focus { outline: none; border-color: var(--primary-color, #4f46e5); }
+
         /* Nav buttons */
         .nav-btns { display: flex; gap: 1rem; margin-top: 1rem; }
         .btn-prev { padding: 0.8rem 1.8rem; border: 1.5px solid var(--input-border, #e5e7eb); border-radius: 10px; background: transparent; cursor: pointer; font-size: 0.95rem; color: var(--text-color, #111); font-weight: 600; }
@@ -301,13 +306,18 @@
                 </div>
                 <div class="fg">
                     <div class="fg-label-row">
-                        <label>현재 서울 거주 여부</label>
+                        <label>거주 지역</label>
                     </div>
-                    <div class="toggle-group" id="tg-seoul">
-                        <button class="toggle-btn selected" data-val="yes">예, 서울 거주</button>
-                        <button class="toggle-btn" data-val="no">아니오</button>
+                    <div class="toggle-group" id="tg-region">
+                        <button class="toggle-btn selected" data-val="seoul">서울</button>
+                        <button class="toggle-btn" data-val="gyeonggi">경기</button>
+                        <button class="toggle-btn" data-val="incheon">인천</button>
                     </div>
-                    <p class="hint">주민등록등본상 서울 주소 기준</p>
+                    <div class="region-district-wrap" id="district-wrapper">
+                        <select id="district-city"><option value="">-- 구·시 선택 --</option></select>
+                        <select id="district-gu" style="display:none;"><option value="">-- 구 선택 (선택사항) --</option></select>
+                    </div>
+                    <p class="hint">주민등록등본상 주소 기준</p>
                 </div>
             </div>
 
@@ -337,7 +347,7 @@
                     </select>
                     <p class="hint">주택을 마지막으로 처분하거나 세대 분리한 날부터 계산</p>
                 </div>
-                <div class="fg">
+                <div class="fg" id="seoul-years-wrap">
                     <div class="fg-label-row">
                         <label>서울 거주 기간 (만 19세 이후)</label>
                         <button class="info-btn" onclick="openHelp('seoul_years')">ℹ 상세보기</button>
@@ -808,6 +818,46 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// ===== 거주 지역 cascade =====
+const DISTRICTS = {
+    seoul: ['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],
+    incheon: ['계양구','남동구','동구','미추홀구','부평구','서구','연수구','중구','강화군','옹진군'],
+    gyeonggi: ['가평군','고양시','과천시','광명시','광주시','구리시','군포시','김포시','남양주시','동두천시','부천시','성남시','수원시','시흥시','안산시','안성시','안양시','양주시','양평군','여주시','연천군','오산시','용인시','의왕시','의정부시','이천시','파주시','평택시','포천시','하남시','화성시']
+};
+const GU_BY_CITY = {
+    '고양시': ['덕양구','일산동구','일산서구'],
+    '성남시': ['수정구','중원구','분당구'],
+    '수원시': ['장안구','권선구','팔달구','영통구'],
+    '안산시': ['상록구','단원구'],
+    '안양시': ['만안구','동안구'],
+    '용인시': ['처인구','기흥구','수지구'],
+};
+function updateDistrictUI() {
+    const region = getToggle('tg-region');
+    const citySelect = document.getElementById('district-city');
+    const guSelect = document.getElementById('district-gu');
+    const seoulYrsWrap = document.getElementById('seoul-years-wrap');
+    const list = DISTRICTS[region] || [];
+    const label = region === 'seoul' ? '구 선택' : region === 'incheon' ? '구·군 선택' : '시·군 선택';
+    citySelect.innerHTML = `<option value="">-- ${label} --</option>` + list.map(d => `<option value="${d}">${d}</option>`).join('');
+    guSelect.style.display = 'none';
+    guSelect.innerHTML = '<option value="">-- 구 선택 (선택사항) --</option>';
+    if (seoulYrsWrap) seoulYrsWrap.style.display = region === 'seoul' ? '' : 'none';
+}
+document.getElementById('district-city').addEventListener('change', function() {
+    const region = getToggle('tg-region');
+    const guSelect = document.getElementById('district-gu');
+    if (region === 'gyeonggi') {
+        const gus = GU_BY_CITY[this.value];
+        if (gus) {
+            guSelect.innerHTML = '<option value="">-- 구 선택 (선택사항) --</option>' + gus.map(g => `<option value="${g}">${g}</option>`).join('');
+            guSelect.style.display = '';
+        } else {
+            guSelect.style.display = 'none';
+        }
+    }
+});
+
 // ===== 공고 데이터 로딩 =====
 let announcementsData = [];
 fetch('announcements.json')
@@ -838,9 +888,12 @@ document.querySelectorAll('.toggle-group').forEach(group => {
         btn.addEventListener('click', () => {
             group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
+            if (group.id === 'tg-region') updateDistrictUI();
         });
     });
 });
+// 초기 실행
+updateDistrictUI();
 function getToggle(id) {
     const btn = document.querySelector(`#${id} .toggle-btn.selected`);
     return btn ? btn.dataset.val : null;
@@ -1308,11 +1361,16 @@ function incomeLimit(pct, size) {
 
 // ===== Analysis Engine =====
 function runAnalysis() {
-    const age         = parseInt(document.getElementById('age').value) || 0;
-    const seoulRes    = getToggle('tg-seoul') === 'yes';
-    const homeless    = getToggle('tg-homeless') === 'yes';
-    const homelessYrs = parseInt(document.getElementById('homeless-years').value) || 0;
-    const seoulYrs    = parseInt(document.getElementById('seoul-years').value) || 0;
+    const age          = parseInt(document.getElementById('age').value) || 0;
+    const region       = getToggle('tg-region') || 'seoul';
+    const district     = document.getElementById('district-city').value;
+    const guDistrict   = document.getElementById('district-gu').value;
+    const seoulRes     = region === 'seoul';
+    const gyeonggiRes  = region === 'gyeonggi';
+    const incheonRes   = region === 'incheon';
+    const homeless     = getToggle('tg-homeless') === 'yes';
+    const homelessYrs  = parseInt(document.getElementById('homeless-years').value) || 0;
+    const seoulYrs     = parseInt(document.getElementById('seoul-years').value) || 0;
     const marital     = getToggle('tg-marital') || 'single';
     const hhSize      = parseInt(document.getElementById('household-size').value) || 1;
     const childCnt    = parseInt(document.getElementById('children-count').value) || 0;
@@ -1363,9 +1421,11 @@ function runAnalysis() {
     }
 
     const baseOk = seoulRes && homeless;
-    const baseOk_lh = homeless; // LH는 전국 대상 (서울 거주 불필요)
-    const baseOk_gh = homeless; // GH는 경기 대상 (전국 신청 가능, 경기 거주 우선)
-    const baseOk_ih = homeless; // iH는 인천 대상 (전국 신청 가능, 인천 거주 우선)
+    const baseOk_lh = homeless;                   // LH 전국 대상
+    const baseOk_gh = homeless;                   // GH 전국 신청 가능 (경기 거주 우선)
+    const baseOk_ih = homeless;                   // iH 전국 신청 가능 (인천 거주 우선)
+    const ghPriority = gyeonggiRes;               // 경기 거주 시 GH 우선순위 가점
+    const ihPriority = incheonRes;                // 인천 거주 시 iH 우선순위 가점
 
     // 1. 장기전세주택 (시프트)
     {
@@ -1875,6 +1935,7 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_gh) r.push('무주택 필요');
+        if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
         const isYouthElig = isYouth && (!isMarried || singleParent);
         if (!isYouthElig) r.push('만 19~39세 미혼(또는 한부모) 필요');
         const aOk = totalAssets <= 27300, carOk = carVal <= 4563;
@@ -1882,7 +1943,7 @@ function runAnalysis() {
         if (!carOk) r.push(`자동차 4,563만원 이하`);
         let eligible = false, rank = '';
         if (baseOk_gh && isYouthElig && aOk && carOk) {
-            if (under(80)) { eligible = true; rank = '1순위 (소득 80% 이하)'; }
+            if (under(80)) { eligible = true; rank = ghPriority ? '1순위 (소득 80% 이하, 경기거주)' : '1순위 (소득 80% 이하)'; }
             else if (under(100)) { eligible = true; rank = '2순위 (소득 100% 이하)'; }
             else r.push('소득 100% 이하 필요');
         }
@@ -1893,6 +1954,7 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_gh) r.push('무주택 세대구성원 필요');
+        if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
         const grp = isNewlywedStrict || infant || (youngChild && isMarried) || (singleParent && youngChild);
         if (!grp) r.push('혼인 7년 이내 신혼(또는 예비신혼) 또는 신생아 가구 필요');
         const aOk = totalAssets <= 34500, carOk = carVal <= 4563;
@@ -1911,6 +1973,7 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_gh) r.push('무주택 세대구성원 필요');
+        if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
         const aOk = totalAssets <= 33700, carOk = carVal <= 3803;
         if (!aOk) r.push(`총자산 33,700만원 이하 (현재 ${totalAssets}만원)`);
         if (!carOk) r.push(`자동차 3,803만원 이하`);
@@ -1928,6 +1991,7 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_gh) r.push('무주택 세대구성원 필요');
+        if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
         const aOk = totalAssets <= 34500, carOk = carVal <= 3708;
         if (!aOk) r.push(`총자산 34,500만원 이하 (현재 ${totalAssets}만원)`);
         if (!carOk) r.push(`자동차 3,708만원 이하`);
@@ -1946,6 +2010,7 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_ih) r.push('무주택 필요');
+        if (!ihPriority) r.push('※ 인천 거주자 우선 (비인천 거주도 신청 가능, 가점 불이익)');
         const isYouthElig = isYouth && (!isMarried || singleParent);
         if (!isYouthElig) r.push('만 19~39세 미혼(또는 한부모) 필요');
         const aOk = totalAssets <= 25400, carOk = carVal <= 4563;
@@ -1964,6 +2029,7 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_ih) r.push('무주택 세대구성원 필요');
+        if (!ihPriority) r.push('※ 인천 거주자 우선 (비인천 거주도 신청 가능, 가점 불이익)');
         const grp = isNewlywedStrict || infant || (youngChild && isMarried);
         if (!grp) r.push('혼인 7년 이내 신혼(또는 예비신혼) 또는 신생아 가구 필요');
         const aOk = totalAssets <= 34500, carOk = carVal <= 4563;
@@ -1992,6 +2058,7 @@ function runAnalysis() {
             else if (under(70)) { eligible = true; rank = '3순위 (소득 70% 이하)'; }
             else r.push('소득 70% 이하 필요');
         }
+        if (!ihPriority) r.push('※ 인천 거주자 우선 (비인천 거주도 신청 가능, 가점 불이익)');
         add('iH 인천 국민임대', eligible, rank, '시세 60~80%', '제한 없음', 'national', r, 'iH', 'rental');
     }
 
@@ -2372,7 +2439,7 @@ function runAnalysis() {
     const maritalLabel = { single:'미혼', prenuptial:'예비신혼', newlywed:'신혼(7년이내)', married:'기혼(7년초과)', divorced:'이혼/사별' };
     const summaryItems = [
         { label: `만 ${age}세`, highlight: false },
-        { label: seoulRes ? '서울 거주' : '비서울', highlight: seoulRes },
+        { label: seoulRes ? `서울 ${district||''}`.trim() : gyeonggiRes ? `경기 ${district||''}${guDistrict?' '+guDistrict:''}`.trim() : `인천 ${district||''}`.trim(), highlight: true },
         { label: homeless ? '무주택' : '유주택', highlight: homeless },
         { label: maritalLabel[marital] || marital, highlight: false },
         { label: `${hhSize}인 가구`, highlight: false },
