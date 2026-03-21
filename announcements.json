@@ -1,16 +1,26 @@
 {
-  "updated": "2026-03-20",
+  "updated": "2026-03-21",
   "count": 11,
   "announcements": [
     {
       "seq": "301893",
-      "title": "NEW  [청년형] 특화형 매입임대주택(구로구) 입주자 모집 공고(운영기관 : 사단법인 길가온복지회)",
+      "title": "[청년형] 특화형 매입임대주택(구로구) 입주자 모집 공고(운영기관 : 사단법인 길가온복지회)",
       "date": "2026-03-20",
       "types": [
         "청년 매입임대주택",
         "일반 매입임대주택"
       ],
       "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301893&multi_itm_seq=2",
+      "status": "확인필요"
+    },
+    {
+      "seq": "301949",
+      "title": "[토지지원 사회주택] 함께주택 성산 입주자 모집공고",
+      "date": "2026-03-20",
+      "types": [
+        "기타"
+      ],
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301949&multi_itm_seq=2",
       "status": "확인필요"
     },
     {
@@ -90,19 +100,6 @@
       ],
       "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301178&multi_itm_seq=2",
       "status": "확인필요"
-    },
-    {
-      "seq": "301759",
-      "title": "2026년 1차 장기미임대 매입임대주택 입주자모집공고(2026.02.27.)",
-      "date": "2026-02-27",
-      "types": [
-        "장기미임대",
-        "일반 매입임대주택"
-      ],
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301759&multi_itm_seq=2",
-      "status": "진행중",
-      "apply_start": "2026-03-18",
-      "apply_end": "2026-03-20"
     },
     {
       "seq": "301016",
