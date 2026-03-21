@@ -614,6 +614,51 @@
                 </select>
                 <p class="hint">행복주택·청년매입임대 가점에 영향. 청약저축 통장 앱에서 확인 가능</p>
             </div>
+
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>세대주 여부</label>
+                </div>
+                <div class="toggle-group" id="tg-household-head">
+                    <button class="toggle-btn selected" data-val="no">세대주 아님</button>
+                    <button class="toggle-btn" data-val="yes">세대주</button>
+                </div>
+                <p class="hint">청년 버팀목 전세자금, 디딤돌 대출 신청 필요 조건</p>
+            </div>
+
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>청약저축 납입금액</label>
+                </div>
+                <div class="toggle-group" id="tg-sub-amount">
+                    <button class="toggle-btn selected" data-val="none">없음</button>
+                    <button class="toggle-btn" data-val="under600">600만원 미만</button>
+                    <button class="toggle-btn" data-val="over600">600만원 이상</button>
+                </div>
+                <p class="hint">생애최초 특별공급 신청 시 600만원 이상 필요</p>
+            </div>
+
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>생애 최초 주택 구매 (세대원 전원)</label>
+                </div>
+                <div class="toggle-group" id="tg-life-first">
+                    <button class="toggle-btn selected" data-val="no">과거 주택 소유 이력 있음</button>
+                    <button class="toggle-btn" data-val="yes">세대원 전원 과거 주택 미소유</button>
+                </div>
+                <p class="hint">생애최초 특별공급 핵심 요건</p>
+            </div>
+
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>근로자/자영업자 소득세 5년 이상 납부</label>
+                </div>
+                <div class="toggle-group" id="tg-tax5">
+                    <button class="toggle-btn selected" data-val="no">해당 없음</button>
+                    <button class="toggle-btn" data-val="yes">5년 이상 납부 (직장인·사업자)</button>
+                </div>
+                <p class="hint">생애최초 특별공급 추가 요건</p>
+            </div>
         </div>
 
         <div class="nav-btns">
@@ -633,6 +678,15 @@
         <div class="summary-card" id="summary-card">
             <div class="summary-title">분석 조건 요약</div>
             <div class="summary-chips" id="summary-chips"></div>
+        </div>
+
+        <!-- 카테고리 필터 탭 -->
+        <div class="filter-tabs" id="cat-filter-tabs" style="margin-bottom:0.5rem;">
+            <button class="filter-tab active" data-cat="ALL">전체</button>
+            <button class="filter-tab" data-cat="rental">임대주택</button>
+            <button class="filter-tab" data-cat="sale">공공분양</button>
+            <button class="filter-tab" data-cat="finance">금융지원</button>
+            <button class="filter-tab" data-cat="welfare">주거복지</button>
         </div>
 
         <!-- 기관별 필터 탭 -->
@@ -717,19 +771,42 @@ function toggleIneligible() {
 // ===== 기관별 필터 =====
 let _allEligibleCards = [];
 let _currentFilter = 'ALL';
+let _currentCatFilter = 'ALL';
 function filterResults(inst) {
     _currentFilter = inst;
-    document.querySelectorAll('.filter-tab').forEach(t => {
+    document.querySelectorAll('#filter-tabs .filter-tab').forEach(t => {
         t.classList.toggle('active', t.dataset.inst === inst);
     });
     const grid = document.getElementById('grid-eligible');
-    const visible = inst === 'ALL' ? _allEligibleCards : _allEligibleCards.filter(c => c.inst === inst);
+    const visible = _allEligibleCards.filter(c => {
+        const instMatch = inst === 'ALL' || c.inst === inst;
+        const catMatch = _currentCatFilter === 'ALL' || c.catGroup === _currentCatFilter;
+        return instMatch && catMatch;
+    });
     document.getElementById('count-eligible').textContent = visible.length;
     document.getElementById('eligible-count-badge').textContent = `신청 가능 유형 ${visible.length}가지` + (inst !== 'ALL' ? ` (${inst})` : '');
     grid.innerHTML = visible.length
         ? visible.map(c => c.html).join('')
-        : `<div class="result-card ineligible"><div class="result-card-name">${inst} 기관에서 신청 가능한 유형이 없습니다.</div></div>`;
+        : `<div class="result-card ineligible"><div class="result-card-name">해당 조건의 신청 가능한 유형이 없습니다.</div></div>`;
+    // 미충족 카드도 같은 필터 적용
+    document.querySelectorAll('.result-card.ineligible').forEach(el => {
+        const inst_ = el.dataset.inst || '';
+        const cat_ = el.dataset.catGroup || '';
+        const instMatch = inst === 'ALL' || inst_ === inst;
+        const catMatch = _currentCatFilter === 'ALL' || cat_ === _currentCatFilter;
+        el.style.display = (instMatch && catMatch) ? '' : 'none';
+    });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#cat-filter-tabs .filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            _currentCatFilter = tab.dataset.cat;
+            document.querySelectorAll('#cat-filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === _currentCatFilter));
+            filterResults(_currentFilter);
+        });
+    });
+});
 
 // ===== 공고 데이터 로딩 =====
 let announcementsData = [];
@@ -1214,13 +1291,13 @@ function closeHelpDirect() {
 
 // ===== Income thresholds (2025, 원) =====
 const INC = {
-    50:  [2518715, 3286202, 3813487, 4289044, 4515524, 4866543, 5217562],
-    70:  [3238348, 4381602, 5338881, 6004662, 6321734, 6813160, 7304587],
-    80:  [null,    4929303, 6101578, 6862470, 7224838, 7786469, null],
-    90:  [null,    5477003, 6864276, 7720279, 8127943, 8759777, null],
-    100: [4317797, 6024703, 7626973, 8578088, 9031048, 9733086, 10435124],
-    130: [5397246, 7667804, 9915065, 11151514, 11740362, 12653012, null],
-    200: [null,    11501706,15253946, 17156176, 18062096, 19466172, null]
+    50:  [2288018, 3226449, 4084215, 4401101, 4663493, 4953132, 5242771],
+    70:  [3203225, 4517028, 5717900, 6161541, 6528890, 6934384, 7339879],
+    80:  [null,    5162318, 6534743, 7041762, 7461588, 7925010, null],
+    90:  [null,    5807607, 7351586, 7921982, 8394287, 8915637, null],
+    100: [4576036, 6452897, 8168429, 8802202, 9326985, 9906263, 10485541],
+    130: [5948847, 8388766, 10618958, 11442863, 12125081, 12878142, null],
+    200: [null,    12905794, 16336858, 17604404, 18653970, 19812526, null]
 };
 
 function incomeLimit(pct, size) {
@@ -1254,6 +1331,10 @@ function runAnalysis() {
     const disabled      = getToggle('tg-disabled') === 'yes';
     const veteran       = getToggle('tg-veteran') === 'yes';
     const subCount      = parseInt(document.getElementById('subscription').value) || 0;
+    const isHouseholdHead = getToggle('tg-household-head') === 'yes';
+    const subAmountEnough = getToggle('tg-sub-amount') === 'over600';
+    const lifeFirst       = getToggle('tg-life-first') === 'yes';
+    const taxPaid5yr      = getToggle('tg-tax5') === 'yes';
 
     const incWon = monthlyIncome * 10000;
     const isRecipient  = ['basic','medical','housing'].includes(priority);
@@ -1277,8 +1358,8 @@ function runAnalysis() {
     }
 
     const results = [];
-    function add(name, eligible, rank, rent, period, category, reasons, inst) {
-        results.push({ name, eligible, rank: rank||'', rent, period, category, reasons: reasons||[], inst: inst||'SH' });
+    function add(name, eligible, rank, rent, period, category, reasons, inst, catGroup) {
+        results.push({ name, eligible, rank: rank||'', rent, period, category, reasons: reasons||[], inst: inst||'SH', catGroup: catGroup||'rental' });
     }
 
     const baseOk = seoulRes && homeless;
@@ -1302,7 +1383,7 @@ function runAnalysis() {
                 rank = '60㎡ 초과형 (소득 무관)';
             }
         }
-        add('장기전세주택 (시프트)', eligible, rank, '시세 80% 이하', '최장 20년', 'longterm', r, 'SH');
+        add('장기전세주택 (시프트)', eligible, rank, '시세 80% 이하', '최장 20년', 'longterm', r, 'SH', 'rental');
     }
 
     // 2. 미리내집 (장기전세2)
@@ -1318,7 +1399,7 @@ function runAnalysis() {
             if (incOk) { eligible=true; rank = isNewlywedStrict ? '특별공급 신혼부부 가능' : (dualInc?'맞벌이 200%':'소득 130%')+' 이하'; }
             else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
         }
-        add('미리내집 (장기전세2)', eligible, rank, '시세 80% 이하', '10년 후 분양전환', 'longterm', r, 'SH');
+        add('미리내집 (장기전세2)', eligible, rank, '시세 80% 이하', '10년 후 분양전환', 'longterm', r, 'SH', 'rental');
     }
 
     // 3. 국민임대주택
@@ -1335,7 +1416,7 @@ function runAnalysis() {
             else if (under(70)) { eligible=true; rank='3순위 (소득 70% 이하, 50~60㎡형)'; }
             else r.push('소득 70% 이하 필요');
         }
-        add('국민임대주택', eligible, rank, '시세 60~80%', '제한 없음 (계속 재계약)', 'national', r, 'SH');
+        add('국민임대주택', eligible, rank, '시세 60~80%', '제한 없음 (계속 재계약)', 'national', r, 'SH', 'rental');
     }
 
     // 4. 일반 매입임대주택
@@ -1356,7 +1437,7 @@ function runAnalysis() {
             else if (disabled&&under(100)) { eligible=true; rank='2순위 (장애인, 100% 이하)'; }
             else r.push('소득 70% 이하 (장애인 100%) 필요');
         }
-        add('일반 매입임대주택', eligible, rank, '시세 30~70%', '거주 제한 없음', 'national', r, 'SH');
+        add('일반 매입임대주택', eligible, rank, '시세 30~70%', '거주 제한 없음', 'national', r, 'SH', 'rental');
     }
 
     // 5. 청년 매입임대주택
@@ -1375,7 +1456,7 @@ function runAnalysis() {
                 else { r.push('총자산 기준 초과'); }
             } else r.push('소득 100% 이하 필요');
         }
-        add('청년 매입임대주택', eligible, rank, rank.includes('1순위')?'시세 30%':'시세 50%', '최장 10년', 'youth', r, 'SH');
+        add('청년 매입임대주택', eligible, rank, rank.includes('1순위')?'시세 30%':'시세 50%', '최장 10년', 'youth', r, 'SH', 'rental');
     }
 
     // 6. 신혼·신생아 매입임대 Ⅰ형
@@ -1396,7 +1477,7 @@ function runAnalysis() {
                 if (under(50)) rent='시세 30% (소득 50% 이하)';
             } else r.push('소득 70%'+(dualInc?'(맞벌이 90%)':'')+' 이하 필요');
         }
-        add('신혼·신생아 매입임대 Ⅰ형', eligible, rank, rent, '최장 20년', 'newlywed', r, 'SH');
+        add('신혼·신생아 매입임대 Ⅰ형', eligible, rank, rent, '최장 20년', 'newlywed', r, 'SH', 'rental');
     }
 
     // 7. 신혼·신생아 매입임대 Ⅱ형
@@ -1417,7 +1498,7 @@ function runAnalysis() {
                 if (under(80)) rent='시세 60% (소득 80% 이하)';
             } else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
         }
-        add('신혼·신생아 매입임대 Ⅱ형', eligible, rank, rent, '최장 14년', 'newlywed', r, 'SH');
+        add('신혼·신생아 매입임대 Ⅱ형', eligible, rank, rent, '최장 14년', 'newlywed', r, 'SH', 'rental');
     }
 
     // 8. 장기미임대
@@ -1430,7 +1511,7 @@ function runAnalysis() {
             eligible=true;
             rank = under(130)?'1순위 (소득 130% 이하)':'2순위 (소득 130% 초과도 신청 가능)';
         }
-        add('장기미임대', eligible, rank, '시세 30~70%', '최장 4년 (우편접수 가능)', 'national', r, 'SH');
+        add('장기미임대', eligible, rank, '시세 30~70%', '최장 4년 (우편접수 가능)', 'national', r, 'SH', 'rental');
     }
 
     // 9. 희망하우징
@@ -1450,7 +1531,7 @@ function runAnalysis() {
                 else r.push('자산 기준 초과');
             } else r.push('소득 100% 이하 필요');
         }
-        add('희망하우징', eligible, rank, '월 79,000~145,000원', '최장 6년', 'youth', r, 'SH');
+        add('희망하우징', eligible, rank, '월 79,000~145,000원', '최장 6년', 'youth', r, 'SH', 'rental');
     }
 
     // 10. 장기안심주택
@@ -1468,7 +1549,7 @@ function runAnalysis() {
                 rank = isNewlywedStrict?'특별공급 신혼부부 가능':'일반공급 가점제';
             } else r.push('소득 100%'+(isNewlywedStrict?'(신혼 120~180%)':'')+' 이하 필요');
         }
-        add('장기안심주택', eligible, rank, '보증금 30% 무이자 지원 (최대 6천만원)', '최장 10년', 'jeonse', r, 'SH');
+        add('장기안심주택', eligible, rank, '보증금 30% 무이자 지원 (최대 6천만원)', '최장 10년', 'jeonse', r, 'SH', 'rental');
     }
 
     // 11. 행복주택 (대학생)
@@ -1483,7 +1564,7 @@ function runAnalysis() {
             if (under(100)&&totalAssets<=33700) { eligible=true; rank='청약저축 가입 필요'+(subCount>=24?' (가점 최상)':''); }
             else { if (!under(100)) r.push('소득 100% 이하 필요'); if (totalAssets>33700) r.push('총자산 33,700만원 이하 필요'); }
         }
-        add('행복주택 (대학생)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'SH');
+        add('행복주택 (대학생)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'SH', 'rental');
     }
 
     // 12. 행복주택 (청년)
@@ -1497,7 +1578,7 @@ function runAnalysis() {
             if (under(100)&&totalAssets<=33700) { eligible=true; rank='청약저축 필요'+(subCount>=24?' (가점 최상)':''); }
             else { if (!under(100)) r.push('소득 100%(1인 120%) 이하 필요'); if (totalAssets>33700) r.push('총자산 33,700만원 이하 필요'); }
         }
-        add('행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'SH');
+        add('행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'SH', 'rental');
     }
 
     // 13. 행복주택 (신혼부부)
@@ -1512,7 +1593,7 @@ function runAnalysis() {
             if (incOk&&totalAssets<=33700) { eligible=true; rank='청약저축 필요'+(dualInc?' (맞벌이 120%)':' (외벌이 100%)'); }
             else { if (!incOk) r.push(`소득 ${dualInc?'120%':'100%'} 이하 필요`); if (totalAssets>33700) r.push('총자산 33,700만원 이하 필요'); }
         }
-        add('행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', r, 'SH');
+        add('행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', r, 'SH', 'rental');
     }
 
     // 14. 기존주택 전세임대
@@ -1529,7 +1610,7 @@ function runAnalysis() {
             else if (disabled&&under(100)) { eligible=true; rank='2순위 (장애인 소득 100%)'; }
             else r.push('소득 50% 이하 (장애인 100%) 또는 우대 대상 필요');
         }
-        add('기존주택 전세임대', eligible, rank, '보증금 5% 부담 (95% SH지원)', '최장 30년', 'jeonse', r, 'SH');
+        add('기존주택 전세임대', eligible, rank, '보증금 5% 부담 (95% SH지원)', '최장 30년', 'jeonse', r, 'SH', 'rental');
     }
 
     // 15. 신혼·신생아 전세임대 Ⅰ형
@@ -1546,7 +1627,7 @@ function runAnalysis() {
             if (dualInc?underDual(70,20):under(70)) { eligible=true; rank=infant?'1순위 (신생아가구)':'2~3순위'; }
             else r.push('소득 70%'+(dualInc?'(맞벌이 90%)':'')+' 이하 필요');
         }
-        add('신혼·신생아 전세임대 Ⅰ형', eligible, rank, '보증금 5% 부담 / SH 최대 1.38억 지원', '최장 20년', 'jeonse', r, 'SH');
+        add('신혼·신생아 전세임대 Ⅰ형', eligible, rank, '보증금 5% 부담 / SH 최대 1.38억 지원', '최장 20년', 'jeonse', r, 'SH', 'rental');
     }
 
     // 16. 신혼·신생아 전세임대 Ⅱ형
@@ -1563,7 +1644,7 @@ function runAnalysis() {
             if (incOk) { eligible=true; rank=infant?'1순위 (신생아가구, '+( dualInc?'맞벌이 200%':'130%')+')':( dualInc?'맞벌이 200%':'소득 130%')+' 이하'; }
             else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
         }
-        add('신혼·신생아 전세임대 Ⅱ형', eligible, rank, '보증금 20% 부담 / SH 최대 6억 지원', '최장 14년', 'jeonse', r, 'SH');
+        add('신혼·신생아 전세임대 Ⅱ형', eligible, rank, '보증금 20% 부담 / SH 최대 6억 지원', '최장 14년', 'jeonse', r, 'SH', 'rental');
     }
 
     // 17. 전세임대형 든든주택
@@ -1575,7 +1656,7 @@ function runAnalysis() {
             eligible=true;
             rank = infant||childCnt>=2?'1순위 (신생아·다자녀)':isNewlywedStrict?'2순위 (신혼부부·예비신혼)':'3순위 (일반)';
         }
-        add('전세임대형 든든주택', eligible, rank, '보증금 20% 부담 / SH 최대 2억 (소득·자산 무관)', '최장 8년', 'jeonse', r, 'SH');
+        add('전세임대형 든든주택', eligible, rank, '보증금 20% 부담 / SH 최대 2억 (소득·자산 무관)', '최장 8년', 'jeonse', r, 'SH', 'rental');
     }
 
     // 18. 청년안심주택
@@ -1596,7 +1677,7 @@ function runAnalysis() {
                 eligible=true; rank=parentIncome?'2순위 (본인+부모 100%)':'3순위 (본인 100%)';
             } else r.push('소득 100% 이하 필요');
         }
-        add('청년안심주택', eligible, rank, '역세권 시세 이하', '공고별 상이 (보통 10년)', 'youth', r, 'SH');
+        add('청년안심주택', eligible, rank, '역세권 시세 이하', '공고별 상이 (보통 10년)', 'youth', r, 'SH', 'rental');
     }
 
     // ===== LH 유형 분석 (전국) =====
@@ -1626,7 +1707,7 @@ function runAnalysis() {
             else if (underMid(150, 170, 160)) { eligible = true; rank = '일반공급 (중위소득 150/170% 이하)'; }
             else r.push('중위소득 150% 이하 필요 (1인 170%, 2인 160%)');
         }
-        add('LH 통합공공임대', eligible, rank, '시세 35~90%', '30년 (분양전환 없음)', 'national', r, 'LH');
+        add('LH 통합공공임대', eligible, rank, '시세 35~90%', '30년 (분양전환 없음)', 'national', r, 'LH', 'rental');
     }
 
     // LH 20. 국민임대
@@ -1643,7 +1724,7 @@ function runAnalysis() {
             else if (under(70)) { eligible = true; rank = '3순위 (소득 70% 이하)'; }
             else r.push('소득 70% 이하 필요');
         }
-        add('LH 국민임대', eligible, rank, '시세 60~80%', '30년 (계속 재계약)', 'national', r, 'LH');
+        add('LH 국민임대', eligible, rank, '시세 60~80%', '30년 (계속 재계약)', 'national', r, 'LH', 'rental');
     }
 
     // LH 21. 영구임대
@@ -1658,7 +1739,7 @@ function runAnalysis() {
         } else {
             r.push('생계·의료급여 수급자, 장애인, 국가유공자 등 12가지 자격 중 해당 필요');
         }
-        add('LH 영구임대', eligible, rank, '시세 약 30%', '제한 없음', 'national', r, 'LH');
+        add('LH 영구임대', eligible, rank, '시세 약 30%', '제한 없음', 'national', r, 'LH', 'rental');
     }
 
     // LH 22. 행복주택 (청년) — LH
@@ -1669,15 +1750,15 @@ function runAnalysis() {
         if (isMarried && !singleParent) r.push('미혼 또는 한부모가족');
         let eligible = false, rank = '';
         if (baseOk_lh && isYouth && (!isMarried || singleParent)) {
-            if (under(100) && totalAssets <= 25400 && carVal <= 4563) {
+            if (under(100) && totalAssets <= 25100 && carVal <= 4542) {
                 eligible = true; rank = '청약저축 필요' + (subCount >= 24 ? ' (가점 최상)' : '');
             } else {
                 if (!under(100)) r.push('소득 100%(1인 120%) 이하 필요');
-                if (totalAssets > 25400) r.push('총자산 25,400만원 이하 필요');
-                if (carVal > 4563) r.push('자동차 4,563만원 이하 필요');
+                if (totalAssets > 25100) r.push('총자산 25,100만원 이하 필요');
+                if (carVal > 4542) r.push('자동차 4,542만원 이하 필요');
             }
         }
-        add('LH 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'LH');
+        add('LH 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'LH', 'rental');
     }
 
     // LH 23. 행복주택 (신혼부부) — LH
@@ -1689,15 +1770,15 @@ function runAnalysis() {
         let eligible = false, rank = '';
         if (baseOk_lh && grp) {
             const incOk = dualInc ? under(130) : under(100);
-            if (incOk && totalAssets <= 33700 && carVal <= 4563) {
+            if (incOk && totalAssets <= 34500 && carVal <= 4542) {
                 eligible = true; rank = '청약저축 필요' + (dualInc ? ' (맞벌이 120%)' : ' (외벌이 100%)');
             } else {
                 if (!incOk) r.push('소득 ' + (dualInc ? '120%' : '100%') + ' 이하 필요');
-                if (totalAssets > 33700) r.push('총자산 33,700만원 이하 필요');
-                if (carVal > 4563) r.push('자동차 4,563만원 이하 필요');
+                if (totalAssets > 34500) r.push('총자산 34,500만원 이하 필요');
+                if (carVal > 4542) r.push('자동차 4,542만원 이하 필요');
             }
         }
-        add('LH 행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', r, 'LH');
+        add('LH 행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', r, 'LH', 'rental');
     }
 
     // LH 24. 청년 매입임대 — LH
@@ -1715,7 +1796,7 @@ function runAnalysis() {
                 else { r.push('자산 기준 초과 (2순위 34,500만원·3순위 27,300만원)'); }
             } else r.push('소득 100% 이하 필요');
         }
-        add('LH 청년 매입임대', eligible, rank, rank.includes('1순위') ? '시세 40%' : '시세 50%', '최장 10년', 'youth', r, 'LH');
+        add('LH 청년 매입임대', eligible, rank, rank.includes('1순위') ? '시세 40%' : '시세 50%', '최장 10년', 'youth', r, 'LH', 'rental');
     }
 
     // LH 25. 신혼·신생아 매입임대 Ⅰ형 — LH
@@ -1736,7 +1817,7 @@ function runAnalysis() {
                 if (under(50)) rent = '시세 40% (소득 50% 이하)';
             } else r.push('소득 70%' + (dualInc ? '(맞벌이 90%)' : '') + ' 이하 필요');
         }
-        add('LH 신혼·신생아 매입임대 Ⅰ형', eligible, rank, rent, '최장 20년', 'newlywed', r, 'LH');
+        add('LH 신혼·신생아 매입임대 Ⅰ형', eligible, rank, rent, '최장 20년', 'newlywed', r, 'LH', 'rental');
     }
 
     // LH 26. 신혼·신생아 매입임대 Ⅱ형 — LH
@@ -1756,7 +1837,7 @@ function runAnalysis() {
                 if (under(80)) rent = '시세 70% (소득 80% 이하)';
             } else r.push('소득 130%' + (dualInc ? '(맞벌이 200%)' : '') + ' 이하 필요');
         }
-        add('LH 신혼·신생아 매입임대 Ⅱ형', eligible, rank, rent, '최장 14년', 'newlywed', r, 'LH');
+        add('LH 신혼·신생아 매입임대 Ⅱ형', eligible, rank, rent, '최장 14년', 'newlywed', r, 'LH', 'rental');
     }
 
     // LH 27. 든든전세주택 — LH (소득·자산 무관)
@@ -1768,7 +1849,7 @@ function runAnalysis() {
             eligible = true;
             rank = infant || childCnt >= 2 ? '1순위 (신생아·다자녀)' : isNewlywedStrict ? '2순위 (신혼부부)' : '3순위 (일반)';
         }
-        add('LH 든든전세주택', eligible, rank, '시세 90% 이하 (소득·자산 무관)', '최장 10년', 'jeonse', r, 'LH');
+        add('LH 든든전세주택', eligible, rank, '시세 90% 이하 (소득·자산 무관)', '최장 10년', 'jeonse', r, 'LH', 'rental');
     }
 
     // LH 28. 기존주택 전세임대 — LH
@@ -1785,7 +1866,7 @@ function runAnalysis() {
             else if (disabled && under(100)) { eligible = true; rank = '2순위 (장애인 100%)'; }
             else r.push('소득 50% 이하 또는 우대 대상 필요');
         }
-        add('LH 기존주택 전세임대', eligible, rank, '보증금 2~5% 부담 / 수도권 1.3억 지원', '최장 30년', 'jeonse', r, 'LH');
+        add('LH 기존주택 전세임대', eligible, rank, '보증금 2~5% 부담 / 수도권 1.3억 지원', '최장 30년', 'jeonse', r, 'LH', 'rental');
     }
 
     // === GH (경기도시공사) ===
@@ -1805,7 +1886,7 @@ function runAnalysis() {
             else if (under(100)) { eligible = true; rank = '2순위 (소득 100% 이하)'; }
             else r.push('소득 100% 이하 필요');
         }
-        add('GH 경기 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 6년', 'youth', r, 'GH');
+        add('GH 경기 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 6년', 'youth', r, 'GH', 'rental');
     }
 
     // GH 30. 경기 행복주택 (신혼·신생아) — GH
@@ -1823,7 +1904,7 @@ function runAnalysis() {
             else if (under(100)) { eligible = true; rank = '2순위 (소득 100% 이하)'; }
             else r.push('소득 100% 이하 필요');
         }
-        add('GH 경기 행복주택 (신혼·신생아)', eligible, rank, '시세 60~80%', '최장 10년', 'newlywed', r, 'GH');
+        add('GH 경기 행복주택 (신혼·신생아)', eligible, rank, '시세 60~80%', '최장 10년', 'newlywed', r, 'GH', 'rental');
     }
 
     // GH 31. 경기 국민임대 — GH
@@ -1840,7 +1921,7 @@ function runAnalysis() {
             else if (under(70)) { eligible = true; rank = '3순위 (소득 70% 이하)'; }
             else r.push('소득 70% 이하 필요');
         }
-        add('GH 경기 국민임대', eligible, rank, '시세 60~80%', '제한 없음', 'national', r, 'GH');
+        add('GH 경기 국민임대', eligible, rank, '시세 60~80%', '제한 없음', 'national', r, 'GH', 'rental');
     }
 
     // GH 32. 경기 매입임대 — GH
@@ -1856,7 +1937,7 @@ function runAnalysis() {
             else if (under(50)) { eligible = true; rank = '2순위 (소득 50% 이하)'; }
             else r.push('소득 50% 이하 또는 수급자·차상위 필요');
         }
-        add('GH 경기 매입임대', eligible, rank, '시세 30~50%', '최장 20년', 'national', r, 'GH');
+        add('GH 경기 매입임대', eligible, rank, '시세 30~50%', '최장 20년', 'national', r, 'GH', 'rental');
     }
 
     // === iH (인천도시공사) ===
@@ -1876,7 +1957,7 @@ function runAnalysis() {
             else if (under(100)) { eligible = true; rank = '2순위 (소득 100% 이하)'; }
             else r.push('소득 100% 이하 필요');
         }
-        add('iH 인천 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 6년', 'youth', r, 'iH');
+        add('iH 인천 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 6년', 'youth', r, 'iH', 'rental');
     }
 
     // iH 34. 인천 행복주택 (신혼) — iH
@@ -1894,7 +1975,7 @@ function runAnalysis() {
             else if (under(100)) { eligible = true; rank = '2순위 (소득 100% 이하)'; }
             else r.push('소득 100% 이하 필요');
         }
-        add('iH 인천 행복주택 (신혼)', eligible, rank, '시세 60~80%', '최장 10년', 'newlywed', r, 'iH');
+        add('iH 인천 행복주택 (신혼)', eligible, rank, '시세 60~80%', '최장 10년', 'newlywed', r, 'iH', 'rental');
     }
 
     // iH 35. 인천 국민임대 — iH
@@ -1911,7 +1992,372 @@ function runAnalysis() {
             else if (under(70)) { eligible = true; rank = '3순위 (소득 70% 이하)'; }
             else r.push('소득 70% 이하 필요');
         }
-        add('iH 인천 국민임대', eligible, rank, '시세 60~80%', '제한 없음', 'national', r, 'iH');
+        add('iH 인천 국민임대', eligible, rank, '시세 60~80%', '제한 없음', 'national', r, 'iH', 'rental');
+    }
+
+    // === 공공분양 ===
+
+    // SH 공공분양 일반공급
+    {
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (baseOk && subCount >= 6 && aOk && carOk && under(100)) {
+            eligible = true;
+            rank = subCount >= 24 ? '1순위 (납입 24회 이상)' : '2순위 (납입 6회 이상)';
+        } else if (baseOk && subCount >= 6 && aOk && carOk) {
+            r.push('소득 100% 이하 필요');
+        }
+        add('SH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-general', r, 'SH', 'sale');
+    }
+
+    // SH 나눔형 일반공급
+    {
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = totalAssets <= 35400, carOk = carVal <= 4563;
+        if (!aOk) r.push('총자산 35,400만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (baseOk && subCount >= 6 && aOk && carOk) {
+            eligible = true;
+            rank = '가점제 (무주택기간·부양가족·청약횟수)';
+        }
+        add('SH 나눔형 공공분양 (일반공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-general', r, 'SH', 'sale');
+    }
+
+    // SH 나눔형 청년특공
+    {
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (!isYouth) r.push('만 19~39세 필요');
+        if (isMarried && !singleParent) r.push('미혼 또는 한부모 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const selfAssetOk = totalAssets <= 27000;
+        if (!selfAssetOk) r.push('본인 자산 27,000만원 이하 필요');
+        let eligible = false, rank = '';
+        if (baseOk && isYouth && (!isMarried || singleParent) && subCount >= 6 && selfAssetOk && under(140)) {
+            eligible = true; rank = '청년특공 (소득 140% 이하, 생애1회)';
+        } else if (baseOk && isYouth && (!isMarried || singleParent) && subCount >= 6 && selfAssetOk) {
+            r.push('소득 140% 이하 필요');
+        }
+        add('SH 나눔형 (청년 특별공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-special', r, 'SH', 'sale');
+    }
+
+    // SH 나눔형 신혼특공
+    {
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const grp = isNewlywedStrict || infant || singleParent;
+        if (!grp) r.push('신혼(7년이내)·예비신혼·한부모·신생아 가구 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = totalAssets <= 35400, carOk = carVal <= 4563;
+        if (!aOk) r.push('총자산 35,400만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (baseOk && grp && subCount >= 6 && aOk && carOk) {
+            const incOk = dualInc ? under(200) : under(130);
+            if (incOk) { eligible = true; rank = dualInc ? '맞벌이 200% 이하' : '외벌이 130% 이하'; }
+            else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+        }
+        add('SH 나눔형 (신혼부부 특별공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-special', r, 'SH', 'sale');
+    }
+
+    // SH 공공분양 신혼특공
+    {
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const grp = isNewlywedStrict || singleParent;
+        if (!grp) r.push('신혼(7년이내)·예비신혼·한부모 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (baseOk && grp && subCount >= 6 && aOk && carOk) {
+            const incOk = dualInc ? under(200) : under(130);
+            if (incOk) {
+                eligible = true;
+                rank = infant ? '우선공급 가능 (2세이하자녀)' : isNewlywedStrict ? '일반공급' : '한부모';
+            } else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+        }
+        add('SH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
+    }
+
+    // SH 공공분양 생애최초
+    {
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (!lifeFirst) r.push('세대원 전원 과거 주택 미소유 필요');
+        if (!taxPaid5yr) r.push('근로자/자영업자 5년 이상 소득세 납부 필요');
+        if (!subAmountEnough) r.push('청약저축 600만원 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (baseOk && lifeFirst && taxPaid5yr && subAmountEnough && aOk && carOk) {
+            const incOk = dualInc ? under(200) : under(130);
+            if (incOk) { eligible = true; rank = '생애최초특공 (생애 1회)'; }
+            else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+        }
+        add('SH 공공분양 (생애최초 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
+    }
+
+    // SH 공공분양 다자녀
+    {
+        const r = [];
+        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (childCnt < 2) r.push('미성년 자녀 2명 이상 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (baseOk && childCnt >= 2 && subCount >= 6 && aOk && carOk) {
+            const incOk = dualInc ? under(200) : under(120);
+            if (incOk) { eligible = true; rank = childCnt >= 3 ? '우선 (자녀 3명이상)' : '일반 (자녀 2명)'; }
+            else r.push('소득 120%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+        }
+        add('SH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
+    }
+
+    // LH 공공분양 일반공급
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        let eligible = false, rank = '';
+        if (homeless && subCount >= 24) { eligible = true; rank = '1순위 (납입 24회 이상)'; }
+        else if (homeless && subCount >= 6) { eligible = true; rank = '2순위 (납입 6회 이상)'; }
+        add('LH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-general', r, 'LH', 'sale');
+    }
+
+    // LH 공공분양 신혼특공
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        const grp = isNewlywedStrict || singleParent;
+        if (!grp) r.push('신혼(7년이내)·예비신혼·한부모 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (homeless && grp && subCount >= 6 && aOk && carOk) {
+            const incOk = dualInc ? under(200) : under(130);
+            if (incOk) {
+                eligible = true;
+                rank = infant ? '우선공급 가능 (2세이하자녀, 소득100%/맞벌이120%)' : '일반공급';
+            } else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+        }
+        add('LH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+    }
+
+    // LH 공공분양 생애최초
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (!lifeFirst) r.push('세대원 전원 과거 주택 미소유 필요');
+        if (!taxPaid5yr) r.push('근로자/자영업자 5년 이상 소득세 납부 필요');
+        if (!subAmountEnough) r.push('청약저축 600만원 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (homeless && lifeFirst && taxPaid5yr && subAmountEnough && aOk && carOk) {
+            const incOk = dualInc ? under(200) : under(130);
+            if (incOk) { eligible = true; rank = '생애최초특공 (추첨 50%)'; }
+            else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+        }
+        add('LH 공공분양 (생애최초 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+    }
+
+    // LH 공공분양 다자녀
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (childCnt < 2) r.push('미성년 자녀 2명 이상 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (homeless && childCnt >= 2 && subCount >= 6 && aOk && carOk) {
+            const incOk = dualInc ? under(200) : under(120);
+            if (incOk) { eligible = true; rank = childCnt >= 3 ? '우선 (자녀 3명이상)' : '일반 (자녀 2명)'; }
+            else r.push('소득 120%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+        }
+        add('LH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+    }
+
+    // LH 공공분양 신생아
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (!infant) r.push('2세 이하 자녀 보유 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (homeless && infant && subCount >= 6 && aOk && carOk && under(200)) {
+            eligible = true; rank = '신생아특공 (생애 1회)';
+        } else if (homeless && infant && subCount >= 6 && aOk && carOk) {
+            r.push('소득 200% 이하 필요');
+        }
+        add('LH 공공분양 (신생아 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+    }
+
+    // LH 공공분양 노부모부양
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요');
+        if (subCount < 24) r.push('청약저축 24회 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (homeless && isHouseholdHead && subCount >= 24 && aOk && carOk) {
+            const incOk = dualInc ? under(200) : under(120);
+            if (incOk) { eligible = true; rank = '노부모부양특공 (65세이상 3년이상 부양)'; }
+            else r.push('소득 120%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+        }
+        add('LH 공공분양 (노부모부양 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+    }
+
+    // LH 신혼희망타운
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        const grp = isNewlywedStrict || infant || singleParent;
+        if (!grp) r.push('신혼(7년이내)·예비신혼·신생아가구·한부모 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = totalAssets <= 36200, carOk = carVal <= 4563;
+        if (!aOk) r.push('총자산 36,200만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        let eligible = false, rank = '';
+        if (homeless && grp && subCount >= 6 && aOk && carOk) {
+            const incOk = dualInc ? under(200) : under(130);
+            if (incOk) {
+                eligible = true;
+                rank = infant ? '우선공급 (혼인2년이내·2세이하자녀)' : '일반공급 (혼인2~7년)';
+            } else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+        }
+        add('LH 신혼희망타운', eligible, rank, '분양가 저렴 (연 1.6% 고정금리)', '분양', 'sale-special', r, 'LH', 'sale');
+    }
+
+    // === 금융지원 ===
+
+    // 디딤돌 대출
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요');
+        const incLimit = isMarried ? 7000 : 6000;
+        if (annualIncome > incLimit) r.push(`연소득 ${incLimit}만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        let eligible = false, rank = '';
+        if (homeless && isHouseholdHead && annualIncome <= incLimit) {
+            eligible = true;
+            rank = isMarried ? '신혼부부 (연소득 7천만원 이하)' : '일반 (연소득 6천만원 이하)';
+        }
+        add('디딤돌 대출 (주택구입)', eligible, rank, '최저 연 2.35% / 최대 3억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
+    }
+
+    // 신생아특례 디딤돌
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (!infant) r.push('2세 이하 자녀 보유 필요 (출산 2년 이내)');
+        if (!homeless) r.push('무주택 필요');
+        if (annualIncome > 13000) r.push(`연소득 1.3억원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        let eligible = false, rank = '';
+        if (homeless && infant && annualIncome <= 13000) {
+            eligible = true; rank = '신생아특례 (출산 2년 이내)';
+        }
+        add('신생아특례 디딤돌 대출', eligible, rank, '최저 연 1.6% / 최대 5억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
+    }
+
+    // 청년 버팀목
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (!isYouth || age > 34) r.push('만 19~34세 필요');
+        if (!homeless) r.push('무주택 필요');
+        if (!isHouseholdHead) r.push('세대주 필요 (단, 예비 세대주 포함)');
+        if (annualIncome > 5000) r.push(`연소득 5,000만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        let eligible = false, rank = '';
+        if (isYouth && age <= 34 && homeless && isHouseholdHead && annualIncome <= 5000) {
+            eligible = true; rank = '청년 버팀목 (보증금 3억 이하, 전용 85㎡ 이하)';
+        }
+        add('청년 버팀목 전세자금 대출', eligible, rank, '최저 연 1.5% / 최대 2억', '최장 10년', 'loan', r, '주택도시기금', 'finance');
+    }
+
+    // 신혼부부 버팀목
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        const grp = isNewlywedStrict;
+        if (!grp) r.push('혼인 7년 이내 신혼부부·예비신혼 필요');
+        if (!homeless) r.push('무주택 필요');
+        if (annualIncome > 7500) r.push(`연소득 7,500만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        let eligible = false, rank = '';
+        if (grp && homeless && annualIncome <= 7500) {
+            eligible = true; rank = infant ? '신생아 우대 적용 가능' : '신혼부부 버팀목';
+        }
+        add('신혼부부 버팀목 전세자금 대출', eligible, rank, '최저 연 1.2% / 최대 3억', '최장 10년', 'newlywed', r, '주택도시기금', 'finance');
+    }
+
+    // === 주거복지 ===
+
+    // 주거급여
+    {
+        const r = [];
+        const midLimits = [1230000, 2010000, 2570000, 3120000, 3620000, 4110000, 4360000];
+        const midLimit = midLimits[Math.min(hhSize, 7) - 1];
+        const incWon2 = monthlyIncome * 10000;
+        if (incWon2 > midLimit) r.push(`소득 기준중위 48% 이하 필요 (${hhSize}인 약 ${Math.round(midLimit/10000)}만원)`);
+        let eligible = false, rank = '';
+        if (incWon2 <= midLimit) {
+            eligible = true; rank = '임차가구 월세 지원 / 자가가구 수선비 지원';
+        }
+        add('주거급여', eligible, rank, '지역·가구원수별 지급기준액', '수급기간 유지', 'welfare', r, '국토교통부', 'welfare');
+    }
+
+    // 서울 청년 월세 지원
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (!seoulRes) r.push('서울 거주 필요');
+        if (!isYouth) r.push('만 19~39세 필요');
+        if (isMarried) r.push('미혼 필요 (예외: 이혼·사별)');
+        if (annualIncome > 4000) r.push('연소득 4,000만원 이하 필요');
+        if (totalAssets > 34400) r.push('총자산 34,400만원 이하 필요');
+        let eligible = false, rank = '';
+        if (seoulRes && isYouth && !isMarried && annualIncome <= 4000 && totalAssets <= 34400) {
+            eligible = true; rank = '월 최대 20만원 (최장 12개월)';
+        }
+        add('서울 청년 월세 지원', eligible, rank, '월 최대 20만원', '최장 12개월', 'welfare', r, 'SH', 'welfare');
+    }
+
+    // 청년 월세 한시 지원 (국토부)
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (!isYouth || age > 34) r.push('만 19~34세 필요');
+        if (isMarried) r.push('독립 거주 미혼 단독세대 필요');
+        if (annualIncome > 5000) r.push('연소득 5,000만원 이하 필요');
+        let eligible = false, rank = '';
+        if (isYouth && age <= 34 && !isMarried && annualIncome <= 5000) {
+            eligible = true; rank = '월 최대 20만원 (최장 12개월)';
+        }
+        add('청년 월세 한시 지원 (국토부)', eligible, rank, '월 최대 20만원', '최장 12개월', 'welfare', r, '국토교통부', 'welfare');
     }
 
     // Render
@@ -1944,9 +2390,11 @@ function runAnalysis() {
 
     // 필터 초기화
     _currentFilter = 'ALL';
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.inst === 'ALL'));
+    _currentCatFilter = 'ALL';
+    document.querySelectorAll('#filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.inst === 'ALL'));
+    document.querySelectorAll('#cat-filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'ALL'));
 
-    const catLabel = { youth:'청년', newlywed:'신혼·신생아', longterm:'장기전세', national:'국민·매입임대', jeonse:'전세지원' };
+    const catLabel = { youth:'청년', newlywed:'신혼·신생아', longterm:'장기전세', national:'국민·매입임대', jeonse:'전세지원', 'sale-general':'공공분양', 'sale-special':'특별공급', loan:'금융대출', welfare:'주거복지' };
 
     function card(r, isE) {
         const rc = r.rank.includes('1순위')?'rank-1':r.rank.includes('2순위')?'rank-2':r.rank.includes('3순위')?'rank-3':isE?'rank-ok':'rank-na';
@@ -1988,7 +2436,7 @@ function runAnalysis() {
             }
         }
 
-        return `<div class="result-card ${isE?'':'ineligible'}">
+        return `<div class="result-card ${isE?'':'ineligible'}" data-inst="${r.inst}" data-cat-group="${r.catGroup}">
             <div class="result-card-header">
                 <div class="result-card-name">${instBadge}${r.name}</div>
                 ${r.rank?`<span class="rank-badge ${rc}">${r.rank}</span>`:''}
@@ -2008,7 +2456,7 @@ function runAnalysis() {
     }
 
     // 신청가능 카드 저장 후 필터 렌더링
-    _allEligibleCards = eligible.map(r => ({ inst: r.inst, html: card(r, true) }));
+    _allEligibleCards = eligible.map(r => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true) }));
     filterResults('ALL');
 
     // 미충족 카드 렌더링 (접힌 상태로)
@@ -2031,6 +2479,7 @@ function restart() {
     document.getElementById('results').style.display='none';
     _allEligibleCards = [];
     _currentFilter = 'ALL';
+    _currentCatFilter = 'ALL';
     goTo(1);
 }
 
