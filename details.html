@@ -198,6 +198,63 @@
         .inst-lh { background: #fef3c7; color: #92400e; }
         .inst-gh { background: #dcfce7; color: #166534; }
         .inst-ih { background: #cffafe; color: #155e75; }
+
+        /* ===== 기관별 필터 탭 ===== */
+        .filter-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .filter-tab {
+            padding: 0.4rem 0.9rem; border: 1.5px solid var(--input-border, #e5e7eb);
+            border-radius: 999px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
+            background: var(--card-bg, #fff); color: var(--text-color, #555);
+            transition: all 0.18s;
+        }
+        .filter-tab.active { background: var(--primary-color, #4f46e5); border-color: var(--primary-color, #4f46e5); color: #fff; }
+        .filter-tab[data-inst="SH"].active { background: #1e40af; border-color: #1e40af; }
+        .filter-tab[data-inst="LH"].active { background: #92400e; border-color: #92400e; }
+        .filter-tab[data-inst="GH"].active { background: #166534; border-color: #166534; }
+        .filter-tab[data-inst="iH"].active { background: #155e75; border-color: #155e75; }
+
+        /* ===== 조건 요약 카드 ===== */
+        .summary-card {
+            background: var(--card-bg, #fff); border-radius: 14px;
+            padding: 1rem 1.3rem; margin-bottom: 1.2rem;
+            border: 1.5px solid var(--input-border, #e5e7eb);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        .summary-title { font-size: 0.75rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.6rem; }
+        .summary-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .summary-chip {
+            background: #f1f5f9; color: #374151; border-radius: 6px;
+            padding: 0.2rem 0.6rem; font-size: 0.8rem; font-weight: 500;
+        }
+        .summary-chip.highlight { background: #ede9fe; color: #4f46e5; }
+        [data-theme="dark"] .summary-card { border-color: #374151; }
+        [data-theme="dark"] .summary-chip { background: #1f2937; color: #d1d5db; }
+        [data-theme="dark"] .summary-chip.highlight { background: #2e1065; color: #c4b5fd; }
+
+        /* ===== 미충족 섹션 접기 ===== */
+        .collapsible-header {
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; user-select: none; padding: 0.3rem 0;
+        }
+        .collapsible-header:hover { opacity: 0.8; }
+        .collapsible-arrow { font-size: 0.8rem; color: #9ca3af; transition: transform 0.2s; }
+        .collapsible-arrow.open { transform: rotate(180deg); }
+        .collapsible-body { overflow: hidden; transition: max-height 0.3s ease; }
+        .collapsible-body.collapsed { max-height: 0; }
+
+        /* ===== 연봉 변환 헬퍼 ===== */
+        .salary-helper {
+            display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem; flex-wrap: wrap;
+        }
+        .salary-helper input {
+            flex: 1; min-width: 120px; padding: 0.55rem 0.8rem;
+            border: 1.5px solid var(--input-border, #e5e7eb);
+            border-radius: 8px; background: var(--input-bg, #f9fafb);
+            color: var(--text-color, #111); font-size: 0.88rem; box-sizing: border-box;
+        }
+        .salary-helper input:focus { outline: none; border-color: var(--primary-color, #4f46e5); }
+        .salary-helper-label { font-size: 0.8rem; color: #6b7280; white-space: nowrap; }
+        .salary-helper-result { font-size: 0.82rem; font-weight: 700; color: #4f46e5; white-space: nowrap; }
     </style>
 </head>
 <body data-theme="light">
@@ -427,7 +484,11 @@
                 </div>
                 <input type="number" id="income" placeholder="예: 300 → 월 300만원" min="0" max="9999">
                 <p class="hint">직장인: 세전 급여 기준 / 맞벌이: 부부 합산 / 소득 없으면 0 입력</p>
-                <p class="hint warn">⚠ 취업 3개월차라면? → 연봉 ÷ 12 로 나눈 월급을 입력하세요 (예: 연봉 3,600만원 → 300 입력)</p>
+                <div class="salary-helper">
+                    <span class="salary-helper-label">연봉으로 입력:</span>
+                    <input type="number" id="annual-salary" placeholder="연봉 (만원)" min="0" max="99999" style="max-width:140px;">
+                    <span class="salary-helper-result" id="monthly-calc"></span>
+                </div>
             </div>
 
             <div class="fg">
@@ -567,10 +628,33 @@
             <h2>분석 결과</h2>
             <div class="score-badge" id="eligible-count-badge">신청 가능 유형 분석 중...</div>
         </div>
+
+        <!-- 조건 요약 카드 -->
+        <div class="summary-card" id="summary-card">
+            <div class="summary-title">분석 조건 요약</div>
+            <div class="summary-chips" id="summary-chips"></div>
+        </div>
+
+        <!-- 기관별 필터 탭 -->
+        <div class="filter-tabs" id="filter-tabs">
+            <button class="filter-tab active" data-inst="ALL" onclick="filterResults('ALL')">전체</button>
+            <button class="filter-tab" data-inst="SH" onclick="filterResults('SH')"><span class="inst-badge inst-sh" style="margin-right:0.2rem;">SH</span>서울</button>
+            <button class="filter-tab" data-inst="LH" onclick="filterResults('LH')"><span class="inst-badge inst-lh" style="margin-right:0.2rem;">LH</span>전국</button>
+            <button class="filter-tab" data-inst="GH" onclick="filterResults('GH')"><span class="inst-badge inst-gh" style="margin-right:0.2rem;">GH</span>경기</button>
+            <button class="filter-tab" data-inst="iH" onclick="filterResults('iH')"><span class="inst-badge inst-ih" style="margin-right:0.2rem;">iH</span>인천</button>
+        </div>
+
         <div class="section-title">✅ 신청 가능 유형 <span class="count-badge" id="count-eligible">0</span></div>
         <div class="result-grid" id="grid-eligible"></div>
-        <div class="section-title">❌ 조건 미충족 유형 <span class="count-badge" id="count-ineligible">0</span></div>
-        <div class="result-grid" id="grid-ineligible"></div>
+
+        <!-- 미충족 섹션 (접기/펼치기) -->
+        <div class="section-title collapsible-header" id="ineligible-header" onclick="toggleIneligible()">
+            <span>❌ 조건 미충족 유형 <span class="count-badge" id="count-ineligible">0</span></span>
+            <span class="collapsible-arrow" id="ineligible-arrow">▼</span>
+        </div>
+        <div class="collapsible-body collapsed" id="ineligible-body">
+            <div class="result-grid" id="grid-ineligible"></div>
+        </div>
         <div class="notice-box">
             ⚠ 본 분석은 2025년 기준 SH공사·LH 임대주택 자료를 바탕으로 한 참고용입니다. 실제 신청 전 공고문 원문을 반드시 확인하세요. SH공사 콜센터 <strong>1600-3456</strong> · LH 콜센터 <strong>1600-1004</strong>
         </div>
@@ -589,6 +673,64 @@
 </div>
 
 <script>
+// ===== 연봉 → 월소득 변환 헬퍼 =====
+(function() {
+    function initSalaryHelper() {
+        const annualInput = document.getElementById('annual-salary');
+        const monthlyCalc = document.getElementById('monthly-calc');
+        const incomeInput = document.getElementById('income');
+        if (!annualInput) return;
+        annualInput.addEventListener('input', () => {
+            const annual = parseFloat(annualInput.value) || 0;
+            if (annual > 0) {
+                const monthly = Math.round(annual / 12 * 10) / 10;
+                monthlyCalc.textContent = `→ 월 ${monthly}만원`;
+                incomeInput.value = monthly;
+            } else {
+                monthlyCalc.textContent = '';
+            }
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSalaryHelper);
+    } else {
+        initSalaryHelper();
+    }
+})();
+
+// ===== 미충족 섹션 토글 =====
+function toggleIneligible() {
+    const body = document.getElementById('ineligible-body');
+    const arrow = document.getElementById('ineligible-arrow');
+    const collapsed = body.classList.contains('collapsed');
+    if (collapsed) {
+        body.style.maxHeight = '9999px';
+        body.classList.remove('collapsed');
+        arrow.classList.add('open');
+    } else {
+        body.style.maxHeight = '0';
+        body.classList.add('collapsed');
+        arrow.classList.remove('open');
+    }
+}
+
+// ===== 기관별 필터 =====
+let _allEligibleCards = [];
+let _currentFilter = 'ALL';
+function filterResults(inst) {
+    _currentFilter = inst;
+    document.querySelectorAll('.filter-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.inst === inst);
+    });
+    const grid = document.getElementById('grid-eligible');
+    const visible = inst === 'ALL' ? _allEligibleCards : _allEligibleCards.filter(c => c.inst === inst);
+    document.getElementById('count-eligible').textContent = visible.length;
+    document.getElementById('eligible-count-badge').textContent = `신청 가능 유형 ${visible.length}가지` + (inst !== 'ALL' ? ` (${inst})` : '');
+    grid.innerHTML = visible.length
+        ? visible.map(c => c.html).join('')
+        : `<div class="result-card ineligible"><div class="result-card-name">${inst} 기관에서 신청 가능한 유형이 없습니다.</div></div>`;
+}
+
 // ===== 공고 데이터 로딩 =====
 let announcementsData = [];
 fetch('announcements.json')
@@ -1780,6 +1922,30 @@ function runAnalysis() {
     document.getElementById('count-eligible').textContent = eligible.length;
     document.getElementById('count-ineligible').textContent = ineligible.length;
 
+    // 조건 요약 카드 렌더링
+    const maritalLabel = { single:'미혼', prenuptial:'예비신혼', newlywed:'신혼(7년이내)', married:'기혼(7년초과)', divorced:'이혼/사별' };
+    const summaryItems = [
+        { label: `만 ${age}세`, highlight: false },
+        { label: seoulRes ? '서울 거주' : '비서울', highlight: seoulRes },
+        { label: homeless ? '무주택' : '유주택', highlight: homeless },
+        { label: maritalLabel[marital] || marital, highlight: false },
+        { label: `${hhSize}인 가구`, highlight: false },
+        { label: `월소득 ${monthlyIncome}만원`, highlight: false },
+        { label: `총자산 ${totalAssets}만원`, highlight: false },
+        ...(childCnt > 0 ? [{ label: `자녀 ${childCnt}명`, highlight: true }] : []),
+        ...(infant ? [{ label: '신생아가구', highlight: true }] : []),
+        ...(is1st ? [{ label: '우대 대상', highlight: true }] : []),
+        ...(dualInc ? [{ label: '맞벌이', highlight: true }] : []),
+        ...(isStudent ? [{ label: '대학(원)생', highlight: true }] : []),
+    ];
+    document.getElementById('summary-chips').innerHTML = summaryItems
+        .map(s => `<span class="summary-chip${s.highlight ? ' highlight' : ''}">${s.label}</span>`)
+        .join('');
+
+    // 필터 초기화
+    _currentFilter = 'ALL';
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.inst === 'ALL'));
+
     const catLabel = { youth:'청년', newlywed:'신혼·신생아', longterm:'장기전세', national:'국민·매입임대', jeonse:'전세지원' };
 
     function card(r, isE) {
@@ -1841,10 +2007,17 @@ function runAnalysis() {
         </div>`;
     }
 
-    document.getElementById('grid-eligible').innerHTML = eligible.length
-        ? eligible.map(r=>card(r,true)).join('')
-        : '<div class="result-card ineligible"><div class="result-card-name">신청 가능한 유형이 없습니다.</div><div class="result-reason">서울 거주 무주택 세대구성원인지 확인해 주세요.</div></div>';
+    // 신청가능 카드 저장 후 필터 렌더링
+    _allEligibleCards = eligible.map(r => ({ inst: r.inst, html: card(r, true) }));
+    filterResults('ALL');
+
+    // 미충족 카드 렌더링 (접힌 상태로)
     document.getElementById('grid-ineligible').innerHTML = ineligible.map(r=>card(r,false)).join('');
+    const ineligibleBody = document.getElementById('ineligible-body');
+    ineligibleBody.classList.add('collapsed');
+    ineligibleBody.style.maxHeight = '0';
+    const arrow = document.getElementById('ineligible-arrow');
+    if (arrow) arrow.classList.remove('open');
 
     document.querySelectorAll('.step-panel').forEach(p => p.style.display='none');
     document.getElementById('step-indicator').style.display='none';
@@ -1856,6 +2029,8 @@ function restart() {
     document.querySelectorAll('.step-panel').forEach(p => { p.style.display=''; });
     document.getElementById('step-indicator').style.display='';
     document.getElementById('results').style.display='none';
+    _allEligibleCards = [];
+    _currentFilter = 'ALL';
     goTo(1);
 }
 
