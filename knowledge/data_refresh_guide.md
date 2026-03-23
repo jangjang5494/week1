@@ -261,17 +261,38 @@ WebSearch: "경기복지재단 잡아바 어플라이 청년이사비"
 
 ---
 
-## 7. GH·iH 임대주택 (apply.gh.or.kr / ih.co.kr)
+## 7. GH 임대주택 (apply.gh.or.kr)
 
 | 항목 | 내용 |
 |------|------|
-| **knowledge 파일** | `knowledge/gh_ih_임대주택.md` |
-| **GH URL** | https://apply.gh.or.kr |
+| **knowledge 파일** | `knowledge/gh_rental_housing.md` ★2026-03-23 신규 작성 |
+| **GH 청약 URL** | https://apply.gh.or.kr |
+| **GH 홈 URL** | https://www.gh.or.kr |
+| **접근 방법** | ⚠️ WebFetch 타임아웃 — WebSearch 보완 / 공식 URL은 확인됨 |
+
+**핵심 확인 항목**:
+- GH 행복주택 청년 자산기준: 총자산 27,300만원 / 자동차 3,708만원 (공식 확인)
+- GH 행복주택 대학생 자산기준: 10,000만원 (LH 10,800만원과 다름 — 재확인 필요)
+- GH 국민임대 자동차 기준: 3,708만원 (LH 4,542만원과 다름 — 재확인 필요)
+- 2026년 공고문 기준으로 자산기준 변경 여부 확인
+
+**확인할 서브페이지**:
+```
+경기행복주택 입주자격  /gh/gyeonggi-happy-house-eligibility-to-move-in.do
+국민임대 입주자격      /gh/nationalpermanent-rental-eligibility-to-move-in.do
+통합공공임대 입주자격  /gh/integration-public-lease-house-eligibility-to-move-in.do
+분양·임대 공고 목록    /gh/announcement-of-salerental001.do
+```
+
+## 7-2. iH 임대주택 (ih.co.kr)
+
+| 항목 | 내용 |
+|------|------|
+| **knowledge 파일** | `knowledge/gh_ih_임대주택.md` (미작성) → 추후 작성 필요 |
 | **iH URL** | https://www.ih.co.kr |
 | **접근 방법** | WebFetch 직접 가능 |
 
 **핵심 확인 항목**:
-- GH 행복주택 청년 자산기준: 총자산 27,300만원 / 자동차 3,708만원
 - iH 국민임대 자동차 기준: 3,500만원 (타 기관보다 엄격)
 - 천원주택 iH 운영분 신규 모집 공고
 
