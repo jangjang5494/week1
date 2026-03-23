@@ -2395,14 +2395,14 @@ function runAnalysis() {
         const annualIncome = monthlyIncome * 12;
         if (!homeless) r.push('무주택 세대주 필요');
         if (!isHouseholdHead) r.push('세대주 필요');
-        const incLimit = isMarried ? 7000 : 6000;
+        const incLimit = isMarried ? 8500 : 6000;
         if (annualIncome > incLimit) r.push(`연소득 ${incLimit}만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
         let eligible = false, rank = '';
         if (homeless && isHouseholdHead && annualIncome <= incLimit) {
             eligible = true;
-            rank = isMarried ? '신혼부부 (연소득 7천만원 이하)' : '일반 (연소득 6천만원 이하)';
+            rank = isMarried ? '신혼부부 (연소득 8,500만원 이하)' : '일반 (연소득 6,000만원 이하)';
         }
-        add('디딤돌 대출 (주택구입)', eligible, rank, '최저 연 2.35% / 최대 3억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
+        add('디딤돌 대출 (주택구입)', eligible, rank, '연 2.85~4.15% / 일반 2억·신혼 3.2억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
     }
 
     // 신생아특례 디딤돌
@@ -2416,7 +2416,7 @@ function runAnalysis() {
         if (homeless && infant && annualIncome <= 13000) {
             eligible = true; rank = '신생아특례 (출산 2년 이내)';
         }
-        add('신생아특례 디딤돌 대출', eligible, rank, '최저 연 1.6% / 최대 5억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
+        add('신생아특례 디딤돌 대출', eligible, rank, '연 1.80~4.50% / 최대 4억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
     }
 
     // 청년 버팀목
@@ -2431,7 +2431,7 @@ function runAnalysis() {
         if (isYouth && age <= 34 && homeless && isHouseholdHead && annualIncome <= 5000) {
             eligible = true; rank = '청년 버팀목 (보증금 3억 이하, 전용 85㎡ 이하)';
         }
-        add('청년 버팀목 전세자금 대출', eligible, rank, '최저 연 1.5% / 최대 2억', '최장 10년', 'loan', r, '주택도시기금', 'finance');
+        add('청년 버팀목 전세자금 대출', eligible, rank, '연 2.2~3.3% / 최대 1.5억', '최장 10년', 'loan', r, '주택도시기금', 'finance');
     }
 
     // 신혼부부 버팀목
@@ -2446,7 +2446,7 @@ function runAnalysis() {
         if (grp && homeless && annualIncome <= 7500) {
             eligible = true; rank = infant ? '신생아 우대 적용 가능' : '신혼부부 버팀목';
         }
-        add('신혼부부 버팀목 전세자금 대출', eligible, rank, '최저 연 1.2% / 최대 3억', '최장 10년', 'newlywed', r, '주택도시기금', 'finance');
+        add('신혼부부 버팀목 전세자금 대출', eligible, rank, '연 1.9~3.3% / 최대 2.5억', '최장 10년', 'newlywed', r, '주택도시기금', 'finance');
     }
 
     // === 주거복지 ===
@@ -2454,7 +2454,7 @@ function runAnalysis() {
     // 주거급여
     {
         const r = [];
-        const midLimits = [1230000, 2010000, 2570000, 3120000, 3620000, 4110000, 4360000];
+        const midLimits = [1230834, 2015660, 2572337, 3117474, 3627225, 4106857, 4567272]; // 2026년 기준중위소득 48%
         const midLimit = midLimits[Math.min(hhSize, 7) - 1];
         const incWon2 = monthlyIncome * 10000;
         if (incWon2 > midLimit) r.push(`소득 기준중위 48% 이하 필요 (${hhSize}인 약 ${Math.round(midLimit/10000)}만원)`);
@@ -2484,15 +2484,16 @@ function runAnalysis() {
     // 청년 월세 한시 지원 (국토부)
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
         if (!isYouth || age > 34) r.push('만 19~34세 필요');
         if (isMarried) r.push('독립 거주 미혼 단독세대 필요');
-        if (annualIncome > 5000) r.push('연소득 5,000만원 이하 필요');
+        // 청년가구 기준중위소득 60% 이하 (2026년 1인 약 154만원/월)
+        const incOk = underMid(60);
+        if (!incOk) r.push(`소득 기준중위 60% 이하 필요 (${hhSize}인 약 ${Math.round(midLimit(60, hhSize)/10000)}만원/월)`);
         let eligible = false, rank = '';
-        if (isYouth && age <= 34 && !isMarried && annualIncome <= 5000) {
-            eligible = true; rank = '월 최대 20만원 (최장 12개월)';
+        if (isYouth && age <= 34 && !isMarried && incOk) {
+            eligible = true; rank = '월 최대 20만원 (최장 24개월, 생애 1회)';
         }
-        add('청년 월세 한시 지원 (국토부)', eligible, rank, '월 최대 20만원', '최장 12개월', 'welfare', r, '국토교통부', 'welfare');
+        add('청년 월세 한시 지원 (국토부)', eligible, rank, '월 최대 20만원 × 24개월', '최대 480만원', 'welfare', r, '국토교통부', 'welfare');
     }
 
     // Render
