@@ -605,6 +605,30 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"method":["온라인"],"url":"https://apply.gh.or.kr","contact":"1588-7013","period_type":"공고별"}',
  'https://apply.gh.or.kr'),
 
+-- iH 국민임대 ★2026-03-23 공식사이트 확인
+('IH_NATIONAL_RENT', '임대주택', '공공임대', '국민임대', 'iH', '인천', 'iH 인천 국민임대주택',
+ '무주택 저소득 가구 (인천 거주 우선)', FALSE,
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":70,"income_pct_1person":90,"income_pct_2person":80,"asset_limit":337000000,"car_limit":45630000,"notes":["총자산 33,700만원·자동차 4,563만원 (2025년 기준 공식확인)","인천 거주자 우선 (비인천도 신청 가능)"]}',
+ '{"rent_pct_min":60,"rent_pct_max":80,"period_years":30}',
+ '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
+ 'https://www.ih.co.kr/main/sale_lease/management/nation.jsp'),
+
+-- iH 행복주택 (청년) ★2026-03-23 공식사이트 확인
+('IH_HAPPY_YOUTH', '임대주택', '공공임대', '행복주택', 'iH', '인천', 'iH 인천 행복주택 (청년)',
+ '만 19~39세 미혼 무주택 청년 (인천 거주 우선)', FALSE,
+ '{"age_min":19,"age_max":39,"marital_status":["미혼","한부모"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"notes":["자산기준 공고별 상이 — 공고문 확인","인천 거주자 우선"]}',
+ '{"rent_pct_min":60,"rent_pct_max":80,"period_years_max":6}',
+ '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
+ 'https://www.ih.co.kr/main/sale_lease/management/happy.jsp'),
+
+-- iH 행복주택 (신혼부부) ★2026-03-23 공식사이트 확인
+('IH_HAPPY_NEWLYWED', '임대주택', '공공임대', '행복주택', 'iH', '인천', 'iH 인천 행복주택 (신혼부부)',
+ '혼인 7년 이내 신혼부부·예비신혼·신생아가구 (인천 거주 우선)', FALSE,
+ '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모"],"homeless_required":true,"marriage_years_max":7,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":120,"income_pct_2person":110,"notes":["자산기준 공고별 상이 — 공고문 확인","인천 거주자 우선"]}',
+ '{"rent_pct_min":60,"rent_pct_max":80,"period_years_max":10}',
+ '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
+ 'https://www.ih.co.kr/main/sale_lease/management/happy.jsp'),
+
 -- iH 천원주택 매입임대
 ('IH_1000WON_BUY', '임대주택', '매입임대', '천원주택', 'iH', '인천', 'iH 천원주택 (매입임대)',
  '신혼부부·신생아·한부모가족 인천 거주', FALSE,

@@ -284,17 +284,35 @@ WebSearch: "경기복지재단 잡아바 어플라이 청년이사비"
 분양·임대 공고 목록    /gh/announcement-of-salerental001.do
 ```
 
-## 7-2. iH 임대주택 (ih.co.kr)
+## 7-2. iH 임대주택 (ih.co.kr) ★2026-03-23 학습완료
 
 | 항목 | 내용 |
 |------|------|
-| **knowledge 파일** | `knowledge/gh_ih_임대주택.md` (미작성) → 추후 작성 필요 |
+| **knowledge 파일** | `knowledge/ih_rental_housing.md` ★신규 작성 |
 | **iH URL** | https://www.ih.co.kr |
-| **접근 방법** | WebFetch 직접 가능 |
+| **접근 방법** | ✅ WebFetch 직접 가능 |
 
-**핵심 확인 항목**:
-- iH 국민임대 자동차 기준: 3,500만원 (타 기관보다 엄격)
-- 천원주택 iH 운영분 신규 모집 공고
+**확인된 서브페이지**:
+```
+건설형(영구임대)   /main/sale_lease/management/build.jsp
+국민임대/장기전세  /main/sale_lease/management/nation.jsp
+행복주택          /main/sale_lease/management/happy.jsp
+매입형            /main/sale_lease/management/buy.jsp
+임차형(보증금지원) /main/sale_lease/management/lease.jsp
+주거복지사업      /main/sale_lease/welfare/ih.jsp
+입주자모집공고    /main/sale_lease/notice.jsp
+```
+
+**확인된 핵심 수치 (2026-03-23)**:
+- iH 국민임대 자동차: **4,563만원** (기존 3,500만원 오기재 → 수정 필요)
+- iH 국민임대 총자산: **33,700만원** (코드 34,500만원 → 불일치)
+- iH 행복주택 소득: 100%(맞벌이120%, 1인120%, 2인110%)
+- iH 행복주택 자산: 공고별 상이 (HTML 미게재)
+
+**다음 재확인 시 체크 항목**:
+- 천원주택 2026년 하반기 모집 공고 여부
+- 행복주택 자산기준 공고문(PDF) 확인
+- 국민임대 자산기준 연도 변경 여부 (현재 2025년 기준)
 
 ---
 
