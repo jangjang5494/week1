@@ -608,7 +608,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- iH 국민임대 ★2026-03-23 공식사이트 확인
 ('IH_NATIONAL_RENT', '임대주택', '공공임대', '국민임대', 'iH', '인천', 'iH 인천 국민임대주택',
  '무주택 저소득 가구 (인천 거주 우선)', FALSE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":70,"income_pct_1person":90,"income_pct_2person":80,"asset_limit":337000000,"car_limit":45630000,"notes":["총자산 33,700만원·자동차 4,563만원 (2025년 기준 공식확인)","인천 거주자 우선 (비인천도 신청 가능)"]}',
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":70,"income_pct_1person":90,"income_pct_2person":80,"asset_limit":345000000,"car_limit":45630000,"notes":["총자산 34,500만원·자동차 4,563만원 (사용자 확인)","인천 거주자 우선 (비인천도 신청 가능)"]}',
  '{"rent_pct_min":60,"rent_pct_max":80,"period_years":30}',
  '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
  'https://www.ih.co.kr/main/sale_lease/management/nation.jsp'),
