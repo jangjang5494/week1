@@ -1476,6 +1476,7 @@ function runAnalysis() {
     }
 
     const baseOk = seoulRes && homeless;
+    const baseOk_sale = homeless;                  // SH 공공분양·나눔형: 수도권(서울·경기·인천) 거주 가능
     const baseOk_lh = homeless;                   // LH 전국 대상
     const baseOk_gh = homeless;                   // GH 전국 신청 가능 (경기 거주 우선)
     const baseOk_ih = homeless;                   // iH 전국 신청 가능 (인천 거주 우선)
@@ -2119,62 +2120,66 @@ function runAnalysis() {
 
     // === 공공분양 ===
 
-    // SH 공공분양 일반공급
+    // SH 공공분양 일반공급 (수도권 거주 무주택, 소득 100%/맞벌이 140%)
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
         const aOk = realEstate <= 21550, carOk = carVal <= 4563;
         if (!aOk) r.push('부동산 21,550만원 이하 필요');
         if (!carOk) r.push('자동차 4,563만원 이하 필요');
         let eligible = false, rank = '';
-        if (baseOk && subCount >= 6 && aOk && carOk && under(100)) {
+        const incOk = dualInc ? under(140) : under(100);
+        if (baseOk_sale && subCount >= 6 && aOk && carOk && incOk) {
             eligible = true;
             rank = subCount >= 24 ? '1순위 (납입 24회 이상)' : '2순위 (납입 6회 이상)';
-        } else if (baseOk && subCount >= 6 && aOk && carOk) {
-            r.push('소득 100% 이하 필요');
+        } else if (baseOk_sale && subCount >= 6 && aOk && carOk) {
+            r.push('소득 100%' + (dualInc ? '(맞벌이 140%)' : '') + ' 이하 필요');
         }
         add('SH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-general', r, 'SH', 'sale');
     }
 
-    // SH 나눔형 일반공급
+    // SH 나눔형 일반공급 (수도권 거주, 소득 100%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
         const aOk = totalAssets <= 35400, carOk = carVal <= 4563;
         if (!aOk) r.push('총자산 35,400만원 이하 필요');
         if (!carOk) r.push('자동차 4,563만원 이하 필요');
         let eligible = false, rank = '';
-        if (baseOk && subCount >= 6 && aOk && carOk) {
+        const incOk = dualInc ? under(200) : under(100);
+        if (baseOk_sale && subCount >= 6 && aOk && carOk && incOk) {
             eligible = true;
-            rank = '가점제 (무주택기간·부양가족·청약횟수)';
+            rank = '가점제 (무주택기간·부양가족·청약횟수)' + (dualInc ? ' / 맞벌이 200%' : '');
+        } else if (baseOk_sale && subCount >= 6 && aOk && carOk) {
+            r.push('소득 100%' + (dualInc ? '(맞벌이 200%)' : '') + ' 이하 필요');
         }
         add('SH 나눔형 공공분양 (일반공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-general', r, 'SH', 'sale');
     }
 
-    // SH 나눔형 청년특공
+    // SH 나눔형 청년특공 (수도권 거주, 소득 140%, 본인자산 27,000)
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
         if (!isYouth) r.push('만 19~39세 필요');
         if (isMarried && !singleParent) r.push('미혼 또는 한부모 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
         const selfAssetOk = totalAssets <= 27000;
         if (!selfAssetOk) r.push('본인 자산 27,000만원 이하 필요');
         let eligible = false, rank = '';
-        if (baseOk && isYouth && (!isMarried || singleParent) && subCount >= 6 && selfAssetOk && under(140)) {
+        if (baseOk_sale && isYouth && (!isMarried || singleParent) && subCount >= 6 && selfAssetOk && under(140)) {
             eligible = true; rank = '청년특공 (소득 140% 이하, 생애1회)';
-        } else if (baseOk && isYouth && (!isMarried || singleParent) && subCount >= 6 && selfAssetOk) {
+        } else if (baseOk_sale && isYouth && (!isMarried || singleParent) && subCount >= 6 && selfAssetOk) {
             r.push('소득 140% 이하 필요');
         }
         add('SH 나눔형 (청년 특별공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-special', r, 'SH', 'sale');
     }
 
-    // SH 나눔형 신혼특공
+    // SH 나눔형 신혼특공 (수도권 거주, 소득 130%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
         const grp = isNewlywedStrict || infant || singleParent;
         if (!grp) r.push('신혼(7년이내)·예비신혼·한부모·신생아 가구 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
@@ -2182,18 +2187,18 @@ function runAnalysis() {
         if (!aOk) r.push('총자산 35,400만원 이하 필요');
         if (!carOk) r.push('자동차 4,563만원 이하 필요');
         let eligible = false, rank = '';
-        if (baseOk && grp && subCount >= 6 && aOk && carOk) {
+        if (baseOk_sale && grp && subCount >= 6 && aOk && carOk) {
             const incOk = dualInc ? under(200) : under(130);
             if (incOk) { eligible = true; rank = dualInc ? '맞벌이 200% 이하' : '외벌이 130% 이하'; }
-            else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+            else r.push('소득 130%' + (dualInc ? '(맞벌이 200%)' : '') + ' 이하 필요');
         }
         add('SH 나눔형 (신혼부부 특별공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-special', r, 'SH', 'sale');
     }
 
-    // SH 공공분양 신혼특공
+    // SH 공공분양 신혼특공 (수도권 거주, 소득 130%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
         const grp = isNewlywedStrict || singleParent;
         if (!grp) r.push('신혼(7년이내)·예비신혼·한부모 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
@@ -2201,20 +2206,20 @@ function runAnalysis() {
         if (!aOk) r.push('부동산 21,550만원 이하 필요');
         if (!carOk) r.push('자동차 4,563만원 이하 필요');
         let eligible = false, rank = '';
-        if (baseOk && grp && subCount >= 6 && aOk && carOk) {
+        if (baseOk_sale && grp && subCount >= 6 && aOk && carOk) {
             const incOk = dualInc ? under(200) : under(130);
             if (incOk) {
                 eligible = true;
                 rank = infant ? '우선공급 가능 (2세이하자녀)' : isNewlywedStrict ? '일반공급' : '한부모';
-            } else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+            } else r.push('소득 130%' + (dualInc ? '(맞벌이 200%)' : '') + ' 이하 필요');
         }
         add('SH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
     }
 
-    // SH 공공분양 생애최초
+    // SH 공공분양 생애최초 (수도권 거주, 소득 130%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
         if (!lifeFirst) r.push('세대원 전원 과거 주택 미소유 필요');
         if (!taxPaid5yr) r.push('근로자/자영업자 5년 이상 소득세 납부 필요');
         if (!subAmountEnough) r.push('청약저축 600만원 이상 납입 필요');
@@ -2222,28 +2227,28 @@ function runAnalysis() {
         if (!aOk) r.push('부동산 21,550만원 이하 필요');
         if (!carOk) r.push('자동차 4,563만원 이하 필요');
         let eligible = false, rank = '';
-        if (baseOk && lifeFirst && taxPaid5yr && subAmountEnough && aOk && carOk) {
+        if (baseOk_sale && lifeFirst && taxPaid5yr && subAmountEnough && aOk && carOk) {
             const incOk = dualInc ? under(200) : under(130);
             if (incOk) { eligible = true; rank = '생애최초특공 (생애 1회)'; }
-            else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+            else r.push('소득 130%' + (dualInc ? '(맞벌이 200%)' : '') + ' 이하 필요');
         }
         add('SH 공공분양 (생애최초 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
     }
 
-    // SH 공공분양 다자녀
+    // SH 공공분양 다자녀 (수도권 거주, 소득 120%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
         if (childCnt < 2) r.push('미성년 자녀 2명 이상 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
         const aOk = realEstate <= 21550, carOk = carVal <= 4563;
         if (!aOk) r.push('부동산 21,550만원 이하 필요');
         if (!carOk) r.push('자동차 4,563만원 이하 필요');
         let eligible = false, rank = '';
-        if (baseOk && childCnt >= 2 && subCount >= 6 && aOk && carOk) {
+        if (baseOk_sale && childCnt >= 2 && subCount >= 6 && aOk && carOk) {
             const incOk = dualInc ? under(200) : under(120);
             if (incOk) { eligible = true; rank = childCnt >= 3 ? '우선 (자녀 3명이상)' : '일반 (자녀 2명)'; }
-            else r.push('소득 120%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+            else r.push('소득 120%' + (dualInc ? '(맞벌이 200%)' : '') + ' 이하 필요');
         }
         add('SH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
     }
@@ -2253,9 +2258,17 @@ function runAnalysis() {
         const r = [];
         if (!homeless) r.push('무주택 세대구성원 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
+        if (!aOk) r.push('부동산 21,550만원 이하 필요');
+        if (!carOk) r.push('자동차 4,563만원 이하 필요');
         let eligible = false, rank = '';
-        if (homeless && subCount >= 24) { eligible = true; rank = '1순위 (납입 24회 이상)'; }
-        else if (homeless && subCount >= 6) { eligible = true; rank = '2순위 (납입 6회 이상)'; }
+        if (homeless && subCount >= 6 && aOk && carOk) {
+            const incOk = under(100);
+            if (incOk) {
+                eligible = true;
+                rank = subCount >= 24 ? '1순위 (납입 24회 이상)' : '2순위 (납입 6회 이상)';
+            } else r.push('소득 100% 이하 필요');
+        }
         add('LH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-general', r, 'LH', 'sale');
     }
 
