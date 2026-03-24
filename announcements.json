@@ -1,7 +1,7 @@
 {
   "updated": "2026-03-24",
-  "count": 50,
-  "needs_review_count": 7,
+  "count": 65,
+  "needs_review_count": 21,
   "announcements": [
     {
       "id": "sh_rental_d6daf76c",
@@ -49,6 +49,97 @@
       "needs_pdf": true
     },
     {
+      "id": "sh_rental_3ad917cc",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[청년형] 특화형 매입임대주택(서초구) 입주자 모집 공고(운영기관 : 한지붕 협동조합)",
+      "types": [
+        "일반 매입임대주택"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301838&multi_itm_seq=2",
+      "posted_date": "2026-03-19",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_rental_31f662f1",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "2026년 상반기 신혼·신생아 매입임대주택Ⅰ 입주대기자 모집공고(2026.03.18.)",
+      "types": [
+        "신혼·신생아 매입임대 Ⅰ형"
+      ],
+      "location": "서울",
+      "status": "예정",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301742&multi_itm_seq=2",
+      "posted_date": "2026-03-18",
+      "crawled_at": "2026-03-24",
+      "apply_start": "2026-04-07",
+      "apply_end": "2026-04-10"
+    },
+    {
+      "id": "sh_rental_050d32c1",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[토지지원 사회주택] 유니버설디자인하우스 망우 입주자 모집공고",
+      "types": [
+        "기타"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301783&multi_itm_seq=2",
+      "posted_date": "2026-03-17",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_rental_2865309d",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[토지지원 사회주택] 경성리츠 입주자 모집 공고",
+      "types": [
+        "기타"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301734&multi_itm_seq=2",
+      "posted_date": "2026-03-16",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_rental_b6691904",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "2026년 창동 아우르네빌리지 예비입주자 모집공고(일자리연계형 지원주택, 2026.03.10.공고)",
+      "types": [
+        "기타"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301406&multi_itm_seq=2",
+      "posted_date": "2026-03-10",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_rental_1655d416",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[청년형] 특화형 매입임대주택(강동구) 입주자 모집 공고(운영기관 : 협동조합 큰바위얼굴)",
+      "types": [
+        "일반 매입임대주택"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301327&multi_itm_seq=2",
+      "posted_date": "2026-03-09",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
       "id": "sh_sale_300579d8",
       "inst": "SH",
       "source_key": "sh_sale",
@@ -64,19 +155,52 @@
       "needs_pdf": true
     },
     {
-      "id": "sh_sale_e37592ab",
-      "inst": "SH",
-      "source_key": "sh_sale",
-      "title": "마곡지구 17단지 토지임대부 분양주택 입주자모집공고",
+      "id": "lh_rental_0b5247a1",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]경남 진주평거(고령자복지) 국민임대 예비입주자 모집(2026.03.23.)",
       "types": [
-        "기타"
+        "LH 국민임대"
       ],
-      "location": "서울",
-      "status": "needs_review",
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301076&multi_itm_seq=1",
-      "posted_date": "2026-02-27",
+      "location": "경상남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
       "crawled_at": "2026-03-24",
-      "needs_pdf": true
+      "apply_end": "2026-04-10",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_f8670dcb",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]경남 사천용현 국민임대주택 예비입주자 모집 (2026.03.23.)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경상남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-10",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_ae7387e2",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "인천시청역 힐스테이트(백운주택 1구역 주택재개발정비사업) 국민임대주택 입주자 모집 공고(당해 사업지구 철거민)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "인천광역시",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-09",
+      "apply_start": "2026-03-24"
     },
     {
       "id": "lh_rental_b986f2bc",
@@ -127,22 +251,6 @@
       "apply_start": "2026-03-24"
     },
     {
-      "id": "lh_rental_fbb0cd06",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]보령시지역 국민임대주택 예비입주자 모집공고(보령죽정, 보령대천 20260323)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "충청남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-24"
-    },
-    {
       "id": "lh_rental_516db22b",
       "inst": "LH",
       "source_key": "lh_rental",
@@ -156,6 +264,22 @@
       "posted_date": "2026-03-24",
       "crawled_at": "2026-03-24",
       "apply_end": "2026-04-09",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_fbb0cd06",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]보령시지역 국민임대주택 예비입주자 모집공고(보령죽정, 보령대천 20260323)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "충청남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-07",
       "apply_start": "2026-03-24"
     },
     {
@@ -207,26 +331,10 @@
       "apply_start": "2026-03-23"
     },
     {
-      "id": "lh_rental_002a933c",
+      "id": "lh_rental_5bf1e8ff",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "[정정공고]강릉시,정선군,태백시 국민임대주택 예비입주자 모집(26.3.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "강원특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-16",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_ede24182",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "2026년 3월 고창, 김제, 순창, 정읍 국민임대주택 예비입주자 모집 공고(전북 남부권)",
+      "title": "익산시 국민임대주택 예비입주자 모집 공고('26.03.23)",
       "types": [
         "LH 국민임대"
       ],
@@ -235,23 +343,7 @@
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-23",
       "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_1e7013e1",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "군산시 국민임대주택 예비입주자 모집 공고('26.03.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전북특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
+      "apply_end": "2026-04-07",
       "apply_start": "2026-03-23"
     },
     {
@@ -287,6 +379,22 @@
       "apply_start": "2026-03-23"
     },
     {
+      "id": "lh_rental_002a933c",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]강릉시,정선군,태백시 국민임대주택 예비입주자 모집(26.3.23)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "강원특별자치도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-16",
+      "apply_start": "2026-03-23"
+    },
+    {
       "id": "lh_rental_596f1ebb",
       "inst": "LH",
       "source_key": "lh_rental",
@@ -303,10 +411,10 @@
       "apply_start": "2026-03-23"
     },
     {
-      "id": "lh_rental_5bf1e8ff",
+      "id": "lh_rental_ede24182",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "익산시 국민임대주택 예비입주자 모집 공고('26.03.23)",
+      "title": "2026년 3월 고창, 김제, 순창, 정읍 국민임대주택 예비입주자 모집 공고(전북 남부권)",
       "types": [
         "LH 국민임대"
       ],
@@ -315,7 +423,23 @@
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-23",
       "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
+      "apply_end": "2026-04-09",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_1e7013e1",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "군산시 국민임대주택 예비입주자 모집 공고('26.03.23)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "전북특별자치도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-09",
       "apply_start": "2026-03-23"
     },
     {
@@ -383,12 +507,12 @@
       "apply_start": "2026-03-23"
     },
     {
-      "id": "lh_rental_d83249ea",
+      "id": "lh_rental_4399ad92",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "경주내남 고령자복지주택(영구임대) 입주자 추가모집 공고",
+      "title": "경북서부지역(구미시, 김천시, 의성군) 국민임대 예비입주자 모집",
       "types": [
-        "LH 영구임대"
+        "LH 국민임대"
       ],
       "location": "경상북도",
       "status": "예정",
@@ -396,54 +520,6 @@
       "posted_date": "2026-03-23",
       "crawled_at": "2026-03-24",
       "apply_end": "2026-04-09",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_d8a4f255",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]대구 서부권지역[달서구, 달성군, 고령군] 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대구광역시 외",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-10",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_47a7767c",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "보령동대4 국민임대주택 예비입주자 모집공고(공고일 : 2026.03.23.)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "충청남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_57a350a7",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "원주문막1 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "강원특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
       "apply_start": "2026-03-23"
     },
     {
@@ -463,12 +539,60 @@
       "apply_start": "2026-03-23"
     },
     {
-      "id": "lh_rental_4399ad92",
+      "id": "lh_rental_57a350a7",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "경북서부지역(구미시, 김천시, 의성군) 국민임대 예비입주자 모집",
+      "title": "원주문막1 국민임대주택 예비입주자 모집",
       "types": [
         "LH 국민임대"
+      ],
+      "location": "강원특별자치도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-07",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_47a7767c",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "보령동대4 국민임대주택 예비입주자 모집공고(공고일 : 2026.03.23.)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "충청남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-08",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_d8a4f255",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]대구 서부권지역[달서구, 달성군, 고령군] 국민임대주택 예비입주자 모집",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "대구광역시 외",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-10",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_d83249ea",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "경주내남 고령자복지주택(영구임대) 입주자 추가모집 공고",
+      "types": [
+        "LH 영구임대"
       ],
       "location": "경상북도",
       "status": "예정",
@@ -495,22 +619,6 @@
       "apply_start": "2026-03-23"
     },
     {
-      "id": "lh_rental_4990822b",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "포항시 국민임대주택 입주자격완화 예비입주자 모집공고",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "경상북도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-23"
-    },
-    {
       "id": "lh_rental_6c85a56e",
       "inst": "LH",
       "source_key": "lh_rental",
@@ -524,6 +632,22 @@
       "posted_date": "2026-03-23",
       "crawled_at": "2026-03-24",
       "apply_end": "2026-04-09",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_4990822b",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "포항시 국민임대주택 입주자격완화 예비입주자 모집공고",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경상북도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-07",
       "apply_start": "2026-03-23"
     },
     {
@@ -687,54 +811,6 @@
       "apply_start": "2026-03-23"
     },
     {
-      "id": "lh_rental_4eebbc09",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "광주광역시 광산구 도산청암, 삼라미주 국민임대주택 입주자격완화 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "광주광역시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_06726371",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "영광도동 국민임대주택 예비입주자 모집(2026.03.23. 공고)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전라남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_9ca1ce5e",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]'2026.3.23. 순천시·광양시 국민임대주택 예비입주자 모집(입주자격완화)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전라남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-23"
-    },
-    {
       "id": "lh_sale_2d611f7a",
       "inst": "LH",
       "source_key": "lh_sale",
@@ -766,21 +842,6 @@
       "needs_pdf": true
     },
     {
-      "id": "ih_rental_fd45ebc1",
-      "inst": "iH",
-      "source_key": "ih_rental",
-      "title": "2026년 천원주택(전세임대주택) 예비입주자 모집공고",
-      "types": [
-        "기타(iH)"
-      ],
-      "location": "인천",
-      "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4234",
-      "posted_date": "2026-02-27",
-      "crawled_at": "2026-03-24",
-      "needs_pdf": true
-    },
-    {
       "id": "youth_a274315e",
       "inst": "SH",
       "source_key": "youth_housing",
@@ -795,6 +856,171 @@
       "crawled_at": "2026-03-24",
       "apply_start": "2026-03-19",
       "apply_end": "2026-03-25"
+    },
+    {
+      "id": "ihwc_ab273319",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "2026년 천원주택(전세임대주택) 예비입주자 모집공고",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4234&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_ac60cb37",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "임대아파트 단지내 상가 입점자 모집 공고(연수, 구월7)",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4226&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_455867e7",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "도화6-2BL 이편한세상 공공임대주택의 예비입주자 모집결과",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4223&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_0c9ffc86",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "영구임대주택(선학) 예비자 모집결과 발표 및 계약체결 안내",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4218&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_68f96ba0",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "영구임대주택(연수) 예비자 모집 결과 발표 및 계약체결 안내",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4217&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_cf2e3d99",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "2026년 우리집 특화시설 운영자 모집공고(수시)",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4199&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_40fdb395",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "임대아파트 단지내 상가 잔여분 선착순 모집 공고(선학, 청학, 화수2)",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4193&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_f7e2281c",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "『인천 도화6-2BL e-편한세상 공공임대주택(10년) 예비입주자 모집 공고』의 1순위 청약접수 마감안내",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4155&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_92ef3c39",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "도화 6-2BL 공공임대주택 예비입주자 모집 공고",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4140&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_bd859e48",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "우리집 영구임대주택(만석·만석2·만석3, 남촌, 덕적, 청천) 예비입주자 모집 공고",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4121&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_d64769d5",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "영구임대주택(선학, 연수, 구월7단지, 더샵부평) 예비입주자 모집 공고",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4120&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "needs_pdf": true
     }
   ]
 }
