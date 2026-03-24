@@ -904,12 +904,21 @@ function getMatchingAnnouncements(typeName) {
 const SB_URL = 'https://ajgurlfgifvicvxsxzqh.supabase.co';
 const SB_KEY = 'sb_publishable_VWYME33r2PPoiBgyA5Zsxw_6bW7Hh_5';
 let sbPrograms = [];
+let sbExceptions = [];  // PDF 파싱으로 등록된 예외공고
 
 fetch(`${SB_URL}/rest/v1/programs?select=code,name,category,institution,region,eligibility,support_content,application_info,source_url&order=category`, {
     headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
 })
     .then(r => r.ok ? r.json() : [])
     .then(data => { sbPrograms = data || []; })
+    .catch(() => {});
+
+// 예외공고: raw_data.source = 'pdf_parsed' 이고 마감되지 않은 것
+fetch(`${SB_URL}/rest/v1/announcements?raw_data->>source=eq.pdf_parsed&status=neq.마감&select=id,title,institution,types,apply_start,apply_end,status,url,raw_data`, {
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+})
+    .then(r => r.ok ? r.json() : [])
+    .then(data => { sbExceptions = data || []; })
     .catch(() => {});
 
 // ===== Theme =====
@@ -2615,6 +2624,52 @@ function runAnalysis() {
         }
     }
 
+    // ===== 예외공고 직접 비교 (PDF 파싱 등록 공고) =====
+    if (sbExceptions.length > 0) {
+        for (const a of sbExceptions) {
+            const e = (a.raw_data || {}).eligibility;
+            if (!e) continue;
+
+            // evalProg와 동일한 로직으로 직접 비교
+            const r = [];
+            if (e.age_min && age < e.age_min) r.push(`만 ${e.age_min}세 이상 필요`);
+            if (e.age_max && age > e.age_max) r.push(`만 ${e.age_max}세 이하 필요`);
+            if (e.homeless_required && !homeless) r.push('무주택 필요');
+            if (e.newborn_required && !infant) r.push('2세 이하 신생아 가구 필요');
+            if (e.region_required) {
+                const req = e.region_required;
+                if (req === '서울' && !seoulRes) r.push('서울 거주 필요');
+                else if (req === '경기' && !gyeonggiRes) r.push('경기 거주 필요');
+                else if (req === '인천' && !incheonRes) r.push('인천 거주 필요');
+                else if (req === '수도권' && !(seoulRes||gyeonggiRes||incheonRes)) r.push('수도권 거주 필요');
+            }
+            if (e.marital_status) {
+                const userOk = e.marital_status.some(ms => {
+                    if (ms.includes('신혼') || ms.includes('예비신혼')) return isNewlywedStrict;
+                    if (ms === '기혼') return isMarried;
+                    if (ms === '미혼') return !isMarried;
+                    return false;
+                });
+                if (!userOk) r.push('혼인 조건 미충족');
+            }
+            if (e.income_type === '절대금액(연소득)') {
+                const annualInc2 = monthlyIncome * 12 * 10000;
+                const limit = e.income_abs || 0;
+                if (limit && annualInc2 > limit) r.push(`연소득 ${Math.round(limit/10000).toLocaleString()}만원 이하 필요`);
+            } else if (e.income_type === '도시근로자월평균' && e.income_pct) {
+                if (!under(e.income_pct)) r.push(`소득 ${e.income_pct}% 이하 필요`);
+            } else if (e.income_type === '중위소득' && e.income_pct) {
+                if (!underMid(e.income_pct)) r.push(`기준 중위소득 ${e.income_pct}% 이하 필요`);
+            }
+
+            const elig = r.length === 0;
+            const types = Array.isArray(a.types) ? a.types.join('·') : (a.types || '');
+            const period = a.apply_end ? `~${a.apply_end.slice(0,10)}` : (a.status || '수시');
+            const inst = a.institution || '기타';
+            add(a.title, elig, elig ? '해당' : '', types || '공고', period, '예외공고', r, inst, 'welfare');
+        }
+    }
+
     // Render
     const eligible = results.filter(r => r.eligible);
     const ineligible = results.filter(r => !r.eligible);
@@ -2652,7 +2707,8 @@ function runAnalysis() {
     const catLabel = {
         youth:'청년', newlywed:'신혼·신생아', longterm:'장기전세', national:'국민·매입임대', jeonse:'전세지원',
         'sale-general':'공공분양', 'sale-special':'특별공급', loan:'금융대출', welfare:'주거복지',
-        '금융지원':'금융지원', '이자지원':'이자지원', '보증료지원':'보증료지원', '주거비지원':'주거비지원', '분양주택':'공공분양'
+        '금융지원':'금융지원', '이자지원':'이자지원', '보증료지원':'보증료지원', '주거비지원':'주거비지원', '분양주택':'공공분양',
+        '예외공고':'📌 공고'
     };
 
     function card(r, isE) {

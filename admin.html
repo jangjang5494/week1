@@ -774,6 +774,7 @@ async function rejectReview(id) {
 // ════════════════════════════════════════════════════════
 let pdfText = '';
 let pdfFileName = '';
+let parsedEligibility = null;
 
 function handleDrop(e) {
   e.preventDefault();
@@ -836,19 +837,34 @@ async function parsePdf() {
 추출 형식:
 {
   "title": "공고 제목",
-  "institution": "SH|LH|GH|iH 중 하나",
-  "types": ["태그1", "태그2"],
+  "institution": "SH|LH|GH|iH 중 하나. 모르면 null",
+  "types": ["행복주택","청년" 등 해당 태그들],
   "apply_start": "YYYY-MM-DD 또는 null",
   "apply_end": "YYYY-MM-DD 또는 null",
   "date": "공고 등록일 YYYY-MM-DD 또는 null",
   "url": "신청 URL 또는 null",
   "status": "진행중|예정|마감|확인필요",
   "seq": "공고번호 또는 null",
-  "note": "핵심 자격조건 1~2줄 요약"
+  "note": "지원 내용 핵심 1~2줄 요약",
+  "eligibility": {
+    "age_min": 숫자 또는 null,
+    "age_max": 숫자 또는 null,
+    "homeless_required": true|false,
+    "marital_status": ["미혼","기혼","신혼(7년이내)","예비신혼","한부모"] 중 해당하는 것만 배열로, 제한없으면 null,
+    "newborn_required": true|false,
+    "income_type": "중위소득|도시근로자월평균|절대금액(연소득)|null",
+    "income_pct": 소득기준 %(숫자) 또는 null,
+    "income_abs": 연소득 상한(원) 또는 null,
+    "asset_limit": 총자산 상한(원) 또는 null,
+    "car_limit": 자동차가액 상한(원) 또는 null,
+    "region_required": "서울|경기|인천|수도권|null",
+    "enrollment_required": true|false,
+    "notes": ["기타 중요 조건들 배열"]
+  }
 }
 
 공고문:
-${pdfText.slice(0, 6000)}`;
+${pdfText.slice(0, 8000)}`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -876,11 +892,28 @@ ${pdfText.slice(0, 6000)}`;
     const jsonStr = raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
     const parsed = JSON.parse(jsonStr);
 
+    // 자격조건 보존
+    parsedEligibility = parsed.eligibility || null;
+
     // 폼 자동완성
     fillManualForm(parsed);
 
-    result.textContent = '✅ 파싱 완료! 아래 폼에 자동 입력되었습니다. 확인 후 등록하세요.';
-    result.style.backgroundColor = '#f0fdf4';
+    // 자격조건 요약 표시
+    let eligSummary = '';
+    if (parsedEligibility) {
+      const e = parsedEligibility;
+      const lines = [];
+      if (e.age_min || e.age_max) lines.push(`나이: 만 ${e.age_min||'?'}~${e.age_max||'?'}세`);
+      if (e.homeless_required) lines.push('무주택 필수');
+      if (e.income_type && e.income_pct) lines.push(`소득: ${e.income_type} ${e.income_pct}% 이하`);
+      if (e.asset_limit) lines.push(`총자산: ${Math.round(e.asset_limit/10000).toLocaleString()}만원 이하`);
+      if (e.region_required) lines.push(`지역: ${e.region_required}`);
+      if (e.marital_status) lines.push(`혼인: ${e.marital_status.join('·')}`);
+      if (e.notes?.length) lines.push(...e.notes.slice(0,2));
+      eligSummary = lines.length ? '\n\n📋 추출된 자격조건:\n' + lines.map(l=>'  • '+l).join('\n') : '';
+    }
+    result.textContent = '✅ 파싱 완료! 아래 폼에 자동 입력되었습니다. 확인 후 등록하세요.' + eligSummary;
+    result.style.whiteSpace = 'pre-line';
 
     // 탭3의 수동입력 폼으로 포커스
     document.getElementById('manual-form').scrollIntoView({ behavior: 'smooth' });
@@ -941,7 +974,9 @@ async function submitManual() {
     date,
     url,
     seq,
-    raw_data: note ? { note } : null
+    raw_data: (note || parsedEligibility)
+      ? { ...(note ? { note } : {}), ...(parsedEligibility ? { eligibility: parsedEligibility, source: 'pdf_parsed' } : {}) }
+      : null
   };
 
   try {
@@ -964,6 +999,7 @@ function clearManualForm() {
   document.getElementById('m-status').value = '진행중';
   pdfText = '';
   pdfFileName = '';
+  parsedEligibility = null;
   document.getElementById('parse-result').style.display = 'none';
   document.getElementById('parse-btn').style.display = 'none';
   document.getElementById('parse-file-name').textContent = '';
