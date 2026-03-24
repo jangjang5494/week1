@@ -1,8 +1,360 @@
 {
   "updated": "2026-03-24",
-  "count": 65,
-  "needs_review_count": 21,
+  "count": 107,
+  "needs_review_count": 83,
   "announcements": [
+    {
+      "id": "lh_rental_0b5247a1",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]경남 진주평거(고령자복지) 국민임대 예비입주자 모집(2026.03.23.)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경상남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-10",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_f8670dcb",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]경남 사천용현 국민임대주택 예비입주자 모집 (2026.03.23.)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경상남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-10",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_ae7387e2",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "인천시청역 힐스테이트(백운주택 1구역 주택재개발정비사업) 국민임대주택 입주자 모집 공고(당해 사업지구 철거민)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "인천광역시",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-09",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_0585ef1f",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]논산시지역 국민임대주택 예비입주자 모집공고(논산취암2, 논산연무 20260323)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "충청남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-08",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_ebb6d519",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]서천군 지역 국민임대주택 예비입주자 모집(서천장항산단, 장항원수 20260323)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "충청남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-06",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_fbb0cd06",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]보령시지역 국민임대주택 예비입주자 모집공고(보령죽정, 보령대천 20260323)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "충청남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-07",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_da0182b1",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고]증평군지역 국민임대주택 예비입주자 모집[2026.03.23]",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "충청북도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-02",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_7dda8536",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고][중부권]청원오송1 국민임대 예비입주자 모집(2023.03.23)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "충청북도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-01",
+      "apply_start": "2026-03-24"
+    },
+    {
+      "id": "lh_rental_050d28fd",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "양산 삼성파크빌,한일유앤아이 국민임대주택 입주자 모집 공고 시행(2026.03.23)_소득, 자산, 무주택 요건 완화 / 계약금 인하",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경상남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-02",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_4399ad92",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "경북서부지역(구미시, 김천시, 의성군) 국민임대 예비입주자 모집",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경상북도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-09",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_47a7767c",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "보령동대4 국민임대주택 예비입주자 모집공고(공고일 : 2026.03.23.)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "충청남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-08",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_9871caf8",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "목포,무안,영암,강진,장흥,완도,진도지역 국민임대주택 예비입주자 모집(2026.03.23.)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "전라남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-13",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_d83249ea",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "경주내남 고령자복지주택(영구임대) 입주자 추가모집 공고",
+      "types": [
+        "LH 영구임대"
+      ],
+      "location": "경상북도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-09",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_6c85a56e",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[남부권]청주시지역 국민임대주택 예비입주자 모집(2026.03.23)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "충청북도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-09",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_4990822b",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "포항시 국민임대주택 입주자격완화 예비입주자 모집공고",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경상북도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-07",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_37b14e48",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "［밀양시지역］밀양삼문휴먼시아 국민임대주택 예비입주자 모집",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경상남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-07",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_d8f276c4",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "장성군 국민임대주택 예비입주자 모집(2026.03.23. 공고)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "전라남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-08",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_974774ca",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "담양군 국민임대주택 예비입주자 모집(2026.03.23. 공고)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "전라남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-08",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_90cda7d2",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "김해진영6단지 국민임대주택 예비입주자 모집('26.03.23 공고)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경상남도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-04-09",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_3ecf924f",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고][청주시 흥덕구,청원구]일반 매입임대주택 예비입주자 모집 공고",
+      "types": [
+        "기타(LH)"
+      ],
+      "location": "전국",
+      "status": "진행중",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-03-27",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_0d479694",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고][충주시]일반 매입임대주택 예비입주자 모집 공고",
+      "types": [
+        "기타(LH)"
+      ],
+      "location": "전국",
+      "status": "진행중",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-03-27",
+      "apply_start": "2026-03-23"
+    },
+    {
+      "id": "lh_rental_37830114",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[정정공고][청주시 상당구,서원구]일반 매입임대주택 예비입주자 모집 공고",
+      "types": [
+        "기타(LH)"
+      ],
+      "location": "전국",
+      "status": "진행중",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-23",
+      "crawled_at": "2026-03-24",
+      "apply_end": "2026-03-27",
+      "apply_start": "2026-03-23"
+    },
     {
       "id": "sh_rental_d6daf76c",
       "inst": "SH",
@@ -155,707 +507,64 @@
       "needs_pdf": true
     },
     {
-      "id": "lh_rental_0b5247a1",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]경남 진주평거(고령자복지) 국민임대 예비입주자 모집(2026.03.23.)",
+      "id": "sh_notice_e64dcd4b",
+      "inst": "SH",
+      "source_key": "sh_notice",
+      "title": "(정정공고) 고덕강일지구 및 내곡도시형생활주택 단지 내 상가 [중개보수 지급] 선착순 분양 공고",
       "types": [
-        "LH 국민임대"
+        "기타"
       ],
-      "location": "경상남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/view.do?seq=301741&multi_itm_seq=1,2,4,8,16,32,64,128,256,512",
+      "posted_date": "2026-03-20",
       "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-10",
-      "apply_start": "2026-03-24"
+      "needs_pdf": true
     },
     {
-      "id": "lh_rental_f8670dcb",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]경남 사천용현 국민임대주택 예비입주자 모집 (2026.03.23.)",
+      "id": "sh_notice_f8f3feed",
+      "inst": "SH",
+      "source_key": "sh_notice",
+      "title": "은평구 신혼부부(수요자 맞춤형)공공주택 입주자 추가모집 공고",
       "types": [
-        "LH 국민임대"
+        "기타"
       ],
-      "location": "경상남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/view.do?seq=301832&multi_itm_seq=1,2,4,8,16,32,64,128,256,512",
+      "posted_date": "2026-03-16",
       "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-10",
-      "apply_start": "2026-03-24"
+      "needs_pdf": true
     },
     {
-      "id": "lh_rental_ae7387e2",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "인천시청역 힐스테이트(백운주택 1구역 주택재개발정비사업) 국민임대주택 입주자 모집 공고(당해 사업지구 철거민)",
+      "id": "sh_notice_2b972c76",
+      "inst": "SH",
+      "source_key": "sh_notice",
+      "title": "씨드큐브 창동 오피스(업무시설) 선착순 수의계약 임대 공고",
       "types": [
-        "LH 국민임대"
+        "기타"
       ],
-      "location": "인천광역시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/view.do?seq=301159&multi_itm_seq=1,2,4,8,16,32,64,128,256,512",
+      "posted_date": "2026-03-04",
       "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-24"
+      "needs_pdf": true
     },
     {
-      "id": "lh_rental_b986f2bc",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]춘천시·홍천군·화천군 지역 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "강원특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-23",
-      "apply_start": "2026-03-24"
-    },
-    {
-      "id": "lh_rental_0585ef1f",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]논산시지역 국민임대주택 예비입주자 모집공고(논산취암2, 논산연무 20260323)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "충청남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-24"
-    },
-    {
-      "id": "lh_rental_ebb6d519",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]서천군 지역 국민임대주택 예비입주자 모집(서천장항산단, 장항원수 20260323)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "충청남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-06",
-      "apply_start": "2026-03-24"
-    },
-    {
-      "id": "lh_rental_516db22b",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]대전광역시 동구지역 국민임대주택 예비입주자 모집공고(대전낭월 20260323)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대전광역시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-24"
-    },
-    {
-      "id": "lh_rental_fbb0cd06",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]보령시지역 국민임대주택 예비입주자 모집공고(보령죽정, 보령대천 20260323)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "충청남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-24"
-    },
-    {
-      "id": "lh_rental_da0182b1",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]증평군지역 국민임대주택 예비입주자 모집[2026.03.23]",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "충청북도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-02",
-      "apply_start": "2026-03-24"
-    },
-    {
-      "id": "lh_rental_7dda8536",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고][중부권]청원오송1 국민임대 예비입주자 모집(2023.03.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "충청북도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-01",
-      "apply_start": "2026-03-24"
-    },
-    {
-      "id": "lh_rental_f3ca4c75",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "2026년 3월 세종시 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "세종특별자치시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_5bf1e8ff",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "익산시 국민임대주택 예비입주자 모집 공고('26.03.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전북특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_c310bfe6",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "대전느리울13 국민임대주택 예비입주자 모집공고(공고일 : 2026.03.23.)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대전광역시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-14",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_21e8ab67",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "대전반석4 국민임대주택 예비입주자 모집공고(2026.03.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대전광역시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-14",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_002a933c",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]강릉시,정선군,태백시 국민임대주택 예비입주자 모집(26.3.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "강원특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-16",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_596f1ebb",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "대전천동1 국민임대주택 예비입주자 모집공고(공고일 : 2026.03.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대전광역시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-15",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_ede24182",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "2026년 3월 고창, 김제, 순창, 정읍 국민임대주택 예비입주자 모집 공고(전북 남부권)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전북특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_1e7013e1",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "군산시 국민임대주택 예비입주자 모집 공고('26.03.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전북특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_050d28fd",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "양산 삼성파크빌,한일유앤아이 국민임대주택 입주자 모집 공고 시행(2026.03.23)_소득, 자산, 무주택 요건 완화 / 계약금 인하",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "경상남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-02",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_c23bc328",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "부산광역시 동부권 국민임대주택 예비입주자 정례모집 공고(2026.03.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "부산광역시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-02",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_1eeeb5ae",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "대구 동구, 경북 경산시 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대구광역시 외",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_f940733a",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "대구 서부권지역[달서구, 달성군, 고령군] 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대구광역시 외",
-      "status": "진행중",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-10",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_47a7767c",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "보령동대4 국민임대주택 예비입주자 모집공고(공고일 : 2026.03.23.)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "충청남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_9871caf8",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "목포,무안,영암,강진,장흥,완도,진도지역 국민임대주택 예비입주자 모집(2026.03.23.)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전라남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-13",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_57a350a7",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "원주문막1 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "강원특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_4399ad92",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "경북서부지역(구미시, 김천시, 의성군) 국민임대 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "경상북도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_d8a4f255",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]대구 서부권지역[달서구, 달성군, 고령군] 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대구광역시 외",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-10",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_d83249ea",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "경주내남 고령자복지주택(영구임대) 입주자 추가모집 공고",
-      "types": [
-        "LH 영구임대"
-      ],
-      "location": "경상북도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_ab2803dc",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고]원주시지역 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "강원특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-15",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_6c85a56e",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[남부권]청주시지역 국민임대주택 예비입주자 모집(2026.03.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "충청북도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_4990822b",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "포항시 국민임대주택 입주자격완화 예비입주자 모집공고",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "경상북도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_37b14e48",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "［밀양시지역］밀양삼문휴먼시아 국민임대주택 예비입주자 모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "경상남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_d8f276c4",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "장성군 국민임대주택 예비입주자 모집(2026.03.23. 공고)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전라남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_974774ca",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "담양군 국민임대주택 예비입주자 모집(2026.03.23. 공고)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전라남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_ed9c7564",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "대전광역시 유성구 국민임대주택 예비입주자 모집(2026.03.23)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대전광역시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_90cda7d2",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "김해진영6단지 국민임대주택 예비입주자 모집('26.03.23 공고)",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "경상남도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-09",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_2f1b9633",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "대전광역시 유성구(유성타워)·대덕구(주은반석) 국민임대(매입형)주택 입주자격완화 예비입주자모집",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "대전광역시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_3ecf924f",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고][청주시 흥덕구,청원구]일반 매입임대주택 예비입주자 모집 공고",
-      "types": [
-        "기타(LH)"
-      ],
-      "location": "전국",
-      "status": "진행중",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-03-27",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_0d479694",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고][충주시]일반 매입임대주택 예비입주자 모집 공고",
-      "types": [
-        "기타(LH)"
-      ],
-      "location": "전국",
-      "status": "진행중",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-03-27",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_37830114",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[정정공고][청주시 상당구,서원구]일반 매입임대주택 예비입주자 모집 공고",
-      "types": [
-        "기타(LH)"
-      ],
-      "location": "전국",
-      "status": "진행중",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-03-27",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_rental_07c5897e",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "(2026.03.23) 전주시, 완주군 지역 국민임대주택 예비입주자 모집 공고",
-      "types": [
-        "LH 국민임대"
-      ],
-      "location": "전북특별자치도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-23",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-04-07",
-      "apply_start": "2026-03-23"
-    },
-    {
-      "id": "lh_sale_2d611f7a",
-      "inst": "LH",
-      "source_key": "lh_sale",
-      "title": "청주지북 B1블록 공공분양주택 잔여세대 추가 입주자모집공고(자격완화)",
-      "types": [
-        "LH 공공분양 (일반공급)"
-      ],
-      "location": "충청북도",
-      "status": "진행중",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1027",
-      "posted_date": "2026-03-13",
-      "crawled_at": "2026-03-24",
-      "apply_end": "2026-03-24",
-      "apply_start": "2026-03-13"
-    },
-    {
-      "id": "ih_rental_e546594a",
+      "id": "ihwc_af8f7b3f",
       "inst": "iH",
-      "source_key": "ih_rental",
+      "source_key": "ihwc",
       "title": "2026년 인천도시공사(iH) 기존주택 전세임대 예비입주자 모집공고",
       "types": [
         "기타(iH)"
       ],
       "location": "인천",
       "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245",
-      "posted_date": "2026-03-18",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-24",
       "crawled_at": "2026-03-24",
       "needs_pdf": true
-    },
-    {
-      "id": "youth_a274315e",
-      "inst": "SH",
-      "source_key": "youth_housing",
-      "title": "[민간임대] 천호역 천호한강청년주택 추가모집공고",
-      "types": [
-        "청년안심주택"
-      ],
-      "location": "서울",
-      "status": "진행중",
-      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6471",
-      "posted_date": "2026-03-19",
-      "crawled_at": "2026-03-24",
-      "apply_start": "2026-03-19",
-      "apply_end": "2026-03-25"
     },
     {
       "id": "ihwc_ab273319",
@@ -1021,6 +730,848 @@
       "posted_date": "2026-03-24",
       "crawled_at": "2026-03-24",
       "needs_pdf": true
+    },
+    {
+      "id": "youth_a274315e",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 천호역 천호한강청년주택 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6471",
+      "posted_date": "2026-03-19",
+      "crawled_at": "2026-03-24",
+      "apply_start": "2026-03-19",
+      "apply_end": "2026-03-25"
+    },
+    {
+      "id": "applyhome_apt_a6548e24",
+      "inst": "청약홈",
+      "source_key": "applyhome_apt",
+      "title": "분양주택",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancListView.do",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_apt_a0412fdd",
+      "inst": "청약홈",
+      "source_key": "applyhome_apt",
+      "title": "분양전환 가능임대",
+      "types": [
+        "공공분양 (아파트)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancListView.do",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_remndr_4685f6a9",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "쌍용 더 플래티넘 온수역 (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_remndr_329b542e",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "영종하늘도시 대라수 어썸(A50BL) (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_remndr_8cf08684",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "두산위브 더센트럴 부평(조합원 취소분) (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_remndr_42931453",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "북오산자이 리버블시티 (2차) (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_remndr_e347e6a7",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "신림스카이아파트(18차) (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_remndr_04617226",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "평택 고덕 국제신도시 A-55 대광로제비앙 모아엘가(3차) (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_remndr_3e7c9717",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "리아츠 더 인천(17차) (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_remndr_fd4d15c3",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "수원이목지구 대방 디에트르 더 리체Ⅱ(A3BL) (14차) (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_f25f2b72",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "건대 프라하임",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_1e456cd0",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "대방역 여의도 더로드캐슬",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_1b05fd64",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "e편한세상 동탄역 어반원",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_4a207e91",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "의왕청계역 시티프라디움 디하모니",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_6734467e",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "운서역 푸르지오 더 스카이 2차",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_c99451b3",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "왕십리역 어반홈스 B동",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_babf5fd3",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "동탄2신도시 동탄역 디에트르 퍼스티지",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_4df65ae0",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "동탄2신도시 대방 엘리움 레이크파크",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_77aa6905",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "루컴즈힐 더테라스 도시형생활주택",
+      "types": [
+        "도시형생활주택 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_81ce29de",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "안성 공도 센트럴카운티",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_b7de77ff",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "잠실 테라412",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_b7a8711b",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "고덕국제신도시 서한 에듀센텀",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_0ca6dbf4",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "청량리역 요진 와이시티 도시형생활주택",
+      "types": [
+        "도시형생활주택 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_7e33c322",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "힐스테이트 용인포레(기업형민간임대)",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_4e3c35d4",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "양주역 중흥S-클래스",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_f8b27eca",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "수원성 중흥S-클래스",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_c95801ca",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "광명 퍼스트 스위첸",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_59867110",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "북수원 이목 시티프라디움 더블리스",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_2e49cbe4",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "청량리역 롯데캐슬 SKY-L65",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_c47683a7",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "루컴즈힐 더테라스 오피스텔",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_2dd47231",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "청라 피크원 푸르지오",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_8428a634",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "오산 세교2지구 M1블록 더샵 오산역아크시티",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_5270e73f",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "평촌 롯데캐슬 르씨엘",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_b933026d",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "청량리역 요진 와이시티 오피스텔",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_7368e573",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "목동 로프트하임",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_763eb9e0",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "운정신도시 푸르지오 더 스마트",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_f40cd935",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "동두천 중흥S-클래스 헤라시티",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_ec62530c",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "동탄2신도시 동탄역 대방 엘리움 더 시그니처(C18BL)",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_96ae25d0",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "철산역 프론트타워",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_eb4a6f9d",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "해링턴 스퀘어 과천",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_07b22417",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "라비움 한강(도시형생활주택)",
+      "types": [
+        "도시형생활주택 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_89f3bcf5",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "GTX창릉역 힐사이드파크 더블",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_e128fa9b",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "종로 어반더힐",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_7b730df4",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "당산역 더클래스 한강",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_37638398",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "보라매 휴마레",
+      "types": [
+        "도시형생활주택 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_25371ca2",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "왕십리역 어반홈스",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_c0b58400",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "북수원자이렉스비아",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_37eb6f06",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "이천 신안실크밸리 2차",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_1655ba8f",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "염창역 더채움",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_2d7df7fd",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "파크라움 여의도",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_e4d06df3",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "신대방역 더하이브퍼스트",
+      "types": [
+        "도시형생활주택 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_62ad5291",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "보라매 휴마레 도시형생활주택",
+      "types": [
+        "도시형생활주택 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_24ac4ad3",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "상봉 센트럴 아이파크 오피스텔",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_e7566acb",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "숭의역 라온프라이빗 스카이브 오피스텔",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_9e0c0032",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "여의도 현대마에스트로",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_6465add3",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "동탄역 디에트르 퍼스티지",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_65176e89",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "동탄 대방 엘리움 레이크파크",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_dadef45e",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "힐스테이트 더웨이브시티",
+      "types": [
+        "오피스텔 청약"
+      ],
+      "location": "경기",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
+    },
+    {
+      "id": "applyhome_other_2c8af6a0",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "서울은평뉴타운 디에트르 더 퍼스트(3-14BL)",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.applyhome.co.kr#a",
+      "posted_date": "2026-03-24",
+      "crawled_at": "2026-03-24"
     }
   ]
 }
