@@ -796,8 +796,10 @@ async function approveReview(id) {
       method: 'PATCH',
       body: JSON.stringify({ apply_start: start, apply_end: end, status })
     });
-    toast('승인 완료 ✓', 'success');
+    toast('승인 완료 ✓ 탭1으로 이동합니다.', 'success');
     document.getElementById(`review-row-${id}`).remove();
+    document.getElementById('cnt-2').textContent = document.querySelectorAll('[id^="review-row-"]').length;
+    setTimeout(() => { switchTab(1); }, 800);
   } catch(e) {
     toast('오류: ' + e.message, 'error');
   }
