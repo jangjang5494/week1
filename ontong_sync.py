@@ -19,10 +19,22 @@ SUPABASE_URL = os.environ["SUPABASE_URL"].rstrip("/")
 SUPABASE_KEY = os.environ["SUPABASE_KEY"]
 ONTONG_API_KEY = os.environ["ONTONG_API_KEY"]
 
-# 제외할 타 지역 키워드 (수도권·전국 외)
+# 제외할 타 지역 키워드 (수도권·전국 외) — 광역시·도 약칭+전칭 모두 포함
 OTHER_REGIONS = [
     '부산', '대구', '대전', '광주', '울산', '세종',
     '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주',
+    '충청북도', '충청남도', '전라북도', '전라남도',
+    '경상북도', '경상남도', '강원도', '제주도',
+    # 타 지역 주요 도시 (수도권 아닌 곳)
+    '광양', '여수', '순천', '목포', '포항', '구미', '창원', '진주',
+    '거제', '통영', '김해', '양산', '전주', '익산', '군산', '청주',
+    '천안', '아산', '원주', '춘천', '강릉',
+]
+
+# 개인 지원이 아닌 인프라·정책·홍보성 사업 제외 키워드 (정책명 기준)
+EXCLUDE_NAME_KEYWORDS = [
+    '펀드투자', '시범마을', '융합특구', '확충',
+    '마이홈 개선', '마이홈개선', '피해 예방', '피해예방',
 ]
 # 수도권·전국 기관 키워드
 METRO_KEYWORDS = ['서울', '경기', '인천']
@@ -62,12 +74,17 @@ def detect_region(inst: str, policy: dict) -> str:
 
 def is_metro_or_national(policy: dict) -> bool:
     """수도권 또는 전국 정책만 통과"""
+    name = policy.get('plcyNm', '') or ''
     texts = [
         policy.get('operInstCdNm', '') or '',
         policy.get('sprvsnInstCdNm', '') or '',
-        policy.get('plcyNm', '') or '',
+        name,
     ]
     full = ' '.join(texts)
+
+    # 인프라·정책·홍보성 사업 제외
+    if any(k in name for k in EXCLUDE_NAME_KEYWORDS):
+        return False
 
     # 타 지역 명시 → 제외
     if any(r in full for r in OTHER_REGIONS):
