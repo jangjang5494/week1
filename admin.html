@@ -279,6 +279,87 @@
   }
   .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
   .stat-value { font-size: 22px; font-weight: 700; color: var(--text); }
+
+  /* ── 탭4 필터바 ── */
+  .filter-bar {
+    display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
+  }
+  .filter-bar select {
+    padding: 7px 10px; border: 1.5px solid var(--border);
+    border-radius: 8px; font-size: 13px; background: #fff; cursor: pointer;
+  }
+  .filter-bar label {
+    font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;
+    cursor: pointer; color: var(--text);
+  }
+
+  /* ── 활성/비활성 배지 ── */
+  .active-badge {
+    display: inline-block; padding: 3px 8px; border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+  }
+  .active-badge.on  { background: #d1fae5; color: #065f46; }
+  .active-badge.off { background: #f1f5f9; color: #64748b; }
+
+  /* ── 카테고리 배지 ── */
+  .cat-badge {
+    display: inline-block; padding: 2px 7px; border-radius: 8px;
+    font-size: 11px; font-weight: 600;
+    background: #ede9fe; color: #5b21b6;
+  }
+
+  /* ── 프로그램 편집 모달 (넓은 버전) ── */
+  .modal-wide {
+    background: #fff; border-radius: 16px; padding: 0;
+    width: 680px; max-width: 95vw; max-height: 88vh;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .modal-wide-header {
+    padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-wide-header h3 { font-size: 16px; font-weight: 700; }
+  .modal-close-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 20px; color: var(--text-muted); line-height: 1;
+  }
+  .modal-wide-body { flex: 1; overflow-y: auto; padding: 0 24px 24px; }
+  .modal-wide-footer {
+    padding: 14px 24px; border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end; gap: 8px;
+    background: #fafafa;
+  }
+
+  /* ── 모달 내 탭 ── */
+  .modal-tabs {
+    display: flex; gap: 0; border-bottom: 1px solid var(--border);
+    margin: 0 -24px 16px; padding: 0 24px;
+    position: sticky; top: 0; background: #fff; z-index: 10;
+  }
+  .modal-tab {
+    padding: 10px 16px; font-size: 13px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s;
+  }
+  .modal-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+  /* ── 모달 내 탭 패널 ── */
+  .modal-pane { display: none; }
+  .modal-pane.active { display: block; }
+
+  /* ── 빠른 편집 그리드 ── */
+  .quick-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;
+  }
+  .quick-grid .form-group { gap: 4px; }
+  .quick-grid label { font-size: 11px; }
+  .quick-section {
+    background: #f8fafc; border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; margin-top: 12px;
+  }
+  .quick-section h4 { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -302,6 +383,9 @@
     <div class="api-badge" id="api-badge" onclick="openApiModal()">
       Claude API ✕
     </div>
+    <div class="api-badge" id="sb-key-badge" onclick="openSbKeyModal()">
+      🔑 서비스 키 ✕
+    </div>
     <button class="logout-btn" onclick="logout()">로그아웃</button>
   </div>
 </header>
@@ -318,6 +402,10 @@
   </div>
   <div class="tab" id="tab-3" onclick="switchTab(3)">
     ✏️ 수동 추가
+  </div>
+  <div class="tab" id="tab-4" onclick="switchTab(4)">
+    📦 프로그램 관리
+    <span class="badge" id="cnt-4">-</span>
   </div>
 </div>
 
@@ -543,6 +631,194 @@
     </div>
   </div>
 
+  <!-- 탭4: 프로그램 관리 -->
+  <div class="tab-panel" id="panel-4">
+    <div class="toolbar">
+      <h2>프로그램 관리</h2>
+      <button class="btn btn-outline btn-sm" onclick="loadTab4()">🔄 새로고침</button>
+    </div>
+    <div class="filter-bar">
+      <select id="f4-cat" onchange="applyFilter4()">
+        <option value="">전체 카테고리</option>
+        <option value="임대주택">임대주택</option>
+        <option value="금융지원">금융지원</option>
+        <option value="주거비지원">주거비지원</option>
+        <option value="이자지원">이자지원</option>
+        <option value="보증료지원">보증료지원</option>
+      </select>
+      <select id="f4-inst" onchange="applyFilter4()">
+        <option value="">전체 기관</option>
+        <option value="SH">SH</option>
+        <option value="LH">LH</option>
+        <option value="GH">GH</option>
+        <option value="iH">iH</option>
+        <option value="국토교통부">국토교통부</option>
+        <option value="서울시">서울시</option>
+        <option value="경기도">경기도</option>
+        <option value="인천시">인천시</option>
+        <option value="기타">기타</option>
+      </select>
+      <label>
+        <input type="checkbox" id="f4-active-only" onchange="applyFilter4()">
+        활성만 표시
+      </label>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>카테고리</th>
+            <th>지역</th>
+            <th>기관</th>
+            <th>프로그램명</th>
+            <th>활성</th>
+            <th>자격요건 요약</th>
+            <th>액션</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-4">
+          <tr class="empty-row"><td colspan="7">탭을 클릭하면 로드됩니다.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- 서비스 키 모달 -->
+<div class="modal-overlay" id="sb-key-modal">
+  <div class="modal">
+    <h3>Supabase 서비스 키 설정</h3>
+    <p>programs 테이블 편집(쓰기)에 사용됩니다. 탭을 닫으면 자동 삭제됩니다.</p>
+    <div class="form-group">
+      <label>서비스 키</label>
+      <input type="password" id="sb-key-input" placeholder="sb_secret_...">
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeSbKeyModal()">취소</button>
+      <button class="btn btn-primary" onclick="saveSbKey()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 프로그램 편집 모달 -->
+<div class="modal-overlay" id="prog-edit-modal">
+  <div class="modal-wide">
+    <div class="modal-wide-header">
+      <h3 id="prog-edit-title">프로그램 편집</h3>
+      <button class="modal-close-btn" onclick="closeProgEdit()">✕</button>
+    </div>
+    <div class="modal-wide-body">
+      <div class="modal-tabs">
+        <div class="modal-tab active" id="mtab-basic" onclick="switchModalTab('basic')">기본정보</div>
+        <div class="modal-tab" id="mtab-eligibility" onclick="switchModalTab('eligibility')">자격요건</div>
+        <div class="modal-tab" id="mtab-support" onclick="switchModalTab('support')">지원내용</div>
+        <div class="modal-tab" id="mtab-application" onclick="switchModalTab('application')">신청정보</div>
+      </div>
+
+      <!-- 기본정보 패널 -->
+      <div class="modal-pane active" id="mpane-basic">
+        <div class="form-grid" style="margin-top:8px;">
+          <div class="form-group full">
+            <label>프로그램명</label>
+            <input type="text" id="pe-name">
+          </div>
+          <div class="form-group">
+            <label>카테고리</label>
+            <select id="pe-category">
+              <option value="임대주택">임대주택</option>
+              <option value="금융지원">금융지원</option>
+              <option value="주거비지원">주거비지원</option>
+              <option value="이자지원">이자지원</option>
+              <option value="보증료지원">보증료지원</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>기관</label>
+            <input type="text" id="pe-institution" placeholder="예: SH, LH, 국토교통부">
+          </div>
+          <div class="form-group">
+            <label>지역</label>
+            <input type="text" id="pe-region" placeholder="예: 서울, 경기, 전국">
+          </div>
+          <div class="form-group">
+            <label>활성 여부</label>
+            <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin-top:6px;">
+              <input type="checkbox" id="pe-is-active"> 활성
+            </label>
+          </div>
+          <div class="form-group full">
+            <label>출처 URL</label>
+            <input type="url" id="pe-source-url" placeholder="https://...">
+          </div>
+        </div>
+      </div>
+
+      <!-- 자격요건 패널 -->
+      <div class="modal-pane" id="mpane-eligibility">
+        <div class="form-group" style="margin-top:8px;">
+          <label>eligibility JSON</label>
+          <textarea id="pe-eligibility-json" style="height:300px;font-family:monospace;font-size:12px;"></textarea>
+        </div>
+        <div class="quick-section">
+          <h4>빠른 편집 (변경 시 JSON 자동 업데이트)</h4>
+          <div class="quick-grid">
+            <div class="form-group">
+              <label>나이 최소 (만)</label>
+              <input type="number" id="qe-age-min" placeholder="예: 19" oninput="syncEligJson()">
+            </div>
+            <div class="form-group">
+              <label>나이 최대 (만)</label>
+              <input type="number" id="qe-age-max" placeholder="예: 39" oninput="syncEligJson()">
+            </div>
+            <div class="form-group">
+              <label>소득 기준</label>
+              <select id="qe-income-type" onchange="syncEligJson()">
+                <option value="">제한없음</option>
+                <option value="중위소득">기준 중위소득</option>
+                <option value="도시근로자월평균">도시근로자 월평균</option>
+                <option value="절대금액(연소득)">연소득 절대금액</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>소득 상한 (%)</label>
+              <input type="number" id="qe-income-pct" placeholder="예: 150" oninput="syncEligJson()">
+            </div>
+            <div class="form-group">
+              <label>소득 절대금액 (원)</label>
+              <input type="number" id="qe-income-abs" placeholder="원 단위" oninput="syncEligJson()">
+            </div>
+            <div class="form-group">
+              <label>무주택 필수</label>
+              <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin-top:6px;">
+                <input type="checkbox" id="qe-homeless" onchange="syncEligJson()"> 필수
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 지원내용 패널 -->
+      <div class="modal-pane" id="mpane-support">
+        <div class="form-group" style="margin-top:8px;">
+          <label>support_content JSON</label>
+          <textarea id="pe-support-json" style="height:360px;font-family:monospace;font-size:12px;"></textarea>
+        </div>
+      </div>
+
+      <!-- 신청정보 패널 -->
+      <div class="modal-pane" id="mpane-application">
+        <div class="form-group" style="margin-top:8px;">
+          <label>application_info JSON</label>
+          <textarea id="pe-application-json" style="height:360px;font-family:monospace;font-size:12px;"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-wide-footer">
+      <button class="btn btn-outline" onclick="closeProgEdit()">취소</button>
+      <button class="btn btn-primary" id="prog-save-btn" onclick="saveProgEdit()">저장</button>
+    </div>
+  </div>
 </div>
 
 <!-- API 키 모달 -->
@@ -597,6 +873,7 @@ function checkPw() {
 function logout() {
   sessionStorage.removeItem('admin_auth');
   sessionStorage.removeItem('claude_api_key');
+  sessionStorage.removeItem('sb_service_key');
   location.reload();
 }
 
@@ -605,6 +882,7 @@ function logout() {
 // ════════════════════════════════════════════════════════
 function init() {
   updateApiBadge();
+  updateSbKeyBadge();
   loadTab1();
 }
 
@@ -626,6 +904,7 @@ function switchTab(n) {
   currentTab = n;
   if (n === 1) loadTab1();
   if (n === 2) loadTab2();
+  if (n === 4) loadTab4();
 }
 
 // ════════════════════════════════════════════════════════
@@ -1268,7 +1547,291 @@ function updateApiBadge() {
   }
 }
 
+// ════════════════════════════════════════════════════════
+//  서비스 키 모달
+// ════════════════════════════════════════════════════════
+function openSbKeyModal() {
+  const existing = sessionStorage.getItem('sb_service_key');
+  if (existing) document.getElementById('sb-key-input').value = existing;
+  document.getElementById('sb-key-modal').classList.add('open');
+}
+function closeSbKeyModal() {
+  document.getElementById('sb-key-modal').classList.remove('open');
+}
+function saveSbKey() {
+  const key = document.getElementById('sb-key-input').value.trim();
+  if (!key) { toast('키를 입력하세요.', 'error'); return; }
+  sessionStorage.setItem('sb_service_key', key);
+  updateSbKeyBadge();
+  closeSbKeyModal();
+  toast('서비스 키 저장됨 ✓', 'success');
+}
+function updateSbKeyBadge() {
+  const badge = document.getElementById('sb-key-badge');
+  const key = sessionStorage.getItem('sb_service_key');
+  if (key) {
+    badge.textContent = '🔑 서비스 키 ✓';
+    badge.className = 'api-badge set';
+  } else {
+    badge.textContent = '🔑 서비스 키 ✕';
+    badge.className = 'api-badge';
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  Supabase 서비스 키 헬퍼
+// ════════════════════════════════════════════════════════
+async function sbFetchWithServiceKey(path, options = {}) {
+  const svcKey = sessionStorage.getItem('sb_service_key');
+  if (!svcKey) throw new Error('서비스 키가 설정되지 않았습니다. 헤더의 🔑 서비스 키 버튼을 클릭해 먼저 설정하세요.');
+  const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': svcKey,
+      'Authorization': `Bearer ${svcKey}`,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || '',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Supabase ${res.status}: ${err}`);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+// ════════════════════════════════════════════════════════
+//  탭4: 프로그램 관리
+// ════════════════════════════════════════════════════════
+let tab4Data = [];
+let tab4Filtered = [];
+
+async function loadTab4() {
+  const tbody = document.getElementById('tbody-4');
+  tbody.innerHTML = '<tr class="empty-row"><td colspan="7">로딩 중...</td></tr>';
+  try {
+    const data = await sbFetch('programs?order=category.asc,name.asc&limit=500&select=*');
+    tab4Data = data || [];
+    document.getElementById('cnt-4').textContent = tab4Data.length;
+    applyFilter4();
+  } catch(e) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">오류: ${e.message}<br><small>programs 테이블이 없거나 읽기 권한이 없습니다.</small></td></tr>`;
+  }
+}
+
+function applyFilter4() {
+  const cat      = document.getElementById('f4-cat').value;
+  const inst     = document.getElementById('f4-inst').value;
+  const activeOnly = document.getElementById('f4-active-only').checked;
+  tab4Filtered = tab4Data.filter(r => {
+    if (cat && r.category !== cat) return false;
+    if (inst && r.institution !== inst) return false;
+    if (activeOnly && !r.is_active) return false;
+    return true;
+  });
+  renderTab4(tab4Filtered);
+}
+
+function renderTab4(data) {
+  const tbody = document.getElementById('tbody-4');
+  if (!data.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">프로그램이 없습니다.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(r => {
+    const elig = r.eligibility || {};
+    const eligSummary = buildEligSummary(elig);
+    const hasElig = Object.keys(elig).length > 0;
+    const activeCls = r.is_active ? 'on' : 'off';
+    const activeText = r.is_active ? '활성' : '비활성';
+    const code = escHtml(r.code || r.id);
+    return `
+      <tr>
+        <td><span class="cat-badge">${escHtml(r.category||'-')}</span></td>
+        <td style="font-size:12px;color:var(--text-muted)">${escHtml(r.region||'-')}</td>
+        <td><span class="inst inst-${r.institution}">${escHtml(r.institution||'-')}</span></td>
+        <td>
+          <div class="ellipsis" title="${escHtml(r.name)}">
+            ${r.source_url ? `<a class="link" href="${escHtml(r.source_url)}" target="_blank">↗</a> ` : ''}
+            ${escHtml(r.name)}
+          </div>
+        </td>
+        <td><span class="active-badge ${activeCls}">${activeText}</span></td>
+        <td style="font-size:12px;color:var(--text-muted);max-width:200px;">
+          ${eligSummary || (hasElig ? '<span style="color:#94a3b8;">있음</span>' : '<span style="color:#cbd5e1;">없음</span>')}
+        </td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" onclick="openProgEdit(${JSON.stringify(r.code||r.id)})">편집</button>
+          <button class="btn ${r.is_active ? 'btn-warning' : 'btn-success'} btn-sm" onclick="toggleActive(${JSON.stringify(r.code||r.id)}, ${r.is_active})">
+            ${r.is_active ? '비활성화' : '활성화'}
+          </button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function buildEligSummary(e) {
+  if (!e || !Object.keys(e).length) return '';
+  const parts = [];
+  if (e.age_min != null || e.age_max != null) {
+    parts.push(`만 ${e.age_min != null ? e.age_min : '?'}~${e.age_max != null ? e.age_max : '?'}세`);
+  }
+  if (e.income_type && e.income_pct != null) parts.push(`${e.income_type} ${e.income_pct}%`);
+  else if (e.income_type && e.income_abs != null) parts.push(`${e.income_type} ${Math.round(e.income_abs/10000).toLocaleString()}만원`);
+  if (e.homeless_required) parts.push('무주택');
+  return parts.join(' · ');
+}
+
+// ════════════════════════════════════════════════════════
+//  프로그램 편집 모달
+// ════════════════════════════════════════════════════════
+let currentProgCode = null;
+
+function switchModalTab(name) {
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.modal-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById(`mtab-${name}`).classList.add('active');
+  document.getElementById(`mpane-${name}`).classList.add('active');
+}
+
+function openProgEdit(code) {
+  const row = tab4Data.find(r => (r.code || r.id) == code);
+  if (!row) { toast('프로그램을 찾을 수 없습니다.', 'error'); return; }
+  currentProgCode = code;
+
+  document.getElementById('prog-edit-title').textContent = row.name || '프로그램 편집';
+
+  // 기본정보
+  document.getElementById('pe-name').value        = row.name || '';
+  document.getElementById('pe-category').value    = row.category || '임대주택';
+  document.getElementById('pe-institution').value = row.institution || '';
+  document.getElementById('pe-region').value      = row.region || '';
+  document.getElementById('pe-is-active').checked = !!row.is_active;
+  document.getElementById('pe-source-url').value  = row.source_url || '';
+
+  // eligibility JSON
+  const elig = row.eligibility || {};
+  document.getElementById('pe-eligibility-json').value = JSON.stringify(elig, null, 2);
+  // 빠른 편집 동기화
+  document.getElementById('qe-age-min').value     = elig.age_min != null ? elig.age_min : '';
+  document.getElementById('qe-age-max').value     = elig.age_max != null ? elig.age_max : '';
+  document.getElementById('qe-income-type').value = elig.income_type || '';
+  document.getElementById('qe-income-pct').value  = elig.income_pct != null ? elig.income_pct : '';
+  document.getElementById('qe-income-abs').value  = elig.income_abs != null ? elig.income_abs : '';
+  document.getElementById('qe-homeless').checked  = !!elig.homeless_required;
+
+  // support_content / application_info JSON
+  document.getElementById('pe-support-json').value      = JSON.stringify(row.support_content || {}, null, 2);
+  document.getElementById('pe-application-json').value  = JSON.stringify(row.application_info || {}, null, 2);
+
+  // 첫 탭으로 리셋
+  switchModalTab('basic');
+  document.getElementById('prog-edit-modal').classList.add('open');
+}
+
+function closeProgEdit() {
+  document.getElementById('prog-edit-modal').classList.remove('open');
+  currentProgCode = null;
+}
+
+function syncEligJson() {
+  // 빠른 편집 → JSON textarea 동기화
+  let existing = {};
+  try { existing = JSON.parse(document.getElementById('pe-eligibility-json').value || '{}'); } catch(_) {}
+
+  const ageMin     = document.getElementById('qe-age-min').value;
+  const ageMax     = document.getElementById('qe-age-max').value;
+  const incomeType = document.getElementById('qe-income-type').value;
+  const incomePct  = document.getElementById('qe-income-pct').value;
+  const incomeAbs  = document.getElementById('qe-income-abs').value;
+  const homeless   = document.getElementById('qe-homeless').checked;
+
+  if (ageMin !== '') existing.age_min = parseInt(ageMin); else delete existing.age_min;
+  if (ageMax !== '') existing.age_max = parseInt(ageMax); else delete existing.age_max;
+  if (incomeType)   existing.income_type = incomeType; else delete existing.income_type;
+  if (incomePct !== '') existing.income_pct = parseInt(incomePct); else delete existing.income_pct;
+  if (incomeAbs !== '') existing.income_abs = parseInt(incomeAbs); else delete existing.income_abs;
+  existing.homeless_required = homeless;
+
+  document.getElementById('pe-eligibility-json').value = JSON.stringify(existing, null, 2);
+}
+
+async function saveProgEdit() {
+  if (!currentProgCode) return;
+  const svcKey = sessionStorage.getItem('sb_service_key');
+  if (!svcKey) {
+    toast('서비스 키를 먼저 설정하세요. (헤더의 🔑 서비스 키 버튼)', 'error');
+    return;
+  }
+
+  // JSON 파싱 검증
+  let eligibility, supportContent, applicationInfo;
+  try { eligibility = JSON.parse(document.getElementById('pe-eligibility-json').value || '{}'); }
+  catch(e) { toast('자격요건 JSON 형식이 잘못되었습니다: ' + e.message, 'error'); return; }
+  try { supportContent = JSON.parse(document.getElementById('pe-support-json').value || '{}'); }
+  catch(e) { toast('지원내용 JSON 형식이 잘못되었습니다: ' + e.message, 'error'); return; }
+  try { applicationInfo = JSON.parse(document.getElementById('pe-application-json').value || '{}'); }
+  catch(e) { toast('신청정보 JSON 형식이 잘못되었습니다: ' + e.message, 'error'); return; }
+
+  const body = {
+    name:             document.getElementById('pe-name').value.trim(),
+    category:         document.getElementById('pe-category').value,
+    institution:      document.getElementById('pe-institution').value.trim(),
+    region:           document.getElementById('pe-region').value.trim(),
+    is_active:        document.getElementById('pe-is-active').checked,
+    source_url:       document.getElementById('pe-source-url').value.trim() || null,
+    eligibility,
+    support_content:  supportContent,
+    application_info: applicationInfo
+  };
+
+  const btn = document.getElementById('prog-save-btn');
+  btn.innerHTML = '<span class="spinner"></span> 저장 중...';
+  btn.disabled = true;
+
+  try {
+    await sbFetchWithServiceKey(
+      `programs?code=eq.${encodeURIComponent(currentProgCode)}`,
+      { method: 'PATCH', prefer: 'return=minimal', body: JSON.stringify(body) }
+    );
+    toast('저장되었습니다. ✓', 'success');
+    closeProgEdit();
+    await loadTab4();
+  } catch(e) {
+    toast('저장 실패: ' + e.message, 'error');
+  } finally {
+    btn.innerHTML = '저장';
+    btn.disabled = false;
+  }
+}
+
+async function toggleActive(code, currentVal) {
+  const svcKey = sessionStorage.getItem('sb_service_key');
+  if (!svcKey) {
+    toast('서비스 키를 먼저 설정하세요. (헤더의 🔑 서비스 키 버튼)', 'error');
+    return;
+  }
+  try {
+    await sbFetchWithServiceKey(
+      `programs?code=eq.${encodeURIComponent(code)}`,
+      { method: 'PATCH', prefer: 'return=minimal', body: JSON.stringify({ is_active: !currentVal }) }
+    );
+    toast(`${!currentVal ? '활성화' : '비활성화'} 완료 ✓`, 'success');
+    await loadTab4();
+  } catch(e) {
+    toast('변경 실패: ' + e.message, 'error');
+  }
+}
+
 // 모달 외부 클릭 시 닫기
+document.getElementById('sb-key-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSbKeyModal();
+});
+document.getElementById('prog-edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeProgEdit();
+});
 document.getElementById('api-modal').addEventListener('click', function(e) {
   if (e.target === this) closeApiModal();
 });
