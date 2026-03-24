@@ -411,6 +411,73 @@
       </div>
     </div>
 
+    <!-- 자격조건 직접 입력 -->
+    <div class="form-card" id="eligibility-form">
+      <h3>📋 자격조건 직접 입력 <small style="font-size:12px;color:var(--text-muted);font-weight:400;">(PDF 없이 직접 입력할 때)</small></h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>나이 최소 (만)</label>
+          <input type="text" id="e-age-min" placeholder="예: 19">
+        </div>
+        <div class="form-group">
+          <label>나이 최대 (만)</label>
+          <input type="text" id="e-age-max" placeholder="예: 39">
+        </div>
+        <div class="form-group">
+          <label>소득 기준</label>
+          <select id="e-income-type">
+            <option value="">제한없음</option>
+            <option value="중위소득">기준 중위소득</option>
+            <option value="도시근로자월평균">도시근로자 월평균</option>
+            <option value="절대금액(연소득)">연소득 절대금액</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>소득 상한 (% 또는 연소득 만원)</label>
+          <input type="text" id="e-income-val" placeholder="예: 150 또는 5000(만원)">
+        </div>
+        <div class="form-group">
+          <label>총자산 상한 (만원)</label>
+          <input type="text" id="e-asset" placeholder="예: 34500">
+        </div>
+        <div class="form-group">
+          <label>자동차가액 상한 (만원)</label>
+          <input type="text" id="e-car" placeholder="예: 4563">
+        </div>
+        <div class="form-group">
+          <label>거주지 조건</label>
+          <select id="e-region">
+            <option value="">제한없음</option>
+            <option value="서울">서울</option>
+            <option value="경기">경기</option>
+            <option value="인천">인천</option>
+            <option value="수도권">수도권</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>무주택 필수</label>
+          <select id="e-homeless">
+            <option value="true">필수</option>
+            <option value="false">무관</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>혼인 조건 (해당하는 것 모두 체크, 없으면 제한없음)</label>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
+            <label style="font-weight:400;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="e-ms-single"> 미혼</label>
+            <label style="font-weight:400;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="e-ms-newlywed"> 신혼(7년이내)</label>
+            <label style="font-weight:400;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="e-ms-prenup"> 예비신혼</label>
+            <label style="font-weight:400;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="e-ms-married"> 기혼</label>
+            <label style="font-weight:400;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="e-ms-single-parent"> 한부모</label>
+          </div>
+        </div>
+        <div class="form-group full">
+          <label>기타 조건 메모</label>
+          <input type="text" id="e-notes" placeholder="예: 재학생 우선, 보증금 5천만원 이하 등">
+        </div>
+      </div>
+    </div>
+
     <!-- 수동 입력 폼 -->
     <div class="form-card">
       <h3>✏️ 직접 입력</h3>
@@ -630,14 +697,23 @@ function renderTab1(data) {
     const start = r.apply_start ? r.apply_start.slice(0,10) : '-';
     const end   = r.apply_end   ? r.apply_end.slice(0,10)   : '-';
     const date  = r.date ? r.date.slice(0,10) : (r.created_at ? r.created_at.slice(0,10) : '-');
+    const rd = r.raw_data || {};
+    const isParsed   = rd.source === 'pdf_parsed';
+    const isPending  = rd.exception_pending === true;
+    const rowStyle   = isPending ? 'background:#fff7ed;' : (isParsed ? 'background:#f5f3ff;' : '');
+    const extraBadge = isParsed
+      ? '<span style="font-size:10px;background:#ede9fe;color:#5b21b6;padding:2px 6px;border-radius:8px;font-weight:700;">파싱완료</span>'
+      : isPending
+      ? '<span style="font-size:10px;background:#fed7aa;color:#9a3412;padding:2px 6px;border-radius:8px;font-weight:700;">파싱필요</span>'
+      : '';
     return `
-      <tr>
+      <tr style="${rowStyle}">
         <td class="check-col"><input type="checkbox" class="row-check-1" data-id="${r.id}"></td>
         <td><span class="inst inst-${r.institution}">${r.institution}</span></td>
         <td>
           <div class="ellipsis" title="${escHtml(r.title)}">
             ${r.url ? `<a class="link" href="${escHtml(r.url)}" target="_blank">↗</a> ` : ''}
-            ${escHtml(r.title)}
+            ${escHtml(r.title)} ${extraBadge}
           </div>
         </td>
         <td style="font-size:12px;color:var(--text-muted)">${escHtml(types)}</td>
@@ -678,23 +754,48 @@ async function deleteAnnouncement(id) {
   }
 }
 
-function sendToExceptionFromTab2(id) {
+async function sendToExceptionFromTab2(id) {
   const row = tab2Data.find(r => r.id === id);
   if (!row) return;
+
+  const start = document.getElementById(`rs-${id}`).value;
+  const end   = document.getElementById(`re-${id}`).value;
+  if (!start || !end) { toast('먼저 신청 시작·마감일을 입력하세요.', 'error'); return; }
+
+  const now = new Date();
+  const status = new Date(end) < now ? '마감' : (new Date(start) > now ? '예정' : '진행중');
+
+  // 날짜 저장 + exception_pending 플래그 설정
+  try {
+    await sbFetch(`announcements?id=eq.${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        apply_start: start, apply_end: end, status,
+        raw_data: { ...(row.raw_data || {}), exception_pending: true }
+      })
+    });
+  } catch(e) {
+    toast('저장 실패: ' + e.message, 'error'); return;
+  }
+
+  // 탭3으로 이동 + 정보 채우기
   switchTab(3);
   document.getElementById('m-title').value = row.title || '';
   if (row.institution) document.getElementById('m-inst').value = row.institution;
   if (row.url) document.getElementById('m-url').value = row.url;
+  if (start) document.getElementById('m-apply-start').value = start;
+  if (end)   document.getElementById('m-apply-end').value   = end;
   if (row.date) document.getElementById('m-date').value = row.date.slice(0,10);
-  document.getElementById('m-status').value = '확인필요';
+  document.getElementById('m-status').value = status;
   if (row.types) document.getElementById('m-types').value = Array.isArray(row.types) ? row.types.join(', ') : row.types;
+
   const result = document.getElementById('parse-result');
   result.style.display = 'block';
   result.className = 'parse-result';
-  result.textContent = `📌 "${row.title}" 공고를 예외공고로 등록합니다.\nPDF 파일을 업로드하면 Claude가 자격조건을 파싱합니다.\n공고 URL: ${row.url || '없음'}`;
+  result.textContent = `📌 "${row.title}" 공고를 예외공고로 처리합니다.\nPDF 업로드 또는 아래 자격조건 직접 입력으로 등록하세요.\n공고 URL: ${row.url || '없음'}`;
   result.style.whiteSpace = 'pre-line';
-  document.getElementById('pdf-zone').scrollIntoView({ behavior: 'smooth' });
-  toast('탭3으로 이동했습니다. PDF를 업로드하세요.', 'success');
+  document.getElementById('eligibility-form').scrollIntoView({ behavior: 'smooth' });
+  toast('탭3으로 이동했습니다. 자격조건을 입력하세요.', 'success');
 }
 
 function sendToException(id) {
@@ -1013,6 +1114,12 @@ async function submitManual() {
   const seq    = document.getElementById('m-seq').value.trim()  || null;
   const note   = document.getElementById('m-note').value.trim() || null;
 
+  // 수동 자격조건 폼 읽기
+  const manualElig = buildManualEligibility();
+
+  // 최종 자격조건: PDF 파싱 > 수동 입력 순
+  const finalElig = parsedEligibility || (manualElig ? manualElig : null);
+
   const body = {
     institution: inst,
     title,
@@ -1023,8 +1130,8 @@ async function submitManual() {
     date,
     url,
     seq,
-    raw_data: (note || parsedEligibility)
-      ? { ...(note ? { note } : {}), ...(parsedEligibility ? { eligibility: parsedEligibility, source: 'pdf_parsed' } : {}) }
+    raw_data: (note || finalElig)
+      ? { ...(note ? { note } : {}), ...(finalElig ? { eligibility: finalElig, source: 'pdf_parsed' } : {}) }
       : null
   };
 
@@ -1041,6 +1148,43 @@ async function submitManual() {
   }
 }
 
+function buildManualEligibility() {
+  const ageMin = parseInt(document.getElementById('e-age-min').value) || null;
+  const ageMax = parseInt(document.getElementById('e-age-max').value) || null;
+  const incType = document.getElementById('e-income-type').value || null;
+  const incVal  = document.getElementById('e-income-val').value.trim();
+  const asset   = parseInt(document.getElementById('e-asset').value) || null;
+  const car     = parseInt(document.getElementById('e-car').value)   || null;
+  const region  = document.getElementById('e-region').value || null;
+  const homeless = document.getElementById('e-homeless').value === 'true';
+  const notes   = document.getElementById('e-notes').value.trim();
+
+  const ms = [];
+  if (document.getElementById('e-ms-single').checked)      ms.push('미혼');
+  if (document.getElementById('e-ms-newlywed').checked)    ms.push('신혼(7년이내)');
+  if (document.getElementById('e-ms-prenup').checked)      ms.push('예비신혼');
+  if (document.getElementById('e-ms-married').checked)     ms.push('기혼');
+  if (document.getElementById('e-ms-single-parent').checked) ms.push('한부모');
+
+  // 아무것도 입력 안 했으면 null 반환
+  if (!ageMin && !ageMax && !incType && !asset && !car && !region && ms.length === 0 && !notes) return null;
+
+  const e = { homeless_required: homeless };
+  if (ageMin) e.age_min = ageMin;
+  if (ageMax) e.age_max = ageMax;
+  if (incType) {
+    e.income_type = incType;
+    if (incType === '절대금액(연소득)') e.income_abs = parseInt(incVal) * 10000 || null;
+    else e.income_pct = parseInt(incVal) || null;
+  }
+  if (asset) e.asset_limit = asset * 10000;
+  if (car)   e.car_limit   = car   * 10000;
+  if (region) e.region_required = region;
+  if (ms.length) e.marital_status = ms;
+  if (notes) e.notes = [notes];
+  return e;
+}
+
 function clearManualForm() {
   ['m-title','m-types','m-apply-start','m-apply-end','m-date','m-url','m-seq','m-note']
     .forEach(id => document.getElementById(id).value = '');
@@ -1053,6 +1197,12 @@ function clearManualForm() {
   document.getElementById('parse-btn').style.display = 'none';
   document.getElementById('parse-file-name').textContent = '';
   document.getElementById('pdf-input').value = '';
+  // 자격조건 폼 초기화
+  ['e-age-min','e-age-max','e-income-val','e-asset','e-car','e-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('e-income-type').value = '';
+  document.getElementById('e-region').value = '';
+  document.getElementById('e-homeless').value = 'true';
+  ['e-ms-single','e-ms-newlywed','e-ms-prenup','e-ms-married','e-ms-single-parent'].forEach(id => document.getElementById(id).checked = false);
 }
 
 // ════════════════════════════════════════════════════════
