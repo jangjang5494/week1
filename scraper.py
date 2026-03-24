@@ -262,17 +262,34 @@ def detect_types_ih(title):
     if "국민임대" in tl: return ["iH 인천 국민임대"]
     return ["기타(iH)"]
 
+def detect_types_applyhome(title, house_type=""):
+    """청약홈 공고 유형 감지 (APT분양 / 오피스텔 / 민간임대 등)"""
+    tl = title.replace(" ", "").lower()
+    ht = house_type.replace(" ", "").lower()
+    if "오피스텔" in tl or "오피스텔" in ht:
+        return ["오피스텔 청약"]
+    if "생활숙박" in tl or "생활숙박" in ht:
+        return ["생활숙박시설 청약"]
+    if "민간임대" in tl or "민간임대" in ht or "공공지원" in ht:
+        return ["민간임대 (공공지원)"]
+    if "도시형" in tl or "도시형" in ht:
+        return ["도시형생활주택 청약"]
+    if "국민" in ht:
+        return ["공공분양 (아파트)"]
+    return ["민간분양 (아파트)"]
+
 
 # ════════════════════════════════════════════════════════════════════════
 # ① SH 공사 크롤러 (임대 / 분양 공통 구조)
 # ════════════════════════════════════════════════════════════════════════
 class SHCrawler:
-    def __init__(self, inst_key, base, list_path, view_path, multi_itm_seq):
+    def __init__(self, inst_key, base, list_path, view_path, multi_itm_seq, param_name="multi_itm_seq"):
         self.inst_key     = inst_key        # 'sh_rental' or 'sh_sale'
         self.base         = base
         self.list_url     = base + list_path
         self.view_url     = base + view_path
         self.multi_itm    = multi_itm_seq
+        self.param_name   = param_name
 
     def crawl(self, initial=False):
         today  = date.today()
@@ -284,7 +301,7 @@ class SHCrawler:
         for page in range(1, max_pages + 1):
             print(f"  [SH {self.inst_key}] 목록 p{page}...")
             html = fetch(self.list_url,
-                         data={"multi_itm_seq": self.multi_itm, "page": str(page)},
+                         data={self.param_name: self.multi_itm, "page": str(page)},
                          extra_headers={"Referer": self.base + "/main/index.do",
                                         "Content-Type": "application/x-www-form-urlencoded"})
             if not html:
@@ -336,7 +353,7 @@ class SHCrawler:
 
             try:
                 html = fetch(self.view_url,
-                             data={"seq": seq, "multi_itm_seq": self.multi_itm},
+                             data={"seq": seq, self.param_name: self.multi_itm},
                              extra_headers={"Referer": self.list_url,
                                             "Content-Type": "application/x-www-form-urlencoded"})
                 time.sleep(DETAIL_SLEEP)
@@ -800,21 +817,282 @@ def crawl_youth_housing(initial=False):
 
 
 # ════════════════════════════════════════════════════════════════════════
-# ⑥ 오케스트레이터
+# ⑥ 청약홈 아파트 청약일정 (applyhome.co.kr)
+# ════════════════════════════════════════════════════════════════════════
+APPLYHOME_BASE = "https://www.applyhome.co.kr"
+METRO_REGIONS  = {"서울", "경기", "인천"}
+
+def _is_metro_region(region_text):
+    """수도권 지역 여부 (서울/경기/인천 포함)"""
+    return any(r in region_text for r in METRO_REGIONS)
+
+def _parse_applyhome_period(text):
+    """'2026-04-03 ~ 2026-04-06' 또는 '2026.04.03 ~ 2026.04.06' 형식 파싱"""
+    m = re.search(r"(\d{4})[-.](\d{2})[-.](\d{2})\s*~\s*(\d{4})[-.](\d{2})[-.](\d{2})", text)
+    if m:
+        s = parse_ymd(m.group(1), m.group(2), m.group(3))
+        e = parse_ymd(m.group(4), m.group(5), m.group(6))
+        return s, e
+    return None, None
+
+def crawl_applyhome_apt(initial=False):
+    """청약홈 아파트 청약일정 — 수도권 필터"""
+    today = date.today()
+    future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
+    results = []
+    print("  [청약홈 APT] 목록 로딩...")
+
+    for page in range(1, 20):
+        html = fetch(
+            APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do",
+            data={"pageIndex": str(page), "orderbySecd": "", "orderbyMth": "01",
+                  "rentSecd": "", "schTxt": ""},
+            extra_headers={"Referer": APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do",
+                           "Content-Type": "application/x-www-form-urlencoded"}
+        )
+        if not html:
+            break
+
+        tbody_m = re.search(r"<tbody>(.*?)</tbody>", html, re.DOTALL)
+        if not tbody_m:
+            break
+
+        rows = re.split(r"<tr[^>]*>", tbody_m.group(1))[1:]
+        if not rows:
+            break
+
+        found_any = False
+        for tr in rows:
+            tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
+            if len(tds) < 4:
+                continue
+            # 컬럼: 지역, 주택구분, 주택명(+링크), 청약기간, 당첨자발표, 분양/임대
+            region    = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
+            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
+            name_raw  = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
+            period_raw = re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip() if len(tds) > 3 else ""
+
+            if not name_raw or not _is_metro_region(region):
+                continue
+
+            apply_start, apply_end = _parse_applyhome_period(period_raw)
+            status = compute_status(apply_start, apply_end, today)
+            if status == "expired":
+                continue
+            if apply_end and apply_end > future_limit:
+                continue
+
+            # 링크 추출
+            link_m = re.search(r'href="([^"]+)"', tds[2])
+            url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
+                  APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do"
+
+            uid = name_raw + (apply_end.isoformat() if apply_end else "")
+            ann = {
+                "id":          make_id("applyhome_apt", uid),
+                "inst":        "청약홈",
+                "source_key":  "applyhome_apt",
+                "title":       name_raw,
+                "types":       detect_types_applyhome(name_raw, house_type),
+                "location":    region,
+                "status":      status,
+                "url":         url,
+                "posted_date": today.isoformat(),
+                "crawled_at":  today.isoformat(),
+            }
+            if apply_start and apply_end:
+                ann["apply_start"] = apply_start.isoformat()
+                ann["apply_end"]   = apply_end.isoformat()
+            results.append(ann)
+            found_any = True
+            print(f"    [{status}] {name_raw[:40]} [{region}]")
+
+        if not found_any and page > 1:
+            break
+        time.sleep(0.5)
+
+    print(f"  [청약홈 APT] 수도권 {len(results)}건")
+    return results
+
+
+def crawl_applyhome_remndr(initial=False):
+    """청약홈 아파트 잔여세대 청약일정"""
+    today = date.today()
+    future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
+    results = []
+    print("  [청약홈 잔여] 목록 로딩...")
+
+    html = fetch(
+        APPLYHOME_BASE + "/ai/aia/selectAPTRemndrLttotPblancListView.do",
+        data={"pageIndex": "1", "orderbySecd": "", "orderbyMth": "01"},
+        extra_headers={"Referer": APPLYHOME_BASE + "/ai/aia/selectAPTRemndrLttotPblancListView.do",
+                       "Content-Type": "application/x-www-form-urlencoded"}
+    )
+    if not html:
+        return results
+
+    tbody_m = re.search(r"<tbody>(.*?)</tbody>", html, re.DOTALL)
+    if not tbody_m:
+        return results
+
+    for tr in re.split(r"<tr[^>]*>", tbody_m.group(1))[1:]:
+        tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
+        if len(tds) < 3:
+            continue
+        region    = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
+        house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
+        name_raw  = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
+        period_raw = re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip() if len(tds) > 3 else ""
+
+        if not name_raw or not _is_metro_region(region):
+            continue
+
+        apply_start, apply_end = _parse_applyhome_period(period_raw)
+        status = compute_status(apply_start, apply_end, today)
+        if status == "expired":
+            continue
+
+        link_m = re.search(r'href="([^"]+)"', tds[2])
+        url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
+              APPLYHOME_BASE + "/ai/aia/selectAPTRemndrLttotPblancListView.do"
+
+        uid = name_raw + "remndr" + (apply_end.isoformat() if apply_end else "")
+        ann = {
+            "id":          make_id("applyhome_remndr", uid),
+            "inst":        "청약홈",
+            "source_key":  "applyhome_remndr",
+            "title":       name_raw + " (잔여세대)",
+            "types":       detect_types_applyhome(name_raw, house_type),
+            "location":    region,
+            "status":      status,
+            "url":         url,
+            "posted_date": today.isoformat(),
+            "crawled_at":  today.isoformat(),
+        }
+        if apply_start and apply_end:
+            ann["apply_start"] = apply_start.isoformat()
+            ann["apply_end"]   = apply_end.isoformat()
+        results.append(ann)
+
+    print(f"  [청약홈 잔여] 수도권 {len(results)}건")
+    return results
+
+
+def crawl_applyhome_other(initial=False):
+    """청약홈 오피스텔/생활숙박/도시형/민간임대 청약일정"""
+    today = date.today()
+    future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
+    results = []
+    print("  [청약홈 기타] 목록 로딩...")
+
+    for page in range(1, 10):
+        html = fetch(
+            APPLYHOME_BASE + "/ai/aia/selectOtherLttotPblancListView.do",
+            data={"pageIndex": str(page), "orderbySecd": "", "orderbyMth": "01",
+                  "houseNm": "", "start_year": "", "end_year": ""},
+            extra_headers={"Referer": APPLYHOME_BASE + "/ai/aia/selectOtherLttotPblancListView.do",
+                           "Content-Type": "application/x-www-form-urlencoded"}
+        )
+        if not html:
+            break
+
+        tbody_m = re.search(r"<tbody>(.*?)</tbody>", html, re.DOTALL)
+        if not tbody_m:
+            break
+
+        rows = re.split(r"<tr[^>]*>", tbody_m.group(1))[1:]
+        if not rows:
+            break
+
+        found_any = False
+        for tr in rows:
+            tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
+            if len(tds) < 3:
+                continue
+            region    = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
+            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
+            name_raw  = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
+            period_raw = re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip() if len(tds) > 3 else ""
+
+            if not name_raw or not _is_metro_region(region):
+                continue
+
+            apply_start, apply_end = _parse_applyhome_period(period_raw)
+            status = compute_status(apply_start, apply_end, today)
+            if status == "expired":
+                continue
+            if apply_end and apply_end > future_limit:
+                continue
+
+            link_m = re.search(r'href="([^"]+)"', tds[2])
+            url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
+                  APPLYHOME_BASE + "/ai/aia/selectOtherLttotPblancListView.do"
+
+            uid = name_raw + (apply_end.isoformat() if apply_end else "")
+            ann = {
+                "id":          make_id("applyhome_other", uid),
+                "inst":        "청약홈",
+                "source_key":  "applyhome_other",
+                "title":       name_raw,
+                "types":       detect_types_applyhome(name_raw, house_type),
+                "location":    region,
+                "status":      status,
+                "url":         url,
+                "posted_date": today.isoformat(),
+                "crawled_at":  today.isoformat(),
+            }
+            if apply_start and apply_end:
+                ann["apply_start"] = apply_start.isoformat()
+                ann["apply_end"]   = apply_end.isoformat()
+            results.append(ann)
+            found_any = True
+
+        if not found_any and page > 1:
+            break
+        time.sleep(0.5)
+
+    print(f"  [청약홈 기타] 수도권 {len(results)}건")
+    return results
+
+
+# ════════════════════════════════════════════════════════════════════════
+# ⑦ 오케스트레이터
 # ════════════════════════════════════════════════════════════════════════
 def dedup(announcements):
-    """소스 우선순위: sh/lh/ih 공식 > ihwc > youth"""
-    PRIORITY = {"sh_rental": 1, "sh_sale": 1, "lh_rental": 1, "lh_sale": 1,
-                "ih_sale": 1, "ih_rental": 1, "youth_housing": 1,
-                "ihwc": 2}
+    """
+    1차: 같은 기관 내 중복 제거 (inst + norm_title + apply_end)
+    2차: 기관 간 중복 제거 (norm_title + apply_end) — apply_end 있는 경우만
+          우선순위: lh/sh/ih/youth > applyhome
+    """
+    PRIORITY = {
+        "sh_rental": 1, "sh_sale": 1, "sh_notice": 1,
+        "lh_rental": 1, "lh_sale": 1,
+        "ih_sale": 1, "ih_rental": 1, "ihwc": 1,
+        "youth_housing": 1,
+        "applyhome_apt": 2, "applyhome_remndr": 2, "applyhome_other": 2,
+    }
+
+    # 1차: 같은 기관 내 dedup
     seen = {}
     for ann in sorted(announcements, key=lambda a: PRIORITY.get(a["source_key"], 9)):
-        key = (ann["inst"],
-               normalize_title(ann["title"]),
-               ann.get("apply_end", ""))
+        key = (ann["inst"], normalize_title(ann["title"]), ann.get("apply_end", ""))
         if key not in seen:
             seen[key] = ann
-    return list(seen.values())
+    deduped = list(seen.values())
+
+    # 2차: 기관 간 cross-dedup (apply_end 있는 경우만)
+    cross_seen = {}
+    result = []
+    for ann in sorted(deduped, key=lambda a: PRIORITY.get(a["source_key"], 9)):
+        end = ann.get("apply_end", "")
+        if end:
+            cross_key = (normalize_title(ann["title"]), end)
+            if cross_key not in cross_seen:
+                cross_seen[cross_key] = True
+                result.append(ann)
+        else:
+            result.append(ann)
+    return result
 
 def load_manual_overrides(path="manual_overrides.json"):
     try:
@@ -921,8 +1199,16 @@ def main():
         view_path="/main/lay2/program/S1T294C296/www/brd/m_244/view.do",
         multi_itm_seq="1"
     )
+    sh_notice = SHCrawler(
+        inst_key="sh_notice", base=sh_base,
+        list_path="/main/lay2/program/S1T294C295/www/brd/m_241/list.do",
+        view_path="/main/lay2/program/S1T294C295/www/brd/m_241/view.do",
+        multi_itm_seq="1,2,4,8,16,32,64,128,256,512",
+        param_name="multi_itm_seqs"
+    )
     all_announcements += sh_rental.crawl(initial)
     all_announcements += sh_sale.crawl(initial)
+    all_announcements += sh_notice.crawl(initial)
 
     # ── LH ──────────────────────────────────────────────────────────────
     all_announcements += crawl_lh(mi="1026", source_key="lh_rental", initial=initial)
@@ -937,6 +1223,11 @@ def main():
 
     # ── 청년안심주택 ────────────────────────────────────────────────────
     all_announcements += crawl_youth_housing(initial)
+
+    # ── 청약홈 ──────────────────────────────────────────────────────────────
+    all_announcements += crawl_applyhome_apt(initial)
+    all_announcements += crawl_applyhome_remndr(initial)
+    all_announcements += crawl_applyhome_other(initial)
 
     # ── GH는 manual_overrides.json 에서만 관리 ──────────────────────────
 
