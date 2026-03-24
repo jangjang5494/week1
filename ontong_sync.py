@@ -444,7 +444,13 @@ def main():
     print(f"  총 {len(all_policies)}개 주거 정책 조회 완료")
 
     print("\n[2] 수도권·전국 필터 + 만료 제외...")
-    filtered = [p for p in all_policies if is_metro_or_national(p) and is_active(p)]
+    filtered = []
+    for p in all_policies:
+        ok = is_metro_or_national(p) and is_active(p)
+        if not ok:
+            print(f"  [제외] {p.get('plcyNm','')!r} | inst={p.get('operInstCdNm','')!r}")
+        else:
+            filtered.append(p)
     print(f"  대상 {len(filtered)}개 (제외 {len(all_policies) - len(filtered)}개)")
 
     print("\n[3] DB 기존 ontong_plcy_no 조회 중...")
