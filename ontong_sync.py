@@ -335,10 +335,13 @@ def sb_patch(path: str, params: str, body: dict) -> int:
 
 
 def fetch_existing_linked() -> dict:
-    """DB에 ontong_plcy_no가 연결된 레코드 조회 → {plcy_no: row}"""
+    """수동 등록 레코드 중 ontong_plcy_no가 연결된 것만 조회 → {plcy_no: row}
+    ONTONG_ 코드 레코드는 제외 (충돌 대상은 수동 큐레이션 데이터만)
+    """
     rows = sb_get(
         'programs',
-        'select=code,name,ontong_plcy_no,application_info,is_active&ontong_plcy_no=not.is.null'
+        'select=code,name,ontong_plcy_no,application_info,is_active'
+        '&ontong_plcy_no=not.is.null&code=not.like.ONTONG_*'
     )
     return {r['ontong_plcy_no']: r for r in rows if r.get('ontong_plcy_no')}
 
@@ -444,13 +447,7 @@ def main():
     print(f"  총 {len(all_policies)}개 주거 정책 조회 완료")
 
     print("\n[2] 수도권·전국 필터 + 만료 제외...")
-    filtered = []
-    for p in all_policies:
-        ok = is_metro_or_national(p) and is_active(p)
-        if not ok:
-            print(f"  [제외] {p.get('plcyNm','')!r} | inst={p.get('operInstCdNm','')!r}")
-        else:
-            filtered.append(p)
+    filtered = [p for p in all_policies if is_metro_or_national(p) and is_active(p)]
     print(f"  대상 {len(filtered)}개 (제외 {len(all_policies) - len(filtered)}개)")
 
     print("\n[3] DB 기존 ontong_plcy_no 조회 중...")
