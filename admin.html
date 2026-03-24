@@ -645,6 +645,7 @@ function renderTab1(data) {
         <td style="font-size:12px">${start}<br>${end !== '-' ? '~'+end : ''}</td>
         <td><span class="status status-${r.status}">${r.status}</span></td>
         <td>
+          <button class="btn btn-warning btn-sm" onclick="sendToException(${r.id})" title="35개 유형에 없는 공고라면 클릭">📌 예외</button>
           <button class="btn btn-danger btn-sm" onclick="deleteAnnouncement(${r.id})">삭제</button>
         </td>
       </tr>`;
@@ -675,6 +676,29 @@ async function deleteAnnouncement(id) {
   } catch(e) {
     toast('삭제 실패: ' + e.message, 'error');
   }
+}
+
+function sendToException(id) {
+  const row = tab1Data.find(r => r.id === id);
+  if (!row) return;
+  // 탭3으로 이동하면서 기본 정보 채우기
+  switchTab(3);
+  document.getElementById('m-title').value = row.title || '';
+  if (row.institution) document.getElementById('m-inst').value = row.institution;
+  if (row.url) document.getElementById('m-url').value = row.url;
+  if (row.apply_start) document.getElementById('m-apply-start').value = row.apply_start.slice(0,10);
+  if (row.apply_end) document.getElementById('m-apply-end').value = row.apply_end.slice(0,10);
+  if (row.date) document.getElementById('m-date').value = row.date.slice(0,10);
+  if (row.status) document.getElementById('m-status').value = row.status;
+  if (row.types) document.getElementById('m-types').value = Array.isArray(row.types) ? row.types.join(', ') : row.types;
+  // 안내 메시지
+  const result = document.getElementById('parse-result');
+  result.style.display = 'block';
+  result.className = 'parse-result';
+  result.textContent = `📌 "${row.title}" 공고를 예외공고로 등록합니다.\nPDF 파일을 업로드하면 Claude가 자격조건을 파싱합니다.\n공고 URL: ${row.url || '없음'}`;
+  result.style.whiteSpace = 'pre-line';
+  document.getElementById('pdf-zone').scrollIntoView({ behavior: 'smooth' });
+  toast('탭3으로 이동했습니다. PDF를 업로드하세요.', 'success');
 }
 
 async function bulkDelete() {
