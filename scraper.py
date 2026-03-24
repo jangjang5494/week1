@@ -6,7 +6,7 @@
   python scraper.py --initial   # 초기 DB 구축 (2026-03-01 이후 전체)
 """
 
-import re, json, time, hashlib, argparse
+import re, json, time, hashlib, argparse, os
 import urllib.request, urllib.parse
 from datetime import datetime, date, timedelta
 
@@ -842,6 +842,56 @@ def apply_overrides(announcements, overrides):
 
 
 # ════════════════════════════════════════════════════════════════════════
+# Supabase 저장
+# ════════════════════════════════════════════════════════════════════════
+def save_to_supabase(announcements):
+    sb_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+    sb_key = os.environ.get("SUPABASE_KEY", "")
+    if not sb_url or not sb_key:
+        print("  [Supabase] 환경변수 없음 — 건너뜀")
+        return
+
+    STATUS_MAP = {"needs_review": "확인필요", "진행중": "진행중",
+                  "예정": "예정", "마감": "마감", "manual_ok": "manual_ok"}
+
+    rows = []
+    for a in announcements:
+        rows.append({
+            "institution": a.get("inst", ""),
+            "seq":         a.get("seq") or a.get("id", ""),
+            "title":       a.get("title", ""),
+            "date":        a.get("date") or None,
+            "types":       a.get("types") or [],
+            "url":         a.get("url") or None,
+            "status":      STATUS_MAP.get(a.get("status", ""), a.get("status", "")),
+            "apply_start": a.get("apply_start") or None,
+            "apply_end":   a.get("apply_end") or None,
+            "raw_data":    {"source_key": a.get("source_key", "")},
+        })
+
+    # 배치 upsert (100개씩)
+    endpoint = f"{sb_url}/rest/v1/announcements"
+    headers = {
+        "apikey":          sb_key,
+        "Authorization":   f"Bearer {sb_key}",
+        "Content-Type":    "application/json",
+        "Prefer":          "resolution=merge-duplicates,return=minimal",
+    }
+    inserted = 0
+    for i in range(0, len(rows), 100):
+        batch = rows[i:i+100]
+        body = json.dumps(batch).encode("utf-8")
+        req = urllib.request.Request(endpoint, data=body, headers=headers, method="POST")
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                inserted += len(batch)
+        except Exception as e:
+            print(f"  [Supabase] 배치 오류 (i={i}): {e}")
+
+    print(f"  [Supabase] {inserted}건 upsert 완료")
+
+
+# ════════════════════════════════════════════════════════════════════════
 # main
 # ════════════════════════════════════════════════════════════════════════
 def main():
@@ -912,6 +962,9 @@ def main():
     }
     with open("announcements.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
+
+    # ── Supabase 저장 ────────────────────────────────────────────────
+    save_to_supabase(all_announcements)
 
     print(f"\n완료: 총 {len(all_announcements)}건 저장")
     print(f"  ├ 진행중:  {sum(1 for a in all_announcements if a.get('status')=='진행중')}건")

@@ -27,6 +27,9 @@ jobs:
           python-version: '3.11'
 
       - name: Run scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
           if [ "${{ github.event.inputs.initial }}" = "true" ]; then
             python3 scraper.py --initial
