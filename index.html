@@ -3,25 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="월세 걱정 그만. SH·LH 임대주택 28가지 유형 중 내 자격에 맞는 것만 3분 만에 정밀 분석해드립니다.">
+<meta name="description" content="LH·SH·GH·iH 등 50개 이상 기관, 20개 이상 공공 API 기반 — 수도권 2030 청년 맞춤형 주거지원 통합 분석 플랫폼">
 <meta name="robots" content="index, follow">
 <meta name="google-site-verification" content="rqIhJzvhTUHAjP7r3ooQbsgmkX-qnbpNbNu55FXmaFE" />
 <meta name="naver-site-verification" content="bfe899e4b329b7fa66fb91125608f65bde02dc54" />
 <link rel="canonical" href="https://jangjang5494.github.io/week1/">
-<meta property="og:title" content="내집구독 — SH·LH 임대주택 28가지 유형 정밀 분석">
-<meta property="og:description" content="월세 걱정 그만. SH·LH 임대주택 28가지 유형 중 내 자격에 맞는 것만 골라드립니다.">
+<meta property="og:title" content="내집구독 — 수도권 2030 청년 맞춤형 주거지원 분석">
+<meta property="og:description" content="임대주택·공공분양·대출·주거복지 64가지 유형 중 내 자격에 맞는 것만. 50개 이상 기관 데이터 기반.">
 <meta property="og:image" content="https://images.unsplash.com/photo-1560518883-ce09059ee41f?q=80&w=1200&auto=format&fit=crop">
-<title>내집구독 — 나에게 맞는 임대주택 바로 찾기</title>
+<title>내집구독 — 수도권 청년 맞춤형 주거지원 플랫폼</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --black:#06060e;--indigo:#4f46e5;--purple:#7c3aed;
-  --red:#ef4444;--amber:#f59e0b;--white:#fff;--g4:#94a3b8;
+  --primary:#4f46e5;--purple:#7c3aed;
+  --text:#111827;--text2:#6b7280;--text3:#9ca3af;
+  --bg:#ffffff;--bg2:#f8fafc;--bg3:#f0f2ff;
+  --border:#e5e7eb;--shadow:0 4px 24px rgba(0,0,0,.07);
 }
-html,body{width:100%;height:100%;overflow:hidden;
+html,body{
+  width:100%;height:100%;overflow:hidden;
   font-family:'Apple SD Gothic Neo',-apple-system,'Noto Sans KR',sans-serif;
-  background:var(--black);color:#fff;
+  background:var(--bg);color:var(--text);
 }
 
 /* ── STAGE ── */
@@ -29,9 +32,9 @@ html,body{width:100%;height:100%;overflow:hidden;
 .scene{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  padding:80px 24px 80px;
+  padding:88px 24px 72px;
   opacity:0;pointer-events:none;
-  transition:opacity .7s ease;
+  transition:opacity .65s ease;
 }
 .scene.active{opacity:1;pointer-events:all}
 
@@ -39,314 +42,337 @@ html,body{width:100%;height:100%;overflow:hidden;
 #top-nav{
   position:fixed;top:0;left:0;right:0;z-index:500;
   display:flex;justify-content:space-between;align-items:center;
-  padding:22px 32px;
-  transition:background .3s,padding .3s;
+  padding:20px 36px;
+  background:rgba(255,255,255,.9);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(0,0,0,.06);
 }
-#top-nav.dark{
-  background:rgba(6,6,14,.85);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(255,255,255,.07);
-  padding:14px 32px;
+.nav-logo{
+  font-size:20px;font-weight:900;color:var(--text);text-decoration:none;
+  display:flex;align-items:center;gap:2px;
 }
-.logo{font-size:19px;font-weight:900;color:#fff;text-decoration:none}
-.logo em{color:#a78bfa;font-style:normal}
+.nav-logo em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--primary),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
 .nav-cta{
-  padding:9px 20px;background:var(--indigo);color:#fff;
-  border-radius:100px;font-size:13px;font-weight:700;text-decoration:none;
-  transition:background .2s,transform .2s;
+  padding:10px 22px;
+  background:linear-gradient(135deg,var(--primary),var(--purple));
+  color:#fff;border-radius:100px;font-size:13.5px;font-weight:700;
+  text-decoration:none;transition:opacity .2s,transform .2s;
+  box-shadow:0 4px 16px rgba(79,70,229,.3);
 }
-.nav-cta:hover{background:var(--purple);transform:translateY(-1px)}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
 
 /* ── PROGRESS BAR ── */
-#pbar{position:fixed;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.07);z-index:500}
-#pfill{height:100%;background:linear-gradient(90deg,var(--indigo),var(--purple));transform:scaleX(0);transform-origin:left;transition:none}
+#pbar{
+  position:fixed;bottom:0;left:0;right:0;height:3px;
+  background:var(--border);z-index:500;
+}
+#pfill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),var(--purple));
+  transform:scaleX(0);transform-origin:left;transition:none;
+}
 
 /* ── DOTS ── */
 #dots{
-  position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
   display:flex;gap:10px;z-index:500;
 }
 .dot{
   width:7px;height:7px;border-radius:50%;
-  background:rgba(255,255,255,.18);border:none;cursor:pointer;
-  transition:background .3s,transform .3s;padding:0;
+  background:var(--border);border:none;cursor:pointer;
+  transition:background .25s,transform .25s;padding:0;
 }
-.dot.on{background:#fff;transform:scale(1.5)}
+.dot.on{background:var(--primary);transform:scale(1.5)}
 
 /* ── ARROWS ── */
 .arrow{
   position:fixed;top:50%;transform:translateY(-50%);z-index:500;
-  width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.06);color:#fff;font-size:18px;
+  width:42px;height:42px;border-radius:50%;
+  border:1.5px solid var(--border);background:#fff;
+  color:var(--text2);font-size:17px;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:background .2s;
+  cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;
+  box-shadow:var(--shadow);
 }
-.arrow:hover{background:rgba(255,255,255,.14)}
+.arrow:hover{border-color:var(--primary);color:var(--primary);background:#f5f3ff}
 .arrow.hide{opacity:0;pointer-events:none}
 #aprev{left:18px}#anext{right:18px}
 
-/* ============================================================
-   S1 — 고통
-============================================================ */
-#s1{background:var(--black);text-align:center}
-#s1::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 90% 50% at 50% 0%,rgba(239,68,68,.1) 0%,transparent 65%);
-}
-.s1-inner{position:relative;z-index:2;max-width:720px}
-.s1-tag{
-  display:inline-block;padding:6px 16px;margin-bottom:42px;
-  background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);
-  border-radius:100px;color:#fca5a5;font-size:12px;font-weight:700;
-  letter-spacing:1px;text-transform:uppercase;opacity:0;
-}
-.s1-tag.go{animation:fup .6s ease .2s both}
-.s1-word{
-  display:block;font-size:clamp(44px,8vw,88px);
-  font-weight:900;letter-spacing:-2.5px;line-height:1.1;opacity:0;
-}
-.s1-word.go{animation:slam .55s ease both}
-.s1-word.red{
-  background:linear-gradient(120deg,#ef4444,#fb923c);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-}
-.s1-sub{margin-top:28px;font-size:17px;color:var(--g4);line-height:1.8;opacity:0}
-.s1-sub.go{animation:fup .6s ease both}
-.s1-stats{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:48px;opacity:0}
-.s1-stats.go{animation:fup .5s ease both}
-.sp{
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  border-radius:18px;padding:18px 24px;min-width:130px;text-align:center;
-}
-.sp-n{
-  display:block;font-size:28px;font-weight:900;letter-spacing:-1px;
-  background:linear-gradient(120deg,#ef4444,#fb923c);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-}
-.sp-l{display:block;font-size:12px;color:var(--g4);margin-top:5px;line-height:1.4}
-
-/* ============================================================
-   S2 — 드라마 대화
-============================================================ */
-#s2{background:linear-gradient(180deg,#08081a 0%,#0d0d22 100%)}
-#s2::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 40% at 50% 60%,rgba(99,102,241,.08) 0%,transparent 70%);
-}
-
-/* Setting banner */
-.d-setting{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:10px;opacity:0;pointer-events:none;
-}
-.d-setting.show{animation:fup .7s ease both}
-.d-setting.hide{animation:fout .5s ease both;animation-fill-mode:forwards}
-.d-set-small{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3)}
-.d-set-big{font-size:clamp(28px,5vw,52px);font-weight:900;letter-spacing:-1px}
-
-/* Stage with spotlight feel */
-.d-stage{
-  position:absolute;inset:0;z-index:2;
-  display:flex;flex-direction:column;
-}
-
-/* Characters at bottom */
-.d-chars{
-  position:absolute;bottom:64px;left:0;right:0;
-  display:flex;justify-content:space-between;padding:0 48px;
-  opacity:0;transition:opacity .5s ease;
-}
-.d-chars.show{opacity:1}
-.dchar{
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  opacity:.2;transition:opacity .3s,transform .3s;
-}
-.dchar.speaking{opacity:1;transform:scale(1.08)}
-.dchar-emoji{font-size:42px;transition:filter .3s}
-.dchar.speaking .dchar-emoji{filter:drop-shadow(0 0 14px rgba(167,139,250,.7))}
-.dchar-name{font-size:12px;color:var(--g4);font-weight:700}
-
-/* Dialogue lines area */
-.d-lines{
-  position:absolute;
-  left:50%;top:50%;transform:translate(-50%,-50%);
-  width:min(640px,90vw);
-  display:flex;flex-direction:column;gap:14px;
-  overflow:hidden;max-height:65vh;
-}
-.dline{
-  display:flex;align-items:baseline;gap:12px;
-  opacity:0;transform:translateY(18px);
-  transition:opacity .45s ease,transform .45s ease;
-}
-.dline.show{opacity:1;transform:translateY(0)}
-.dline.dim{opacity:.22;transform:scale(.95)}
-.dline.is-a{flex-direction:row}
-.dline.is-b{flex-direction:row-reverse;text-align:right}
-.dl-name{
-  font-size:11px;font-weight:900;letter-spacing:.8px;
-  text-transform:uppercase;flex-shrink:0;margin-top:3px;
-}
-.dline.is-a .dl-name{color:#7dd3fc}
-.dline.is-b .dl-name{color:#c4b5fd}
-.dl-text{font-size:clamp(17px,2.8vw,23px);font-weight:700;line-height:1.55;letter-spacing:-.3px}
-.dhl{
-  color:#fbbf24;font-size:1.45em;font-weight:900;letter-spacing:-.5px;
-  display:inline-block;animation:dhl-pop .35s cubic-bezier(.2,1.6,.4,1) both;
-}
-@keyframes dhl-pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
-
-/* ============================================================
-   S3 — 혼란 (word rain)
-============================================================ */
-#s3{background:linear-gradient(175deg,#0d0820 0%,#120c28 100%)}
-
-/* Intro overlay */
-.s3-intro{
-  position:absolute;inset:0;z-index:5;
-  display:flex;align-items:center;justify-content:center;
-  text-align:center;opacity:0;pointer-events:none;
-}
-.s3-intro.show{animation:fup .7s ease both}
-.s3-intro.hide{animation:fout .5s ease forwards}
-.s3-intro-text{font-size:clamp(26px,4.5vw,48px);font-weight:900;letter-spacing:-1px;line-height:1.3}
-.s3-intro-text em{color:#fbbf24;font-style:normal}
-
-/* Rain container */
-#s3-rain{position:absolute;inset:0;overflow:hidden;opacity:0;transition:opacity .4s}
-#s3-rain.show{opacity:1}
-
-/* Person head */
-.s3-head{
-  position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);
-  text-align:center;pointer-events:none;
-}
-#s3-face{font-size:80px;display:block;transition:transform .15s}
-#s3-face.shake{animation:hshake .25s ease}
-@keyframes hshake{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}70%{transform:rotate(7deg)}}
-
-/* Falling word */
-.ww{
-  position:absolute;font-weight:800;white-space:nowrap;
-  opacity:0;transform:translateY(-110vh) rotate(var(--r,0deg));
-}
-.ww.go{animation:wfall var(--dur,.55s) cubic-bezier(.2,1,.35,1) forwards}
-@keyframes wfall{
-  0%{opacity:0;transform:translateY(-110vh) rotate(var(--r,0deg))}
-  8%{opacity:1}
-  65%{transform:translateY(0) rotate(var(--r,0deg));animation-timing-function:ease-out}
-  75%{transform:translateY(-16px) rotate(var(--r,0deg))}
-  85%{transform:translateY(4px) rotate(var(--r,0deg))}
-  92%{transform:translateY(-5px) rotate(var(--r,0deg))}
-  100%{transform:translateY(0) rotate(var(--r,0deg));opacity:1}
-}
-
-/* Give-up card */
-#s3-gu{
-  position:absolute;bottom:80px;left:50%;transform:translateX(-50%);
-  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22);
-  border-radius:20px;padding:20px 30px;text-align:center;
-  white-space:nowrap;opacity:0;transition:opacity .6s ease;z-index:10;
-}
-#s3-gu.show{opacity:1}
-.gu-t{font-size:20px;font-weight:900;color:#fca5a5;margin-bottom:6px}
-.gu-s{font-size:14px;color:var(--g4)}
-
-/* ============================================================
-   S4 — 해결
-============================================================ */
-#s4{background:linear-gradient(155deg,#0c0e2a 0%,#0d1232 60%,#091830 100%);text-align:center}
-#s4::before{
-  content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 65% 55% at 28% 40%,rgba(124,58,237,.16) 0%,transparent 60%),
-    radial-gradient(ellipse 50% 45% at 74% 65%,rgba(37,99,235,.11) 0%,transparent 60%);
-}
-.s4-inner{position:relative;z-index:2;max-width:620px;width:100%}
-.s4-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:7px 18px;background:rgba(124,58,237,.18);
-  border:1px solid rgba(167,139,250,.3);border-radius:100px;
-  color:#c4b5fd;font-size:13px;font-weight:700;margin-bottom:26px;opacity:0;
-}
-.s4-badge.go{animation:fup .6s ease both}
-.s4-badge::before{
-  content:'';width:6px;height:6px;background:#a78bfa;
-  border-radius:50%;animation:pdot 1.5s infinite;
-}
-@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
-.s4-title{
-  font-size:clamp(30px,5.5vw,56px);font-weight:900;
-  letter-spacing:-2px;line-height:1.18;margin-bottom:34px;opacity:0;
-}
-.s4-title.go{animation:fup .7s ease .15s both}
-.s4-hl{background:linear-gradient(130deg,#a78bfa 20%,#60a5fa 80%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.s4-cards{display:flex;flex-direction:column;gap:12px;text-align:left}
-.s4-card{
-  display:flex;align-items:flex-start;gap:14px;padding:18px 22px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
-  border-radius:16px;opacity:0;
-  transition:border-color .25s,background .25s;
-}
-.s4-card:hover{border-color:rgba(167,139,250,.3);background:rgba(124,58,237,.08)}
-.s4-card.go{animation:sleft .55s ease both}
-.s4-icon{font-size:24px;flex-shrink:0}
-.s4-ct{font-size:15px;font-weight:700;margin-bottom:4px}
-.s4-cd{font-size:13px;color:var(--g4);line-height:1.6}
-
-/* ============================================================
-   S5 — CTA
-============================================================ */
-#s5{background:linear-gradient(165deg,#0a1640 0%,#0d1130 50%,#0a0a1e 100%);text-align:center}
-#s5::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 65% at 50% 45%,rgba(79,70,229,.15) 0%,transparent 70%);
-}
-#s5::after{
-  content:'';position:absolute;
-  width:560px;height:560px;border-radius:50%;
-  border:1px solid rgba(99,102,241,.12);
-  left:50%;top:50%;transform:translate(-50%,-50%);
-  animation:ring 4s ease-in-out infinite;
-}
-@keyframes ring{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.5}50%{transform:translate(-50%,-50%) scale(1.06);opacity:.15}}
-.s5-inner{position:relative;z-index:2;max-width:680px}
-.s5-eye{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--g4);margin-bottom:18px;opacity:0}
-.s5-eye.go{animation:fup .5s ease both}
-.s5-title{font-size:clamp(44px,9vw,94px);font-weight:900;letter-spacing:-3.5px;line-height:1.04;margin-bottom:18px;opacity:0}
-.s5-title.go{animation:fup .7s ease .15s both}
-.s5-title .hl{color:#a78bfa}
-.s5-sub{font-size:18px;color:var(--g4);line-height:1.7;margin-bottom:52px;opacity:0}
-.s5-sub.go{animation:fup .6s ease .3s both}
-.s5-btn{
-  display:inline-flex;align-items:center;gap:12px;
-  padding:22px 56px;background:linear-gradient(135deg,var(--indigo),var(--purple));
-  color:#fff;text-decoration:none;font-size:20px;font-weight:800;letter-spacing:-.3px;
-  border-radius:100px;box-shadow:0 16px 56px rgba(99,102,241,.4);
-  opacity:0;transition:transform .2s,box-shadow .2s;
-}
-.s5-btn.go{animation:fup .6s ease .45s both}
-.s5-btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 28px 72px rgba(124,58,237,.5)}
-.s5-note{margin-top:20px;font-size:13px;color:rgba(255,255,255,.2);opacity:0}
-.s5-note.go{animation:fup .5s ease .65s both}
-
 /* ── Keyframes ── */
-@keyframes fup{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fout{from{opacity:1}to{opacity:0}}
-@keyframes slam{0%{opacity:0;transform:scale(1.28) translateY(-8px);filter:blur(5px)}60%{transform:scale(.97)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
-@keyframes sleft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fup{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slam{
+  0%{opacity:0;transform:scale(1.2) translateY(-6px);filter:blur(4px)}
+  60%{transform:scale(.98)}
+  100%{opacity:1;transform:scale(1);filter:blur(0)}
+}
+@keyframes sleft{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:translateX(0)}}
+@keyframes sright{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:translateX(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@keyframes lineGrow{from{width:0}to{width:100%}}
+
+/* ════════════════════════════════
+   S1 — 브랜드 히어로
+════════════════════════════════ */
+#s1{background:var(--bg);text-align:center}
+#s1::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(79,70,229,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 80% 100%, rgba(124,58,237,.05) 0%, transparent 60%);
+}
+.s1-inner{position:relative;z-index:2;max-width:820px;width:100%}
+
+/* 브랜드 pill */
+.s1-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 18px;margin-bottom:36px;
+  background:#f0f0ff;border:1.5px solid #c7d2fe;
+  border-radius:100px;font-size:12.5px;font-weight:700;
+  color:var(--primary);letter-spacing:.4px;
+  opacity:0;
+}
+.s1-pill.go{animation:fup .55s ease both}
+.s1-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--primary);animation:pdot 1.6s infinite}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+
+/* 메인 타이틀 */
+.s1-brand{
+  font-size:clamp(64px,13vw,136px);font-weight:900;
+  letter-spacing:-5px;line-height:.95;display:block;
+  background:linear-gradient(135deg,#111827 40%,var(--primary) 70%,var(--purple) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  opacity:0;
+}
+.s1-brand.go{animation:slam .7s cubic-bezier(.2,1.1,.4,1) both}
+
+/* 부제목 */
+.s1-sub-wrap{
+  display:flex;align-items:center;justify-content:center;gap:0;
+  margin-top:24px;opacity:0;
+}
+.s1-sub-wrap.go{animation:fup .6s ease .15s both}
+.s1-sub-line{
+  height:2px;flex:1;max-width:80px;
+  background:linear-gradient(90deg,transparent,var(--primary));
+}
+.s1-sub-line.r{background:linear-gradient(90deg,var(--primary),transparent)}
+.s1-sub{
+  font-size:clamp(16px,2.4vw,22px);font-weight:700;
+  color:var(--text2);padding:0 20px;text-align:center;
+  line-height:1.55;white-space:nowrap;
+}
+@media(max-width:600px){.s1-sub{white-space:normal;font-size:15px}}
+
+/* 키 스탯 */
+.s1-stats{
+  display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
+  margin-top:52px;opacity:0;
+}
+.s1-stats.go{animation:fup .6s ease both}
+.s1-stat{
+  display:flex;flex-direction:column;align-items:center;
+  background:#fff;border:1.5px solid var(--border);border-radius:18px;
+  padding:20px 28px;min-width:140px;
+  box-shadow:0 2px 12px rgba(0,0,0,.05);
+  transition:border-color .2s,transform .2s,box-shadow .2s;
+}
+.s1-stat:hover{border-color:#a5b4fc;transform:translateY(-3px);box-shadow:0 8px 28px rgba(79,70,229,.12)}
+.s1-stat-n{
+  font-size:32px;font-weight:900;letter-spacing:-1.5px;
+  background:linear-gradient(135deg,var(--primary),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.s1-stat-l{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5;text-align:center;font-weight:500}
+
+/* 하단 CTA 힌트 */
+.s1-hint{
+  margin-top:44px;font-size:13px;color:var(--text3);
+  opacity:0;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.s1-hint.go{animation:fup .5s ease both}
+.s1-hint-arrow{
+  width:28px;height:28px;border-radius:50%;
+  border:1.5px solid var(--border);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:12px;animation:bounce 1.8s ease infinite;
+}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+/* ════════════════════════════════
+   S2 — 서비스 소개
+════════════════════════════════ */
+#s2{background:var(--bg2)}
+#s2::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 50% at 50% 100%,rgba(79,70,229,.06) 0%,transparent 65%);
+}
+.s2-inner{
+  position:relative;z-index:2;
+  max-width:880px;width:100%;
+  display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;
+}
+@media(max-width:700px){.s2-inner{grid-template-columns:1fr;gap:32px}}
+
+/* 왼쪽: 텍스트 */
+.s2-eyebrow{
+  font-size:11.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--primary);margin-bottom:18px;opacity:0;
+}
+.s2-eyebrow.go{animation:fup .5s ease both}
+.s2-title{
+  font-size:clamp(22px,3.2vw,32px);font-weight:900;
+  letter-spacing:-1px;line-height:1.25;margin-bottom:24px;
+  color:var(--text);opacity:0;
+}
+.s2-title.go{animation:fup .6s ease .1s both}
+.s2-desc{
+  font-size:15px;color:var(--text2);line-height:1.85;
+  word-break:keep-all;opacity:0;
+}
+.s2-desc.go{animation:fup .6s ease .2s both}
+.s2-desc strong{color:var(--text);font-weight:700}
+.s2-desc .hl{
+  background:linear-gradient(135deg,var(--primary),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  font-weight:800;
+}
+
+/* 오른쪽: 기관·수치 */
+.s2-nums{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  margin-bottom:24px;
+}
+.s2-num{
+  background:#fff;border:1.5px solid var(--border);border-radius:14px;
+  padding:16px 18px;text-align:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+  opacity:0;transition:border-color .2s;
+}
+.s2-num.go{animation:popIn .45s cubic-bezier(.2,1.5,.4,1) both}
+.s2-num:hover{border-color:#a5b4fc}
+.s2-num-n{
+  font-size:26px;font-weight:900;letter-spacing:-1px;
+  background:linear-gradient(135deg,var(--primary),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.s2-num-l{font-size:11.5px;color:var(--text3);margin-top:4px;font-weight:500;line-height:1.4}
+
+/* 기관 배지 그리드 */
+.s2-insts-label{
+  font-size:11px;font-weight:700;color:var(--text3);
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:10px;opacity:0;
+}
+.s2-insts-label.go{animation:fup .4s ease both}
+.s2-insts{
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+.s2-inst{
+  padding:6px 14px;border-radius:100px;font-size:12px;font-weight:700;
+  border:1.5px solid;opacity:0;
+  transition:transform .15s;cursor:default;
+}
+.s2-inst:hover{transform:scale(1.06)}
+.s2-inst.go{animation:popIn .35s cubic-bezier(.2,1.5,.4,1) both}
+.inst-lh{background:#fef9ee;border-color:#fcd34d;color:#92400e}
+.inst-sh{background:#eff6ff;border-color:#93c5fd;color:#1e40af}
+.inst-gh{background:#f0fdf4;border-color:#86efac;color:#166534}
+.inst-ih{background:#ecfeff;border-color:#67e8f9;color:#155e75}
+.inst-hf{background:#f5f3ff;border-color:#c4b5fd;color:#5b21b6}
+.inst-gov{background:#f8fafc;border-color:#cbd5e1;color:#475569}
+
+/* ════════════════════════════════
+   S3 — 정밀분석 CTA
+════════════════════════════════ */
+#s3{background:#fff;text-align:center}
+#s3::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 50%,rgba(79,70,229,.05) 0%,transparent 65%);
+}
+.s3-inner{
+  position:relative;z-index:2;max-width:700px;width:100%;
+}
+
+/* 배지 */
+.s3-badge{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:28px;
+  padding:8px 20px;
+  background:linear-gradient(135deg,rgba(79,70,229,.08),rgba(124,58,237,.08));
+  border:1.5px solid #c7d2fe;border-radius:100px;
+  font-size:13px;font-weight:700;color:var(--primary);
+  opacity:0;
+}
+.s3-badge.go{animation:fup .5s ease both}
+
+/* 타이틀 */
+.s3-title{
+  font-size:clamp(32px,5.5vw,58px);font-weight:900;
+  letter-spacing:-2px;line-height:1.18;margin-bottom:20px;
+  color:var(--text);opacity:0;
+}
+.s3-title.go{animation:fup .65s ease .1s both}
+.s3-title .hl{
+  background:linear-gradient(135deg,var(--primary),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* 설명 */
+.s3-desc{
+  font-size:16.5px;color:var(--text2);line-height:1.75;
+  margin-bottom:40px;word-break:keep-all;opacity:0;
+}
+.s3-desc.go{animation:fup .6s ease .2s both}
+
+/* 기능 칩들 */
+.s3-chips{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+  margin-bottom:44px;opacity:0;
+}
+.s3-chips.go{animation:fup .55s ease .3s both}
+.s3-chip{
+  display:flex;align-items:center;gap:7px;
+  padding:9px 18px;background:#f8fafc;
+  border:1.5px solid var(--border);border-radius:100px;
+  font-size:13.5px;font-weight:600;color:var(--text);
+}
+.s3-chip-icon{font-size:15px}
+
+/* CTA 버튼 */
+.s3-btn-wrap{opacity:0}
+.s3-btn-wrap.go{animation:fup .6s ease .4s both}
+.s3-btn{
+  display:inline-flex;align-items:center;gap:14px;
+  padding:22px 64px;
+  background:linear-gradient(135deg,var(--primary),var(--purple));
+  color:#fff;text-decoration:none;
+  font-size:19px;font-weight:800;letter-spacing:-.3px;
+  border-radius:100px;
+  box-shadow:0 12px 48px rgba(79,70,229,.35);
+  transition:transform .2s,box-shadow .2s;
+}
+.s3-btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 20px 64px rgba(124,58,237,.45)}
+.s3-btn svg{transition:transform .2s}
+.s3-btn:hover svg{transform:translateX(4px)}
+
+.s3-note{
+  margin-top:20px;font-size:13px;color:var(--text3);
+  opacity:0;
+}
+.s3-note.go{animation:fup .5s ease .6s both}
 
 /* ── Responsive ── */
 @media(max-width:600px){
   #aprev,#anext{display:none}
   #top-nav{padding:16px 20px}
-  .d-chars{padding:0 20px}
-  .dl-text{font-size:16px}
-  .d-lines{width:92vw}
-  #s3-gu{white-space:normal;max-width:82vw}
-  .s5-btn{font-size:17px;padding:18px 40px}
-  .s5-title{letter-spacing:-2.5px}
+  .s1-stats{gap:10px}
+  .s1-stat{padding:16px 20px;min-width:110px}
+  .s2-inner{gap:24px}
+  .s3-btn{font-size:16px;padding:18px 42px}
+  .s3-chips{gap:8px}
 }
 </style>
 </head>
@@ -354,8 +380,8 @@ html,body{width:100%;height:100%;overflow:hidden;
 
 <!-- ── TOP NAV ── -->
 <nav id="top-nav">
-  <a href="#" class="logo">내집<em>구독</em></a>
-  <a href="./details.html" class="nav-cta">정밀분석 바로가기 →</a>
+  <a href="#" class="nav-logo">내집<em>구독</em></a>
+  <a href="./details.html" class="nav-cta">정밀분석 시작 →</a>
 </nav>
 
 <!-- ── PROGRESS BAR ── -->
@@ -366,108 +392,145 @@ html,body{width:100%;height:100%;overflow:hidden;
   <button class="dot on"></button>
   <button class="dot"></button>
   <button class="dot"></button>
-  <button class="dot"></button>
-  <button class="dot"></button>
 </div>
 
 <!-- ── ARROWS ── -->
 <button class="arrow hide" id="aprev">←</button>
 <button class="arrow" id="anext">→</button>
 
-<!-- ═══════════════════════════════════
+<!-- ══════════════════════════════════
      STAGE
-═══════════════════════════════════ -->
+══════════════════════════════════ -->
 <div id="stage">
 
-<!-- S1 ── 고통 -->
+<!-- ── S1 · 브랜드 히어로 ── -->
 <section class="scene" id="s1">
   <div class="s1-inner">
-    <div class="s1-tag">2030 청년 주거 현실</div>
-    <div>
-      <span class="s1-word">오르기만 하는</span>
-      <span class="s1-word red">월세.</span>
-      <span class="s1-word red">전세사기.</span>
-      <span class="s1-word" style="font-size:clamp(26px,4vw,50px);letter-spacing:-1px;color:#94a3b8">걱정이 많으시죠?</span>
+    <div class="s1-pill">
+      <span class="s1-pill-dot"></span>
+      수도권 2030 청년 맞춤형 주거지원 플랫폼
     </div>
-    <p class="s1-sub">서울 청년 평균 월세 72만원. 매년 오릅니다.<br>어디에 신청해야 할지도, 자격이 되는지도 모른 채<br>그냥 포기하고 있진 않으신가요.</p>
+
+    <span class="s1-brand">내집구독</span>
+
+    <div class="s1-sub-wrap">
+      <div class="s1-sub-line"></div>
+      <p class="s1-sub">임대 · 분양 · 대출 · 주거복지, 내 자격에 맞는 것만 정확히</p>
+      <div class="s1-sub-line r"></div>
+    </div>
+
     <div class="s1-stats">
-      <div class="sp"><span class="sp-n">+23%</span><span class="sp-l">서울 월세<br>3년 상승률</span></div>
-      <div class="sp"><span class="sp-n">3.5만건</span><span class="sp-l">전세사기<br>피해 신고</span></div>
-      <div class="sp"><span class="sp-n">월 72만</span><span class="sp-l">서울 청년<br>평균 월세</span></div>
+      <div class="s1-stat">
+        <span class="s1-stat-n">64가지</span>
+        <span class="s1-stat-l">분석 지원 유형<br>(임대·분양·금융·복지)</span>
+      </div>
+      <div class="s1-stat">
+        <span class="s1-stat-n">50개+</span>
+        <span class="s1-stat-l">데이터 수집 기관<br>(LH·SH·GH·iH 등)</span>
+      </div>
+      <div class="s1-stat">
+        <span class="s1-stat-n">20개+</span>
+        <span class="s1-stat-l">공공 Open API<br>실시간 연동</span>
+      </div>
+    </div>
+
+    <div class="s1-hint">
+      <span>아래로 스크롤하거나 클릭하세요</span>
+      <span class="s1-hint-arrow">↓</span>
     </div>
   </div>
 </section>
 
-<!-- S2 ── 드라마 대화 -->
+<!-- ── S2 · 서비스 소개 ── -->
 <section class="scene" id="s2">
-  <div class="d-setting" id="dset">
-    <div class="d-set-small">Scene 1 · 서울 어딘가</div>
-    <div class="d-set-big">2025년 가을</div>
-  </div>
-  <div class="d-stage">
-    <div class="d-chars" id="dchars">
-      <div class="dchar" id="dca">
-        <div class="dchar-emoji">🧑‍💼</div>
-        <div class="dchar-name">A씨 (28세, 직장인)</div>
+  <div class="s2-inner">
+
+    <!-- 왼쪽: 설명 텍스트 -->
+    <div class="s2-left">
+      <div class="s2-eyebrow">About 내집구독</div>
+      <h2 class="s2-title">50개 기관·20개 API로<br>나에게 맞는 것만 찾아드립니다</h2>
+      <p class="s2-desc">
+        <strong>내집구독</strong>은 <span class="hl">LH · SH · GH · iH · 청약홈</span> 및 각 지자체
+        웹사이트 등 <strong>50개 이상의 기관</strong>, <strong>20개 이상의 공공 Open API</strong>를
+        기반으로 사용자의 정보를 받아 신청 가능한 모든
+        <strong>임대주택 · 분양주택 · 대출 및 주거복지 서비스</strong>를
+        정확하고 신속하게 알려드립니다.<br><br>
+        맞춤형 전략을 세워 <span class="hl">수도권 2030 청년들의 거주 문제</span>를
+        해결하고자 하는 서비스입니다.
+      </p>
+    </div>
+
+    <!-- 오른쪽: 수치 + 기관 배지 -->
+    <div class="s2-right">
+      <div class="s2-nums">
+        <div class="s2-num" id="n1">
+          <div class="s2-num-n">임대주택</div>
+          <div class="s2-num-l">35가지 유형<br>SH·LH·GH·iH</div>
+        </div>
+        <div class="s2-num" id="n2">
+          <div class="s2-num-n">공공분양</div>
+          <div class="s2-num-l">13가지 유형<br>SH·LH</div>
+        </div>
+        <div class="s2-num" id="n3">
+          <div class="s2-num-n">금융지원</div>
+          <div class="s2-num-l">5가지 대출<br>주택도시기금</div>
+        </div>
+        <div class="s2-num" id="n4">
+          <div class="s2-num-n">주거복지</div>
+          <div class="s2-num-l">11가지<br>이자·보증료·월세</div>
+        </div>
       </div>
-      <div class="dchar" id="dcb">
-        <div class="dchar-emoji">🤙</div>
-        <div class="dchar-name">친구</div>
+
+      <div class="s2-insts-label" id="insts-label">연동 기관</div>
+      <div class="s2-insts" id="s2-insts">
+        <span class="s2-inst inst-lh">LH 한국토지주택공사</span>
+        <span class="s2-inst inst-sh">SH 서울주택도시공사</span>
+        <span class="s2-inst inst-gh">GH 경기주택도시공사</span>
+        <span class="s2-inst inst-ih">iH 인천도시공사</span>
+        <span class="s2-inst inst-hf">주택도시기금</span>
+        <span class="s2-inst inst-gov">청약홈</span>
+        <span class="s2-inst inst-gov">온통청년</span>
+        <span class="s2-inst inst-gov">마이홈포털</span>
+        <span class="s2-inst inst-gov">각 지자체</span>
       </div>
     </div>
-    <div class="d-lines" id="dlines"></div>
+
   </div>
 </section>
 
-<!-- S3 ── 혼란 (word rain) -->
+<!-- ── S3 · 정밀분석 CTA ── -->
 <section class="scene" id="s3">
-  <div class="s3-intro" id="s3intro">
-    <div class="s3-intro-text">그래서 임대주택을 찾아봤습니다.<br><em>SH·LH 합치면 무려 28가지.</em></div>
-  </div>
-  <div id="s3-rain">
-    <div class="s3-head">
-      <span id="s3-face">🤔</span>
+  <div class="s3-inner">
+    <div class="s3-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      무료 · 3분 · 로그인 불필요
     </div>
-  </div>
-  <div id="s3-gu">
-    <div class="gu-t">😮‍💨 "그냥 포기할까…"</div>
-    <div class="gu-s">기준 중위소득? 1순위 조건? 가점? 모르겠다. 나는 안 되겠지.</div>
-  </div>
-</section>
 
-<!-- S4 ── 해결 -->
-<section class="scene" id="s4">
-  <div class="s4-inner">
-    <div class="s4-badge">내집구독 정밀분석</div>
-    <h2 class="s4-title">복잡한 거 다 건너뛰고<br><span class="s4-hl">딱 내 것만</span> 알려드릴게요.</h2>
-    <div class="s4-cards">
-      <div class="s4-card">
-        <span class="s4-icon">🎯</span>
-        <div><div class="s4-ct">내 자격에 맞는 유형만 골라드려요</div><div class="s4-cd">SH·LH 28가지 유형 중 나이·소득·자산·혼인 여부로 지원 가능한 것만 필터링해드립니다</div></div>
-      </div>
-      <div class="s4-card">
-        <span class="s4-icon">📊</span>
-        <div><div class="s4-ct">어떤 유형이 나한테 유리한지도 알려드려요</div><div class="s4-cd">임대료·거주기간·순위까지 한눈에 비교해서 최적 유형을 짚어드립니다</div></div>
-      </div>
-      <div class="s4-card">
-        <span class="s4-icon">📢</span>
-        <div><div class="s4-ct">지금 신청 가능한 실제 공고와 바로 연결</div><div class="s4-cd">SH공사 진행 중인 공고를 분석 결과와 실시간으로 매칭해드립니다</div></div>
-      </div>
+    <h2 class="s3-title">
+      지금, 내가 받을 수 있는<br>
+      <span class="hl">모든 혜택을 확인하세요</span>
+    </h2>
+
+    <p class="s3-desc">
+      나이·소득·자산·지역·혼인 여부 몇 가지만 입력하면<br>
+      64가지 유형 중 신청 가능한 것만 즉시 분석해드립니다.
+    </p>
+
+    <div class="s3-chips">
+      <div class="s3-chip"><span class="s3-chip-icon">🏠</span> 임대주택 35가지</div>
+      <div class="s3-chip"><span class="s3-chip-icon">🏢</span> 공공분양 13가지</div>
+      <div class="s3-chip"><span class="s3-chip-icon">💰</span> 금융·대출 5가지</div>
+      <div class="s3-chip"><span class="s3-chip-icon">🎁</span> 주거복지 11가지</div>
     </div>
-  </div>
-</section>
 
-<!-- S5 ── CTA -->
-<section class="scene" id="s5">
-  <div class="s5-inner">
-    <p class="s5-eye">무료 · 3분 · 로그인 불필요</p>
-    <h2 class="s5-title">내 집 마련,<br><span class="hl">지금 시작해요.</span></h2>
-    <p class="s5-sub">몇 가지 질문에만 답하면<br>지금 신청 가능한 임대주택을 바로 알려드립니다.</p>
-    <a href="./details.html" class="s5-btn">
-      정밀분석 시작하기
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </a>
-    <p class="s5-note">2026년 3월 기준 · SH공사 공식 자격요건 기반</p>
+    <div class="s3-btn-wrap">
+      <a href="./details.html" class="s3-btn">
+        정밀분석 시작하기
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <p class="s3-note">2026년 3월 기준 · LH·SH·GH·iH 공식 자격요건 기반</p>
   </div>
 </section>
 
@@ -478,10 +541,9 @@ html,body{width:100%;height:100%;overflow:hidden;
 'use strict';
 const $=id=>document.getElementById(id);
 
-/* ─── Scene config ─── */
-const IDS=['s1','s2','s3','s4','s5'];
-// auto-advance ms (0 = stays)
-const DURS=[5800,10500,12000,7000,0];
+/* ── Scene config ── */
+const IDS=['s1','s2','s3'];
+const DURS=[5500,9000,0]; // ms (0 = stays)
 let cur=0;
 const timers=[];
 let autoTimer=null;
@@ -489,17 +551,14 @@ let autoTimer=null;
 function qt(fn,ms){const t=setTimeout(fn,ms);timers.push(t)}
 function clearAll(){timers.forEach(clearTimeout);timers.length=0;clearTimeout(autoTimer)}
 
-/* ─── Go to scene ─── */
 function go(idx){
   if(idx<0||idx>=IDS.length)return;
   clearAll();
   document.getElementById(IDS[cur])?.classList.remove('active');
-  cleanScene(IDS[cur]);
   cur=idx;
-  cleanScene(IDS[cur]);
   document.getElementById(IDS[cur]).classList.add('active');
   updateUI();
-  ({s1:initS1,s2:initS2,s3:initS3,s4:initS4,s5:initS5})[IDS[cur]]?.();
+  ({s1:initS1,s2:initS2,s3:initS3})[IDS[cur]]?.();
   const dur=DURS[cur];
   if(dur>0){startProgress(dur);autoTimer=setTimeout(()=>go(cur+1),dur)}
   else resetProgress();
@@ -519,153 +578,78 @@ function updateUI(){
   document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
   $('aprev').classList.toggle('hide',cur===0);
   $('anext').classList.toggle('hide',cur===IDS.length-1);
-  $('top-nav').classList.toggle('dark',cur>0);
 }
 
-/* ─── Scene cleanup ─── */
-function cleanScene(id){
-  if(id==='s2'){
-    $('dlines').innerHTML='';
-    $('dset').className='d-setting';
-    $('dchars').className='d-chars';
-    document.querySelectorAll('.dchar').forEach(c=>c.classList.remove('speaking'));
-  }
-  if(id==='s3'){
-    $('s3-rain').querySelectorAll('.ww').forEach(e=>e.remove());
-    $('s3-rain').classList.remove('show');
-    $('s3intro').className='s3-intro';
-    $('s3-gu').classList.remove('show');
-    $('s3-face').textContent='🤔';
-    $('s3-face').classList.remove('shake');
-  }
-}
-
-/* ════════════════════════════
-   S1 — 고통
-════════════════════════════ */
+/* ════════════════════════
+   S1 — 브랜드 히어로
+════════════════════════ */
 function initS1(){
-  const tag=document.querySelector('#s1 .s1-tag');
-  const words=document.querySelectorAll('#s1 .s1-word');
-  const sub=document.querySelector('#s1 .s1-sub');
-  const stats=document.querySelector('#s1 .s1-stats');
-  [tag,sub,stats,...words].forEach(e=>{e.classList.remove('go');void e.offsetWidth});
-  qt(()=>tag.classList.add('go'),150);
-  qt(()=>words[0].classList.add('go'),600);
-  qt(()=>words[1].classList.add('go'),1250);
-  qt(()=>words[2].classList.add('go'),1900);
-  qt(()=>words[3].classList.add('go'),2700);
-  qt(()=>sub.classList.add('go'),3400);
-  qt(()=>stats.classList.add('go'),4000);
+  const els=[
+    document.querySelector('.s1-pill'),
+    document.querySelector('.s1-brand'),
+    document.querySelector('.s1-sub-wrap'),
+    document.querySelector('.s1-stats'),
+    document.querySelector('.s1-hint'),
+  ];
+  els.forEach(e=>{if(e){e.classList.remove('go');void e.offsetWidth}});
+  qt(()=>els[0]?.classList.add('go'), 150);
+  qt(()=>els[1]?.classList.add('go'), 500);
+  qt(()=>els[2]?.classList.add('go'), 1200);
+  qt(()=>els[3]?.classList.add('go'), 1900);
+  qt(()=>els[4]?.classList.add('go'), 2800);
 }
 
-/* ════════════════════════════
-   S2 — 드라마 대화
-════════════════════════════ */
-const LINES=[
-  {s:'a',name:'A씨',text:'"이번 달 월세 또 올랐어. 진짜 못 살겠다." 😔'},
-  {s:'b',name:'친구',text:'"야, 행복주택 알아? SH·LH에서 우리 같은 2030 청년한테 지원해주는 임대주택."'},
-  {s:'a',name:'A씨',text:'"그게 뭔데, 얼마야?"'},
-  {s:'b',name:'친구',text:'"<span class=dhl>시세 60%</span>에 <span class=dhl>최대 6년</span>. 역세권이야. 내 친구 작년에 됐거든."'},
-  {s:'a',name:'A씨',text:'"나도 될 수 있어?? 🤯"'},
-];
+/* ════════════════════════
+   S2 — 서비스 소개
+════════════════════════ */
 function initS2(){
-  qt(()=>$('dset').classList.add('show'),100);
-  qt(()=>{$('dset').classList.remove('show');$('dset').classList.add('hide')},2300);
-  qt(()=>$('dchars').classList.add('show'),2900);
-  LINES.forEach((line,i)=>{
-    qt(()=>{
-      document.querySelectorAll('#dlines .dline.show').forEach(e=>e.classList.add('dim'));
-      document.querySelectorAll('.dchar').forEach(c=>c.classList.remove('speaking'));
-      $(line.s==='a'?'dca':'dcb').classList.add('speaking');
-      const el=document.createElement('div');
-      el.className=`dline is-${line.s}`;
-      el.innerHTML=`<span class="dl-name">${line.name}</span><span class="dl-text">${line.text}</span>`;
-      $('dlines').appendChild(el);
-      requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
-    },3300+i*1650);
+  // 텍스트 요소
+  const eyebrow = document.querySelector('.s2-eyebrow');
+  const title   = document.querySelector('.s2-title');
+  const desc    = document.querySelector('.s2-desc');
+  const instsLbl= $('insts-label');
+  [eyebrow,title,desc,instsLbl].forEach(e=>{if(e){e.classList.remove('go');void e.offsetWidth}});
+
+  // 수치 카드
+  ['n1','n2','n3','n4'].forEach(id=>{
+    const el=$(id);
+    if(el){el.classList.remove('go');void el.offsetWidth}
   });
+
+  // 기관 배지
+  document.querySelectorAll('.s2-inst').forEach(e=>{e.classList.remove('go');void e.offsetWidth});
+
+  qt(()=>eyebrow?.classList.add('go'), 200);
+  qt(()=>title?.classList.add('go'),   450);
+  qt(()=>desc?.classList.add('go'),    700);
+
+  ['n1','n2','n3','n4'].forEach((id,i)=>
+    qt(()=>$(id)?.classList.add('go'), 600+i*150)
+  );
+
+  qt(()=>instsLbl?.classList.add('go'), 1300);
+  document.querySelectorAll('.s2-inst').forEach((e,i)=>
+    qt(()=>e.classList.add('go'), 1450+i*80)
+  );
 }
 
-/* ════════════════════════════
-   S3 — Word Rain
-════════════════════════════ */
-const WORDS=[
-  // 공통 유형 (SH·LH 모두)
-  {t:'행복주택',sz:36},{t:'국민임대',sz:34},{t:'청년 매입임대',sz:28},
-  {t:'신혼매입Ⅰ',sz:28},{t:'신혼매입Ⅱ',sz:28},{t:'전세임대',sz:30},
-  {t:'든든주택',sz:30},{t:'일반매입임대',sz:26},{t:'영구임대',sz:28},
-  // SH 전용
-  {t:'희망하우징',sz:32},{t:'청년안심주택',sz:27},{t:'시프트',sz:31},
-  {t:'미리내집',sz:30},{t:'장기안심주택',sz:26},{t:'장기미임대',sz:26},
-  // LH 전용
-  {t:'통합공공임대',sz:28},{t:'기숙사형청년',sz:26},{t:'집주인임대',sz:27},
-  {t:'고령자매입',sz:27},{t:'청년전세임대',sz:27},
-];
-const COLORS=['rgba(255,255,255,.9)','#7dd3fc','#a78bfa','#fbbf24','#86efac','#fca5a5','#c4b5fd','#6ee7b7','rgba(255,255,255,.75)'];
-const FACES=['🤔','😐','😵','🤯','😵‍💫'];
-
+/* ════════════════════════
+   S3 — CTA
+════════════════════════ */
 function initS3(){
-  qt(()=>$('s3intro').classList.add('show'),100);
-  qt(()=>{$('s3intro').classList.remove('show');$('s3intro').classList.add('hide')},2100);
-  qt(()=>{
-    $('s3-rain').classList.add('show');
-    WORDS.forEach((w,i)=>qt(()=>dropWord(w,i),i*160));
-  },2600);
-  qt(()=>$('s3-gu').classList.add('show'),2600+(WORDS.length-1)*160+700);
+  const els=[
+    document.querySelector('.s3-badge'),
+    document.querySelector('.s3-title'),
+    document.querySelector('.s3-desc'),
+    document.querySelector('.s3-chips'),
+    document.querySelector('.s3-btn-wrap'),
+    document.querySelector('.s3-note'),
+  ];
+  els.forEach(e=>{if(e){e.classList.remove('go');void e.offsetWidth}});
+  els.forEach((e,i)=>qt(()=>e?.classList.add('go'), 180+i*160));
 }
 
-function dropWord({t,sz},i){
-  const rain=$('s3-rain');
-  const el=document.createElement('span');
-  el.className='ww';
-  el.textContent=t;
-  // Random landing position clustered around head (center ~45%)
-  const xPct=6+Math.random()*80;
-  const yPct=14+Math.random()*42;
-  el.style.left=xPct+'%';
-  el.style.top=yPct+'%';
-  el.style.fontSize=sz+'px';
-  const rot=(Math.random()-.5)*32;
-  el.style.setProperty('--r',rot+'deg');
-  el.style.setProperty('--dur',(0.26+Math.random()*.12)+'s');
-  el.style.color=COLORS[i%COLORS.length];
-  el.style.zIndex=i;
-  rain.appendChild(el);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('go')));
-  // Update face
-  const fi=Math.floor((i+1)/4);
-  if(fi<FACES.length){
-    const face=$('s3-face');
-    face.textContent=FACES[fi];
-    face.classList.remove('shake');
-    void face.offsetWidth;
-    face.classList.add('shake');
-  }
-}
-
-/* ════════════════════════════
-   S4 — 해결
-════════════════════════════ */
-function initS4(){
-  const badge=document.querySelector('.s4-badge');
-  const title=document.querySelector('.s4-title');
-  const cards=document.querySelectorAll('.s4-card');
-  [badge,title,...cards].forEach(e=>{e.classList.remove('go');void e.offsetWidth});
-  qt(()=>badge.classList.add('go'),250);
-  qt(()=>title.classList.add('go'),450);
-  cards.forEach((c,i)=>qt(()=>c.classList.add('go'),750+i*220));
-}
-
-/* ════════════════════════════
-   S5 — CTA
-════════════════════════════ */
-function initS5(){
-  const els=document.querySelectorAll('.s5-eye,.s5-title,.s5-sub,.s5-btn,.s5-note');
-  els.forEach(e=>{e.classList.remove('go');void e.offsetWidth});
-  els.forEach((e,i)=>qt(()=>e.classList.add('go'),200+i*140));
-}
-
-/* ─── Controls ─── */
+/* ── Controls ── */
 $('aprev').addEventListener('click',()=>go(cur-1));
 $('anext').addEventListener('click',()=>go(cur+1));
 document.querySelectorAll('.dot').forEach((d,i)=>d.addEventListener('click',()=>go(i)));
@@ -679,7 +663,6 @@ document.addEventListener('touchend',e=>{
   const dx=tx-e.changedTouches[0].clientX;
   if(Math.abs(dx)>55){dx>0?go(cur+1):go(cur-1)}
 });
-// Click empty stage to advance
 $('stage').addEventListener('click',e=>{
   if(!e.target.closest('a,button')&&cur<IDS.length-1)go(cur+1);
 });
