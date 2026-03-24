@@ -698,8 +698,18 @@ function renderTab1(data) {
     const end   = r.apply_end   ? r.apply_end.slice(0,10)   : '-';
     const date  = r.date ? r.date.slice(0,10) : (r.created_at ? r.created_at.slice(0,10) : '-');
     const rd = r.raw_data || {};
-    const isParsed   = rd.source === 'pdf_parsed';
-    const isPending  = rd.exception_pending === true;
+    const isParsed  = rd.source === 'pdf_parsed';
+    // 35개 유형 키워드 — 이 중 하나라도 매칭되면 기존 유형으로 커버됨
+    const KNOWN_KEYWORDS = [
+      '청년안심주택','역세권청년','천원주택','희망하우징','장기전세',
+      '행복주택','국민임대','영구임대','통합공공임대','매입임대','전세임대',
+      '신혼','신생아','다자녀','고령자','장애인','기숙사','든든전세',
+      '집주인임대','공공분양','사전청약','청년월세','주거급여','디딤돌','버팀목',
+      '보금자리론','청약저축','전세보증','월세보증','이자지원'
+    ];
+    const titleAndTypes = (r.title + ' ' + (Array.isArray(r.types) ? r.types.join(' ') : (r.types||''))).toLowerCase();
+    const isKnown   = KNOWN_KEYWORDS.some(kw => titleAndTypes.includes(kw.toLowerCase()));
+    const isPending = !isParsed && !isKnown;
     const rowStyle   = isPending ? 'background:#fff7ed;' : (isParsed ? 'background:#f5f3ff;' : '');
     const extraBadge = isParsed
       ? '<span style="font-size:10px;background:#ede9fe;color:#5b21b6;padding:2px 6px;border-radius:8px;font-weight:700;">파싱완료</span>'
