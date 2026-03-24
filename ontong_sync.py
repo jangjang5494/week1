@@ -174,8 +174,8 @@ def parse_application_info(policy: dict) -> dict:
 
 
 def parse_eligibility(policy: dict) -> dict:
-    age_min = policy.get('sprtTrgtMinAge') or 0
-    age_max = policy.get('sprtTrgtMaxAge') or 0
+    age_min = int(policy.get('sprtTrgtMinAge') or 0)
+    age_max = int(policy.get('sprtTrgtMaxAge') or 0)
     result = {'homeless_required': False}
     if age_min > 0:
         result['age_min'] = age_min
@@ -189,8 +189,8 @@ def build_record(p: dict) -> dict:
     inst = detect_institution(p)
     region = detect_region(inst, p)
 
-    age_min = p.get('sprtTrgtMinAge') or 0
-    age_max = p.get('sprtTrgtMaxAge') or 0
+    age_min = int(p.get('sprtTrgtMinAge') or 0)
+    age_max = int(p.get('sprtTrgtMaxAge') or 0)
     if age_min > 0 and age_max > 0:
         target = f"만 {age_min}~{age_max}세"
     elif age_min > 0:
