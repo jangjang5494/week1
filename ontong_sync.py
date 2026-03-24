@@ -245,37 +245,94 @@ def fetch_all() -> list:
     return all_policies
 
 
-# ── Supabase upsert ────────────────────────────────────────────
+# ── Supabase 헬퍼 ─────────────────────────────────────────────
 
-def upsert_batch(records: list) -> None:
-    url = f"{SUPABASE_URL}/rest/v1/programs"
-    body = json.dumps(records).encode('utf-8')
-    req = urllib.request.Request(url, data=body, method='POST')
+def sb_get(path: str, params: str = '') -> list:
+    """Supabase REST GET"""
+    url = f"{SUPABASE_URL}/rest/v1/{path}{'?' + params if params else ''}"
+    req = urllib.request.Request(url)
+    req.add_header('apikey', SUPABASE_KEY)
+    req.add_header('Authorization', f'Bearer {SUPABASE_KEY}')
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        return json.loads(resp.read().decode('utf-8'))
+
+
+def sb_post(path: str, body: list, prefer: str) -> int:
+    """Supabase REST POST, 상태코드 반환"""
+    url = f"{SUPABASE_URL}/rest/v1/{path}"
+    data = json.dumps(body).encode('utf-8')
+    req = urllib.request.Request(url, data=data, method='POST')
     req.add_header('apikey', SUPABASE_KEY)
     req.add_header('Authorization', f'Bearer {SUPABASE_KEY}')
     req.add_header('Content-Type', 'application/json')
-    req.add_header('Prefer', 'resolution=merge-duplicates,return=minimal')
-
+    req.add_header('Prefer', prefer)
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
-            status = resp.status
+            return resp.status
     except urllib.error.HTTPError as e:
-        body_err = e.read().decode('utf-8', errors='replace')[:300]
-        print(f"  ⚠️  HTTP {e.code}: {body_err}")
-        return
-
-    if status not in (200, 201):
-        print(f"  ⚠️  예상치 못한 상태코드: {status}")
+        print(f"  ⚠️  HTTP {e.code}: {e.read().decode('utf-8', errors='replace')[:200]}")
+        return e.code
 
 
-def upsert_all(records: list, batch_size: int = 50) -> int:
-    total = 0
-    for i in range(0, len(records), batch_size):
-        batch = records[i:i + batch_size]
-        upsert_batch(batch)
-        total += len(batch)
-        print(f"  ✅ {i + 1}~{i + len(batch)} upsert 완료")
-    return total
+def sb_patch(path: str, params: str, body: dict) -> int:
+    """Supabase REST PATCH (단건 업데이트), 상태코드 반환"""
+    url = f"{SUPABASE_URL}/rest/v1/{path}?{params}"
+    data = json.dumps(body).encode('utf-8')
+    req = urllib.request.Request(url, data=data, method='PATCH')
+    req.add_header('apikey', SUPABASE_KEY)
+    req.add_header('Authorization', f'Bearer {SUPABASE_KEY}')
+    req.add_header('Content-Type', 'application/json')
+    req.add_header('Prefer', 'return=minimal')
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return resp.status
+    except urllib.error.HTTPError as e:
+        print(f"  ⚠️  PATCH HTTP {e.code}: {e.read().decode('utf-8', errors='replace')[:200]}")
+        return e.code
+
+
+def fetch_existing_ontong_nos() -> set:
+    """DB에 이미 ontong_plcy_no가 연결된 code 목록 조회"""
+    rows = sb_get('programs', 'select=ontong_plcy_no&ontong_plcy_no=not.is.null')
+    return {r['ontong_plcy_no'] for r in rows if r.get('ontong_plcy_no')}
+
+
+# ── Supabase 동기화 ────────────────────────────────────────────
+
+def sync_to_supabase(policies: list, existing_nos: set) -> dict:
+    """
+    - ontong_plcy_no가 이미 DB에 있으면 → 동적 필드만 PATCH (수동 데이터 보존)
+    - 신규면 → INSERT (code = ONTONG_{plcyNo})
+    """
+    to_insert = []
+    updated = 0
+
+    for p in policies:
+        plcy_no = p['plcyNo']
+        app_info = parse_application_info(p)
+
+        if plcy_no in existing_nos:
+            # 기존 수동 등록 레코드: 신청기간·활성여부만 업데이트
+            patch_body = {
+                'application_info': app_info,
+                'is_active': True,
+                'updated_at': datetime.now().isoformat(),
+            }
+            sb_patch('programs', f'ontong_plcy_no=eq.{plcy_no}', patch_body)
+            updated += 1
+        else:
+            to_insert.append(build_record(p))
+
+    # 신규 레코드 배치 INSERT
+    inserted = 0
+    batch_size = 50
+    for i in range(0, len(to_insert), batch_size):
+        batch = to_insert[i:i + batch_size]
+        sb_post('programs', batch, 'resolution=merge-duplicates,return=minimal')
+        inserted += len(batch)
+        print(f"  ✅ INSERT {i + 1}~{i + len(batch)}")
+
+    return {'inserted': inserted, 'updated': updated}
 
 
 # ── 메인 ──────────────────────────────────────────────────────
@@ -290,17 +347,16 @@ def main():
 
     print("\n[2] 수도권·전국 필터 + 만료 제외...")
     filtered = [p for p in all_policies if is_metro_or_national(p) and is_active(p)]
-    excluded = len(all_policies) - len(filtered)
-    print(f"  대상 {len(filtered)}개 (제외 {excluded}개)")
+    print(f"  대상 {len(filtered)}개 (제외 {len(all_policies) - len(filtered)}개)")
 
-    print("\n[3] programs 스키마 변환 중...")
-    records = [build_record(p) for p in filtered]
-    print(f"  {len(records)}개 레코드 준비 완료")
+    print("\n[3] DB 기존 ontong_plcy_no 조회 중...")
+    existing_nos = fetch_existing_ontong_nos()
+    print(f"  기존 연결된 정책: {len(existing_nos)}개")
 
-    print("\n[4] Supabase upsert 중...")
-    upserted = upsert_all(records)
+    print("\n[4] Supabase 동기화 중...")
+    result = sync_to_supabase(filtered, existing_nos)
 
-    print(f"\n=== 완료: {upserted}개 upsert ===")
+    print(f"\n=== 완료: 신규 INSERT {result['inserted']}개 / 기존 UPDATE {result['updated']}개 ===")
 
 
 if __name__ == '__main__':
