@@ -697,6 +697,12 @@ function renderTab1(data) {
     const start = r.apply_start ? r.apply_start.slice(0,10) : '-';
     const end   = r.apply_end   ? r.apply_end.slice(0,10)   : '-';
     const date  = r.date ? r.date.slice(0,10) : (r.created_at ? r.created_at.slice(0,10) : '-');
+    // status 클라이언트에서 재계산 (당일 23:59:59까지 진행중)
+    const now = new Date();
+    const liveStatus = r.apply_end
+      ? (new Date(r.apply_end + 'T23:59:59') < now ? '마감'
+        : (r.apply_start && new Date(r.apply_start) > now ? '예정' : '진행중'))
+      : r.status;
     const rd = r.raw_data || {};
     const isParsed  = rd.source === 'pdf_parsed';
     // 35개 유형 키워드 — 이 중 하나라도 매칭되면 기존 유형으로 커버됨
@@ -729,7 +735,7 @@ function renderTab1(data) {
         <td style="font-size:12px;color:var(--text-muted)">${escHtml(types)}</td>
         <td style="font-size:12px">${date}</td>
         <td style="font-size:12px">${start}<br>${end !== '-' ? '~'+end : ''}</td>
-        <td><span class="status status-${r.status}">${r.status}</span></td>
+        <td><span class="status status-${liveStatus}">${liveStatus}</span></td>
         <td>
           <button class="btn btn-warning btn-sm" onclick="sendToException(${r.id})" title="35개 유형에 없는 공고라면 클릭">📌 예외</button>
           <button class="btn btn-danger btn-sm" onclick="deleteAnnouncement(${r.id})">삭제</button>
