@@ -383,7 +383,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 행복주택 청년
 ('LH_HAPPY_YOUTH', '임대주택', '공공임대', '행복주택', 'LH', '전국', 'LH 행복주택 (청년·사회초년생)',
  '만19~39세 미혼 무주택 청년·사회초년생', TRUE,
- '{"age_min":19,"age_max":39,"marital_status":["미혼"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":251000000,"car_limit":45420000,"notes":["사회초년생: 소득활동 5년이내(나이무관)","청약저축 필수","1순위: 해당자치구 거주/소득근거지","2순위: 시·도 거주","신생아(2023.3.28이후): 소득·자산 최대20%p완화","★2026년 건설형 자산25,100만·차량4,542만"]}',
+ '{"age_min":19,"age_max":39,"marital_status":["미혼"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":273000000,"car_limit":45420000,"notes":["사회초년생: 소득활동 5년이내(나이무관)","청약저축 필수","1순위: 해당자치구 거주/소득근거지","2순위: 시·도 거주","신생아(2023.3.28이후): 소득·자산 최대20%p완화","★2026-03-24 전 기관 통일: 청년 자산27,300만·차량4,542만(건설형)"]}',
  '{"rent_pct_min":60,"rent_pct_max":80,"period_max_years":10,"area_max_sqm":60}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
@@ -628,18 +628,18 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
  'https://www.ih.co.kr/main/sale_lease/management/nation.jsp'),
 
--- iH 행복주택 (청년) ★2026-03-23 공식사이트 확인
+-- iH 행복주택 (청년) ★2026-03-24 자산기준 확정 (전 기관 통일)
 ('IH_HAPPY_YOUTH', '임대주택', '공공임대', '행복주택', 'iH', '인천', 'iH 인천 행복주택 (청년)',
  '만 19~39세 미혼 무주택 청년 (인천 거주 우선)', FALSE,
- '{"age_min":19,"age_max":39,"marital_status":["미혼","한부모"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"notes":["자산기준 공고별 상이 — 공고문 확인","인천 거주자 우선"]}',
+ '{"age_min":19,"age_max":39,"marital_status":["미혼","한부모"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"asset_limit":273000000,"car_limit":45630000,"notes":["★2026-03-24 전 기관 통일: 청년 자산27,300만·차량4,563만","인천 거주자 우선"]}',
  '{"rent_pct_min":60,"rent_pct_max":80,"period_years_max":6}',
  '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
  'https://www.ih.co.kr/main/sale_lease/management/happy.jsp'),
 
--- iH 행복주택 (신혼부부) ★2026-03-23 공식사이트 확인
+-- iH 행복주택 (신혼부부) ★2026-03-24 자산기준 확정 (전 기관 통일)
 ('IH_HAPPY_NEWLYWED', '임대주택', '공공임대', '행복주택', 'iH', '인천', 'iH 인천 행복주택 (신혼부부)',
  '혼인 7년 이내 신혼부부·예비신혼·신생아가구 (인천 거주 우선)', FALSE,
- '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모"],"homeless_required":true,"marriage_years_max":7,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":120,"income_pct_2person":110,"notes":["자산기준 공고별 상이 — 공고문 확인","인천 거주자 우선"]}',
+ '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모"],"homeless_required":true,"marriage_years_max":7,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":120,"income_pct_2person":110,"asset_limit":345000000,"car_limit":45630000,"notes":["★2026-03-24 전 기관 통일: 신혼 자산34,500만·차량4,563만","인천 거주자 우선"]}',
  '{"rent_pct_min":60,"rent_pct_max":80,"period_years_max":10}',
  '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
  'https://www.ih.co.kr/main/sale_lease/management/happy.jsp'),
