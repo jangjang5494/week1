@@ -825,8 +825,18 @@ def crawl_youth_housing(initial=False):
 # ⑥ 청약홈 아파트 청약일정 (applyhome.co.kr)
 # ════════════════════════════════════════════════════════════════════════
 APPLYHOME_BASE = "https://www.applyhome.co.kr"
-_NON_METRO = {"부산", "대구", "광주", "대전", "울산", "세종",
-              "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"}
+_NON_METRO = {
+    # 광역시·도
+    "부산", "대구", "광주", "대전", "울산", "세종",
+    "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주",
+    # 비수도권 주요 시·군 (LH 제목에 자주 등장)
+    "논산", "서천", "보령", "증평", "청주", "충주", "제천",
+    "양산", "경주", "밀양", "포항", "창원", "진주", "사천", "김해", "거제",
+    "목포", "여수", "순천", "광양", "무안", "영암", "강진", "장흥", "완도", "진도", "장성", "담양",
+    "전주", "군산", "익산", "정읍", "남원",
+    "안동", "구미", "김천", "의성", "상주", "영주",
+    "원주", "춘천", "강릉",
+}
 
 def _is_metro_or_national(region_text):
     """수도권(서울/경기/인천) 또는 전국/불명확이면 True, 명확히 타 지역이면 False"""
@@ -876,18 +886,18 @@ def crawl_applyhome_apt(initial=False):
         found_any = False
         for tr in rows:
             tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
-            if len(tds) < 4:
+            if len(tds) < 5:
                 continue
-            # 실제 컬럼: 지역 / 주택명(링크+배지) / 분양구분 / 청약기간 / 당첨자발표
+            # 실제 컬럼: 지역(0) / 주택구분(1) / 분양구분(2) / 주택명+링크(3) / 청약기간(4~)
             region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
-            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
-            # 주택명: <a> 태그 텍스트 우선
-            link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[1], re.DOTALL)
+            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()  # 민영/국민
+            # 주택명: tds[3]에서 <a> 태그 텍스트 우선
+            link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[3], re.DOTALL)
             name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
-                       else re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
-            # 청약기간: tds[3~5] 중 날짜 패턴 있는 첫 번째
+                       else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
+            # 청약기간: tds[4~6] 중 날짜 패턴 있는 첫 번째
             period_raw = ""
-            for col_i in (3, 4, 5):
+            for col_i in (4, 5, 6):
                 if col_i < len(tds):
                     c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
                     if re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
@@ -905,7 +915,7 @@ def crawl_applyhome_apt(initial=False):
                 continue
 
             # 링크 추출
-            link_m = re.search(r'href="([^"]+)"', tds[1])
+            link_m = re.search(r'href="([^"]+)"', tds[3])
             url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
                   APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do"
 
@@ -959,12 +969,20 @@ def crawl_applyhome_remndr(initial=False):
 
     for tr in re.split(r"<tr[^>]*>", tbody_m.group(1))[1:]:
         tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
-        if len(tds) < 3:
+        if len(tds) < 5:
             continue
-        region    = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
+        region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
         house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
-        name_raw  = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
-        period_raw = re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip() if len(tds) > 3 else ""
+        link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[3], re.DOTALL)
+        name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
+                   else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
+        period_raw = ""
+        for col_i in (4, 5, 6):
+            if col_i < len(tds):
+                c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
+                if re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
+                    period_raw = c
+                    break
 
         if not name_raw or not _is_metro_or_national(region):
             continue
@@ -974,7 +992,7 @@ def crawl_applyhome_remndr(initial=False):
         if status == "expired":
             continue
 
-        link_m = re.search(r'href="([^"]+)"', tds[2])
+        link_m = re.search(r'href="([^"]+)"', tds[3])
         url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
               APPLYHOME_BASE + "/ai/aia/selectAPTRemndrLttotPblancListView.do"
 
@@ -1029,12 +1047,20 @@ def crawl_applyhome_other(initial=False):
         found_any = False
         for tr in rows:
             tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
-            if len(tds) < 3:
+            if len(tds) < 5:
                 continue
-            region    = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
+            region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
             house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
-            name_raw  = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
-            period_raw = re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip() if len(tds) > 3 else ""
+            link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[3], re.DOTALL)
+            name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
+                       else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
+            period_raw = ""
+            for col_i in (4, 5, 6):
+                if col_i < len(tds):
+                    c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
+                    if re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
+                        period_raw = c
+                        break
 
             if not name_raw or not _is_metro_or_national(region):
                 continue
@@ -1046,7 +1072,7 @@ def crawl_applyhome_other(initial=False):
             if apply_end and apply_end > future_limit:
                 continue
 
-            link_m = re.search(r'href="([^"]+)"', tds[2])
+            link_m = re.search(r'href="([^"]+)"', tds[3])
             url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
                   APPLYHOME_BASE + "/ai/aia/selectOtherLttotPblancListView.do"
 
