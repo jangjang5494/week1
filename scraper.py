@@ -496,6 +496,8 @@ def crawl_lh(mi, source_key, initial=False):
 
         if lh_status == "expired":
             continue
+        if not _is_metro_or_national(region):
+            continue
         if apply_end and apply_end < today:
             continue
         if apply_end and apply_end > future_limit:
@@ -820,11 +822,18 @@ def crawl_youth_housing(initial=False):
 # ⑥ 청약홈 아파트 청약일정 (applyhome.co.kr)
 # ════════════════════════════════════════════════════════════════════════
 APPLYHOME_BASE = "https://www.applyhome.co.kr"
-METRO_REGIONS  = {"서울", "경기", "인천"}
+_NON_METRO = {"부산", "대구", "광주", "대전", "울산", "세종",
+              "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"}
 
-def _is_metro_region(region_text):
-    """수도권 지역 여부 (서울/경기/인천 포함)"""
-    return any(r in region_text for r in METRO_REGIONS)
+def _is_metro_or_national(region_text):
+    """수도권(서울/경기/인천) 또는 전국/불명확이면 True, 명확히 타 지역이면 False"""
+    if not region_text:
+        return True
+    if any(m in region_text for m in ("서울", "경기", "인천")):
+        return True
+    if any(n in region_text for n in _NON_METRO):
+        return False
+    return True  # 전국·전체·불명확 등 애매하면 통과
 
 def _parse_applyhome_period(text):
     """'2026-04-03 ~ 2026-04-06' 또는 '2026.04.03 ~ 2026.04.06' 형식 파싱"""
@@ -872,7 +881,7 @@ def crawl_applyhome_apt(initial=False):
             name_raw  = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
             period_raw = re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip() if len(tds) > 3 else ""
 
-            if not name_raw or not _is_metro_region(region):
+            if not name_raw or not _is_metro_or_national(region):
                 continue
 
             apply_start, apply_end = _parse_applyhome_period(period_raw)
@@ -944,7 +953,7 @@ def crawl_applyhome_remndr(initial=False):
         name_raw  = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
         period_raw = re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip() if len(tds) > 3 else ""
 
-        if not name_raw or not _is_metro_region(region):
+        if not name_raw or not _is_metro_or_national(region):
             continue
 
         apply_start, apply_end = _parse_applyhome_period(period_raw)
@@ -1014,7 +1023,7 @@ def crawl_applyhome_other(initial=False):
             name_raw  = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
             period_raw = re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip() if len(tds) > 3 else ""
 
-            if not name_raw or not _is_metro_region(region):
+            if not name_raw or not _is_metro_or_national(region):
                 continue
 
             apply_start, apply_end = _parse_applyhome_period(period_raw)
