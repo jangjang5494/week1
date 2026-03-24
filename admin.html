@@ -799,9 +799,23 @@ async function sendToExceptionFromTab2(id) {
   toast('탭3으로 이동했습니다. 자격조건을 입력하세요.', 'success');
 }
 
-function sendToException(id) {
+async function sendToException(id) {
   const row = tab1Data.find(r => r.id === id);
   if (!row) return;
+
+  // DB에 exception_pending 플래그 저장
+  try {
+    await sbFetch(`announcements?id=eq.${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ raw_data: { ...(row.raw_data || {}), exception_pending: true } })
+    });
+    // 로컬 데이터도 업데이트해서 즉시 주황색 반영
+    row.raw_data = { ...(row.raw_data || {}), exception_pending: true };
+    renderTab1(tab1Data);
+  } catch(e) {
+    toast('플래그 저장 실패: ' + e.message, 'error'); return;
+  }
+
   // 탭3으로 이동하면서 기본 정보 채우기
   switchTab(3);
   document.getElementById('m-title').value = row.title || '';
@@ -812,14 +826,14 @@ function sendToException(id) {
   if (row.date) document.getElementById('m-date').value = row.date.slice(0,10);
   if (row.status) document.getElementById('m-status').value = row.status;
   if (row.types) document.getElementById('m-types').value = Array.isArray(row.types) ? row.types.join(', ') : row.types;
-  // 안내 메시지
+
   const result = document.getElementById('parse-result');
   result.style.display = 'block';
   result.className = 'parse-result';
-  result.textContent = `📌 "${row.title}" 공고를 예외공고로 등록합니다.\nPDF 파일을 업로드하면 Claude가 자격조건을 파싱합니다.\n공고 URL: ${row.url || '없음'}`;
+  result.textContent = `📌 "${row.title}" 공고를 예외공고로 처리합니다.\nPDF 업로드 또는 자격조건 직접 입력으로 등록하세요.\n공고 URL: ${row.url || '없음'}`;
   result.style.whiteSpace = 'pre-line';
-  document.getElementById('pdf-zone').scrollIntoView({ behavior: 'smooth' });
-  toast('탭3으로 이동했습니다. PDF를 업로드하세요.', 'success');
+  document.getElementById('eligibility-form').scrollIntoView({ behavior: 'smooth' });
+  toast('탭3으로 이동했습니다. 자격조건을 입력하세요.', 'success');
 }
 
 async function bulkDelete() {
