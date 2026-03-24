@@ -1646,7 +1646,7 @@ function renderTab4(data) {
     const hasElig = Object.keys(elig).length > 0;
     const activeCls = r.is_active ? 'on' : 'off';
     const activeText = r.is_active ? '활성' : '비활성';
-    const code = escHtml(r.code || r.id);
+    const codeKey = String(r.code || r.id);
     return `
       <tr>
         <td><span class="cat-badge">${escHtml(r.category||'-')}</span></td>
@@ -1663,8 +1663,8 @@ function renderTab4(data) {
           ${eligSummary || (hasElig ? '<span style="color:#94a3b8;">있음</span>' : '<span style="color:#cbd5e1;">없음</span>')}
         </td>
         <td style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="btn btn-outline btn-sm" onclick="openProgEdit(${JSON.stringify(r.code||r.id)})">편집</button>
-          <button class="btn ${r.is_active ? 'btn-warning' : 'btn-success'} btn-sm" onclick="toggleActive(${JSON.stringify(r.code||r.id)}, ${r.is_active})">
+          <button class="btn btn-outline btn-sm t4-edit" data-code="${escHtml(codeKey)}">편집</button>
+          <button class="btn ${r.is_active ? 'btn-warning' : 'btn-success'} btn-sm t4-toggle" data-code="${escHtml(codeKey)}" data-active="${r.is_active}">
             ${r.is_active ? '비활성화' : '활성화'}
           </button>
         </td>
@@ -1697,8 +1697,8 @@ function switchModalTab(name) {
 }
 
 function openProgEdit(code) {
-  const row = tab4Data.find(r => (r.code || r.id) == code);
-  if (!row) { toast('프로그램을 찾을 수 없습니다.', 'error'); return; }
+  const row = tab4Data.find(r => String(r.code || r.id) === String(code));
+  if (!row) { alert(`프로그램을 찾을 수 없습니다.\ncode="${code}"\ntab4Data.length=${tab4Data.length}`); return; }
   currentProgCode = code;
 
   document.getElementById('prog-edit-title').textContent = row.name || '프로그램 편집';
@@ -1824,6 +1824,14 @@ async function toggleActive(code, currentVal) {
     toast('변경 실패: ' + e.message, 'error');
   }
 }
+
+// 탭4 버튼 이벤트 위임 (data-code 방식 — 따옴표 이스케이프 문제 없음)
+document.addEventListener('click', function(e) {
+  const editBtn = e.target.closest('.t4-edit');
+  if (editBtn) { openProgEdit(editBtn.dataset.code); return; }
+  const toggleBtn = e.target.closest('.t4-toggle');
+  if (toggleBtn) { toggleActive(toggleBtn.dataset.code, toggleBtn.dataset.active === 'true'); return; }
+});
 
 // 모달 외부 클릭 시 닫기
 document.getElementById('sb-key-modal').addEventListener('click', function(e) {
