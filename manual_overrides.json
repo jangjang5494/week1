@@ -1,0 +1,17 @@
+{
+  "_comment": "크롤러가 수집 못하는 공고를 수동으로 관리하는 파일입니다. GH 등.",
+  "_format": {
+    "id": "gh_예시",
+    "inst": "GH",
+    "source_key": "gh_manual",
+    "title": "공고명",
+    "types": ["GH 경기 행복주택 (청년)"],
+    "location": "경기",
+    "apply_start": "YYYY-MM-DD",
+    "apply_end": "YYYY-MM-DD",
+    "status": "manual_ok",
+    "url": "https://apply.gh.or.kr/...",
+    "posted_date": "YYYY-MM-DD",
+    "verified_at": "YYYY-MM-DD"
+  }
+}

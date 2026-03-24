@@ -1866,11 +1866,11 @@ function runAnalysis() {
         if (isMarried && !singleParent) r.push('미혼 또는 한부모가족');
         let eligible = false, rank = '';
         if (baseOk_lh && isYouth && (!isMarried || singleParent)) {
-            if (under(100) && totalAssets <= 25100 && carVal <= 4563) {
+            if (under(100) && totalAssets <= 27300 && carVal <= 4563) {
                 eligible = true; rank = '청약저축 필요' + (subCount >= 24 ? ' (가점 최상)' : '');
             } else {
                 if (!under(100)) r.push('소득 100%(1인 120%) 이하 필요');
-                if (totalAssets > 25100) r.push('총자산 25,100만원 이하 필요');
+                if (totalAssets > 27300) r.push('총자산 27,300만원 이하 필요');
                 if (carVal > 4563) r.push('자동차 4,563만원 이하 필요');
             }
         }
@@ -2069,8 +2069,8 @@ function runAnalysis() {
         if (!ihPriority) r.push('※ 인천 거주자 우선 (비인천 거주도 신청 가능, 가점 불이익)');
         const isYouthElig = isYouth && (!isMarried || singleParent);
         if (!isYouthElig) r.push('만 19~39세 미혼(또는 한부모) 필요');
-        const aOk = totalAssets <= 25400, carOk = carVal <= 4563;
-        if (!aOk) r.push(`총자산 25,400만원 이하 (현재 ${totalAssets}만원)`);
+        const aOk = totalAssets <= 27300, carOk = carVal <= 4563;
+        if (!aOk) r.push(`총자산 27,300만원 이하 (현재 ${totalAssets}만원)`);
         if (!carOk) r.push(`자동차 4,563만원 이하`);
         let eligible = false, rank = '';
         if (baseOk_ih && isYouthElig && aOk && carOk) {
@@ -2269,7 +2269,7 @@ function runAnalysis() {
                 rank = subCount >= 24 ? '1순위 (납입 24회 이상)' : '2순위 (납입 6회 이상)';
             } else r.push('소득 100% 이하 필요');
         }
-        add('LH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-general', r, 'LH', 'sale');
+        add('LH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-general', r, 'LH', 'sale');
     }
 
     // LH 공공분양 신혼특공
@@ -2290,7 +2290,7 @@ function runAnalysis() {
                 rank = infant ? '우선공급 가능 (2세이하자녀, 소득100%/맞벌이120%)' : '일반공급';
             } else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
         }
-        add('LH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 공공분양 생애최초
@@ -2309,7 +2309,7 @@ function runAnalysis() {
             if (incOk) { eligible = true; rank = '생애최초특공 (추첨 50%)'; }
             else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
         }
-        add('LH 공공분양 (생애최초 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (생애최초 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 공공분양 다자녀
@@ -2327,7 +2327,7 @@ function runAnalysis() {
             if (incOk) { eligible = true; rank = childCnt >= 3 ? '우선 (자녀 3명이상)' : '일반 (자녀 2명)'; }
             else r.push('소득 120%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
         }
-        add('LH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 공공분양 신생아
@@ -2345,7 +2345,7 @@ function runAnalysis() {
         } else if (homeless && infant && subCount >= 6 && aOk && carOk) {
             r.push('소득 200% 이하 필요');
         }
-        add('LH 공공분양 (신생아 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (신생아 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 공공분양 노부모부양
@@ -2363,7 +2363,7 @@ function runAnalysis() {
             if (incOk) { eligible = true; rank = '노부모부양특공 (65세이상 3년이상 부양)'; }
             else r.push('소득 120%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
         }
-        add('LH 공공분양 (노부모부양 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (노부모부양 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 신혼희망타운
@@ -2384,7 +2384,7 @@ function runAnalysis() {
                 rank = infant ? '우선공급 (혼인2년이내·2세이하자녀)' : '일반공급 (혼인2~7년)';
             } else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
         }
-        add('LH 신혼희망타운', eligible, rank, '분양가 저렴 (연 1.6% 고정금리)', '분양', 'sale-special', r, 'LH', 'sale');
+        add('LH 신혼희망타운', eligible, rank, '분양가 저렴 (연 1.6% 고정금리)', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
 
     // === 금융지원 ===
@@ -3284,7 +3284,7 @@ const typeDetailData = {
             <ul>
                 <li>만 19~39세 미혼 무주택 청년</li>
                 <li>소득 100% 이하 (1인 120%)</li>
-                <li>총자산 25,400만원 이하 / 자동차 4,563만원 이하</li>
+                <li>총자산 27,300만원 이하 / 자동차 4,563만원 이하</li>
                 <li>주택청약저축 가입 필수</li>
             </ul>
         </div>
@@ -3601,7 +3601,7 @@ const typeDetailData = {
             <ul>
                 <li>만 19~39세 미혼 (또는 한부모)</li>
                 <li>무주택자</li>
-                <li>총자산 25,400만원 이하 / 자동차 4,563만원 이하</li>
+                <li>총자산 27,300만원 이하 / 자동차 4,563만원 이하</li>
                 <li>소득 80% 이하 (1순위) / 100% 이하 (2순위)</li>
             </ul>
         </div>

@@ -1,246 +1,922 @@
 #!/usr/bin/env python3
-"""SH공사 임대주택 공고 크롤러 - GitHub Actions에서 매일 실행"""
+"""
+멀티소스 주택공고 크롤러
+사용법:
+  python scraper.py             # 일반 실행 (각 소스 1페이지)
+  python scraper.py --initial   # 초기 DB 구축 (2026-03-01 이후 전체)
+"""
 
-import re
-import json
-import urllib.request
-import urllib.parse
+import re, json, time, hashlib, argparse
+import urllib.request, urllib.parse
 from datetime import datetime, date, timedelta
 
-BASE = "https://www.i-sh.co.kr"
-LIST_URL = BASE + "/main/lay2/program/S1T294C296/www/brd/m_244/list.do"
+# ── 설정 ────────────────────────────────────────────────────────────────
+INITIAL_SINCE       = date(2026, 3, 1)   # 초기 크롤링 기준일
+FUTURE_LIMIT_DAYS   = 31                 # 이 일수 이내 예정 공고만 포함
+DETAIL_SLEEP        = 0.4                # 상세페이지 요청 간격(초)
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    "Referer": BASE + "/main/index.do",
-    "Content-Type": "application/x-www-form-urlencoded",
+    "Accept":          "text/html,application/xhtml+xml,*/*",
+    "Accept-Language": "ko-KR,ko;q=0.9",
 }
 
-# 공고 제목 → 유형 매핑 (순서 중요: 더 구체적인 것 먼저)
-TYPE_KEYWORDS = [
-    ("미리내집",          ["미리내집", "장기전세주택2", "장기전세2", "장기전세 2차"]),
-    ("장기전세주택 (시프트)", ["장기전세주택", "장기전세 주택", "시프트"]),
-    ("희망하우징",         ["희망하우징"]),
-    ("청년안심주택",        ["청년안심주택"]),
-    ("장기안심주택",        ["장기안심주택"]),
-    ("행복주택 (신혼부부)",  ["행복주택"]),   # 행복주택은 공고에서 세분화 어려워 통합
-    ("행복주택 (청년)",     []),              # 위에서 통합 처리
-    ("행복주택 (대학생)",   []),
-    ("신혼·신생아 매입임대 Ⅱ형", ["신혼신생아 매입", "신혼·신생아 매입", "신혼 신생아 매입"]),
-    ("신혼·신생아 매입임대 Ⅰ형", []),
-    ("신혼·신생아 전세임대 Ⅱ형", ["신혼신생아 전세", "신혼·신생아 전세", "신혼 신생아 전세"]),
-    ("신혼·신생아 전세임대 Ⅰ형", []),
-    ("청년 매입임대주택",   ["청년형 매입", "청년 매입임대", "청년형 특화형 매입", "청년형] 특화형 매입", "청년형] 특화"]),
-    ("장기미임대",         ["장기미임대"]),
-    ("전세임대형 든든주택",  ["든든주택"]),
-    ("기존주택 전세임대",   ["기존주택 전세임대", "전세임대주택"]),
-    ("국민임대주택",        ["국민임대", "국민공공임대"]),
-    ("일반 매입임대주택",   ["매입임대주택", "일반 매입임대"]),
-]
-
-# 공고 제목에서 유형 추출
-def detect_types(title):
-    title_lower = title.replace(" ", "").lower()
-    matched = []
-
-    # 행복주택 세분화 시도
-    if "행복주택" in title:
-        if "신혼" in title:
-            matched.append("행복주택 (신혼부부)")
-        elif "청년" in title:
-            matched.append("행복주택 (청년)")
-        elif "대학" in title:
-            matched.append("행복주택 (대학생)")
-        else:
-            matched += ["행복주택 (대학생)", "행복주택 (청년)", "행복주택 (신혼부부)"]
-        return matched
-
-    # 신혼·신생아 세분화
-    if any(k in title for k in ["신혼신생아", "신혼·신생아", "신혼 신생아"]):
-        if "매입" in title:
-            if "Ⅱ" in title or "2형" in title or "II" in title:
-                matched.append("신혼·신생아 매입임대 Ⅱ형")
-            elif "Ⅰ" in title or "1형" in title or "I형" in title:
-                matched.append("신혼·신생아 매입임대 Ⅰ형")
-            else:
-                matched += ["신혼·신생아 매입임대 Ⅰ형", "신혼·신생아 매입임대 Ⅱ형"]
-        elif "전세" in title:
-            if "Ⅱ" in title or "2형" in title:
-                matched.append("신혼·신생아 전세임대 Ⅱ형")
-            elif "Ⅰ" in title or "1형" in title:
-                matched.append("신혼·신생아 전세임대 Ⅰ형")
-            else:
-                matched += ["신혼·신생아 전세임대 Ⅰ형", "신혼·신생아 전세임대 Ⅱ형"]
-        return matched
-
-    for type_name, keywords in TYPE_KEYWORDS:
-        if not keywords:
-            continue
-        if any(kw.replace(" ", "") in title_lower for kw in keywords):
-            if type_name not in matched:
-                matched.append(type_name)
-
-    return matched if matched else ["기타"]
-
-# 공고가 모집공고인지 판단 (당첨자발표, 재계약 등 제외)
-def is_recruitment(title):
-    exclude = ["당첨자", "예비자", "예비입주", "재계약", "결과발표", "계약결과",
-               "채용", "입찰", "입주안내", "입주대상자", "동호추첨",
-               "서류심사대상자 발표", "청약접수결과", "심사결과", "분양원가",
-               "연장공고", "취소", "철회", "위임장", "변경 안내"]
-    include = ["모집공고", "입주자모집", "모집 공고", "공급공고", "청약공고", "추가모집", "추가 모집"]
-    title_has_exclude = any(e in title for e in exclude)
-    title_has_include = any(i in title for i in include)
-    return title_has_include and not title_has_exclude
-
-import time
-
-DETAIL_URL = BASE + "/main/lay2/program/S1T294C296/www/brd/m_244/view.do"
-
-def fetch(url, data=None):
+# ── 공통 유틸 ────────────────────────────────────────────────────────────
+def fetch(url, data=None, extra_headers=None, timeout=20):
+    headers = {**HEADERS, **(extra_headers or {})}
     if data:
         data = urllib.parse.urlencode(data).encode()
-    req = urllib.request.Request(url, data=data, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=15) as r:
-        raw = r.read()
-        try:
-            return raw.decode("utf-8")
-        except:
-            return raw.decode("euc-kr", errors="replace")
-
-def parse_date(y, m, d):
+    req = urllib.request.Request(url, data=data, headers=headers)
     try:
-        return date(int(y), int(m), int(d))
-    except:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read()
+            for enc in ["utf-8", "euc-kr"]:
+                try:
+                    return raw.decode(enc)
+                except Exception:
+                    continue
+            return raw.decode("utf-8", errors="replace")
+    except Exception as e:
+        print(f"  [fetch 오류] {url[:70]}: {e}")
+        return ""
+
+def fetch_json(url, extra_headers=None, timeout=20):
+    html = fetch(url, extra_headers=extra_headers, timeout=timeout)
+    if not html:
+        return None
+    try:
+        return json.loads(html)
+    except Exception:
         return None
 
-def extract_apply_dates(html):
-    """상세 페이지에서 신청 시작일·마감일 추출"""
-    idx = html.find('class="cont"')
-    if idx < 0:
-        return None, None
-    content = html[idx:idx+8000]
-    content = re.sub(r"<[^>]+>", " ", content)
-    content = re.sub(r"&nbsp;", " ", content)
-    content = re.sub(r"&[a-z]+;", "", content)
-    content = re.sub(r"\s+", " ", content)
+def parse_ymd(y, m, d):
+    try:
+        return date(int(y), int(m), int(d))
+    except Exception:
+        return None
 
-    # SH공사 날짜 형식 다양:
-    #   2026.03.18  /  2026. 3.18  /  2026. 3. 18.  /  2026-03-18
-    # 공백 허용 패턴
-    DATE_PAT = r"(\d{4})\s*[.\-]\s*(\d{1,2})\s*[.\-]\s*(\d{1,2})"
-    RANGE_PAT = DATE_PAT + r"[^0-9]{0,30}?~[^0-9]{0,15}?" + DATE_PAT
+DATE_PAT  = r"(\d{4})\s*[.\-/]\s*(\d{1,2})\s*[.\-/]\s*(\d{1,2})"
+RANGE_PAT = DATE_PAT + r"[^0-9]{0,30}?" + r"~" + r"[^0-9]{0,15}?" + DATE_PAT
 
-    keywords = ["신청기간", "접수기간", "접수일", "신청일", "모집기간", "청약기간", "공고기간", "청약 기간", "신청 기간"]
-    for kw in keywords:
-        pos = content.find(kw)
-        if pos < 0:
-            continue
-        segment = content[pos:pos+400]
-        m = re.search(RANGE_PAT, segment)
-        if m:
-            start = parse_date(m.group(1), m.group(2), m.group(3))
-            end   = parse_date(m.group(4), m.group(5), m.group(6))
-            if start and end and end >= start:
-                return start, end
-        # 범위가 아닌 경우: 키워드 뒤 첫 날짜만 있으면 start만 추출 (fallback)
-        sm = re.search(DATE_PAT, segment)
-        if sm:
-            start = parse_date(sm.group(1), sm.group(2), sm.group(3))
-            if start:
-                return start, start + timedelta(days=14)  # 14일 예상 마감
-
-    # 키워드 없이 전체에서 첫 날짜 범위 추출 (fallback)
-    m = re.search(RANGE_PAT, content)
+def extract_range(text):
+    m = re.search(RANGE_PAT, text)
     if m:
-        start = parse_date(m.group(1), m.group(2), m.group(3))
-        end   = parse_date(m.group(4), m.group(5), m.group(6))
-        if start and end and end >= start and end.year >= date.today().year:
-            return start, end
-
+        s = parse_ymd(m.group(1), m.group(2), m.group(3))
+        e = parse_ymd(m.group(4), m.group(5), m.group(6))
+        if s and e and e >= s:
+            return s, e
     return None, None
 
-def scrape_list(pages=5):
-    candidates = []
-    for page in range(1, pages + 1):
-        print(f"목록 페이지 {page} 수집 중...")
-        html = fetch(LIST_URL, {"multi_itm_seq": "2", "page": str(page)})
-        rows = re.findall(
-            r'onclick="javascript:getDetailView\(\'(\d+)\'\)[^"]*">(.*?)</a>.*?<td class="num">\s*([\d-]+)\s*</td>',
-            html, re.DOTALL
-        )
-        if not rows:
-            break
-        for seq, title_raw, posted_date in rows:
-            title = re.sub(r"<[^>]+>|\s+", " ", title_raw).strip()
-            if not title or not is_recruitment(title):
-                continue
-            candidates.append((seq, title, posted_date.strip()))
+def extract_dates_from_html(html):
+    """상세페이지 HTML에서 신청/청약/모집기간 추출"""
+    # 태그 제거
+    text = re.sub(r"<[^>]+>", " ", html)
+    text = re.sub(r"&nbsp;|&amp;|&lt;|&gt;", " ", text)
+    text = re.sub(r"\s+", " ", text)
 
-    today = date.today()
-    future_limit = today + timedelta(days=31)
+    keywords = ["신청기간", "접수기간", "청약기간", "모집기간",
+                "공급기간", "신청일정", "청약일정", "접수일"]
+    for kw in keywords:
+        pos = text.find(kw)
+        if pos < 0:
+            continue
+        seg = text[pos:pos + 400]
+        s, e = extract_range(seg)
+        if s and e:
+            return s, e
+
+    # fallback: 앞부분 3000자에서 첫 범위
+    s, e = extract_range(text[:3000])
+    if s and e and e.year >= date.today().year:
+        return s, e
+    return None, None
+
+def normalize_title(title):
+    return re.sub(r"\s+", "", title)[:20]
+
+def make_id(source_key, uid):
+    h = hashlib.md5(str(uid).encode("utf-8")).hexdigest()[:8]
+    return f"{source_key}_{h}"
+
+def compute_status(apply_start, apply_end, today=None):
+    today = today or date.today()
+    if not (apply_start and apply_end):
+        return "needs_review"
+    if apply_end < today:
+        return "expired"
+    if apply_start <= today:
+        return "진행중"
+    return "예정"
+
+def should_keep(ann, today=None):
+    """공고 포함 여부 판단 (만료·너무 먼 미래 제외)"""
+    today = today or date.today()
+    s = ann.get("apply_start")
+    e = ann.get("apply_end")
+    status = ann.get("status")
+
+    if status in ("manual_ok", "needs_review"):
+        return True     # 수동/미확인은 항상 유지
+    if e:
+        ed = date.fromisoformat(e)
+        if ed < today:
+            return False
+    if s:
+        sd = date.fromisoformat(s)
+        if sd > today + timedelta(days=FUTURE_LIMIT_DAYS):
+            return False
+    return True
+
+# ── 공고 유형 감지 ───────────────────────────────────────────────────────
+SH_TYPES = [
+    ("미리내집",                  ["미리내집", "장기전세주택2", "장기전세2"]),
+    ("장기전세주택 (시프트)",      ["장기전세주택", "시프트"]),
+    ("희망하우징",                ["희망하우징"]),
+    ("청년안심주택",               ["청년안심주택"]),
+    ("장기안심주택",               ["장기안심주택"]),
+    ("전세임대형 든든주택",        ["든든주택"]),
+    ("신혼·신생아 매입임대 Ⅱ형",  ["신혼신생아 매입", "신혼·신생아 매입", "신혼 신생아 매입"]),
+    ("신혼·신생아 전세임대 Ⅱ형",  ["신혼신생아 전세", "신혼·신생아 전세"]),
+    ("청년 매입임대주택",          ["청년형 매입", "청년 매입임대", "청년형 특화"]),
+    ("장기미임대",                 ["장기미임대"]),
+    ("기존주택 전세임대",          ["기존주택 전세임대", "전세임대주택"]),
+    ("국민임대주택",               ["국민임대", "국민공공임대"]),
+    ("일반 매입임대주택",          ["매입임대주택", "일반 매입임대"]),
+    # 분양
+    ("SH 공공분양 (일반공급)",    ["일반공급", "일반 공급"]),
+    ("SH 나눔형 공공분양 (일반공급)", ["나눔형"]),
+]
+
+LH_TYPES = [
+    ("LH 통합공공임대",            ["통합공공임대"]),
+    ("LH 국민임대",                ["국민임대"]),
+    ("LH 영구임대",                ["영구임대"]),
+    ("LH 행복주택 (신혼부부)",     ["행복주택"]),   # 아래에서 세분화
+    ("LH 행복주택 (청년)",         []),
+    ("LH 행복주택 (대학생)",       []),
+    ("LH 청년 매입임대",           ["청년 매입", "청년형 매입"]),
+    ("LH 신혼·신생아 매입임대 Ⅰ형", ["신혼신생아 매입", "신혼·신생아 매입"]),
+    ("LH 신혼·신생아 매입임대 Ⅱ형", []),
+    ("LH 기존주택 전세임대",       ["전세임대"]),
+    ("LH 든든전세주택",            ["든든전세"]),
+    ("LH 기숙사형 청년주택",       ["기숙사형"]),
+    ("LH 청년신혼부부 매입임대리츠", ["리츠", "매입임대리츠"]),
+    ("LH 자립준비청년",            ["자립준비"]),
+    # 분양
+    ("LH 공공분양 (신혼부부 특별공급)", ["신혼부부 특별", "신혼 특별"]),
+    ("LH 공공분양 (생애최초 특별공급)", ["생애최초"]),
+    ("LH 공공분양 (다자녀 특별공급)",   ["다자녀 특별"]),
+    ("LH 공공분양 (일반공급)",         ["일반공급", "공공분양"]),
+    ("LH 신혼희망타운",               ["신혼희망타운"]),
+]
+
+IH_TYPES = [
+    ("iH 인천 행복주택 (청년)",    ["행복주택"]),
+    ("iH 인천 행복주택 (신혼)",    []),
+    ("iH 인천 국민임대",           ["국민임대"]),
+]
+
+RECRUIT_INCLUDE = ["모집공고", "입주자모집", "모집 공고", "공급공고",
+                   "청약공고", "추가모집", "추가 모집", "예비입주자 모집",
+                   "예비자 모집", "선착순"]
+RECRUIT_EXCLUDE = ["당첨자", "예비자 발표", "예비자 계약", "재계약", "결과발표",
+                   "채용", "입찰", "입주안내", "동호추첨", "서류심사대상자",
+                   "청약접수결과", "심사결과", "취소", "철회", "계약결과",
+                   "입주대상자 발표", "연장공고"]
+
+def is_recruitment(title):
+    if any(e in title for e in RECRUIT_EXCLUDE):
+        return False
+    return any(i in title for i in RECRUIT_INCLUDE)
+
+def detect_types_sh(title):
+    tl = title.replace(" ", "").lower()
+    if "행복주택" in title:
+        if "신혼" in title: return ["행복주택 (신혼부부)"]
+        if "청년" in title: return ["행복주택 (청년)"]
+        if "대학" in title: return ["행복주택 (대학생)"]
+        return ["행복주택 (청년)", "행복주택 (신혼부부)", "행복주택 (대학생)"]
+    if any(k in title for k in ["신혼신생아", "신혼·신생아", "신혼 신생아"]):
+        if "매입" in title:
+            if any(x in title for x in ["Ⅱ", "2형", "II"]):
+                return ["신혼·신생아 매입임대 Ⅱ형"]
+            if any(x in title for x in ["Ⅰ", "1형"]):
+                return ["신혼·신생아 매입임대 Ⅰ형"]
+            return ["신혼·신생아 매입임대 Ⅰ형", "신혼·신생아 매입임대 Ⅱ형"]
+        if "전세" in title:
+            if any(x in title for x in ["Ⅱ", "2형"]):
+                return ["신혼·신생아 전세임대 Ⅱ형"]
+            return ["신혼·신생아 전세임대 Ⅰ형"]
+    matched = []
+    for name, kws in SH_TYPES:
+        if not kws: continue
+        if any(kw.replace(" ", "") in tl for kw in kws):
+            if name not in matched:
+                matched.append(name)
+    return matched or ["기타"]
+
+def detect_types_lh(title, type_col=""):
+    """LH는 목록에 유형 컬럼이 있어서 type_col 우선 활용"""
+    tl = title.replace(" ", "").lower()
+    tc = type_col.replace(" ", "").lower()
+
+    if "행복주택" in title or "행복주택" in type_col:
+        if "신혼" in title or "신생아" in title: return ["LH 행복주택 (신혼부부)"]
+        if "대학" in title: return ["LH 행복주택 (대학생)"]
+        if "청년" in title: return ["LH 행복주택 (청년)"]
+        return ["LH 행복주택 (청년)", "LH 행복주택 (신혼부부)"]
+    if "통합공공" in tc or "통합공공" in tl:
+        return ["LH 통합공공임대"]
+    if "국민임대" in tc or "국민임대" in tl:
+        return ["LH 국민임대"]
+    if "영구임대" in tc or "영구임대" in tl:
+        return ["LH 영구임대"]
+    if any(k in tl for k in ["신혼신생아매입", "신혼·신생아매입"]):
+        if any(x in title for x in ["Ⅱ", "2형", "II"]): return ["LH 신혼·신생아 매입임대 Ⅱ형"]
+        return ["LH 신혼·신생아 매입임대 Ⅰ형"]
+    if "청년매입" in tl or "청년형매입" in tl:
+        return ["LH 청년 매입임대"]
+    if "전세임대" in tl and "든든" in tl:
+        return ["LH 든든전세주택"]
+    if "전세임대" in tl:
+        return ["LH 기존주택 전세임대"]
+    if "기숙사형" in tl:
+        return ["LH 기숙사형 청년주택"]
+    if "리츠" in tl:
+        return ["LH 청년신혼부부 매입임대리츠"]
+    if "자립준비" in tl:
+        return ["LH 자립준비청년"]
+    if "신혼희망타운" in tl:
+        return ["LH 신혼희망타운"]
+    if "분양" in tc or "공공분양" in tl:
+        if "신혼" in tl: return ["LH 공공분양 (신혼부부 특별공급)"]
+        if "생애최초" in tl: return ["LH 공공분양 (생애최초 특별공급)"]
+        return ["LH 공공분양 (일반공급)"]
+    return ["기타(LH)"]
+
+def detect_types_ih(title):
+    tl = title.replace(" ", "").lower()
+    if "행복주택" in title:
+        if "신혼" in title: return ["iH 인천 행복주택 (신혼)"]
+        return ["iH 인천 행복주택 (청년)"]
+    if "국민임대" in tl: return ["iH 인천 국민임대"]
+    return ["기타(iH)"]
+
+
+# ════════════════════════════════════════════════════════════════════════
+# ① SH 공사 크롤러 (임대 / 분양 공통 구조)
+# ════════════════════════════════════════════════════════════════════════
+class SHCrawler:
+    def __init__(self, inst_key, base, list_path, view_path, multi_itm_seq):
+        self.inst_key     = inst_key        # 'sh_rental' or 'sh_sale'
+        self.base         = base
+        self.list_url     = base + list_path
+        self.view_url     = base + view_path
+        self.multi_itm    = multi_itm_seq
+
+    def crawl(self, initial=False):
+        today  = date.today()
+        since  = INITIAL_SINCE if initial else today - timedelta(days=2)
+        max_pages = 50 if initial else 1
+        results = []
+        candidates = []
+
+        for page in range(1, max_pages + 1):
+            print(f"  [SH {self.inst_key}] 목록 p{page}...")
+            html = fetch(self.list_url,
+                         data={"multi_itm_seq": self.multi_itm, "page": str(page)},
+                         extra_headers={"Referer": self.base + "/main/index.do",
+                                        "Content-Type": "application/x-www-form-urlencoded"})
+            if not html:
+                break
+
+            rows = re.findall(
+                r"onclick=\"javascript:getDetailView\('(\d+)'\)[^\"]*\">.*?</a>"
+                r".*?<td[^>]*>\s*([^<]+)</td>"    # 담당부서
+                r".*?<td[^>]*>\s*([\d-]+)\s*</td>", # 등록일
+                html, re.DOTALL
+            )
+            if not rows:
+                # 대안 패턴
+                rows = re.findall(
+                    r"getDetailView\('(\d+)'\)",
+                    html)
+                # seq만 추출된 경우 날짜 없이 처리
+                for seq in rows:
+                    candidates.append((seq, "", today.isoformat()))
+                if not rows:
+                    break
+            else:
+                stop = False
+                for seq, dept, posted_str in rows:
+                    posted_str = posted_str.strip()
+                    try:
+                        posted = date.fromisoformat(posted_str)
+                    except Exception:
+                        posted = today
+                    if initial and posted < since:
+                        stop = True
+                        break
+                    title_html = re.search(
+                        rf"getDetailView\('{seq}'\)[^>]*>(.*?)</a>", html, re.DOTALL)
+                    raw_title = title_html.group(1) if title_html else ""
+                    title = re.sub(r"<[^>]+>|\s+", " ", raw_title).strip()
+                    title = re.sub(r"^(NEW\s+|\d+일전\s+)+", "", title).strip()
+                    candidates.append((seq, title, posted_str))
+                if stop:
+                    break
+            time.sleep(0.3)
+
+        print(f"  [SH {self.inst_key}] 상세 {len(candidates)}건 확인 중...")
+        future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
+
+        for seq, title, posted_str in candidates:
+            if title and not is_recruitment(title):
+                continue
+
+            try:
+                html = fetch(self.view_url,
+                             data={"seq": seq, "multi_itm_seq": self.multi_itm},
+                             extra_headers={"Referer": self.list_url,
+                                            "Content-Type": "application/x-www-form-urlencoded"})
+                time.sleep(DETAIL_SLEEP)
+            except Exception as e:
+                print(f"    seq {seq} 오류: {e}")
+                html = ""
+
+            # 상세에서 제목 재추출 (목록 파싱 실패 시)
+            if not title:
+                tm = re.search(r"<title>(.*?)</title>", html, re.DOTALL)
+                title = re.sub(r"\s+", " ", tm.group(1)).strip() if tm else f"seq={seq}"
+                if not is_recruitment(title):
+                    continue
+
+            apply_start, apply_end = extract_dates_from_html(html) if html else (None, None)
+            status = compute_status(apply_start, apply_end, today)
+
+            if status == "expired":
+                continue
+            if apply_start and apply_start > future_limit:
+                continue
+            if status == "needs_review":
+                # 게시일 30일 이내만 포함
+                try:
+                    posted = date.fromisoformat(posted_str)
+                    if (today - posted).days > 30:
+                        continue
+                except Exception:
+                    pass
+
+            inst = "SH"
+            types = detect_types_sh(title)
+            url = f"{self.view_url}?seq={seq}&multi_itm_seq={self.multi_itm}"
+            ann = {
+                "id":          make_id(self.inst_key, seq),
+                "inst":        inst,
+                "source_key":  self.inst_key,
+                "title":       title,
+                "types":       types,
+                "location":    "서울",
+                "status":      status,
+                "url":         url,
+                "posted_date": posted_str,
+                "crawled_at":  today.isoformat(),
+            }
+            if apply_start:
+                ann["apply_start"] = apply_start.isoformat()
+                ann["apply_end"]   = apply_end.isoformat()
+            else:
+                ann["needs_pdf"] = True
+
+            results.append(ann)
+            flag = f"{apply_start}~{apply_end}" if apply_start else "날짜미파싱"
+            print(f"    [{status}] {title[:45]} ({flag})")
+
+        return results
+
+
+# ════════════════════════════════════════════════════════════════════════
+# ② LH청약플러스 크롤러
+# ════════════════════════════════════════════════════════════════════════
+LH_BASE     = "https://apply.lh.or.kr"
+LH_LIST_URL = LH_BASE + "/lhapply/apply/wt/wrtanc/selectWrtancList.do"
+
+LH_STATUS_MAP = {
+    "접수중":    "진행중",
+    "공고중":    "예정",
+    "정정공고중": "진행중",
+    "접수마감":  "expired",
+}
+
+def crawl_lh(mi, source_key, initial=False):
+    """
+    LH청약플러스 목록 페이지에서 현재 활성 공고 전체를 파싱.
+    활성 공고는 단일 페이지에 모두 표시되므로 pagination 불필요.
+    상세 페이지는 세션이 없으면 차단되어 목록 데이터만 활용.
+    """
+    today  = date.today()
+    since  = INITIAL_SINCE if initial else today - timedelta(days=7)
     results = []
 
-    print(f"\n상세 페이지 파싱 중 ({len(candidates)}건)...")
-    for seq, title, posted_date in candidates:
-        try:
-            html = fetch(DETAIL_URL, {"seq": seq, "multi_itm_seq": "2"})
-            apply_start, apply_end = extract_apply_dates(html)
-            time.sleep(0.4)  # 서버 부하 방지
-        except Exception as e:
-            print(f"  seq {seq} 오류: {e}")
-            apply_start, apply_end = None, None
+    print(f"  [LH {source_key}] 목록 로딩...")
+    html = fetch(LH_LIST_URL + f"?mi={mi}")
+    if not html:
+        return results
 
-        # 날짜 파싱 성공한 경우: 마감일 >= 오늘 AND 시작일 <= 오늘+31일
-        if apply_start and apply_end:
-            if apply_end >= today and apply_start <= future_limit:
-                status = "진행중" if apply_start <= today <= apply_end else "예정"
-            else:
-                print(f"  [{posted_date}] 마감/미래초과 제외: {title[:40]} ({apply_start}~{apply_end})")
-                continue
-        else:
-            # 날짜 파싱 실패: 게시일 기준 30일 이내만 포함 (보수적 처리)
-            posted = date.fromisoformat(posted_date) if posted_date else today
-            if (today - posted).days > 30:
-                print(f"  [{posted_date}] 게시 30일 초과 제외(날짜미파싱): {title[:40]}")
-                continue
-            apply_start, apply_end = None, None
-            status = "확인필요"
+    # <tbody> 내 <tr> 블록 분리
+    tbody_m = re.search(r"<tbody>(.*?)</tbody>", html, re.DOTALL)
+    if not tbody_m:
+        print(f"  [LH {source_key}] tbody 없음")
+        return results
 
-        types = detect_types(title)
-        url = f"{BASE}/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq={seq}&multi_itm_seq=2"
-        item = {
-            "seq": seq,
-            "title": title,
-            "date": posted_date,
-            "types": types,
-            "url": url,
-            "status": status,
+    tbody = tbody_m.group(1)
+    tr_blocks = re.split(r"<tr[^>]*>", tbody)[1:]  # 첫 빈 항목 제거
+
+    future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
+
+    for tr in tr_blocks:
+        # data-id1 이 있는 행만 처리 (공고 행)
+        pan_m = re.search(r'data-id1="(\w+)"', tr)
+        if not pan_m:
+            continue
+        pan_id = pan_m.group(1)
+
+        # 제목
+        title_m = re.search(r'class="wrtancInfoBtn"[^>]*>.*?<span>(.*?)</span>', tr, re.DOTALL)
+        if not title_m:
+            continue
+        title = re.sub(r"<[^>]+>|\s+", " ", title_m.group(1)).strip()
+        # 목록 뱃지 텍스트 제거: "NEW", "N일전" 등
+        title = re.sub(r"\s+(NEW|\d+일전)\s*$", "", title).strip()
+        if not is_recruitment(title):
+            continue
+
+        # 유형 (cate col1)
+        type_m = re.search(r'cate col1[^>]*>(.*?)</td>', tr, re.DOTALL)
+        type_str = re.sub(r"\s+", " ", type_m.group(1)).strip() if type_m else ""
+
+        # 지역 (cate col2)
+        region_m = re.search(r'cate col2[^>]*>(.*?)</td>', tr, re.DOTALL)
+        region = re.sub(r"<[^>]+>|\s+", " ", region_m.group(1)).strip() if region_m else "전국"
+
+        # 날짜: <td>YYYY.MM.DD</td> 형식 2개 (게시일, 마감일)
+        dates = re.findall(r"<td>(\d{4}\.\d{2}\.\d{2})</td>", tr)
+        posted = None
+        apply_end = None
+        if len(dates) >= 2:
+            pm = re.match(r"(\d{4})\.(\d{2})\.(\d{2})", dates[0])
+            em = re.match(r"(\d{4})\.(\d{2})\.(\d{2})", dates[1])
+            posted    = parse_ymd(pm.group(1), pm.group(2), pm.group(3)) if pm else today
+            apply_end = parse_ymd(em.group(1), em.group(2), em.group(3)) if em else None
+        elif len(dates) == 1:
+            pm = re.match(r"(\d{4})\.(\d{2})\.(\d{2})", dates[0])
+            posted = parse_ymd(pm.group(1), pm.group(2), pm.group(3)) if pm else today
+
+        # 상태
+        status_m = re.search(r'class="[^"]*stt[^"]*">([^<]+)</td>', tr)
+        status_raw = status_m.group(1).strip() if status_m else ""
+        lh_status = LH_STATUS_MAP.get(status_raw, "needs_review")
+
+        if lh_status == "expired":
+            continue
+        if apply_end and apply_end < today:
+            continue
+        if apply_end and apply_end > future_limit:
+            continue
+        if posted and initial and posted < since:
+            continue
+
+        types = detect_types_lh(title, type_str)
+        list_url = LH_LIST_URL + f"?mi={mi}"
+
+        ann = {
+            "id":          make_id(source_key, pan_id),
+            "inst":        "LH",
+            "source_key":  source_key,
+            "title":       title,
+            "types":       types,
+            "location":    region,
+            "status":      lh_status,
+            "url":         list_url,
+            "posted_date": posted.isoformat() if posted else "",
+            "crawled_at":  today.isoformat(),
         }
-        if apply_start:
-            item["apply_start"] = apply_start.isoformat()
-            item["apply_end"]   = apply_end.isoformat()
+        if apply_end:
+            ann["apply_end"]   = apply_end.isoformat()
+            ann["apply_start"] = posted.isoformat() if posted else ""
+        else:
+            ann["needs_pdf"] = True
 
-        results.append(item)
-        flag = f"{apply_start}~{apply_end}" if apply_start else "날짜미파싱"
-        print(f"  [{status}] {title[:45]} ({flag})")
+        results.append(ann)
+        print(f"    [{lh_status}] {title[:45]} (~{apply_end})")
 
     return results
 
+
+# ════════════════════════════════════════════════════════════════════════
+# ③ iH (인천도시공사) 크롤러
+# ════════════════════════════════════════════════════════════════════════
+IH_SOURCES = {
+    "ih_sale":   "https://www.ih.co.kr/main/sale_lease/board/house_notice.jsp",
+    "ih_rental": "https://www.ih.co.kr/main/sale_lease/notice.jsp",
+}
+IH_BASE = "https://www.ih.co.kr"
+
+def crawl_ih(source_key, initial=False):
+    list_url = IH_SOURCES[source_key]
+    today    = date.today()
+    since    = INITIAL_SINCE if initial else today - timedelta(days=2)
+    results  = []
+    max_pages = 10 if initial else 1
+
+    for page in range(1, max_pages + 1):
+        print(f"  [iH {source_key}] 목록 p{page}...")
+        url = list_url + (f"?page={page}" if page > 1 else "")
+        html = fetch(url)
+        if not html:
+            break
+
+        # iH 목록: <a href="detail?..."> 또는 bbsMsgDetail.do?msg_seq=XXX
+        rows = re.findall(
+            r"msg_seq=(\d+)[^\"]*\"[^>]*>(.*?)</a>"
+            r".*?(\d{4}\.\d{2}\.\d{2})",
+            html, re.DOTALL
+        )
+        if not rows:
+            rows_alt = re.findall(
+                r"href=\"([^\"]*detail[^\"]*)\">([^<]+)</a>"
+                r".*?(\d{4}\.\d{1,2}\.\d{1,2})",
+                html, re.DOTALL
+            )
+            if not rows_alt:
+                break
+            rows = [(r[0], r[1], r[2]) for r in rows_alt]
+
+        stop = False
+        for seq_or_href, title_raw, posted_raw in rows:
+            title = re.sub(r"\s+", " ", title_raw).strip()
+            if not title or not is_recruitment(title):
+                continue
+
+            pm = re.match(r"(\d{4})\.(\d{1,2})\.(\d{1,2})", posted_raw)
+            posted = parse_ymd(pm.group(1), pm.group(2), pm.group(3)) if pm else today
+
+            if initial and posted < since:
+                stop = True
+                break
+
+            # 상세 페이지에서 날짜 추출
+            if seq_or_href.isdigit():
+                detail_url = f"{IH_BASE}/main/bbs/bbsMsgDetail.do?msg_seq={seq_or_href}"
+            else:
+                detail_url = seq_or_href if seq_or_href.startswith("http") else IH_BASE + seq_or_href
+
+            detail_html = fetch(detail_url)
+            time.sleep(DETAIL_SLEEP)
+            apply_start, apply_end = extract_dates_from_html(detail_html) if detail_html else (None, None)
+            status = compute_status(apply_start, apply_end, today)
+
+            if status == "expired":
+                continue
+            if apply_start and apply_start > today + timedelta(days=FUTURE_LIMIT_DAYS):
+                continue
+            if status == "needs_review":
+                if (today - posted).days > 30:
+                    continue
+
+            types = detect_types_ih(title)
+            ann = {
+                "id":          make_id(source_key, seq_or_href),
+                "inst":        "iH",
+                "source_key":  source_key,
+                "title":       title,
+                "types":       types,
+                "location":    "인천",
+                "status":      status,
+                "url":         detail_url,
+                "posted_date": posted.isoformat(),
+                "crawled_at":  today.isoformat(),
+            }
+            if apply_start:
+                ann["apply_start"] = apply_start.isoformat()
+                ann["apply_end"]   = apply_end.isoformat()
+            else:
+                ann["needs_pdf"] = True
+            results.append(ann)
+            flag = f"{apply_start}~{apply_end}" if apply_start else "날짜미파싱"
+            print(f"    [{status}] {title[:45]} ({flag})")
+
+        if stop:
+            break
+        time.sleep(0.3)
+
+    return results
+
+
+# ════════════════════════════════════════════════════════════════════════
+# ④ ihwc.or.kr (인천주거복지센터 — LH + iH 공공임대 통합)
+# ════════════════════════════════════════════════════════════════════════
+IHWC_BASE = "https://www.ihwc.or.kr"
+IHWC_LIST = IHWC_BASE + "/rent/recruit.jsp"
+
+def crawl_ihwc(initial=False):
+    today    = date.today()
+    since    = INITIAL_SINCE if initial else today - timedelta(days=2)
+    results  = []
+    max_pages = 9 if initial else 1  # 총 9페이지
+
+    for page in range(1, max_pages + 1):
+        print(f"  [ihwc] 목록 p{page}...")
+        url = IHWC_LIST + (f"?pgno={page}" if page > 1 else "")
+        html = fetch(url)
+        if not html:
+            break
+
+        # 실제 HTML 구조:
+        # <a href="https://..."><p class="tag">
+        #   <span class="tag_ih">IH도시공사</span>
+        #   <span class="tag_ing"></span>
+        # </p><dl><dt>공고명</dt></dl></a>
+        entries = re.findall(
+            r'href="(https?://[^"]+)"[^>]*>\s*'
+            r'<p class="tag">\s*'
+            r'<span class="(tag_lh|tag_ih)[^"]*">[^<]+</span>\s*'
+            r'<span class="(tag_\w+)"></span>\s*'
+            r'</p>\s*<dl>\s*<dt>(.*?)</dt>',
+            html, re.DOTALL
+        )
+
+        if not entries:
+            break
+
+        IHWC_STATUS = {"tag_ing": "진행중", "tag_end": "expired"}
+
+        for href, op_cls, st_cls, title_raw in entries:
+            title = re.sub(r"\s+", " ", title_raw).strip()
+            if not title or not is_recruitment(title):
+                continue
+
+            ihwc_status = IHWC_STATUS.get(st_cls, "needs_review")
+            lh_status = ihwc_status
+            if lh_status == "expired":
+                continue
+
+            inst = "iH" if "tag_ih" in op_cls else "LH"
+            href_full = href if href.startswith("http") else IHWC_BASE + href
+            detail_html = fetch(href_full)
+            time.sleep(DETAIL_SLEEP)
+            apply_start, apply_end = extract_dates_from_html(detail_html) if detail_html else (None, None)
+            status = compute_status(apply_start, apply_end, today)
+
+            if status == "expired":
+                continue
+
+            types = detect_types_lh(title) if inst == "LH" else detect_types_ih(title)
+            ann = {
+                "id":          make_id("ihwc", href),
+                "inst":        inst,
+                "source_key":  "ihwc",
+                "title":       title,
+                "types":       types,
+                "location":    "인천",
+                "status":      status,
+                "url":         href_full,
+                "posted_date": today.isoformat(),
+                "crawled_at":  today.isoformat(),
+            }
+            if apply_start:
+                ann["apply_start"] = apply_start.isoformat()
+                ann["apply_end"]   = apply_end.isoformat()
+            else:
+                ann["needs_pdf"] = True
+            results.append(ann)
+            flag = f"{apply_start}~{apply_end}" if apply_start else "날짜미파싱"
+            print(f"    [{status}] {title[:45]} ({flag})")
+
+    return results
+
+
+# ════════════════════════════════════════════════════════════════════════
+# ⑤ 청년안심주택 (soco.seoul.go.kr) — JSON API (POST)
+# ════════════════════════════════════════════════════════════════════════
+YOUTH_API   = "https://soco.seoul.go.kr/youth/pgm/home/yohome/bbsListJson.json"
+YOUTH_BBS   = "BMSR00015"
+YOUTH_BASE  = "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do"
+YOUTH_REF   = "https://soco.seoul.go.kr/youth/bbs/BMSR00015/list.do?menuNo=400008"
+
+def crawl_youth_housing(initial=False):
+    """
+    청년안심주택(역세권청년주택) 공고 크롤링.
+    API는 POST + bbsId 파라미터 필요.
+    날짜 필드: optn1=신청시작일, optn4=신청마감일.
+    """
+    today   = date.today()
+    since   = INITIAL_SINCE if initial else today - timedelta(days=7)
+    results = []
+    max_pages = 5 if initial else 1
+
+    for page in range(1, max_pages + 1):
+        print(f"  [청년안심주택] API p{page}...")
+        raw = fetch(YOUTH_API,
+                    data={"bbsId": YOUTH_BBS, "pageIndex": str(page),
+                          "searchAdresGu": "", "searchCondition": "",
+                          "searchKeyword": "", "optn2": "", "optn5": ""},
+                    extra_headers={"X-Requested-With": "XMLHttpRequest",
+                                   "Referer": YOUTH_REF})
+        if not raw:
+            break
+        try:
+            data = json.loads(raw)
+        except Exception:
+            break
+
+        items = data.get("resultList", [])
+        if not items:
+            break
+
+        stop = False
+        for item in items:
+            title    = (item.get("nttSj") or "").strip()
+            board_id = item.get("boardId", "")
+
+            if not title or not is_recruitment(title):
+                continue
+
+            # 날짜: optn1 = 시작일, optn4 = 마감일 (YYYY-MM-DD)
+            apply_start_raw = item.get("optn1") or ""
+            apply_end_raw   = item.get("optn4") or ""
+
+            apply_start = None
+            apply_end   = None
+            for raw_d, setter in [(apply_start_raw, "s"), (apply_end_raw, "e")]:
+                if raw_d:
+                    m = re.match(r"(\d{4})[-.](\d{1,2})[-.](\d{1,2})", raw_d)
+                    if m:
+                        d = parse_ymd(m.group(1), m.group(2), m.group(3))
+                        if setter == "s": apply_start = d
+                        else:             apply_end   = d
+
+            # 등록일: regDate는 ms 타임스탬프
+            reg_ts = item.get("regDate")
+            try:
+                posted = date.fromtimestamp(reg_ts / 1000) if reg_ts else today
+            except Exception:
+                posted = today
+
+            if initial and posted < since:
+                stop = True
+                break
+
+            status = compute_status(apply_start, apply_end, today)
+            if status == "expired":
+                continue
+
+            url = f"{YOUTH_BASE}?menuNo=400008&boardId={board_id}"
+            ann = {
+                "id":          make_id("youth", board_id),
+                "inst":        "SH",
+                "source_key":  "youth_housing",
+                "title":       title,
+                "types":       ["청년안심주택"],
+                "location":    "서울",
+                "status":      status,
+                "url":         url,
+                "posted_date": posted.isoformat(),
+                "crawled_at":  today.isoformat(),
+            }
+            if apply_start and apply_end:
+                ann["apply_start"] = apply_start.isoformat()
+                ann["apply_end"]   = apply_end.isoformat()
+            else:
+                ann["needs_pdf"] = True
+            results.append(ann)
+            flag = f"{apply_start}~{apply_end}" if apply_start else "날짜미파싱"
+            print(f"    [{status}] {title[:45]} ({flag})")
+
+        if stop:
+            break
+
+    return results
+
+
+# ════════════════════════════════════════════════════════════════════════
+# ⑥ 오케스트레이터
+# ════════════════════════════════════════════════════════════════════════
+def dedup(announcements):
+    """소스 우선순위: sh/lh/ih 공식 > ihwc > youth"""
+    PRIORITY = {"sh_rental": 1, "sh_sale": 1, "lh_rental": 1, "lh_sale": 1,
+                "ih_sale": 1, "ih_rental": 1, "youth_housing": 1,
+                "ihwc": 2}
+    seen = {}
+    for ann in sorted(announcements, key=lambda a: PRIORITY.get(a["source_key"], 9)):
+        key = (ann["inst"],
+               normalize_title(ann["title"]),
+               ann.get("apply_end", ""))
+        if key not in seen:
+            seen[key] = ann
+    return list(seen.values())
+
+def load_manual_overrides(path="manual_overrides.json"):
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def apply_overrides(announcements, overrides):
+    ann_map = {a["id"]: a for a in announcements}
+    # 오버라이드 적용 (_comment, _format 등 메타 키 제외)
+    for ann_id, patch in overrides.items():
+        if ann_id.startswith("_"):
+            continue
+        if not isinstance(patch, dict):
+            continue
+        if ann_id in ann_map:
+            ann_map[ann_id].update(patch)
+        else:
+            # 수동 전용 공고 (크롤러에 없음 — GH 등)
+            ann_map[ann_id] = patch
+    result = list(ann_map.values())
+    # 수동 공고 만료 여부는 manual_overrides에서 직접 관리
+    return result
+
+
+# ════════════════════════════════════════════════════════════════════════
+# main
+# ════════════════════════════════════════════════════════════════════════
 def main():
-    print("SH공사 공고 크롤링 시작...")
-    announcements = scrape_list(pages=5)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--initial", action="store_true",
+                        help=f"초기 DB 구축 ({INITIAL_SINCE} 이후 전체 공고)")
+    args = parser.parse_args()
+    initial = args.initial
+    today   = date.today()
 
-    today = date.today().isoformat()
+    print(f"{'[초기 DB 구축]' if initial else '[일반 크롤링]'} 시작: {today}")
+    print("=" * 60)
+
+    all_announcements = []
+
+    # ── SH ──────────────────────────────────────────────────────────────
+    sh_base = "https://www.i-sh.co.kr"
+    sh_rental = SHCrawler(
+        inst_key="sh_rental", base=sh_base,
+        list_path="/app/lay2/program/S48T561C563/www/brd/m_247/list.do",
+        view_path="/app/lay2/program/S48T561C563/www/brd/m_247/view.do",
+        multi_itm_seq="2"
+    )
+    sh_sale = SHCrawler(
+        inst_key="sh_sale", base=sh_base,
+        list_path="/main/lay2/program/S1T294C296/www/brd/m_244/list.do",
+        view_path="/main/lay2/program/S1T294C296/www/brd/m_244/view.do",
+        multi_itm_seq="1"
+    )
+    all_announcements += sh_rental.crawl(initial)
+    all_announcements += sh_sale.crawl(initial)
+
+    # ── LH ──────────────────────────────────────────────────────────────
+    all_announcements += crawl_lh(mi="1026", source_key="lh_rental", initial=initial)
+    all_announcements += crawl_lh(mi="1027", source_key="lh_sale",   initial=initial)
+
+    # ── iH ──────────────────────────────────────────────────────────────
+    all_announcements += crawl_ih("ih_sale",   initial)
+    all_announcements += crawl_ih("ih_rental", initial)
+
+    # ── ihwc ────────────────────────────────────────────────────────────
+    all_announcements += crawl_ihwc(initial)
+
+    # ── 청년안심주택 ────────────────────────────────────────────────────
+    all_announcements += crawl_youth_housing(initial)
+
+    # ── GH는 manual_overrides.json 에서만 관리 ──────────────────────────
+
+    # ── 중복 제거 ────────────────────────────────────────────────────────
+    print("\n중복 제거 중...")
+    all_announcements = dedup(all_announcements)
+
+    # ── 만료 공고 제거 ────────────────────────────────────────────────────
+    all_announcements = [a for a in all_announcements if should_keep(a, today)]
+
+    # ── 수동 오버라이드 병합 ──────────────────────────────────────────────
+    overrides = load_manual_overrides()
+    if overrides:
+        all_announcements = apply_overrides(all_announcements, overrides)
+
+    # ── 저장 ─────────────────────────────────────────────────────────────
+    needs_review = [a for a in all_announcements if a.get("status") == "needs_review"]
     output = {
-        "updated": today,
-        "count": len(announcements),
-        "announcements": announcements
+        "updated":       today.isoformat(),
+        "count":         len(all_announcements),
+        "needs_review_count": len(needs_review),
+        "announcements": all_announcements,
     }
-
     with open("announcements.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(f"\n완료: {len(announcements)}건 저장 → announcements.json")
+    print(f"\n완료: 총 {len(all_announcements)}건 저장")
+    print(f"  ├ 진행중:  {sum(1 for a in all_announcements if a.get('status')=='진행중')}건")
+    print(f"  ├ 예정:    {sum(1 for a in all_announcements if a.get('status')=='예정')}건")
+    print(f"  └ 검토필요: {len(needs_review)}건")
 
 if __name__ == "__main__":
     main()
