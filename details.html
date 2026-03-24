@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>정밀 자격 분석 - 내집구독</title>
+    <title>수도권 주거지원 통합 분석 - 내집구독</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link href="/style.css" rel="stylesheet">
     <style>
@@ -203,6 +203,8 @@
         .inst-lh { background: #fef3c7; color: #92400e; }
         .inst-gh { background: #dcfce7; color: #166534; }
         .inst-ih { background: #cffafe; color: #155e75; }
+        .inst-hf { background: #ede9fe; color: #5b21b6; }  /* 주택도시기금 */
+        .inst-gov { background: #f1f5f9; color: #374151; } /* 국토부·지자체 */
 
         /* ===== 기관별 필터 탭 ===== */
         .filter-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
@@ -276,8 +278,8 @@
 <div class="page-wrapper">
     <a href="index.html" style="color:var(--primary-color,#4f46e5);font-weight:600;font-size:0.9rem;">← 홈으로</a>
     <div style="height:1rem;"></div>
-    <h1 class="page-title">SH·LH 임대주택 정밀 분석</h1>
-    <p class="page-subtitle">2026년 기준 · SH(서울) + LH(전국) + GH(경기) + iH(인천) 총 35가지 유형 · 궁금한 항목은 <strong>상세보기</strong>를 눌러보세요</p>
+    <h1 class="page-title">수도권 주거지원 통합 분석</h1>
+    <p class="page-subtitle">2026년 기준 · 임대주택(35) + 공공분양(13) + 금융지원(5) + 주거복지(11) 총 64가지 유형 · 궁금한 항목은 <strong>상세보기</strong>를 눌러보세요</p>
 
     <!-- Step indicator -->
     <div class="steps" id="step-indicator">
@@ -748,7 +750,8 @@
             <div class="result-grid" id="grid-ineligible"></div>
         </div>
         <div class="notice-box">
-            ⚠ 본 분석은 2026년 기준 SH공사·LH 임대주택 자료를 바탕으로 한 참고용입니다. 실제 신청 전 공고문 원문을 반드시 확인하세요. SH공사 콜센터 <strong>1600-3456</strong> · LH 콜센터 <strong>1600-1004</strong>
+            ⚠ 본 분석은 2026년 기준 참고용이며 실제 신청 전 공고문 원문을 반드시 확인하세요.<br>
+            SH <strong>1600-3456</strong> · LH <strong>1600-1004</strong> · GH <strong>031-250-7100</strong> · iH <strong>032-120</strong> · 주택도시기금 <strong>1599-0001</strong>
         </div>
         <button class="restart-btn" onclick="restart()">↩ 다시 분석하기</button>
     </div>
@@ -896,6 +899,18 @@ fetch('announcements.json')
 function getMatchingAnnouncements(typeName) {
     return announcementsData.filter(a => a.types && a.types.includes(typeName));
 }
+
+// ===== Supabase 프로그램 데이터 로딩 =====
+const SB_URL = 'https://ajgurlfgifvicvxsxzqh.supabase.co';
+const SB_KEY = 'sb_publishable_VWYME33r2PPoiBgyA5Zsxw_6bW7Hh_5';
+let sbPrograms = [];
+
+fetch(`${SB_URL}/rest/v1/programs?select=code,name,category,institution,region,eligibility,support_content,application_info,source_url&order=category`, {
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+})
+    .then(r => r.ok ? r.json() : [])
+    .then(data => { sbPrograms = data || []; })
+    .catch(() => {});
 
 // ===== Theme =====
 const savedTheme = localStorage.getItem('theme') || 'light';
@@ -1397,8 +1412,8 @@ function closeHelpDirect() {
     document.body.style.overflow = '';
 }
 
-// ===== Income thresholds (2025, 원) =====
-const INC = {
+// ===== Income thresholds (2025 도시근로자, 원) =====
+let INC = {
     50:  [2288018, 3226449, 4084215, 4401101, 4663493, 4953132, 5242771],
     70:  [3203225, 4517028, 5717900, 6161541, 6528890, 6934384, 7339879],
     80:  [null,    5162318, 6534743, 7041762, 7461588, 7925010, null],
@@ -2496,6 +2511,110 @@ function runAnalysis() {
         add('청년 월세 한시 지원 (국토부)', eligible, rank, '월 최대 20만원 × 24개월', '최대 480만원', 'welfare', r, '국토교통부', 'welfare');
     }
 
+    // ===== Supabase 연계: 금융지원·주거비지원·이자지원·보증료지원·분양주택 =====
+    if (sbPrograms.length > 0) {
+        const annualInc = monthlyIncome * 12 * 10000;
+
+        // 기존 코드에서 이미 처리된 프로그램 (중복 방지)
+        const alreadyHandled = new Set([
+            'SEOUL_YOUTH_MONTHLY_RENT', 'GOV_YOUTH_MONTHLY_RENT'
+        ]);
+
+        // JSONB 기반 제네릭 자격 판단
+        function evalProg(p) {
+            const e = p.eligibility || {};
+            const r = [];
+            if (e.age_min && age < e.age_min) r.push(`만 ${e.age_min}세 이상 필요`);
+            if (e.age_max && age > e.age_max) r.push(`만 ${e.age_max}세 이하 필요`);
+            if (e.homeless_required && !homeless) r.push('무주택 필요');
+            if (e.newborn_required && !infant) r.push('2세 이하 신생아 가구 필요');
+            if (e.children_min && childCnt < e.children_min) r.push(`자녀 ${e.children_min}명 이상 필요`);
+            if (e.region_required) {
+                const req = e.region_required;
+                if (req === '서울' && !seoulRes) r.push('서울 거주 필요');
+                else if (req === '경기' && !gyeonggiRes) r.push('경기 거주 필요');
+                else if (req === '인천' && !incheonRes) r.push('인천 거주 필요');
+                else if (req === '수도권' && !(seoulRes||gyeonggiRes||incheonRes)) r.push('수도권 거주 필요');
+            }
+            if (e.marital_status) {
+                const userOk = e.marital_status.some(ms => {
+                    if (ms.includes('신혼') || ms.includes('예비신혼')) return isNewlywedStrict;
+                    if (ms === '기혼') return isMarried;
+                    if (ms === '미혼') return !isMarried;
+                    return false;
+                });
+                if (!userOk) r.push('신혼부부(7년이내) 또는 예비신혼 필요');
+            }
+            if (e.income_type === '절대금액(연소득)') {
+                const limit = (dualInc && e.income_abs_married) ? e.income_abs_married : (e.income_abs || 0);
+                if (limit && annualInc > limit) r.push(`연소득 ${Math.round(limit/10000).toLocaleString()}만원 이하 필요`);
+            } else if (e.income_type === '도시근로자월평균' && e.income_pct) {
+                const dualPct = e.income_pct_married || e.income_pct;
+                if (!(dualInc ? incWon <= (incomeLimit(dualPct, hhSize)||Infinity) : under(e.income_pct)))
+                    r.push(`소득 ${e.income_pct}% 이하 필요`);
+            } else if (e.income_type === '중위소득' && e.income_pct) {
+                if (!underMid(e.income_pct)) r.push(`기준 중위소득 ${e.income_pct}% 이하 필요`);
+            }
+            return { eligible: r.length === 0, reasons: r };
+        }
+
+        // support_content → 카드 태그 텍스트
+        function supportTag(p) {
+            const s = p.support_content || {};
+            if (p.category === '금융지원') {
+                if (s.loan_limit) return `최대 ${(s.loan_limit/100000000).toFixed(0)}억 / ${s.interest_min}~${s.interest_max}%`;
+                return '대출 지원';
+            }
+            if (p.category === '이자지원') {
+                if (s.annual_max) return `연 최대 ${Math.round(s.annual_max/10000)}만원 이자 지원`;
+                if (s.loan_limit) return `최대 ${Math.round(s.loan_limit/10000)}만원 무이자`;
+                return '이자 지원';
+            }
+            if (p.category === '보증료지원') {
+                if (s.total_max) return `최대 ${Math.round(s.total_max/10000)}만원`;
+                return '보증료 지원';
+            }
+            if (p.category === '주거비지원') {
+                if (s.monthly_support) return `월 ${Math.round(s.monthly_support/10000)}만원`;
+                if (s.total_max) return `최대 ${Math.round(s.total_max/10000)}만원`;
+                return '주거비 지원';
+            }
+            if (p.category === '분양주택') return '공공분양 / 청약저축 필요';
+            return '';
+        }
+
+        // application_info → 기간 태그
+        function periodTag(p) {
+            const a = p.application_info || {};
+            return a.period_note || a.period_type || '수시';
+        }
+
+        // 카테고리 → catGroup 매핑
+        const catGroupMap = {
+            '금융지원': 'finance', '이자지원': 'welfare',
+            '보증료지원': 'welfare', '주거비지원': 'welfare', '분양주택': 'sale'
+        };
+
+        // 기관 → inst 약칭
+        function instKey(inst) {
+            if (inst === '주택도시기금') return '주택도시기금';
+            if (inst === '국토교통부') return '국토교통부';
+            return inst;
+        }
+
+        const newProgs = sbPrograms.filter(p =>
+            p.category !== '임대주택' && !alreadyHandled.has(p.code)
+        );
+
+        for (const p of newProgs) {
+            const { eligible: elig, reasons } = evalProg(p);
+            const catGrp = catGroupMap[p.category] || 'welfare';
+            const sup = supportTag(p);
+            const per = periodTag(p);
+            add(p.name, elig, elig ? '해당' : '', sup, per, p.category, reasons, instKey(p.institution), catGrp);
+        }
+    }
+
     // Render
     const eligible = results.filter(r => r.eligible);
     const ineligible = results.filter(r => !r.eligible);
@@ -2530,15 +2649,27 @@ function runAnalysis() {
     document.querySelectorAll('#filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.inst === 'ALL'));
     document.querySelectorAll('#cat-filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'ALL'));
 
-    const catLabel = { youth:'청년', newlywed:'신혼·신생아', longterm:'장기전세', national:'국민·매입임대', jeonse:'전세지원', 'sale-general':'공공분양', 'sale-special':'특별공급', loan:'금융대출', welfare:'주거복지' };
+    const catLabel = {
+        youth:'청년', newlywed:'신혼·신생아', longterm:'장기전세', national:'국민·매입임대', jeonse:'전세지원',
+        'sale-general':'공공분양', 'sale-special':'특별공급', loan:'금융대출', welfare:'주거복지',
+        '금융지원':'금융지원', '이자지원':'이자지원', '보증료지원':'보증료지원', '주거비지원':'주거비지원', '분양주택':'공공분양'
+    };
 
     function card(r, isE) {
         const rc = r.rank.includes('1순위')?'rank-1':r.rank.includes('2순위')?'rank-2':r.rank.includes('3순위')?'rank-3':isE?'rank-ok':'rank-na';
         const safeName = r.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-        const instBadge = r.inst === 'LH' ? '<span class="inst-badge inst-lh">LH</span>'
-            : r.inst === 'GH' ? '<span class="inst-badge inst-gh">GH</span>'
-            : r.inst === 'iH' ? '<span class="inst-badge inst-ih">iH</span>'
-            : '<span class="inst-badge inst-sh">SH</span>';
+        const instBadgeMap = {
+            'LH': '<span class="inst-badge inst-lh">LH</span>',
+            'GH': '<span class="inst-badge inst-gh">GH</span>',
+            'iH': '<span class="inst-badge inst-ih">iH</span>',
+            'SH': '<span class="inst-badge inst-sh">SH</span>',
+            '주택도시기금': '<span class="inst-badge inst-hf">기금</span>',
+            '국토교통부': '<span class="inst-badge inst-gov">국토부</span>',
+            '서울시': '<span class="inst-badge inst-sh">서울</span>',
+            '경기도': '<span class="inst-badge inst-gh">경기</span>',
+            '인천시': '<span class="inst-badge inst-ih">인천</span>',
+        };
+        const instBadge = instBadgeMap[r.inst] || `<span class="inst-badge inst-gov">${r.inst}</span>`;
 
         // 공고 매칭
         let announceHtml = '';
