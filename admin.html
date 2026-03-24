@@ -763,7 +763,8 @@ async function sendToExceptionFromTab2(id) {
   if (!start || !end) { toast('먼저 신청 시작·마감일을 입력하세요.', 'error'); return; }
 
   const now = new Date();
-  const status = new Date(end) < now ? '마감' : (new Date(start) > now ? '예정' : '진행중');
+  const endDate2 = new Date(end + 'T23:59:59');
+  const status = endDate2 < now ? '마감' : (new Date(start) > now ? '예정' : '진행중');
 
   // 날짜 저장 + exception_pending 플래그 설정
   try {
@@ -889,7 +890,7 @@ async function approveReview(id) {
   if (!start || !end) { toast('신청 시작·마감일을 모두 입력하세요.', 'error'); return; }
 
   const now = new Date();
-  const endDate = new Date(end);
+  const endDate = new Date(end + 'T23:59:59');
   const status = endDate < now ? '마감' : (new Date(start) > now ? '예정' : '진행중');
 
   try {
