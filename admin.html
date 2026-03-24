@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내집구독 관리자 패널</title>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-dark: #3730a3;
+    --danger: #ef4444;
+    --danger-dark: #dc2626;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --tab-active: #4f46e5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── 비밀번호 게이트 ── */
+  #gate {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+  }
+  .gate-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    width: 360px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .gate-card h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; color: var(--primary); }
+  .gate-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .gate-card input {
+    width: 100%; padding: 12px 14px; border: 2px solid var(--border);
+    border-radius: 8px; font-size: 15px; margin-bottom: 12px;
+    transition: border-color .2s;
+  }
+  .gate-card input:focus { outline: none; border-color: var(--primary); }
+  .gate-card .error { color: var(--danger); font-size: 13px; margin-bottom: 10px; display: none; }
+  .gate-btn {
+    width: 100%; padding: 12px; background: var(--primary); color: #fff;
+    border: none; border-radius: 8px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: background .2s;
+  }
+  .gate-btn:hover { background: var(--primary-dark); }
+
+  /* ── 헤더 ── */
+  header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 12px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  header h1 { font-size: 18px; font-weight: 700; color: var(--primary); }
+  header span { font-size: 12px; background: #ede9fe; color: var(--primary); padding: 3px 8px; border-radius: 20px; }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .api-badge {
+    font-size: 12px; padding: 4px 10px; border-radius: 20px;
+    background: #f1f5f9; color: var(--text-muted); cursor: pointer;
+    border: 1px solid var(--border);
+  }
+  .api-badge.set { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+  .logout-btn {
+    font-size: 12px; padding: 4px 12px; background: #fee2e2; color: var(--danger);
+    border: none; border-radius: 20px; cursor: pointer; font-weight: 500;
+  }
+
+  /* ── 탭 ── */
+  .tabs {
+    display: flex; gap: 0;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+  .tab {
+    padding: 14px 20px; font-size: 14px; font-weight: 500; color: var(--text-muted);
+    cursor: pointer; border-bottom: 3px solid transparent;
+    transition: color .2s, border-color .2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tab.active { color: var(--tab-active); border-bottom-color: var(--tab-active); font-weight: 700; }
+  .tab .badge {
+    background: #f1f5f9; color: var(--text-muted);
+    font-size: 11px; padding: 2px 6px; border-radius: 10px; font-weight: 600;
+  }
+  .tab.active .badge { background: #ede9fe; color: var(--primary); }
+
+  /* ── 콘텐츠 영역 ── */
+  .content { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── 툴바 ── */
+  .toolbar {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .toolbar h2 { font-size: 16px; font-weight: 700; flex: 1; }
+  .btn {
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; border: none; transition: all .2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { background: var(--danger-dark); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { background: #059669; }
+  .btn-warning { background: var(--warning); color: #fff; }
+  .btn-outline {
+    background: #fff; color: var(--text); border: 1px solid var(--border);
+  }
+  .btn-outline:hover { background: var(--bg); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  /* ── 테이블 ── */
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: #f8fafc; }
+  th {
+    padding: 11px 14px; font-size: 12px; font-weight: 600;
+    color: var(--text-muted); text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 14px; font-size: 13px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+  .empty-row td { text-align: center; color: var(--text-muted); padding: 40px; }
+
+  /* ── 상태 뱃지 ── */
+  .status {
+    display: inline-block; padding: 3px 8px; border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+  }
+  .status-진행중 { background: #d1fae5; color: #065f46; }
+  .status-예정 { background: #dbeafe; color: #1e40af; }
+  .status-마감 { background: #f1f5f9; color: #64748b; }
+  .status-확인필요 { background: #fef3c7; color: #92400e; }
+  .status-manual_ok { background: #ede9fe; color: #5b21b6; }
+
+  /* ── 기관 뱃지 ── */
+  .inst { display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; }
+  .inst-SH { background: #dbeafe; color: #1e40af; }
+  .inst-LH { background: #fef3c7; color: #92400e; }
+  .inst-GH { background: #dcfce7; color: #166534; }
+  .inst-iH { background: #e0f2fe; color: #0c4a6e; }
+
+  /* ── 수동 추가 폼 ── */
+  .form-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 24px;
+  }
+  .form-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 20px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+  input[type=text], input[type=date], input[type=url],
+  select, textarea {
+    padding: 9px 12px; border: 1.5px solid var(--border);
+    border-radius: 8px; font-size: 13px; width: 100%;
+    transition: border-color .2s; background: #fff;
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--primary);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* ── PDF 업로드 영역 ── */
+  .pdf-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px; padding: 32px;
+    text-align: center; cursor: pointer;
+    transition: all .2s; background: #fafafa;
+  }
+  .pdf-zone:hover, .pdf-zone.dragover {
+    border-color: var(--primary); background: #ede9fe;
+  }
+  .pdf-zone svg { width: 40px; height: 40px; color: var(--text-muted); margin-bottom: 10px; }
+  .pdf-zone p { font-size: 14px; color: var(--text-muted); }
+  .pdf-zone small { font-size: 12px; color: #94a3b8; }
+  #pdf-input { display: none; }
+
+  /* ── Claude 파싱 결과 ── */
+  .parse-result {
+    background: #f0fdf4; border: 1px solid #bbf7d0;
+    border-radius: 10px; padding: 16px; margin-top: 12px;
+    font-size: 13px; line-height: 1.6;
+    display: none;
+  }
+  .parse-result.error { background: #fef2f2; border-color: #fecaca; }
+
+  /* ── 로딩 스피너 ── */
+  .spinner {
+    display: inline-block; width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── 확인필요 탭 입력 폼 인라인 ── */
+  .review-input { display: flex; gap: 8px; align-items: center; }
+  .review-input input { width: 120px; padding: 5px 8px; }
+
+  /* ── 토스트 ── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #1e293b; color: #fff;
+    padding: 12px 18px; border-radius: 10px;
+    font-size: 13px; font-weight: 500;
+    transform: translateY(80px); opacity: 0;
+    transition: all .3s; z-index: 9999;
+    max-width: 300px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.success { background: #065f46; }
+  #toast.error { background: #991b1b; }
+
+  /* ── API 키 모달 ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: #fff; border-radius: 16px; padding: 28px;
+    width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+  /* ── 텍스트 줄임 ── */
+  .ellipsis { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .link { color: var(--primary); text-decoration: none; font-size: 12px; }
+  .link:hover { text-decoration: underline; }
+
+  /* ── 선택 삭제 ── */
+  .check-col { width: 36px; }
+  input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; }
+
+  .stats-bar {
+    display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .stat-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 18px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+  .stat-value { font-size: 22px; font-weight: 700; color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- 비밀번호 게이트 -->
+<div id="gate">
+  <div class="gate-card">
+    <h1>🏠 내집구독</h1>
+    <p>관리자 전용 패널입니다.</p>
+    <input type="password" id="pw-input" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')checkPw()">
+    <div class="error" id="pw-error">비밀번호가 틀렸습니다.</div>
+    <button class="gate-btn" onclick="checkPw()">입력</button>
+  </div>
+</div>
+
+<!-- 헤더 -->
+<header>
+  <h1>🏠 내집구독</h1>
+  <span>관리자 패널</span>
+  <div class="header-right">
+    <div class="api-badge" id="api-badge" onclick="openApiModal()">
+      Claude API ✕
+    </div>
+    <button class="logout-btn" onclick="logout()">로그아웃</button>
+  </div>
+</header>
+
+<!-- 탭 -->
+<div class="tabs">
+  <div class="tab active" id="tab-1" onclick="switchTab(1)">
+    📋 크롤링 공고
+    <span class="badge" id="cnt-1">-</span>
+  </div>
+  <div class="tab" id="tab-2" onclick="switchTab(2)">
+    ⚠️ 확인 필요
+    <span class="badge" id="cnt-2">-</span>
+  </div>
+  <div class="tab" id="tab-3" onclick="switchTab(3)">
+    ✏️ 수동 추가
+  </div>
+</div>
+
+<!-- 콘텐츠 -->
+<div class="content">
+
+  <!-- 탭1: 크롤링 공고 -->
+  <div class="tab-panel active" id="panel-1">
+    <div class="stats-bar" id="stats-bar-1"></div>
+    <div class="toolbar">
+      <h2>크롤링된 공고</h2>
+      <button class="btn btn-outline btn-sm" onclick="loadTab1()">🔄 새로고침</button>
+      <button class="btn btn-danger btn-sm" id="bulk-delete-btn" onclick="bulkDelete()" style="display:none">
+        선택 삭제
+      </button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="check-col"><input type="checkbox" id="select-all-1" onchange="toggleAll(1,this)"></th>
+            <th>기관</th>
+            <th>제목</th>
+            <th>유형</th>
+            <th>등록일</th>
+            <th>신청기간</th>
+            <th>상태</th>
+            <th>액션</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-1">
+          <tr class="empty-row"><td colspan="8">로딩 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 탭2: 확인 필요 -->
+  <div class="tab-panel" id="panel-2">
+    <div class="toolbar">
+      <h2>확인 필요 공고</h2>
+      <button class="btn btn-outline btn-sm" onclick="loadTab2()">🔄 새로고침</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+      신청기간을 파악할 수 없는 공고입니다. 날짜를 직접 입력하고 승인/반려하세요.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>기관</th>
+            <th>제목</th>
+            <th>등록일</th>
+            <th>신청 시작</th>
+            <th>신청 마감</th>
+            <th>액션</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-2">
+          <tr class="empty-row"><td colspan="6">로딩 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 탭3: 수동 추가 -->
+  <div class="tab-panel" id="panel-3">
+    <!-- PDF 파싱 -->
+    <div class="form-card">
+      <h3>📄 PDF에서 자동 파싱 (Claude AI)</h3>
+      <div class="pdf-zone" id="pdf-zone"
+           onclick="document.getElementById('pdf-input').click()"
+           ondragover="e=>{e.preventDefault();this.classList.add('dragover')}"
+           ondragleave="document.getElementById('pdf-zone').classList.remove('dragover')"
+           ondrop="handleDrop(event)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M7 18a4.6 4.4 0 0 1 0 -9a5 4.5 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1"/>
+          <polyline points="9 15 12 12 15 15"/>
+          <line x1="12" y1="12" x2="12" y2="21"/>
+        </svg>
+        <p>PDF 공고문을 여기에 드래그하거나 클릭하세요</p>
+        <small>Claude AI가 신청기간·자격조건·유형 등을 자동 추출합니다</small>
+      </div>
+      <input type="file" id="pdf-input" accept=".pdf" onchange="handlePdfFile(this.files[0])">
+      <div id="parse-result" class="parse-result"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;" id="parse-actions" style="display:none">
+        <button class="btn btn-primary btn-sm" id="parse-btn" onclick="parsePdf()" style="display:none">
+          ✨ Claude로 파싱하기
+        </button>
+        <span id="parse-file-name" style="font-size:13px;color:var(--text-muted);"></span>
+      </div>
+    </div>
+
+    <!-- 수동 입력 폼 -->
+    <div class="form-card">
+      <h3>✏️ 직접 입력</h3>
+      <div class="form-grid" id="manual-form">
+        <div class="form-group">
+          <label>기관 *</label>
+          <select id="m-inst">
+            <option value="SH">SH (서울주택도시공사)</option>
+            <option value="LH">LH (한국토지주택공사)</option>
+            <option value="GH">GH (경기도시공사)</option>
+            <option value="iH">iH (인천도시공사)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>상태 *</label>
+          <select id="m-status">
+            <option value="진행중">진행중</option>
+            <option value="예정">예정</option>
+            <option value="마감">마감</option>
+            <option value="확인필요">확인필요</option>
+            <option value="manual_ok">수동확인완료</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>공고 제목 *</label>
+          <input type="text" id="m-title" placeholder="예: 2026년 SH 청년안심주택 입주자 모집공고">
+        </div>
+        <div class="form-group full">
+          <label>유형 태그 (쉼표 구분)</label>
+          <input type="text" id="m-types" placeholder="예: 행복주택, 청년">
+        </div>
+        <div class="form-group">
+          <label>신청 시작일</label>
+          <input type="date" id="m-apply-start">
+        </div>
+        <div class="form-group">
+          <label>신청 마감일</label>
+          <input type="date" id="m-apply-end">
+        </div>
+        <div class="form-group">
+          <label>공고 등록일</label>
+          <input type="date" id="m-date">
+        </div>
+        <div class="form-group">
+          <label>공고 번호 (seq)</label>
+          <input type="text" id="m-seq" placeholder="원본 공고 번호 (선택)">
+        </div>
+        <div class="form-group full">
+          <label>공고 URL</label>
+          <input type="url" id="m-url" placeholder="https://...">
+        </div>
+        <div class="form-group full">
+          <label>메모</label>
+          <textarea id="m-note" placeholder="추가 메모 (선택)"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="clearManualForm()">초기화</button>
+        <button class="btn btn-primary" onclick="submitManual()">
+          ＋ 공고 등록
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- API 키 모달 -->
+<div class="modal-overlay" id="api-modal">
+  <div class="modal">
+    <h3>Claude API 키 설정</h3>
+    <p>PDF 파싱에 사용됩니다. 탭을 닫으면 자동 삭제됩니다.</p>
+    <div class="form-group">
+      <label>API 키</label>
+      <input type="password" id="api-key-input" placeholder="sk-ant-api03-...">
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeApiModal()">취소</button>
+      <button class="btn btn-primary" onclick="saveApiKey()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 토스트 -->
+<div id="toast"></div>
+
+<!-- PDF.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  설정
+// ════════════════════════════════════════════════════════
+const ADMIN_PW = 'nhome2026';
+const SB_URL   = 'https://ajgurlfgifvicvxsxzqh.supabase.co';
+const SB_KEY   = 'sb_publishable_VWYME33r2PPoiBgyA5Zsxw_6bW7Hh_5';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ════════════════════════════════════════════════════════
+//  인증
+// ════════════════════════════════════════════════════════
+function checkPw() {
+  const val = document.getElementById('pw-input').value;
+  if (val === ADMIN_PW) {
+    sessionStorage.setItem('admin_auth', '1');
+    document.getElementById('gate').style.display = 'none';
+    init();
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('admin_auth');
+  sessionStorage.removeItem('claude_api_key');
+  location.reload();
+}
+
+// ════════════════════════════════════════════════════════
+//  초기화
+// ════════════════════════════════════════════════════════
+function init() {
+  updateApiBadge();
+  loadTab1();
+}
+
+if (sessionStorage.getItem('admin_auth') === '1') {
+  document.getElementById('gate').style.display = 'none';
+  document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState !== 'loading') init();
+}
+
+// ════════════════════════════════════════════════════════
+//  탭 전환
+// ════════════════════════════════════════════════════════
+let currentTab = 1;
+function switchTab(n) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`tab-${n}`).classList.add('active');
+  document.getElementById(`panel-${n}`).classList.add('active');
+  currentTab = n;
+  if (n === 1) loadTab1();
+  if (n === 2) loadTab2();
+}
+
+// ════════════════════════════════════════════════════════
+//  Supabase 헬퍼
+// ════════════════════════════════════════════════════════
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': `Bearer ${SB_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || '',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Supabase ${res.status}: ${err}`);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+// ════════════════════════════════════════════════════════
+//  탭1: 크롤링 공고
+// ════════════════════════════════════════════════════════
+let tab1Data = [];
+
+async function loadTab1() {
+  const tbody = document.getElementById('tbody-1');
+  tbody.innerHTML = '<tr class="empty-row"><td colspan="8">로딩 중...</td></tr>';
+  try {
+    const data = await sbFetch(
+      `announcements?status=neq.확인필요&order=created_at.desc&limit=200&select=*`
+    );
+    tab1Data = data || [];
+    renderTab1(tab1Data);
+    document.getElementById('cnt-1').textContent = tab1Data.length;
+    renderStats1(tab1Data);
+  } catch(e) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="8">오류: ${e.message}<br><small>Supabase announcements 테이블이 없을 수 있습니다. schema.sql을 먼저 실행하세요.</small></td></tr>`;
+  }
+}
+
+function renderStats1(data) {
+  const counts = {};
+  data.forEach(r => counts[r.status] = (counts[r.status]||0)+1);
+  const instC = {};
+  data.forEach(r => instC[r.institution] = (instC[r.institution]||0)+1);
+  let html = '';
+  ['진행중','예정','마감','manual_ok'].forEach(s => {
+    if (counts[s]) html += `<div class="stat-item"><div class="stat-label">${s}</div><div class="stat-value">${counts[s]}</div></div>`;
+  });
+  Object.entries(instC).forEach(([k,v]) => {
+    html += `<div class="stat-item"><div class="stat-label">${k}</div><div class="stat-value">${v}</div></div>`;
+  });
+  document.getElementById('stats-bar-1').innerHTML = html;
+}
+
+function renderTab1(data) {
+  const tbody = document.getElementById('tbody-1');
+  if (!data.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">공고가 없습니다.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(r => {
+    const types = Array.isArray(r.types) ? r.types.join(', ') : (r.types || '-');
+    const start = r.apply_start ? r.apply_start.slice(0,10) : '-';
+    const end   = r.apply_end   ? r.apply_end.slice(0,10)   : '-';
+    const date  = r.date ? r.date.slice(0,10) : (r.created_at ? r.created_at.slice(0,10) : '-');
+    return `
+      <tr>
+        <td class="check-col"><input type="checkbox" class="row-check-1" data-id="${r.id}"></td>
+        <td><span class="inst inst-${r.institution}">${r.institution}</span></td>
+        <td>
+          <div class="ellipsis" title="${escHtml(r.title)}">
+            ${r.url ? `<a class="link" href="${escHtml(r.url)}" target="_blank">↗</a> ` : ''}
+            ${escHtml(r.title)}
+          </div>
+        </td>
+        <td style="font-size:12px;color:var(--text-muted)">${escHtml(types)}</td>
+        <td style="font-size:12px">${date}</td>
+        <td style="font-size:12px">${start}<br>${end !== '-' ? '~'+end : ''}</td>
+        <td><span class="status status-${r.status}">${r.status}</span></td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="deleteAnnouncement(${r.id})">삭제</button>
+        </td>
+      </tr>`;
+  }).join('');
+
+  // 체크박스 이벤트
+  document.querySelectorAll('.row-check-1').forEach(cb => {
+    cb.addEventListener('change', updateBulkBtn);
+  });
+}
+
+function toggleAll(tab, master) {
+  document.querySelectorAll(`.row-check-${tab}`).forEach(cb => cb.checked = master.checked);
+  updateBulkBtn();
+}
+
+function updateBulkBtn() {
+  const anyChecked = document.querySelectorAll('.row-check-1:checked').length > 0;
+  document.getElementById('bulk-delete-btn').style.display = anyChecked ? '' : 'none';
+}
+
+async function deleteAnnouncement(id) {
+  if (!confirm('이 공고를 삭제하시겠습니까?')) return;
+  try {
+    await sbFetch(`announcements?id=eq.${id}`, { method: 'DELETE' });
+    toast('삭제되었습니다.', 'success');
+    loadTab1();
+  } catch(e) {
+    toast('삭제 실패: ' + e.message, 'error');
+  }
+}
+
+async function bulkDelete() {
+  const ids = [...document.querySelectorAll('.row-check-1:checked')].map(cb => cb.dataset.id);
+  if (!ids.length) return;
+  if (!confirm(`선택한 ${ids.length}개를 삭제하시겠습니까?`)) return;
+  try {
+    await sbFetch(`announcements?id=in.(${ids.join(',')})`, { method: 'DELETE' });
+    toast(`${ids.length}개 삭제 완료`, 'success');
+    loadTab1();
+  } catch(e) {
+    toast('삭제 실패: ' + e.message, 'error');
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  탭2: 확인 필요
+// ════════════════════════════════════════════════════════
+async function loadTab2() {
+  const tbody = document.getElementById('tbody-2');
+  tbody.innerHTML = '<tr class="empty-row"><td colspan="6">로딩 중...</td></tr>';
+  try {
+    const data = await sbFetch(
+      `announcements?status=eq.확인필요&order=created_at.desc&limit=200`
+    );
+    renderTab2(data || []);
+    document.getElementById('cnt-2').textContent = (data||[]).length;
+  } catch(e) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">오류: ${e.message}</td></tr>`;
+  }
+}
+
+function renderTab2(data) {
+  const tbody = document.getElementById('tbody-2');
+  if (!data.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">확인 필요 공고가 없습니다. 👍</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(r => {
+    const date = r.date ? r.date.slice(0,10) : (r.created_at ? r.created_at.slice(0,10) : '-');
+    return `
+      <tr id="review-row-${r.id}">
+        <td><span class="inst inst-${r.institution}">${r.institution}</span></td>
+        <td>
+          <div class="ellipsis" title="${escHtml(r.title)}">
+            ${r.url ? `<a class="link" href="${escHtml(r.url)}" target="_blank">↗</a> ` : ''}
+            ${escHtml(r.title)}
+          </div>
+        </td>
+        <td style="font-size:12px">${date}</td>
+        <td><input type="date" id="rs-${r.id}" style="width:130px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px"></td>
+        <td><input type="date" id="re-${r.id}" style="width:130px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px"></td>
+        <td style="display:flex;gap:6px">
+          <button class="btn btn-success btn-sm" onclick="approveReview(${r.id})">✓ 승인</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectReview(${r.id})">✕ 반려</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+async function approveReview(id) {
+  const start = document.getElementById(`rs-${id}`).value;
+  const end   = document.getElementById(`re-${id}`).value;
+  if (!start || !end) { toast('신청 시작·마감일을 모두 입력하세요.', 'error'); return; }
+
+  const now = new Date();
+  const endDate = new Date(end);
+  const status = endDate < now ? '마감' : (new Date(start) > now ? '예정' : '진행중');
+
+  try {
+    await sbFetch(`announcements?id=eq.${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ apply_start: start, apply_end: end, status })
+    });
+    toast('승인 완료 ✓', 'success');
+    document.getElementById(`review-row-${id}`).remove();
+  } catch(e) {
+    toast('오류: ' + e.message, 'error');
+  }
+}
+
+async function rejectReview(id) {
+  if (!confirm('이 공고를 삭제하시겠습니까?')) return;
+  try {
+    await sbFetch(`announcements?id=eq.${id}`, { method: 'DELETE' });
+    toast('반려(삭제) 완료', 'success');
+    document.getElementById(`review-row-${id}`).remove();
+    const cnt = document.querySelectorAll('[id^="review-row-"]').length;
+    document.getElementById('cnt-2').textContent = cnt;
+  } catch(e) {
+    toast('오류: ' + e.message, 'error');
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  탭3: PDF 파싱
+// ════════════════════════════════════════════════════════
+let pdfText = '';
+let pdfFileName = '';
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('pdf-zone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') handlePdfFile(file);
+  else toast('PDF 파일만 지원합니다.', 'error');
+}
+
+async function handlePdfFile(file) {
+  if (!file) return;
+  pdfFileName = file.name;
+  document.getElementById('parse-file-name').textContent = `📄 ${file.name}`;
+  document.getElementById('parse-btn').style.display = '';
+  document.getElementById('parse-actions').style.display = 'flex';
+
+  const result = document.getElementById('parse-result');
+  result.style.display = 'block';
+  result.className = 'parse-result';
+  result.textContent = 'PDF 텍스트 추출 중...';
+
+  try {
+    const arrayBuf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+    let text = '';
+    for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(s => s.str).join(' ') + '\n';
+    }
+    pdfText = text.trim();
+    result.textContent = `✅ ${pdf.numPages}페이지 추출 완료 (${pdfText.length.toLocaleString()}자). Claude로 파싱하려면 버튼을 클릭하세요.`;
+  } catch(e) {
+    result.className = 'parse-result error';
+    result.textContent = 'PDF 추출 실패: ' + e.message;
+  }
+}
+
+async function parsePdf() {
+  const apiKey = sessionStorage.getItem('claude_api_key');
+  if (!apiKey) {
+    toast('Claude API 키를 먼저 설정하세요.', 'error');
+    openApiModal();
+    return;
+  }
+  if (!pdfText) { toast('PDF를 먼저 업로드하세요.', 'error'); return; }
+
+  const btn = document.getElementById('parse-btn');
+  btn.innerHTML = '<span class="spinner"></span> 파싱 중...';
+  btn.disabled = true;
+
+  const result = document.getElementById('parse-result');
+  result.style.display = 'block';
+  result.className = 'parse-result';
+  result.textContent = 'Claude AI가 공고를 분석 중입니다...';
+
+  const prompt = `다음은 주거지원 공고문 텍스트입니다. 아래 JSON 형식으로 정보를 추출해주세요.
+응답은 반드시 순수 JSON만 출력하세요. 마크다운 코드블록 없이.
+
+추출 형식:
+{
+  "title": "공고 제목",
+  "institution": "SH|LH|GH|iH 중 하나",
+  "types": ["태그1", "태그2"],
+  "apply_start": "YYYY-MM-DD 또는 null",
+  "apply_end": "YYYY-MM-DD 또는 null",
+  "date": "공고 등록일 YYYY-MM-DD 또는 null",
+  "url": "신청 URL 또는 null",
+  "status": "진행중|예정|마감|확인필요",
+  "seq": "공고번호 또는 null",
+  "note": "핵심 자격조건 1~2줄 요약"
+}
+
+공고문:
+${pdfText.slice(0, 6000)}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`Claude API ${res.status}: ${err}`);
+    }
+
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '';
+    const jsonStr = raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+    const parsed = JSON.parse(jsonStr);
+
+    // 폼 자동완성
+    fillManualForm(parsed);
+
+    result.textContent = '✅ 파싱 완료! 아래 폼에 자동 입력되었습니다. 확인 후 등록하세요.';
+    result.style.backgroundColor = '#f0fdf4';
+
+    // 탭3의 수동입력 폼으로 포커스
+    document.getElementById('manual-form').scrollIntoView({ behavior: 'smooth' });
+
+  } catch(e) {
+    result.className = 'parse-result error';
+    result.textContent = '파싱 실패: ' + e.message;
+  } finally {
+    btn.innerHTML = '✨ Claude로 파싱하기';
+    btn.disabled = false;
+  }
+}
+
+function fillManualForm(d) {
+  if (d.institution) {
+    const inst = document.getElementById('m-inst');
+    for (let o of inst.options) if (o.value === d.institution) { inst.value = d.institution; break; }
+  }
+  if (d.title) document.getElementById('m-title').value = d.title;
+  if (d.types) document.getElementById('m-types').value = Array.isArray(d.types) ? d.types.join(', ') : d.types;
+  if (d.apply_start) document.getElementById('m-apply-start').value = d.apply_start;
+  if (d.apply_end)   document.getElementById('m-apply-end').value   = d.apply_end;
+  if (d.date)        document.getElementById('m-date').value        = d.date;
+  if (d.url)         document.getElementById('m-url').value         = d.url;
+  if (d.seq)         document.getElementById('m-seq').value         = d.seq;
+  if (d.status) {
+    const st = document.getElementById('m-status');
+    for (let o of st.options) if (o.value === d.status) { st.value = d.status; break; }
+  }
+  if (d.note) document.getElementById('m-note').value = d.note;
+}
+
+// ════════════════════════════════════════════════════════
+//  탭3: 수동 등록
+// ════════════════════════════════════════════════════════
+async function submitManual() {
+  const title = document.getElementById('m-title').value.trim();
+  if (!title) { toast('제목을 입력하세요.', 'error'); return; }
+
+  const inst   = document.getElementById('m-inst').value;
+  const status = document.getElementById('m-status').value;
+  const types  = document.getElementById('m-types').value
+    .split(',').map(s => s.trim()).filter(Boolean);
+  const start  = document.getElementById('m-apply-start').value || null;
+  const end    = document.getElementById('m-apply-end').value   || null;
+  const date   = document.getElementById('m-date').value        || null;
+  const url    = document.getElementById('m-url').value.trim()  || null;
+  const seq    = document.getElementById('m-seq').value.trim()  || null;
+  const note   = document.getElementById('m-note').value.trim() || null;
+
+  const body = {
+    institution: inst,
+    title,
+    status,
+    types: types.length ? types : null,
+    apply_start: start,
+    apply_end: end,
+    date,
+    url,
+    seq,
+    raw_data: note ? { note } : null
+  };
+
+  try {
+    await sbFetch('announcements', {
+      method: 'POST',
+      prefer: 'return=minimal',
+      body: JSON.stringify(body)
+    });
+    toast('공고가 등록되었습니다! ✓', 'success');
+    clearManualForm();
+  } catch(e) {
+    toast('등록 실패: ' + e.message, 'error');
+  }
+}
+
+function clearManualForm() {
+  ['m-title','m-types','m-apply-start','m-apply-end','m-date','m-url','m-seq','m-note']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-inst').value = 'SH';
+  document.getElementById('m-status').value = '진행중';
+  pdfText = '';
+  pdfFileName = '';
+  document.getElementById('parse-result').style.display = 'none';
+  document.getElementById('parse-btn').style.display = 'none';
+  document.getElementById('parse-file-name').textContent = '';
+  document.getElementById('pdf-input').value = '';
+}
+
+// ════════════════════════════════════════════════════════
+//  API 키 모달
+// ════════════════════════════════════════════════════════
+function openApiModal() {
+  const existing = sessionStorage.getItem('claude_api_key');
+  if (existing) document.getElementById('api-key-input').value = existing;
+  document.getElementById('api-modal').classList.add('open');
+}
+function closeApiModal() {
+  document.getElementById('api-modal').classList.remove('open');
+}
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) { toast('키를 입력하세요.', 'error'); return; }
+  sessionStorage.setItem('claude_api_key', key);
+  updateApiBadge();
+  closeApiModal();
+  toast('API 키 저장됨 ✓', 'success');
+}
+function updateApiBadge() {
+  const badge = document.getElementById('api-badge');
+  const key = sessionStorage.getItem('claude_api_key');
+  if (key) {
+    badge.textContent = 'Claude API ✓';
+    badge.className = 'api-badge set';
+  } else {
+    badge.textContent = 'Claude API ✕';
+    badge.className = 'api-badge';
+  }
+}
+
+// 모달 외부 클릭 시 닫기
+document.getElementById('api-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeApiModal();
+});
+
+// ════════════════════════════════════════════════════════
+//  유틸
+// ════════════════════════════════════════════════════════
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+let toastTimer;
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+</script>
+</body>
+</html>
