@@ -29,13 +29,24 @@ METRO_KEYWORDS = ['서울', '경기', '인천']
 NATIONAL_KEYWORDS = ['국토교통부', '국토부', '주택도시기금', '한국토지주택공사',
                      'LH', '보건복지부', '고용노동부', '중소벤처기업부']
 
+# 경기도 31 시군 (기관명에 '경기' 없이 시군명만 표기되는 경우 대응)
+GG_CITIES = [
+    '수원', '성남', '의정부', '안양', '부천', '광명', '평택', '동두천',
+    '안산', '고양', '과천', '구리', '남양주', '오산', '시흥', '군포',
+    '의왕', '하남', '용인', '파주', '이천', '안성', '김포', '화성',
+    '광주', '양주', '포천', '여주', '연천', '가평', '양평',
+]
+
 
 # ── 지역 판별 ──────────────────────────────────────────────────
 
 def detect_region(inst: str, policy: dict) -> str:
-    for kw, region in [('서울', '서울'), ('경기', '경기'), ('인천', '인천')]:
-        if kw in inst:
-            return region
+    if '서울' in inst:
+        return '서울'
+    if '경기' in inst or any(city in inst for city in GG_CITIES):
+        return '경기'
+    if '인천' in inst:
+        return '인천'
     # zipCd로 2차 판별
     zip_cd = policy.get('zipCd', '') or ''
     for z in zip_cd.split(','):
@@ -62,19 +73,28 @@ def is_metro_or_national(policy: dict) -> bool:
     if any(r in full for r in OTHER_REGIONS):
         return False
 
-    # 전국 기관 또는 수도권 → 포함
-    if any(k in full for k in NATIONAL_KEYWORDS + METRO_KEYWORDS):
+    # 전국 기관 키워드 → 포함
+    if any(k in full for k in NATIONAL_KEYWORDS):
+        return True
+
+    # 수도권 광역 키워드 → 포함
+    if any(k in full for k in METRO_KEYWORDS):
+        return True
+
+    # 경기도 시군 이름 → 포함
+    if any(city in full for city in GG_CITIES):
         return True
 
     # zipCd로 판단
     zip_cd = policy.get('zipCd', '') or ''
     if not zip_cd:
-        return True  # 지역 미지정 → 전국으로 간주
+        return True  # 지역 미지정 → 지역제한 없는 전국 정책으로 간주
     for z in zip_cd.split(','):
         z = z.strip()[:3]
         if z.startswith(('11', '41', '21')):
             return True
 
+    # zipCd가 있지만 수도권 코드가 없음 → 타 지역 정책
     return False
 
 
