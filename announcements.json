@@ -1,16 +1,27 @@
 {
-  "updated": "2026-03-23",
-  "count": 9,
+  "updated": "2026-03-24",
+  "count": 10,
   "announcements": [
     {
-      "seq": "301893",
-      "title": "[청년형] 특화형 매입임대주택(구로구) 입주자 모집 공고(운영기관 : 사단법인 길가온복지회)",
+      "seq": "301840",
+      "title": "NEW  [청년형] 특화형 매입임대주택(금천구) 입주자 모집 공고(운영기관 : 한지붕 협동조합)",
+      "date": "2026-03-24",
+      "types": [
+        "청년 매입임대주택",
+        "일반 매입임대주택"
+      ],
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301840&multi_itm_seq=2",
+      "status": "확인필요"
+    },
+    {
+      "seq": "302027",
+      "title": "[청년형] 특화형 매입임대주택(구로구) 입주자 모집 공고(운영기관 : 사단법인 길가온복지회)_정정",
       "date": "2026-03-20",
       "types": [
         "청년 매입임대주택",
         "일반 매입임대주택"
       ],
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301893&multi_itm_seq=2",
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=302027&multi_itm_seq=2",
       "status": "확인필요"
     },
     {
