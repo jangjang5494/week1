@@ -343,6 +343,32 @@ def fetch_existing_linked() -> dict:
     return {r['ontong_plcy_no']: r for r in rows if r.get('ontong_plcy_no')}
 
 
+def cleanup_stale(current_plcy_nos: set) -> int:
+    """이번 동기화에서 제외된 ONTONG_ 레코드 삭제 (필터 변경 반영)"""
+    # DB의 모든 ONTONG_ 코드 조회
+    rows = sb_get('programs', 'select=code,ontong_plcy_no&code=like.ONTONG_*')
+    stale = [r for r in rows if r.get('ontong_plcy_no') not in current_plcy_nos]
+
+    deleted = 0
+    for r in stale:
+        code = r['code']
+        req = urllib.request.Request(
+            f"{SUPABASE_URL}/rest/v1/programs?code=eq.{urllib.parse.quote(code)}",
+            method='DELETE'
+        )
+        req.add_header('apikey', SUPABASE_KEY)
+        req.add_header('Authorization', f'Bearer {SUPABASE_KEY}')
+        req.add_header('Prefer', 'return=minimal')
+        try:
+            with urllib.request.urlopen(req, timeout=30):
+                deleted += 1
+                print(f"  🗑️  삭제: {r['name'] if 'name' in r else code}")
+        except urllib.error.HTTPError as e:
+            print(f"  ⚠️  삭제 실패 {code}: {e.code}")
+
+    return deleted
+
+
 # ── Step Summary 출력 ─────────────────────────────────────────
 
 def write_summary(lines: list) -> None:
@@ -428,8 +454,14 @@ def main():
     print("\n[4] Supabase 동기화 중...")
     result = sync_to_supabase(filtered, existing_map)
 
+    print("\n[5] 필터 제외된 기존 레코드 정리 중...")
+    current_nos = {p['plcyNo'] for p in filtered}
+    deleted = cleanup_stale(current_nos)
+    print(f"  삭제 완료: {deleted}개")
+
     print(f"\n=== 완료: 신규 INSERT {result['inserted']}개 / "
-          f"충돌(미적용) {len(result['conflicts'])}개"
+          f"충돌(미적용) {len(result['conflicts'])}개 / "
+          f"삭제 {deleted}개"
           + (f" / 강제 PATCH {result['force_patched']}개" if FORCE_UPDATE else "") + " ===")
 
     # ── Step Summary 작성 ──────────────────────────────────────
@@ -437,6 +469,7 @@ def main():
         f"## 온통청년 동기화 결과 ({now})",
         f"- 신규 INSERT: **{result['inserted']}개**",
         f"- 충돌(DB에 수동 등록된 정책): **{len(result['conflicts'])}개**",
+        f"- 필터 제외 삭제: **{deleted}개**",
     ]
     if FORCE_UPDATE:
         summary.append(f"- 강제 PATCH 적용: **{result['force_patched']}개**")
