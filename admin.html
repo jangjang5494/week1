@@ -1143,6 +1143,7 @@ async function submitManual() {
     });
     toast('공고가 등록되었습니다! ✓', 'success');
     clearManualForm();
+    setTimeout(() => { switchTab(1); }, 800);
   } catch(e) {
     toast('등록 실패: ' + e.message, 'error');
   }
