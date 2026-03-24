@@ -496,7 +496,10 @@ def crawl_lh(mi, source_key, initial=False):
 
         if lh_status == "expired":
             continue
+        # region 파싱 실패(전국 기본값) 시 제목에서도 타지역 체크
         if not _is_metro_or_national(region):
+            continue
+        if region in ("전국", "") and any(n in title for n in _NON_METRO):
             continue
         if apply_end and apply_end < today:
             continue
@@ -875,11 +878,21 @@ def crawl_applyhome_apt(initial=False):
             tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
             if len(tds) < 4:
                 continue
-            # 컬럼: 지역, 주택구분, 주택명(+링크), 청약기간, 당첨자발표, 분양/임대
-            region    = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
-            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
-            name_raw  = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
-            period_raw = re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip() if len(tds) > 3 else ""
+            # 실제 컬럼: 지역 / 주택명(링크+배지) / 분양구분 / 청약기간 / 당첨자발표
+            region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
+            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[2]).strip()
+            # 주택명: <a> 태그 텍스트 우선
+            link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[1], re.DOTALL)
+            name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
+                       else re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
+            # 청약기간: tds[3~5] 중 날짜 패턴 있는 첫 번째
+            period_raw = ""
+            for col_i in (3, 4, 5):
+                if col_i < len(tds):
+                    c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
+                    if re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
+                        period_raw = c
+                        break
 
             if not name_raw or not _is_metro_or_national(region):
                 continue
@@ -892,7 +905,7 @@ def crawl_applyhome_apt(initial=False):
                 continue
 
             # 링크 추출
-            link_m = re.search(r'href="([^"]+)"', tds[2])
+            link_m = re.search(r'href="([^"]+)"', tds[1])
             url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
                   APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do"
 
@@ -1159,8 +1172,8 @@ def save_to_supabase(announcements):
             "raw_data":    {"source_key": a.get("source_key", "")},
         })
 
-    # 배치 upsert (100개씩)
-    endpoint = f"{sb_url}/rest/v1/announcements"
+    # 배치 upsert (100개씩) — on_conflict 명시 필요
+    endpoint = f"{sb_url}/rest/v1/announcements?on_conflict=institution,seq"
     headers = {
         "apikey":          sb_key,
         "Authorization":   f"Bearer {sb_key}",
