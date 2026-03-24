@@ -447,7 +447,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 일반 매입임대 (다가구)
 ('LH_BUY_GENERAL', '임대주택', '매입임대', '매입임대', 'LH', '전국', 'LH 일반 매입임대주택',
  '수급자·한부모·장애인·고령자 등 취약계층', TRUE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct_rank1":70,"income_pct_rank2":50,"asset_limit":237000000,"car_limit":45630000,"notes":["1순위: 생계·의료수급자/한부모/65세이상수급자·차상위/소득70%이하장애인/주거지원시급가구","2순위: 소득50%이하 무주택세대구성원","임대기간: 1순위 무제한 / 2순위 최장20년(9회재계약)"]}',
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct_rank1":70,"income_pct_rank2":50,"asset_limit":241000000,"car_limit":45630000,"notes":["1순위: 생계·의료수급자/한부모/65세이상수급자·차상위/소득70%이하장애인/주거지원시급가구","2순위: 소득50%이하 무주택세대구성원","임대기간: 1순위 무제한 / 2순위 최장20년(9회재계약)"]}',
  '{"rent_pct":30,"deposit_avg":4750000,"rent_avg_month":100000,"period_max_years":20,"renewal_count":9}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
@@ -471,8 +471,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 신혼·신생아 매입임대 Ⅱ형
 ('LH_BUY_NEWLYWED_2', '임대주택', '매입임대', '신혼매입임대', 'LH', '전국', 'LH 신혼·신생아 매입임대 Ⅱ형',
  '혼인7년이내·신생아가구·한부모 (소득 100% 이하)', TRUE,
- '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":130,"asset_limit":345000000,"car_limit":45630000,"marriage_years_max":7}',
- '{"rent_pct_min":50,"rent_pct_max":70,"period_max_years":10,"renewal_count":4,"notes":["자녀있으면 최장 14년"]}',
+ '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모","혼인가구"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":120,"income_pct_rank5":120,"income_pct_rank5_married":140,"asset_limit":345000000,"car_limit":45630000,"marriage_years_max":7,"notes":["1~4순위: 외벌이100%/맞벌이120%","5순위(혼인가구): 외벌이120%/맞벌이140%"]}',
+ '{"rent_pct_min":70,"rent_pct_max":80,"period_max_years":10,"renewal_count":4,"notes":["자녀있으면 최장 14년(재계약6회)"]}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
 
@@ -480,7 +480,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 ('LH_JEONSE_GENERAL', '임대주택', '전세임대', '전세임대', 'LH', '전국', 'LH 기존주택 전세임대 (일반)',
  '수급자·한부모·장애인·고령자 등 취약계층', TRUE,
  '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct_rank1":70,"income_pct_rank2":50,"notes":["1순위: 수급자/한부모/시급가구(RIR30%↑)/장애인70%이하/65세이상수급자·차상위","2순위: 소득50%이하","신청: 행정복지센터(수급자) 또는 LH청약플러스"]}',
- '{"loan_limit_metro":130000000,"loan_limit_metro_city":90000000,"loan_limit_other":70000000,"tenant_burden_pct":5,"interest_min":1.2,"interest_max":2.2,"period_max_years":30,"renewal_count":14,"notes":["65세이상·중증장애인·1순위: 재계약 횟수 무제한","입주자가 원하는 주택 직접 물색 후 LH 권리분석"]}',
+ '{"loan_limit_metro":130000000,"loan_limit_metro_city":90000000,"loan_limit_other":70000000,"tenant_burden_pct_min":2,"tenant_burden_pct_max":5,"interest_min":1.2,"interest_max":2.2,"period_max_years":30,"renewal_count":14,"notes":["65세이상·중증장애인·1순위: 재계약 횟수 무제한","입주자가 원하는 주택 직접 물색 후 LH 권리분석"]}',
  '{"method":["온라인","방문"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
 
@@ -516,15 +516,6 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
 
--- LH 신혼부부 매입임대 (기존 — Ⅰ·Ⅱ 통합 코드 유지)
-('LH_BUY_NEWLYWED', '임대주택', '매입임대', '신혼매입임대', 'LH', '전국', 'LH 신혼부부 매입임대 (통합)',
- '혼인7년이내 신혼부부·예비신혼·신생아가구·한부모 (Ⅰ·Ⅱ형 통합 참조용)',
- TRUE,
- '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":70,"income_pct_married":90,"income_pct_2":100,"income_pct_2_married":130,"asset_limit":237000000,"asset_limit_2":345000000,"car_limit":45630000,"marriage_years_max":7,"notes":["Ⅰ형(소득70%,자산23,700만): LH_BUY_NEWLYWED_1 참조","Ⅱ형(소득100%,자산34,500만): LH_BUY_NEWLYWED_2 참조"]}',
- '{"rent_pct_1_min":30,"rent_pct_1_max":40,"rent_pct_2_min":50,"rent_pct_2_max":70}',
- '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
- 'https://apply.lh.or.kr'),
-
 -- LH 신혼희망타운 (분양형)
 ('LH_HOPE_TOWN', '임대주택', '분양', '신혼희망타운', 'LH', '전국', 'LH 신혼희망타운 (분양형)',
  '혼인7년이내·예비신혼·6세이하자녀·한부모 (소득 130% 이하)', TRUE,
@@ -544,7 +535,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 다자녀 매입임대 ★2026-03-21 신규 추가
 ('LH_BUY_MULTICHILDREN', '임대주택', '매입임대', '매입임대', 'LH', '전국', 'LH 다자녀 매입임대주택',
  '미성년 자녀 2인 이상 양육 무주택 가구 (소득 70% 이하)', TRUE,
- '{"homeless_required":true,"children_min":2,"income_type":"도시근로자월평균","income_pct":70,"asset_limit":241000000,"car_limit":37080000,"notes":["미성년 자녀 2인 이상 (태아 포함)","신청: 지자체(행정복지센터)","1순위: 수급자·한부모·차상위/시급가구","2순위: 소득70%이하 무주택세대구성원"]}',
+ '{"homeless_required":true,"children_min":2,"income_type":"도시근로자월평균","income_pct":70,"asset_limit":345000000,"car_limit":45420000,"notes":["미성년 자녀 2인 이상 (태아 포함)","신청: 지자체(행정복지센터)","1순위: 수급자·한부모·차상위/시급가구","2순위: 소득70%이하 무주택세대구성원"]}',
  '{"rent_pct_min":30,"rent_pct_max":40,"period_max_years":20,"renewal_count":9}',
  '{"method":["방문"],"contact":"지자체(행정복지센터)","period_type":"공고별","url":"https://apply.lh.or.kr"}',
  'https://apply.lh.or.kr'),
@@ -553,8 +544,32 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 ('LH_DNDNT_JEONSE', '임대주택', '전세임대', '든든전세주택', 'LH', '전국', 'LH 전세임대형 든든주택',
  '중산층까지 확대한 비아파트(빌라·다세대) 전세임대 (소득·자산 무관)', TRUE,
  '{"homeless_required":true,"income_required":false,"asset_required":false,"notes":["소득·자산 기준 없음 (중산층까지 대상)","대상주택: 빌라·다세대·연립(非아파트)","순위: 신생아·다자녀→신혼부부→기타","1인 가구도 신청 가능"]}',
- '{"jeonse_pct_max":90,"period_max_years":10,"notes":["시세 90% 이하 전세","전세형으로 공급"]}',
+ '{"jeonse_pct_max":90,"period_max_years":8,"renewal_count":3,"notes":["시세 90% 이하 전세","전세형으로 공급","2년+재계약3회=최장8년"]}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
+ 'https://apply.lh.or.kr'),
+
+-- LH 기숙사형 청년주택 ★2026-03-24 신규 추가
+('LH_DORM_YOUTH', '임대주택', '공공임대', '기숙사형청년주택', 'LH', '전국', 'LH 기숙사형 청년주택',
+ '대학생·대학원생 무주택자 (입학·복학 예정자 포함)', TRUE,
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct_rank2":100,"income_pct_rank3":100,"asset_limit":108000000,"car_limit":0,"notes":["1순위: 생계·주거·의료급여수급자/차상위/한부모","2순위: 본인+부모 합산 도시근로자 100% 이하","3순위: 본인 도시근로자 1인 100% 이하 (만19~39세 미혼자)","대학생·대학원생 우선 (입학·복학 예정자 포함)","car_limit: 대학생 기준 자동차 소유 불가"]}',
+ '{"rent_pct":40,"deposit":600000,"period_max_years":10,"renewal_count":4,"notes":["보증금 60만원 고정","시세 약 40%","공급시기: 반기별(6월·12월)"]}',
+ '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"반기별"}',
+ 'https://apply.lh.or.kr'),
+
+-- LH 청년신혼부부 매입임대리츠(아파트) ★2026-03-24 신규 추가
+('LH_RITZ_NEWLYWED', '임대주택', '매입임대', '매입임대리츠', 'LH', '전국', 'LH 청년신혼부부 매입임대리츠(아파트)',
+ '신혼부부(혼인7년이내)·청년(만19~39세)·6세이하자녀 혼인가구', TRUE,
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":120,"asset_limit":215500000,"car_limit":45420000,"notes":["1순위: 신혼부부(혼인7년이내)/예비신혼/6세이하자녀 한부모","2순위: 만19~39세 청년·대학생","3순위: 6세이하자녀 있는 혼인가구","소득: 도시근로자 100%(배우자 120%)","자산: 분양전환공공임대주택 기준"]}',
+ '{"rent_pct":90,"period_max_years":10,"renewal_count":4,"notes":["시세 90% 수준 아파트","2년+재계약4회=최장10년"]}',
+ '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
+ 'https://apply.lh.or.kr'),
+
+-- LH 자립준비청년 임대주택 ★2026-03-24 신규 추가
+('LH_INDEPENDENCE_YOUTH', '임대주택', '매입임대', '자립준비청년', 'LH', '전국', 'LH 자립준비청년 임대주택',
+ '가정위탁 종료 또는 아동복지시설 퇴소 후 5년 이내 자립준비청년', TRUE,
+ '{"homeless_required":true,"income_required":false,"asset_required":false,"notes":["보호조치 종료·퇴소 후 5년 이내 (보호연장·퇴소예정자 포함)","소득·자산 기준 없음","만22세 이하: 전세임대 무이자 적용","5년 이내 거주 시 임대료 50% 감면 가능"]}',
+ '{"deposit":1000000,"rent_pct_build_min":30,"rent_pct_build_max":80,"rent_pct_buy":40,"period_max_years_buy":20,"renewal_count_buy":9,"notes":["건설임대: 보증금100만/시세30~80%","매입임대: 보증금100만/시세40%/최장20년","전세임대: 보증금100만/연1.0~2.0%(22세이하 무이자)","공급: 연중 수시"]}',
+ '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"수시"}',
  'https://apply.lh.or.kr'),
 
 -- SH 행복주택 청년
