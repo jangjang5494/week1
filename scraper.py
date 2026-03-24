@@ -895,14 +895,13 @@ def crawl_applyhome_apt(initial=False):
             link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[3], re.DOTALL)
             name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
                        else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
-            # 청약기간: tds[4~6] 중 날짜 패턴 있는 첫 번째
+            # 청약기간: ~ 포함된 날짜 범위 셀 탐색
             period_raw = ""
-            for col_i in (4, 5, 6):
-                if col_i < len(tds):
-                    c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
-                    if re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
-                        period_raw = c
-                        break
+            for col_i in range(4, len(tds)):
+                c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
+                if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
+                    period_raw = c
+                    break
 
             if not name_raw or not _is_metro_or_national(region):
                 continue
@@ -977,12 +976,11 @@ def crawl_applyhome_remndr(initial=False):
         name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
                    else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
         period_raw = ""
-        for col_i in (4, 5, 6):
-            if col_i < len(tds):
-                c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
-                if re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
-                    period_raw = c
-                    break
+        for col_i in range(4, len(tds)):
+            c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
+            if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
+                period_raw = c
+                break
 
         if not name_raw or not _is_metro_or_national(region):
             continue
@@ -1055,12 +1053,11 @@ def crawl_applyhome_other(initial=False):
             name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
                        else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
             period_raw = ""
-            for col_i in (4, 5, 6):
-                if col_i < len(tds):
-                    c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
-                    if re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
-                        period_raw = c
-                        break
+            for col_i in range(4, len(tds)):
+                c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
+                if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
+                    period_raw = c
+                    break
 
             if not name_raw or not _is_metro_or_national(region):
                 continue
