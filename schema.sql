@@ -193,6 +193,12 @@ CREATE TABLE programs (
   is_central    BOOLEAN     DEFAULT TRUE,  -- 중앙정부 사업 여부 (false=지자체 고유)
   data_year     INTEGER     DEFAULT 2026,
   source_url    TEXT,
+
+  -- 외부 API 연계 키
+  ontong_plcy_no TEXT,       -- 온통청년 API plcyNo (getPlcy 응답 필드)
+  -- 온통청년 API: GET https://www.youthcenter.go.kr/go/ythip/getPlcy?apiKeyNm={KEY}&rtnType=json&lclsfNm=주거
+  -- 신청기간(aplyYmd), 사업기간(bizPrdBgngYmd~bizPrdEndYmd) 실시간 업데이트 가능
+
   created_at    TIMESTAMPTZ DEFAULT NOW(),
   updated_at    TIMESTAMPTZ DEFAULT NOW()
 );
@@ -898,13 +904,13 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 INSERT INTO programs (code, category, subcategory, program_type, institution, region, name, target_summary, is_central,
   eligibility, support_content, application_info, source_url) VALUES
 
--- 중앙 청년월세 (HB009)
-('GOV_YOUTH_MONTHLY_RENT', '주거비지원', '월세지원', '청년월세', '국토교통부', '전국', '청년월세 한시 특별지원',
+-- 중앙 청년월세 (2026년 / 온통청년 plcyNo: 20260319005400112218)
+('GOV_YOUTH_MONTHLY_RENT', '주거비지원', '월세지원', '청년월세', '국토교통부', '전국', '청년월세 지원사업 (2026년)',
  '만19~34세 독립거주 무주택 청년 중위소득 60% 이하', TRUE,
  '{"age_min":19,"age_max":34,"homeless_required":true,"income_type":"중위소득","income_pct":60,"income_pct_origin_family":100,"asset_limit":12200000,"asset_limit_origin_family":47000000,"excluded":["공공임대거주자","주택소유자","2촌이내혈족임차"]}',
  '{"monthly_support":200000,"max_months":24,"total_max":4800000,"once_per_life":true,"deposit_limit":50000000,"monthly_rent_limit":700000}',
- '{"method":["온라인","방문"],"url":"https://www.bokjiro.go.kr","contact":"1599-0001","period_type":"수시"}',
- 'https://www.myhome.go.kr'),
+ '{"method":["온라인","방문"],"url":"https://www.bokjiro.go.kr","contact":"1599-0001","period_type":"정기","period_note":"2026년 신청 2026.03.30~05.29 / 지원기간 2026.09~2028.12"}',
+ 'https://www.bokjiro.go.kr'),
 
 -- 서울시 청년월세
 ('SEOUL_YOUTH_MONTHLY_RENT', '주거비지원', '월세지원', '청년월세', '서울시', '서울', '서울시 청년월세 지원',
@@ -997,6 +1003,22 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"total_max":400000,"notes":["2025.3.31이후 가입: 최대40만","이전가입: 최대30만","기납부 보증료 실비"]}',
  '{"method":["온라인","방문"],"url":"https://www.gov.kr","contact":"032-120","period_type":"수시","period_note":"예산 소진 시 조기 마감"}',
  'https://youth.incheon.go.kr');
+
+
+-- ============================================================
+-- 온통청년 API 연계 (plcyNo 매핑)
+-- API: GET https://www.youthcenter.go.kr/go/ythip/getPlcy
+--      ?apiKeyNm={ONTONG_API_KEY}&rtnType=json&lclsfNm=주거&pageSize=200
+-- 기준일: 2026-03-24 | 주거 정책 총 156개
+-- ============================================================
+
+CREATE INDEX IF NOT EXISTS idx_programs_ontong ON programs (ontong_plcy_no)
+  WHERE ontong_plcy_no IS NOT NULL;
+
+-- 확인된 매핑 (온통청년 plcyNo ↔ programs.code)
+UPDATE programs SET ontong_plcy_no = '20260319005400112218'
+  WHERE code = 'GOV_YOUTH_MONTHLY_RENT';
+-- (국토부) 26년 청년월세 지원사업 | 신청: 2026.03.30~05.29
 
 
 -- ============================================================
