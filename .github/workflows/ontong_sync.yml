@@ -4,6 +4,13 @@ on:
   schedule:
     - cron: '0 0 * * 1'   # 매주 월요일 오전 9시 KST (UTC 00:00)
   workflow_dispatch:
+    inputs:
+      force_update:
+        description: '충돌 항목도 API 값으로 강제 덮어쓰기'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
 
 jobs:
   sync:
@@ -24,4 +31,9 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           ONTONG_API_KEY: ${{ secrets.ONTONG_API_KEY }}
-        run: python3 ontong_sync.py
+        run: |
+          if [ "${{ github.event.inputs.force_update }}" = "true" ]; then
+            python3 ontong_sync.py --force-update
+          else
+            python3 ontong_sync.py
+          fi
