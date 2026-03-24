@@ -1065,11 +1065,14 @@ def dedup(announcements):
           우선순위: lh/sh/ih/youth > applyhome
     """
     PRIORITY = {
-        "sh_rental": 1, "sh_sale": 1, "sh_notice": 1,
+        # LH 최우선 (기관 간 동일 공고 시 LH 버전 유지)
         "lh_rental": 1, "lh_sale": 1,
-        "ih_sale": 1, "ih_rental": 1, "ihwc": 1,
-        "youth_housing": 1,
-        "applyhome_apt": 2, "applyhome_remndr": 2, "applyhome_other": 2,
+        # SH / iH / 청년안심주택
+        "sh_rental": 2, "sh_sale": 2, "sh_notice": 2,
+        "ih_sale": 2, "ih_rental": 2, "ihwc": 2,
+        "youth_housing": 2,
+        # 청약홈은 집계 사이트이므로 기관 직접 공고보다 후순위
+        "applyhome_apt": 3, "applyhome_remndr": 3, "applyhome_other": 3,
     }
 
     # 1차: 같은 기관 내 dedup
