@@ -1001,6 +1001,8 @@ def crawl_applyhome_remndr(initial=False):
         status = compute_status(apply_start, apply_end, today)
         if status == "expired":
             continue
+        if apply_end and apply_end > today + timedelta(days=30):
+            continue
 
         link_m = re.search(r'href="([^"]+)"', tds[3])
         url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
