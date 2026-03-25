@@ -2843,9 +2843,12 @@ function runAnalysis() {
     const ineligible = results.filter(r => !r.eligible);
 
     // 신청가능 → 현재 모집중 vs 모집없음
+    // finance/welfare: 수시 신청 가능 → 항상 모집중
+    // rental/sale: 공고 기반 → 진행중 공고 있을 때만 모집중
     const activeEligible = [], inactiveEligible = [];
     for (const r of eligible) {
-        const hasActive = getMatchingAnnouncements(r.name).some(a => a.status === '진행중');
+        const isContinuous = r.catGroup === 'finance' || r.catGroup === 'welfare';
+        const hasActive = isContinuous || getMatchingAnnouncements(r.name).some(a => a.status === '진행중');
         (hasActive ? activeEligible : inactiveEligible).push(r);
     }
 
