@@ -870,8 +870,9 @@ def _parse_applyhome_supply_types(detail_html, base_type):
     if not m:
         return types
     col_sums = {}
-    col_map = {0: "분양 다자녀", 1: "분양 신혼특공", 2: "분양 생애최초",
-               3: "분양 청년특공", 4: "분양 노부모부양", 5: "분양 신생아특공"}
+    # tds[0]=주택형, tds[1~]=공급세대수 컬럼
+    col_map = {1: "분양 다자녀", 2: "분양 신혼특공", 3: "분양 생애최초",
+               4: "분양 청년특공", 5: "분양 노부모부양", 6: "분양 신생아특공"}
     for tr in re.split(r"<tr[^>]*>", m.group(1))[1:]:
         tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
         for i, key in col_map.items():
