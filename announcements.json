@@ -1,7 +1,7 @@
 {
   "updated": "2026-03-25",
-  "count": 44,
-  "needs_review_count": 24,
+  "count": 36,
+  "needs_review_count": 16,
   "announcements": [
     {
       "id": "lh_rental_ae7387e2",
@@ -171,21 +171,6 @@
       "needs_pdf": true
     },
     {
-      "id": "sh_notice_e64dcd4b",
-      "inst": "SH",
-      "source_key": "sh_notice",
-      "title": "(정정공고) 고덕강일지구 및 내곡도시형생활주택 단지 내 상가 [중개보수 지급] 선착순 분양 공고",
-      "types": [
-        "기타"
-      ],
-      "location": "서울",
-      "status": "needs_review",
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/view.do?seq=301741&multi_itm_seq=1,2,4,8,16,32,64,128,256,512",
-      "posted_date": "2026-03-20",
-      "crawled_at": "2026-03-25",
-      "needs_pdf": true
-    },
-    {
       "id": "sh_notice_f8f3feed",
       "inst": "SH",
       "source_key": "sh_notice",
@@ -197,21 +182,6 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/view.do?seq=301832&multi_itm_seq=1,2,4,8,16,32,64,128,256,512",
       "posted_date": "2026-03-16",
-      "crawled_at": "2026-03-25",
-      "needs_pdf": true
-    },
-    {
-      "id": "sh_notice_2b972c76",
-      "inst": "SH",
-      "source_key": "sh_notice",
-      "title": "씨드큐브 창동 오피스(업무시설) 선착순 수의계약 임대 공고",
-      "types": [
-        "기타"
-      ],
-      "location": "서울",
-      "status": "needs_review",
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/view.do?seq=301159&multi_itm_seq=1,2,4,8,16,32,64,128,256,512",
-      "posted_date": "2026-03-04",
       "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
@@ -241,96 +211,6 @@
       "location": "인천",
       "status": "needs_review",
       "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4234&bcd=notice&cate1=general&pgdiv=general",
-      "posted_date": "2026-03-25",
-      "crawled_at": "2026-03-25",
-      "needs_pdf": true
-    },
-    {
-      "id": "ihwc_ac60cb37",
-      "inst": "iH",
-      "source_key": "ihwc",
-      "title": "임대아파트 단지내 상가 입점자 모집 공고(연수, 구월7)",
-      "types": [
-        "기타(iH)"
-      ],
-      "location": "인천",
-      "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4226&bcd=notice&cate1=general&pgdiv=general",
-      "posted_date": "2026-03-25",
-      "crawled_at": "2026-03-25",
-      "needs_pdf": true
-    },
-    {
-      "id": "ihwc_455867e7",
-      "inst": "iH",
-      "source_key": "ihwc",
-      "title": "도화6-2BL 이편한세상 공공임대주택의 예비입주자 모집결과",
-      "types": [
-        "기타(iH)"
-      ],
-      "location": "인천",
-      "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4223&bcd=notice&cate1=general&pgdiv=general",
-      "posted_date": "2026-03-25",
-      "crawled_at": "2026-03-25",
-      "needs_pdf": true
-    },
-    {
-      "id": "ihwc_0c9ffc86",
-      "inst": "iH",
-      "source_key": "ihwc",
-      "title": "영구임대주택(선학) 예비자 모집결과 발표 및 계약체결 안내",
-      "types": [
-        "기타(iH)"
-      ],
-      "location": "인천",
-      "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4218&bcd=notice&cate1=general&pgdiv=general",
-      "posted_date": "2026-03-25",
-      "crawled_at": "2026-03-25",
-      "needs_pdf": true
-    },
-    {
-      "id": "ihwc_68f96ba0",
-      "inst": "iH",
-      "source_key": "ihwc",
-      "title": "영구임대주택(연수) 예비자 모집 결과 발표 및 계약체결 안내",
-      "types": [
-        "기타(iH)"
-      ],
-      "location": "인천",
-      "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4217&bcd=notice&cate1=general&pgdiv=general",
-      "posted_date": "2026-03-25",
-      "crawled_at": "2026-03-25",
-      "needs_pdf": true
-    },
-    {
-      "id": "ihwc_cf2e3d99",
-      "inst": "iH",
-      "source_key": "ihwc",
-      "title": "2026년 우리집 특화시설 운영자 모집공고(수시)",
-      "types": [
-        "기타(iH)"
-      ],
-      "location": "인천",
-      "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4199&bcd=notice&cate1=general&pgdiv=general",
-      "posted_date": "2026-03-25",
-      "crawled_at": "2026-03-25",
-      "needs_pdf": true
-    },
-    {
-      "id": "ihwc_40fdb395",
-      "inst": "iH",
-      "source_key": "ihwc",
-      "title": "임대아파트 단지내 상가 잔여분 선착순 모집 공고(선학, 청학, 화수2)",
-      "types": [
-        "기타(iH)"
-      ],
-      "location": "인천",
-      "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4193&bcd=notice&cate1=general&pgdiv=general",
       "posted_date": "2026-03-25",
       "crawled_at": "2026-03-25",
       "needs_pdf": true
