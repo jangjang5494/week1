@@ -280,7 +280,7 @@
     <a href="index.html" style="color:var(--primary-color,#4f46e5);font-weight:600;font-size:0.9rem;">← 홈으로</a>
     <div style="height:1rem;"></div>
     <h1 class="page-title">수도권 주거지원 통합 분석</h1>
-    <p class="page-subtitle">2026년 기준 · 임대주택(35) + 분양·청약(18) + 금융지원(5) + 주거복지(11) 총 69가지 유형 · 궁금한 항목은 <strong>상세보기</strong>를 눌러보세요</p>
+    <p class="page-subtitle">2026년 기준 · 임대주택(35) + 분양·청약(24) + 금융지원(5) + 주거복지(11) 총 75가지 유형 · 궁금한 항목은 <strong>상세보기</strong>를 눌러보세요</p>
 
     <!-- Step indicator -->
     <div class="steps" id="step-indicator">
@@ -2475,6 +2475,78 @@ function runAnalysis() {
         const eligible = age >= 19;
         const rank = eligible ? (homeless ? '무주택자' : '신청 가능') : '';
         add('도시형생활주택 청약', eligible, rank, '시세 100% (소형주택 분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+    }
+
+    // 청약홈 특별공급 — 상세 크롤링으로 파악된 공급유형 카드
+    // 분양 신혼특공
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (!isNewlywedStrict) r.push('혼인 7년 이내 신혼부부 또는 예비신혼부부 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        if (!under(130)) r.push('소득 도시근로자 130% 이하 필요');
+        const eligible = homeless && isNewlywedStrict && subCount >= 6 && under(130);
+        const rank = eligible ? (dualInc ? '맞벌이 (200% 이하)' : '외벌이 (130% 이하)') : '';
+        add('분양 신혼특공', eligible, rank, '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+    }
+
+    // 분양 생애최초
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (!lifeFirst) r.push('생애최초 주택 구입자 필요');
+        if (!taxPaid5yr) r.push('소득세 납부 이력 5년 필요');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        if (!under(130)) r.push('소득 도시근로자 130% 이하 필요');
+        const eligible = homeless && lifeFirst && taxPaid5yr && subCount >= 6 && under(130);
+        const rank = eligible ? '생애최초 (소득 130% 이하)' : '';
+        add('분양 생애최초', eligible, rank, '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+    }
+
+    // 분양 다자녀
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (childCnt < 2) r.push('미성년 자녀 2명 이상 필요 (3명 이상 우선)');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const eligible = homeless && childCnt >= 2 && subCount >= 6;
+        const rank = eligible ? (childCnt >= 3 ? '3명 이상 (우선순위)' : '2명') : '';
+        add('분양 다자녀', eligible, rank, '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+    }
+
+    // 분양 노부모부양
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (age < 35) r.push('만 35세 이상 필요 (일반적 기준)');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const eligible = homeless && age >= 35 && subCount >= 6;
+        const rank = eligible ? '노부모부양 (65세 이상 부모 3년 이상 부양)' : '';
+        add('분양 노부모부양', eligible, rank, '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+    }
+
+    // 분양 신생아특공
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (!infant) r.push('2세 이하 자녀 보유 필요 (입주자모집공고일 기준 2년 이내 출산)');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        if (!under(130)) r.push('소득 도시근로자 130% 이하 필요');
+        const eligible = homeless && infant && subCount >= 6 && under(130);
+        const rank = eligible ? '신생아특공 (2세 이하 자녀)' : '';
+        add('분양 신생아특공', eligible, rank, '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+    }
+
+    // 분양 청년특공 (나눔형 등)
+    {
+        const r = [];
+        if (!homeless) r.push('무주택 세대구성원 필요');
+        if (!isYouth) r.push('만 19~39세 청년 필요');
+        if (isMarried) r.push('미혼 청년 대상');
+        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
+        const eligible = homeless && isYouth && !isMarried && subCount >= 6;
+        const rank = eligible ? '청년특공 (미혼 청년)' : '';
+        add('분양 청년특공', eligible, rank, '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
     }
 
     // === 금융지원 ===

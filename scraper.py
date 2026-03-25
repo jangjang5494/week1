@@ -860,6 +860,32 @@ def _is_metro_or_national(region_text):
         return False
     return True  # 전국·전체·불명확 등 애매하면 통과
 
+def _parse_applyhome_supply_types(detail_html, base_type):
+    """청약홈 상세 페이지에서 공급유형별 세대수 파싱 → types 배열 반환
+    컬럼 순서: 다자녀(0) 신혼부부(1) 생애최초(2) 청년(3) 노부모부양(4) 신생아(5) ...
+    """
+    types = [base_type]
+    # trHshldco 이후 tbody 추출
+    m = re.search(r'id="trHshldco".*?<tbody>(.*?)</tbody>', detail_html, re.DOTALL)
+    if not m:
+        return types
+    col_sums = {}
+    col_map = {0: "분양 다자녀", 1: "분양 신혼특공", 2: "분양 생애최초",
+               3: "분양 청년특공", 4: "분양 노부모부양", 5: "분양 신생아특공"}
+    for tr in re.split(r"<tr[^>]*>", m.group(1))[1:]:
+        tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
+        for i, key in col_map.items():
+            if i < len(tds):
+                val = re.sub(r"<[^>]+>", "", tds[i]).strip()
+                try:
+                    col_sums[key] = col_sums.get(key, 0) + int(val)
+                except ValueError:
+                    pass
+    for key, total in col_sums.items():
+        if total > 0:
+            types.append(key)
+    return types
+
 def _parse_applyhome_period(text):
     """'2026-04-03 ~ 2026-04-06' 또는 '2026.04.03 ~ 2026.04.06' 형식 파싱"""
     m = re.search(r"(\d{4})[-.](\d{2})[-.](\d{2})\s*~\s*(\d{4})[-.](\d{2})[-.](\d{2})", text)
@@ -896,18 +922,20 @@ def crawl_applyhome_apt(initial=False):
             break
 
         found_any = False
-        for tr in rows:
-            tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
+        # data-pbno/data-hmno 포함 tr 파싱
+        tr_blocks = re.findall(
+            r'<tr\s+data-pbno="(\d+)"\s+data-hmno="(\d+)"[^>]*>(.*?)</tr>',
+            tbody_m.group(1), re.DOTALL
+        )
+        for pbno, hmno, tr_inner in tr_blocks:
+            tds = re.findall(r"<td[^>]*>(.*?)</td>", tr_inner, re.DOTALL)
             if len(tds) < 5:
                 continue
-            # 실제 컬럼: 지역(0) / 주택구분(1) / 분양구분(2) / 주택명+링크(3) / 청약기간(4~)
             region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
-            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()  # 민영/국민
-            # 주택명: tds[3]에서 <a> 태그 텍스트 우선
+            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
             link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[3], re.DOTALL)
             name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
                        else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
-            # 청약기간: ~ 포함된 날짜 범위 셀 탐색
             period_raw = ""
             for col_i in range(4, len(tds)):
                 c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
@@ -925,10 +953,15 @@ def crawl_applyhome_apt(initial=False):
             if apply_end and apply_end > future_limit:
                 continue
 
-            # 링크 추출
-            link_m = re.search(r'href="([^"]+)"', tds[3])
-            url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
-                  APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do"
+            # 상세 페이지 크롤링 → 공급유형 파악
+            detail_url = (f"{APPLYHOME_BASE}/ai/aia/selectAPTLttotPblancDetail.do"
+                          f"?pblancNo={pbno}&houseManageNo={hmno}")
+            detail_html = fetch(detail_url, extra_headers={
+                "Referer": APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do"
+            })
+            time.sleep(DETAIL_SLEEP)
+            base_type = detect_types_applyhome(name_raw, house_type)[0]
+            types = _parse_applyhome_supply_types(detail_html, base_type) if detail_html else [base_type]
 
             uid = name_raw + (apply_end.isoformat() if apply_end else "")
             ann = {
@@ -936,10 +969,10 @@ def crawl_applyhome_apt(initial=False):
                 "inst":        "청약홈",
                 "source_key":  "applyhome_apt",
                 "title":       name_raw,
-                "types":       detect_types_applyhome(name_raw, house_type),
+                "types":       types,
                 "location":    region,
                 "status":      status,
-                "url":         url,
+                "url":         detail_url,
                 "posted_date": today.isoformat(),
                 "crawled_at":  today.isoformat(),
             }
@@ -948,7 +981,8 @@ def crawl_applyhome_apt(initial=False):
                 ann["apply_end"]   = apply_end.isoformat()
             results.append(ann)
             found_any = True
-            print(f"    [{status}] {name_raw[:40]} [{region}]")
+            supply_info = ", ".join(types[1:]) if len(types) > 1 else "일반공급만"
+            print(f"    [{status}] {name_raw[:35]} [{region}] → {supply_info}")
 
         if not found_any and page > 1:
             break
