@@ -2641,6 +2641,101 @@ function runAnalysis() {
         add('신혼부부 버팀목 전세자금 대출', eligible, rank, '연 1.9~3.3% / 최대 2.5억', '최장 10년', 'newlywed', r, '주택도시기금', 'finance');
     }
 
+    // 버팀목전세자금 (일반)
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요');
+        const incLim = (childCnt >= 2 ? 6000 : isNewlywedStrict ? 7500 : 5000);
+        if (annualIncome > incLim) r.push(`연소득 ${incLim}만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        // 청년·신혼 전용상품이 더 유리하므로 해당자는 제외
+        const hasYouthProduct = isYouth && age <= 34;
+        let eligible = false, rank = '';
+        if (homeless && isHouseholdHead && annualIncome <= incLim && !hasYouthProduct) {
+            eligible = true;
+            rank = isNewlywedStrict ? '신혼 (수도권 2.5억, 금리 1.9~3.3%)' : childCnt >= 2 ? '다자녀 (수도권 2.5억)' : '일반 (수도권 1.2억)';
+        }
+        add('버팀목 전세자금 대출', eligible, rank, '연 2.5~3.5% / 수도권 1.2억', '최장 10년', 'loan', r, '주택도시기금', 'finance');
+    }
+
+    // 신생아특례 버팀목
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (!infant) r.push('2세 이하 자녀 보유 필요 (출산 2년 이내)');
+        if (!homeless) r.push('무주택 세대주 필요');
+        const incLim = dualInc ? 20000 : 13000;
+        if (annualIncome > incLim) r.push(`연소득 ${incLim}만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        let eligible = false, rank = '';
+        if (infant && homeless && annualIncome <= incLim) {
+            eligible = true; rank = dualInc ? '맞벌이 (2억 이하)' : '외벌이 (1.3억 이하)';
+        }
+        add('신생아특례 버팀목 전세자금 대출', eligible, rank, '연 1.3~4.3% / 최대 2.4억 (특례 4년)', '최장 12년', 'loan', r, '주택도시기금', 'finance');
+    }
+
+    // 청년전용 보증부월세대출
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (!isYouth || age > 34) r.push('만 19~34세 필요');
+        if (!homeless) r.push('무주택 필요');
+        if (annualIncome > 5000) r.push(`연소득 5,000만원 이하 필요`);
+        let eligible = false, rank = '';
+        if (isYouth && age <= 34 && homeless && annualIncome <= 5000) {
+            eligible = true; rank = '보증금 4,500만·월세금 1,200만 (월 0~1.3%)';
+        }
+        add('청년전용 보증부월세대출', eligible, rank, '월세금 연 0% (월 20만↓) · 보증금 연 1.3%', '최장 10년', 'loan', r, '주택도시기금', 'finance');
+    }
+
+    // 주거안정월세대출
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        const isSocialNewbie = (age <= 35 && annualIncome <= 4000);
+        const isGeneral = annualIncome <= 5000;
+        if (!homeless) r.push('무주택 필요');
+        if (!isSocialNewbie && !isGeneral) r.push('연소득 5,000만원 이하 필요');
+        let eligible = false, rank = '';
+        if (homeless && (isSocialNewbie || isGeneral)) {
+            eligible = true; rank = isSocialNewbie ? '우대형 연 1.3% (사회초년생·취준생)' : '일반형 연 1.8%';
+        }
+        add('주거안정월세대출', eligible, rank, '연 1.3~1.8% / 월 최대 60만원', '최장 10년 (생애 1회)', 'loan', r, '주택도시기금', 'finance');
+    }
+
+    // 청년 주택드림 디딤돌 대출
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (age > 39) r.push('청약 당첨 시 만 39세 이하 필요');
+        if (!homeless) r.push('무주택 세대주 필요');
+        const incLim = isNewlywedStrict ? 10000 : 7000;
+        if (annualIncome > incLim) r.push(`연소득 ${incLim}만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        r.push('청년 주택드림 청약통장 1년 이상·1천만원 이상 납입 필요');
+        let eligible = false, rank = '';
+        // 통장 조건은 별도 확인 필요하므로 소득/나이 조건만 체크
+        if (age <= 39 && homeless && annualIncome <= incLim) {
+            eligible = true; rank = isNewlywedStrict ? '신혼 최대 4억 (금리 2.4~4.15%)' : '미혼 최대 3억 (금리 2.4~4.15%)';
+            r.length = 0; r.push('청년 주택드림 통장 1년 이상·1천만원 이상 납입 조건 별도 확인');
+        }
+        add('청년 주택드림 디딤돌 대출', eligible, rank, '연 2.4~4.15% / 최대 3~4억', '최장 40년', 'loan', r, '주택도시기금', 'finance');
+    }
+
+    // 신혼부부전용 구입자금 (생애최초)
+    {
+        const r = [];
+        const annualIncome = monthlyIncome * 12;
+        if (!isNewlywedStrict) r.push('혼인 7년 이내 신혼부부·예비신혼 필요');
+        if (!homeless) r.push('무주택 세대주 필요');
+        if (!lifeFirst) r.push('생애최초 주택구입자 필요 (기금대출 이력 없음)');
+        if (annualIncome > 8500) r.push(`연소득 8,500만원 이하 필요`);
+        let eligible = false, rank = '';
+        if (isNewlywedStrict && homeless && lifeFirst && annualIncome <= 8500) {
+            eligible = true; rank = '신혼 생애최초 (LTV 80%, 금리 2.55~3.85%)';
+        }
+        add('신혼부부 구입자금 대출 (생애최초)', eligible, rank, '연 2.55~3.85% / 최대 3.2억', '최장 30년', 'newlywed', r, '주택도시기금', 'finance');
+    }
+
     // === 주거복지 ===
 
     // 주거급여
@@ -4071,6 +4166,370 @@ const typeDetailData = {
         </div>
         <a class="help-link" href="https://www.ih.co.kr" target="_blank">🔗 인천도시공사(iH)</a>`
     }
+};
+
+// ===== 주택도시기금 금융상품 상세 =====
+
+typeDetailData['디딤돌 대출 (주택구입)'] = {
+    title: '내집마련 디딤돌 대출',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>주택도시기금이 지원하는 <strong>저금리 주택 구입자금 대출</strong>입니다. 시중 금리보다 낮은 고정금리로 내 집 마련을 지원합니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>금리 (연소득별)</h4>
+        <ul>
+            <li>2천만원 이하: 연 <strong>2.85~3.10%</strong></li>
+            <li>2천~4천만원: 연 <strong>3.20~3.45%</strong></li>
+            <li>4천~7천만원: 연 <strong>3.55~3.80%</strong></li>
+            <li>7천~8,500만원(신혼): 연 <strong>3.90~4.15%</strong></li>
+            <li>우대금리: 신혼·생애최초 -0.2%p, 다자녀 -0.5~0.7%p, 한부모 -0.5%p</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>한도: 일반 <strong>2억</strong> / 생애최초 2.4억 / 신혼·2자녀 <strong>3.2억</strong></li>
+            <li>LTV: 70% (생애최초 80%)</li>
+            <li>기간: 10·15·20·30년 (거치 1년 가능)</li>
+            <li>대상 주택: 전용 85㎡ 이하, <strong>5억원 이하</strong> (신혼·2자녀 6억원)</li>
+            <li>중도상환수수료: 2026.12.31까지 면제</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건</h4>
+        <ul>
+            <li>무주택 세대주 (민법상 성년)</li>
+            <li>연소득: 일반 6천만원 이하 / 신혼 8,500만원 이하</li>
+            <li>순자산 5.11억원 이하</li>
+            <li>실거주의무: 1개월 내 전입 후 2년 이상 거주</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030101.jsp" target="_blank">🔗 주택도시기금 디딤돌 대출 안내</a>`
+};
+
+typeDetailData['신생아특례 디딤돌 대출'] = {
+    title: '신생아특례 디딤돌 대출',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>출산 가구를 위한 <strong>초저금리 구입자금 대출</strong>입니다. 2023.1.1 이후 출생아 기준 출산 후 2년 이내 신청 가능하며, 특례금리가 5년간 적용됩니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>특례금리 (5년간, 연소득별)</h4>
+        <ul>
+            <li>2천만원 이하: 연 <strong>1.80~2.05%</strong></li>
+            <li>4천~6천만원: 연 <strong>2.40~2.65%</strong></li>
+            <li>1억~1.3억: 연 <strong>3.20~3.50%</strong></li>
+            <li>맞벌이 1.7억~2억: 연 <strong>4.20~4.50%</strong></li>
+            <li>추가출산 자녀당 -0.2%p 우대 / 특례금리 5년 단위 연장 가능</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>한도: 최대 <strong>4억원</strong></li>
+            <li>LTV: 70% (생애최초 80%)</li>
+            <li>기간: 10·15·20·30년</li>
+            <li>대상 주택: 전용 85㎡ 이하, 담보평가액 <strong>9억원 이하</strong></li>
+            <li>중도상환수수료: 2026.12.31까지 면제</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건</h4>
+        <ul>
+            <li>대출접수일 기준 2년 내 출산 (무주택 또는 1주택 대환)</li>
+            <li>연소득: 1.3억원 이하 / 맞벌이 2억원 이하</li>
+            <li>순자산 5.11억원 이하</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030801.jsp" target="_blank">🔗 신생아특례 디딤돌 대출 안내</a>`
+};
+
+typeDetailData['청년 버팀목 전세자금 대출'] = {
+    title: '청년전용 버팀목 전세자금 대출',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>만 19~34세 청년을 위한 <strong>저금리 전세자금 대출</strong>입니다. 일반 버팀목보다 낮은 금리와 높은 한도를 제공합니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>금리 (연소득별)</h4>
+        <ul>
+            <li>2천만원 이하: 연 <strong>2.2%</strong></li>
+            <li>2천~4천만원: 연 <strong>2.5%</strong></li>
+            <li>4천~6천만원: 연 <strong>2.9%</strong></li>
+            <li>6천~7,500만원(신혼): 연 <strong>3.3%</strong></li>
+            <li>우대: 만 25세 미만 단독세대주 -0.3%p, 중소기업 재직 -0.3%p, 전자계약 -0.1%p</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>한도: 최대 <strong>1.5억원</strong> (만 25세 미만 단독세대주 1.2억원)</li>
+            <li>임차보증금의 80% 이내</li>
+            <li>기간: 2년 (최장 10년, 미성년 자녀당 +2년 최장 20년)</li>
+            <li>대상 주택: 전용 85㎡ 이하, 보증금 수도권 <strong>3억원 이하</strong></li>
+            <li>중도상환수수료 없음</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건</h4>
+        <ul>
+            <li>만 19~34세 세대주 (예비세대주 포함) · 무주택</li>
+            <li>연소득 5천만원 이하 (신혼 7,500만원)</li>
+            <li>순자산 3.45억원 이하</li>
+            <li>신청기한: 잔금지급일과 전입일 중 빠른 날로부터 3개월 이내</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020301.jsp" target="_blank">🔗 청년전용 버팀목 대출 안내</a>`
+};
+
+typeDetailData['신혼부부 버팀목 전세자금 대출'] = {
+    title: '신혼부부전용 버팀목 전세자금 대출',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>혼인 7년 이내 신혼부부·예비신혼부부를 위한 전세자금 대출입니다. 일반 버팀목보다 높은 한도와 낮은 금리를 제공합니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>금리 (부부합산 연소득별)</h4>
+        <ul>
+            <li>2천만원 이하 / 보증금 5천만원 이하: 연 <strong>1.9%</strong></li>
+            <li>4천~6천만원: 연 <strong>2.4~2.7%</strong></li>
+            <li>6천~7,500만원: 연 <strong>2.9~3.3%</strong></li>
+            <li>우대: 자녀 1명 -0.3%p, 2명 -0.5%p, 다자녀 -0.7%p</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>한도: 수도권 최대 <strong>2.5억원</strong> (임차보증금 80% 이내)</li>
+            <li>기간: 2년 (최장 10년, 자녀 있으면 최장 20년)</li>
+            <li>대상 주택: 전용 85㎡ 이하, 보증금 수도권 <strong>4억원 이하</strong></li>
+            <li>중도상환수수료 없음 / 기금e든든 비대면 신청 가능</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건</h4>
+        <ul>
+            <li>혼인기간 7년 이내 또는 3개월 이내 결혼예정자 · 무주택</li>
+            <li>부부합산 연소득 7,500만원 이하 / 순자산 3.45억원 이하</li>
+            <li>계약 후 3개월 이내 신청</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020401.jsp" target="_blank">🔗 신혼부부전용 버팀목 대출 안내</a>`
+};
+
+typeDetailData['버팀목 전세자금 대출'] = {
+    title: '버팀목 전세자금 대출 (일반)',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>무주택 세대주라면 누구나 신청 가능한 기본 전세자금 대출입니다. 다자녀·신혼 가구는 더 높은 한도가 적용됩니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>금리</h4>
+        <ul>
+            <li>기본금리: 연 <strong>2.5~3.5%</strong> (소득·보증금 규모별)</li>
+            <li>우대: 기초수급자 -1.0%p, 한부모 -1.0%p, 다자녀 -0.7%p, 2자녀 -0.5%p</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>한도: 수도권 <strong>1.2억원</strong> (신혼·2자녀 이상 2.5억원)</li>
+            <li>기간: 2년 (최장 10년)</li>
+            <li>대상 주택: 전용 85㎡ 이하, 보증금 수도권 <strong>3억원 이하</strong></li>
+            <li>중도상환수수료 없음</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건</h4>
+        <ul>
+            <li>무주택 세대주 (성년) · 순자산 3.45억원 이하</li>
+            <li>연소득: 일반 5천만원 / 2자녀 6천만원 / 신혼 7,500만원 이하</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020101.jsp" target="_blank">🔗 버팀목 전세자금 대출 안내</a>`
+};
+
+typeDetailData['신생아특례 버팀목 전세자금 대출'] = {
+    title: '신생아특례 버팀목 전세자금 대출',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>출산 가구를 위한 <strong>초저금리 전세자금 대출</strong>입니다. 특례금리가 기본 4년간 적용되며, 추가 출산 시 연장됩니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>특례금리 (4년간, 연소득별)</h4>
+        <ul>
+            <li>2천만원 이하 / 보증금 5천만원 이하: 연 <strong>1.3%</strong></li>
+            <li>4천~6천만원: 연 <strong>1.9~2.2%</strong></li>
+            <li>7,500만~1억원: 연 <strong>2.55%</strong></li>
+            <li>1억~1.3억원: 연 <strong>2.9%</strong></li>
+            <li>맞벌이 1.7억~2억: 연 <strong>4.0%</strong></li>
+            <li>추가출산 자녀당 -0.2%p / 전자계약 -0.1%p</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>한도: 최대 <strong>2.4억원</strong> (임차보증금 80% 이내)</li>
+            <li>기간: 기본 2년, 최장 <strong>12년</strong></li>
+            <li>중도상환수수료 없음 / 기금e든든 비대면 신청 가능</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건</h4>
+        <ul>
+            <li>대출접수일 기준 2년 내 출산 (2023.1.1 이후 출생아)</li>
+            <li>무주택 세대주 / 연소득 1.3억원 이하 (맞벌이 2억원)</li>
+            <li>순자산 3.45억원 이하</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05021401.jsp" target="_blank">🔗 신생아특례 버팀목 대출 안내</a>`
+};
+
+typeDetailData['청년전용 보증부월세대출'] = {
+    title: '청년전용 보증부월세대출',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>월세 사는 청년을 위한 특별 대출입니다. <strong>월세금을 월 20만원까지 0% 금리</strong>로 빌려주며, 보증금도 연 1.3%로 지원합니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>금리 및 한도</h4>
+        <ul>
+            <li>보증금 대출: 연 <strong>1.3%</strong> / 최대 <strong>4,500만원</strong></li>
+            <li>월세금 대출: 연 <strong>0%</strong> (월 20만원 이하) / 연 1.0% (초과분)</li>
+            <li>월세금 한도: 최대 <strong>1,200만원</strong> (24개월 기준, 월 50만원 이내)</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>기간: 25개월 만기 일시상환 (최장 10년 5개월)</li>
+            <li>대상 주택: 전용 <strong>60㎡ 이하</strong>, 보증금 6,500만원·월세 70만원 이하</li>
+            <li>중도상환수수료 없음 / 14일 내 계약 철회 가능</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건</h4>
+        <ul>
+            <li>만 19~34세 단독세대주 (예비세대주 포함) · 무주택</li>
+            <li>부부합산 연소득 5천만원 이하 / 순자산 3.45억원 이하</li>
+            <li>신청처: 우리·국민·신한은행</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020701.jsp" target="_blank">🔗 청년전용 보증부월세대출 안내</a>`
+};
+
+typeDetailData['주거안정월세대출'] = {
+    title: '주거안정월세대출',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>무주택 사회초년생·취업준비생의 월세를 지원하는 대출입니다. <strong>생애 1회</strong>만 이용 가능하며, 매달 임대인 계좌로 직접 지급됩니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>금리 및 한도</h4>
+        <ul>
+            <li>우대형 (취준생·사회초년생): 연 <strong>1.3%</strong></li>
+            <li>일반형: 연 <strong>1.8%</strong></li>
+            <li>한도: 최대 <strong>1,440만원</strong> (월 60만원 이내)</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>기간: 2년 (최장 10년) / 생애 1회만 이용</li>
+            <li>중도상환수수료 없음 / 매월 임대인 계좌로 자동 이체</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건</h4>
+        <ul>
+            <li>우대형: 만 35세 이하, 연소득 4천만원 이하 사회초년생·취업준비생</li>
+            <li>일반형: 연소득 5천만원 이하 무주택 세대주</li>
+            <li>순자산 3.45억원 이하</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020201.jsp" target="_blank">🔗 주거안정월세대출 안내</a>`
+};
+
+typeDetailData['청년 주택드림 디딤돌 대출'] = {
+    title: '청년 주택드림 디딤돌 대출',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>청년 주택드림 청약통장 가입자를 위한 <strong>저금리 구입자금 대출</strong>입니다. 일반 디딤돌보다 낮은 금리와 높은 한도를 제공합니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>금리 (연소득별)</h4>
+        <ul>
+            <li>2천만원 이하 (미혼): 연 <strong>2.40~2.70%</strong></li>
+            <li>2천~4천만원: 연 <strong>2.80~3.10%</strong></li>
+            <li>4천~7천만원: 연 <strong>3.20~3.50%</strong></li>
+            <li>신혼 7천~1억원: 연 <strong>3.55~4.15%</strong></li>
+            <li>우대: 결혼 -0.1%p, 첫째 출산 -0.5%p, 추가출산 -0.2%p</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>한도: 미혼 최대 <strong>3억원</strong> / 신혼 최대 <strong>4억원</strong></li>
+            <li>기간: 10·15·20·30년 (연소득 4천만원 이하는 40년 가능)</li>
+            <li>LTV 70% (생애최초 80%) / 중도상환수수료 면제(~2026.12.31)</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건 (핵심)</h4>
+        <ul>
+            <li>청약 당첨 시 만 39세 이하 · 무주택 세대주</li>
+            <li>연소득: 미혼 7천만원 / 신혼 1억원 이하</li>
+            <li>⭐ <strong>청년 주택드림 청약통장 1년 이상 가입 + 1천만원 이상 납입</strong></li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030901.jsp" target="_blank">🔗 청년 주택드림 디딤돌 안내</a>`
+};
+
+typeDetailData['신혼부부 구입자금 대출 (생애최초)'] = {
+    title: '신혼부부전용 구입자금 대출 (생애최초)',
+    body: `
+    <div class="help-section">
+        <h4>어떤 상품인가요?</h4>
+        <p>생애최초로 집을 사는 신혼부부를 위한 대출입니다. LTV 80%까지 가능하며 일반 디딤돌보다 낮은 금리를 제공합니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>금리 (부부합산 연소득별)</h4>
+        <ul>
+            <li>2천만원 이하: 연 <strong>2.55%</strong></li>
+            <li>2천~4천만원: 연 <strong>2.75%</strong></li>
+            <li>4천~7천만원: 연 <strong>3.25%</strong></li>
+            <li>7천~8,500만원: 연 <strong>3.85%</strong></li>
+            <li>우대: 자녀 1명 -0.3%p, 2명 -0.5%p, 다자녀 -0.7%p</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>대출 조건</h4>
+        <ul>
+            <li>한도: 최대 <strong>3.2억원</strong></li>
+            <li>LTV: <strong>80%</strong> (수도권·규제지역 70%)</li>
+            <li>기간: 10·15·20·30년 / 중도상환수수료 면제(~2026.12.31)</li>
+            <li>대상 주택: 전용 85㎡ 이하, <strong>6억원 이하</strong></li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>자격 요건</h4>
+        <ul>
+            <li>혼인 7년 이내 또는 3개월 이내 결혼예정 · 무주택 세대주</li>
+            <li>부부합산 연소득 8,500만원 이하 / 순자산 5.11억원 이하</li>
+            <li>⭐ <strong>생애최초 주택구입자 필수 (기금대출 이력 없어야 함)</strong></li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030601.jsp" target="_blank">🔗 신혼부부 구입자금 안내</a>`
 };
 
 // ===== 유형별 신청 가이드 =====
