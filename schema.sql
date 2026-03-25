@@ -858,45 +858,85 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 INSERT INTO programs (code, category, subcategory, program_type, institution, region, name, target_summary, is_central,
   eligibility, support_content, application_info, source_url) VALUES
 
--- 디딤돌 대출
+-- 내집마련 디딤돌대출 (2026년 기준: 금리 2.85~4.15%, 한도 일반2억/신혼3.2억, 주택가 5억이하)
 ('HF_DIDIMDOL', '금융지원', '구입자금', '디딤돌', '주택도시기금', '전국', '내집마련 디딤돌대출',
- '연소득 6천만원 이하 무주택 세대주', TRUE,
- '{"homeless_required":true,"is_household_head":true,"income_type":"절대금액(연소득)","income_abs":60000000,"income_abs_married":70000000,"asset_limit":null,"notes":["주택가액 5억이하","전용85㎡이하"]}',
- '{"loan_limit":300000000,"loan_pct":70,"interest_min":2.35,"interest_max":3.65,"period_years":30,"house_price_limit":500000000,"area_max_sqm":85}',
- '{"method":["은행방문"],"contact":"1599-0001","period_type":"수시","bank":["우리","국민","신한","하나","농협","기업"]}',
- 'https://www.myhome.go.kr'),
+ '연소득 6천만원(신혼 8.5천) 이하 무주택 세대주', TRUE,
+ '{"homeless_required":true,"is_household_head":true,"income_type":"절대금액(연소득)","income_abs":60000000,"income_abs_married":85000000,"asset_limit":511000000,"notes":["주택가액 5억이하(신혼6억)","전용85㎡이하","LTV 70%(생애최초80%)","중도상환수수료 2026.12.31까지 면제"]}',
+ '{"loan_limit":200000000,"loan_limit_newlywed":320000000,"loan_pct":70,"interest_min":2.85,"interest_max":4.15,"period_years":30,"house_price_limit":500000000,"area_max_sqm":85,"desc":"연 2.85~4.15% / 일반 2억·신혼 3.2억 (LTV 70%)"}',
+ '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","국민","신한","하나","농협","대구","부산"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030101.jsp'),
 
--- 신생아특례 디딤돌
+-- 신생아특례 디딤돌대출 (2026년 기준: 금리 1.80~4.50%, 한도 4억, 주택가 9억이하, 특례 5년)
 ('HF_DIDIMDOL_NEWBORN', '금융지원', '구입자금', '디딤돌', '주택도시기금', '전국', '신생아특례 디딤돌대출',
- '2년내 출산가구 연소득 1.3억 이하', TRUE,
- '{"income_type":"절대금액(연소득)","income_abs":130000000,"newborn_required":true,"notes":["출산일로부터 2년 이내","주택가액 9억이하"]}',
- '{"loan_limit":500000000,"loan_pct":70,"interest_min":1.6,"interest_max":3.3,"period_years":30,"house_price_limit":900000000}',
- '{"method":["은행방문"],"contact":"1599-0001","period_type":"수시"}',
- 'https://www.myhome.go.kr'),
+ '2년내 출산가구 연소득 1.3억(맞벌이2억) 이하 무주택', TRUE,
+ '{"income_type":"절대금액(연소득)","income_abs":130000000,"income_abs_married":200000000,"newborn_required":true,"homeless_required":true,"asset_limit":511000000,"notes":["출산일로부터 2년 이내","주택가액 9억이하","전용85㎡이하","특례금리 5년(추가출산시 연장)"]}',
+ '{"loan_limit":400000000,"loan_pct":70,"interest_min":1.80,"interest_max":4.50,"period_years":30,"house_price_limit":900000000,"desc":"연 1.80~4.50% / 최대 4억 (특례금리 5년)"}',
+ '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","신한","국민","농협","하나"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030801.jsp'),
 
--- 청년 버팀목 전세자금
+-- 청년전용 버팀목 전세자금 (2026년 기준: 금리 2.2~3.3%, 한도 1.5억, 보증금 3억이하)
 ('HF_YOUTH_BUTIMOK', '금융지원', '전세자금', '버팀목', '주택도시기금', '전국', '청년전용 버팀목 전세자금',
  '만19~34세 무주택 청년 연소득 5천만원 이하', TRUE,
- '{"age_min":19,"age_max":34,"homeless_required":true,"is_household_head":true,"income_type":"절대금액(연소득)","income_abs":50000000,"asset_limit":337000000,"notes":["보증금 3억이하","전용85㎡이하"]}',
- '{"loan_limit":200000000,"loan_pct":80,"interest_min":1.5,"interest_max":2.9,"period_years":10,"deposit_limit":300000000,"area_max_sqm":85}',
- '{"method":["은행방문"],"contact":"1599-0001","period_type":"수시"}',
- 'https://www.myhome.go.kr'),
+ '{"age_min":19,"age_max":34,"homeless_required":true,"is_household_head":true,"income_type":"절대금액(연소득)","income_abs":50000000,"asset_limit":345000000,"notes":["보증금 수도권 3억이하","전용85㎡이하","예비세대주 포함"]}',
+ '{"loan_limit":150000000,"loan_pct":80,"interest_min":2.2,"interest_max":3.3,"period_years":10,"deposit_limit":300000000,"area_max_sqm":85,"desc":"연 2.2~3.3% / 최대 1.5억 (임차보증금 80%)"}',
+ '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","국민","농협","신한","하나","대구","부산"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020301.jsp'),
 
--- 신혼부부 전세자금
-('HF_NEWLYWED_JEONSE', '금융지원', '전세자금', '버팀목', '주택도시기금', '전국', '신혼부부전용 전세자금대출',
+-- 신혼부부전용 버팀목 전세자금 (2026년 기준: 금리 1.9~3.3%, 한도 수도권 2.5억)
+('HF_NEWLYWED_JEONSE', '금융지원', '전세자금', '버팀목', '주택도시기금', '전국', '신혼부부전용 버팀목 전세자금',
  '혼인7년이내 신혼부부 연소득 7.5천만원 이하', TRUE,
- '{"marital_status":["신혼(7년이내)","예비신혼"],"homeless_required":true,"income_type":"절대금액(연소득)","income_abs":75000000,"asset_limit":337000000,"marriage_years_max":7}',
- '{"loan_limit":300000000,"loan_pct":80,"interest_min":1.2,"interest_max":2.4,"period_years":10,"deposit_limit":400000000}',
- '{"method":["은행방문"],"contact":"1599-0001","period_type":"수시"}',
- 'https://www.myhome.go.kr'),
+ '{"marital_status":["신혼(7년이내)","예비신혼"],"homeless_required":true,"income_type":"절대금액(연소득)","income_abs":75000000,"asset_limit":345000000,"marriage_years_max":7,"notes":["보증금 수도권 4억이하","전용85㎡이하"]}',
+ '{"loan_limit":250000000,"loan_pct":80,"interest_min":1.9,"interest_max":3.3,"period_years":10,"deposit_limit":400000000,"desc":"연 1.9~3.3% / 수도권 최대 2.5억 (임차보증금 80%)"}',
+ '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","국민","농협","신한","하나","대구","부산"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020401.jsp'),
 
--- 청년 보증부 월세대출
-('HF_YOUTH_MONTHLY', '금융지원', '월세자금', '버팀목', '주택도시기금', '전국', '청년 보증부 월세대출',
- '만19~34세 청년 연소득 5천만원 이하', TRUE,
- '{"age_min":19,"age_max":34,"homeless_required":true,"income_type":"절대금액(연소득)","income_abs":50000000,"asset_limit":null,"notes":["보증금 1억이하","월세 60만이하"]}',
- '{"loan_limit":21600000,"interest_min":1.0,"interest_max":2.0,"monthly_rent_limit":600000,"deposit_limit":100000000}',
- '{"method":["은행방문"],"contact":"1599-0001","period_type":"수시"}',
- 'https://www.myhome.go.kr');
+-- 청년전용 보증부월세대출 (월세금 연0%, 보증금 연1.3%)
+('HF_YOUTH_MONTHLY', '금융지원', '월세자금', '버팀목', '주택도시기금', '전국', '청년전용 보증부월세대출',
+ '만19~34세 청년 연소득 5천만원 이하 월세거주자', TRUE,
+ '{"age_min":19,"age_max":34,"homeless_required":true,"income_type":"절대금액(연소득)","income_abs":50000000,"asset_limit":345000000,"notes":["보증금 6,500만이하","월세 70만이하","전용60㎡이하","단독세대주"]}',
+ '{"deposit_loan_limit":45000000,"monthly_loan_limit":1200000,"interest_deposit":1.3,"interest_monthly_low":0.0,"interest_monthly_high":1.0,"monthly_rent_limit":500000,"desc":"월세금 연 0%(월20만↓)·보증금 연 1.3% / 보증금 최대 4,500만"}',
+ '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","국민","신한"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020701.jsp'),
+
+-- 버팀목 전세자금 대출 (일반, 연소득 5천만원 이하)
+('HF_BUTIMOK_GENERAL', '금융지원', '전세자금', '버팀목', '주택도시기금', '전국', '버팀목 전세자금 대출',
+ '연소득 5천만원(다자녀6천·신혼7.5천) 이하 무주택 세대주', TRUE,
+ '{"homeless_required":true,"is_household_head":true,"income_type":"절대금액(연소득)","income_abs":50000000,"income_abs_married":75000000,"asset_limit":345000000,"notes":["보증금 수도권 3억이하","전용85㎡이하"]}',
+ '{"loan_limit":120000000,"loan_limit_family":250000000,"loan_pct":80,"interest_min":2.5,"interest_max":3.5,"period_years":10,"deposit_limit":300000000,"desc":"연 2.5~3.5% / 수도권 1.2억(신혼·2자녀 2.5억)"}',
+ '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","국민","신한","하나","농협"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020101.jsp'),
+
+-- 신생아특례 버팀목 전세자금 (금리 1.3~4.3%, 한도 2.4억, 특례 4년)
+('HF_BUTIMOK_NEWBORN', '금융지원', '전세자금', '버팀목', '주택도시기금', '전국', '신생아특례 버팀목 전세자금',
+ '2년내 출산가구 연소득 1.3억(맞벌이2억) 이하 무주택', TRUE,
+ '{"newborn_required":true,"homeless_required":true,"income_type":"절대금액(연소득)","income_abs":130000000,"income_abs_married":200000000,"asset_limit":345000000,"notes":["특례금리 4년(추가출산시 연장)","최장 12년 이용 가능"]}',
+ '{"loan_limit":240000000,"loan_pct":80,"interest_min":1.3,"interest_max":4.3,"period_years":12,"desc":"연 1.3~4.3% / 최대 2.4억 (특례금리 4년)"}',
+ '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","신한","국민","농협","하나"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05021401.jsp'),
+
+-- 주거안정월세대출 (사회초년생·취준생 월세, 연 1.3~1.8%, 생애 1회)
+('HF_MONTHLY_STABILITY', '금융지원', '월세자금', '월세대출', '주택도시기금', '전국', '주거안정월세대출',
+ '무주택 사회초년생·취업준비생 연소득 5천만원 이하', TRUE,
+ '{"homeless_required":true,"income_type":"절대금액(연소득)","income_abs":50000000,"asset_limit":345000000,"notes":["생애 1회","우대형: 만35세이하 연소득4천이하 사회초년생","매월 임대인 직접 지급"]}',
+ '{"loan_limit":14400000,"interest_min":1.3,"interest_max":1.8,"monthly_limit":600000,"period_years":10,"desc":"연 1.3~1.8% / 월 최대 60만원 (생애 1회)"}',
+ '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","신한","국민","농협","하나"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020201.jsp'),
+
+-- 청년 주택드림 디딤돌 대출 (청약통장 1천만원 이상, 금리 2.4~4.15%)
+('HF_YOUTH_DREAM_DIDIMDOL', '금융지원', '구입자금', '디딤돌', '주택도시기금', '전국', '청년 주택드림 디딤돌 대출',
+ '만39세이하 청약당첨자, 청년주택드림통장 1년+1천만원 이상', TRUE,
+ '{"age_max":39,"homeless_required":true,"income_type":"절대금액(연소득)","income_abs":70000000,"income_abs_married":100000000,"asset_limit":511000000,"notes":["청년주택드림 청약통장 1년이상+1천만이상 납입 필수","LTV 70%(생애최초80%)","중도상환수수료 면제(~2026.12.31)"]}',
+ '{"loan_limit":300000000,"loan_limit_newlywed":400000000,"loan_pct":70,"interest_min":2.4,"interest_max":4.15,"period_years":40,"desc":"연 2.4~4.15% / 미혼 3억·신혼 4억 (최장 40년)"}',
+ '{"method":["은행방문"],"url":"https://nhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","신한","국민","농협","하나"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030901.jsp'),
+
+-- 신혼부부전용 구입자금 대출 (생애최초, LTV 80%, 금리 2.55~3.85%)
+('HF_NEWLYWED_PURCHASE', '금융지원', '구입자금', '디딤돌', '주택도시기금', '전국', '신혼부부 구입자금 (생애최초)',
+ '신혼부부 생애최초 주택구입자 연소득 8.5천만원 이하', TRUE,
+ '{"marital_status":["신혼(7년이내)","예비신혼"],"homeless_required":true,"income_type":"절대금액(연소득)","income_abs":85000000,"asset_limit":511000000,"life_first_required":true,"notes":["생애최초 주택구입자 필수","주택가액 6억이하","전용85㎡이하","LTV 80%(수도권규제지역70%)"]}',
+ '{"loan_limit":320000000,"loan_pct":80,"interest_min":2.55,"interest_max":3.85,"period_years":30,"house_price_limit":600000000,"desc":"연 2.55~3.85% / 최대 3.2억 (LTV 80%, 생애최초)"}',
+ '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","국민","농협","신한","하나","대구","부산"]}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030601.jsp');
 
 
 -- ── 주거비지원 ───────────────────────────────────────────────
