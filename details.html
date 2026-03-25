@@ -889,20 +889,22 @@ document.getElementById('district-city').addEventListener('change', function() {
     }
 });
 
-// ===== 공고 데이터 로딩 =====
+// ===== Supabase 프로그램 데이터 로딩 =====
+const SB_URL = 'https://ajgurlfgifvicvxsxzqh.supabase.co';
+const SB_KEY = 'sb_publishable_VWYME33r2PPoiBgyA5Zsxw_6bW7Hh_5';
+
+// ===== 공고 데이터 로딩 (Supabase) =====
 let announcementsData = [];
-fetch('announcements.json')
-    .then(r => r.ok ? r.json() : null)
-    .then(json => { if (json) announcementsData = json.announcements || []; })
+fetch(`${SB_URL}/rest/v1/announcements?status=neq.마감&raw_data->>source_key=not.is.null&select=title,institution,types,url,status,apply_start,apply_end&order=apply_start.asc`, {
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+})
+    .then(r => r.ok ? r.json() : [])
+    .then(data => { announcementsData = data || []; })
     .catch(() => {});
 
 function getMatchingAnnouncements(typeName) {
     return announcementsData.filter(a => a.types && a.types.includes(typeName));
 }
-
-// ===== Supabase 프로그램 데이터 로딩 =====
-const SB_URL = 'https://ajgurlfgifvicvxsxzqh.supabase.co';
-const SB_KEY = 'sb_publishable_VWYME33r2PPoiBgyA5Zsxw_6bW7Hh_5';
 let sbPrograms = [];
 let sbExceptions = [];  // PDF 파싱으로 등록된 예외공고
 
