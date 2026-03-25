@@ -1,7 +1,7 @@
 {
   "updated": "2026-03-25",
-  "count": 26,
-  "needs_review_count": 7,
+  "count": 36,
+  "needs_review_count": 16,
   "announcements": [
     {
       "id": "lh_rental_ae7387e2",
@@ -65,6 +65,97 @@
       "needs_pdf": true
     },
     {
+      "id": "sh_rental_3ad917cc",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[청년형] 특화형 매입임대주택(서초구) 입주자 모집 공고(운영기관 : 한지붕 협동조합)",
+      "types": [
+        "일반 매입임대주택"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301838&multi_itm_seq=2",
+      "posted_date": "2026-03-19",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_rental_31f662f1",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "2026년 상반기 신혼·신생아 매입임대주택Ⅰ 입주대기자 모집공고(2026.03.18.)",
+      "types": [
+        "신혼·신생아 매입임대 Ⅰ형"
+      ],
+      "location": "서울",
+      "status": "예정",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301742&multi_itm_seq=2",
+      "posted_date": "2026-03-18",
+      "crawled_at": "2026-03-25",
+      "apply_start": "2026-04-07",
+      "apply_end": "2026-04-10"
+    },
+    {
+      "id": "sh_rental_050d32c1",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[토지지원 사회주택] 유니버설디자인하우스 망우 입주자 모집공고",
+      "types": [
+        "기타"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301783&multi_itm_seq=2",
+      "posted_date": "2026-03-17",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_rental_2865309d",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[토지지원 사회주택] 경성리츠 입주자 모집 공고",
+      "types": [
+        "기타"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301734&multi_itm_seq=2",
+      "posted_date": "2026-03-16",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_rental_b6691904",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "2026년 창동 아우르네빌리지 예비입주자 모집공고(일자리연계형 지원주택, 2026.03.10.공고)",
+      "types": [
+        "기타"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301406&multi_itm_seq=2",
+      "posted_date": "2026-03-10",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_rental_1655d416",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[청년형] 특화형 매입임대주택(강동구) 입주자 모집 공고(운영기관 : 협동조합 큰바위얼굴)",
+      "types": [
+        "일반 매입임대주택"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301327&multi_itm_seq=2",
+      "posted_date": "2026-03-09",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
       "id": "sh_sale_300579d8",
       "inst": "SH",
       "source_key": "sh_sale",
@@ -80,47 +171,107 @@
       "needs_pdf": true
     },
     {
-      "id": "sh_sale_e37592ab",
+      "id": "sh_notice_f8f3feed",
       "inst": "SH",
-      "source_key": "sh_sale",
-      "title": "마곡지구 17단지 토지임대부 분양주택 입주자모집공고",
+      "source_key": "sh_notice",
+      "title": "은평구 신혼부부(수요자 맞춤형)공공주택 입주자 추가모집 공고",
       "types": [
         "기타"
       ],
       "location": "서울",
       "status": "needs_review",
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301076&multi_itm_seq=1",
-      "posted_date": "2026-02-27",
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/view.do?seq=301832&multi_itm_seq=1,2,4,8,16,32,64,128,256,512",
+      "posted_date": "2026-03-16",
       "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
     {
-      "id": "ih_rental_e546594a",
+      "id": "ihwc_af8f7b3f",
       "inst": "iH",
-      "source_key": "ih_rental",
+      "source_key": "ihwc",
       "title": "2026년 인천도시공사(iH) 기존주택 전세임대 예비입주자 모집공고",
       "types": [
         "기타(iH)"
       ],
       "location": "인천",
       "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245",
-      "posted_date": "2026-03-18",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-25",
       "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
     {
-      "id": "ih_rental_fd45ebc1",
+      "id": "ihwc_ab273319",
       "inst": "iH",
-      "source_key": "ih_rental",
+      "source_key": "ihwc",
       "title": "2026년 천원주택(전세임대주택) 예비입주자 모집공고",
       "types": [
         "기타(iH)"
       ],
       "location": "인천",
       "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4234",
-      "posted_date": "2026-02-27",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4234&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_f7e2281c",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "『인천 도화6-2BL e-편한세상 공공임대주택(10년) 예비입주자 모집 공고』의 1순위 청약접수 마감안내",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4155&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_92ef3c39",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "도화 6-2BL 공공임대주택 예비입주자 모집 공고",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4140&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_bd859e48",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "우리집 영구임대주택(만석·만석2·만석3, 남촌, 덕적, 청천) 예비입주자 모집 공고",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4121&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
+      "id": "ihwc_d64769d5",
+      "inst": "iH",
+      "source_key": "ihwc",
+      "title": "영구임대주택(선학, 연수, 구월7단지, 더샵부평) 예비입주자 모집 공고",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4120&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-25",
       "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
@@ -261,6 +412,38 @@
       "apply_end": "2026-03-26"
     },
     {
+      "id": "applyhome_remndr_28b68889",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "덕명건설 주식회사 (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "서울",
+      "status": "예정",
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
+      "apply_start": "2026-03-30",
+      "apply_end": "2026-03-31"
+    },
+    {
+      "id": "applyhome_remndr_7bbd4613",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "상록지구주택재개발정비사업조합 (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "경기",
+      "status": "예정",
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
+      "apply_start": "2026-03-30",
+      "apply_end": "2026-03-31"
+    },
+    {
       "id": "applyhome_remndr_bc447287",
       "inst": "청약홈",
       "source_key": "applyhome_remndr",
@@ -355,38 +538,6 @@
       "crawled_at": "2026-03-25",
       "apply_start": "2026-03-30",
       "apply_end": "2026-03-30"
-    },
-    {
-      "id": "applyhome_remndr_2228e29d",
-      "inst": "청약홈",
-      "source_key": "applyhome_remndr",
-      "title": "송림6구역재개발정비사업조합 (잔여세대)",
-      "types": [
-        "민간분양 (아파트)"
-      ],
-      "location": "인천",
-      "status": "진행중",
-      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-25",
-      "crawled_at": "2026-03-25",
-      "apply_start": "2026-03-25",
-      "apply_end": "2026-03-31"
-    },
-    {
-      "id": "applyhome_remndr_e2c792d3",
-      "inst": "청약홈",
-      "source_key": "applyhome_remndr",
-      "title": "디비토건 주식회사,디비하우징 주식회사,디비종합개발 주식회사 (잔여세대)",
-      "types": [
-        "민간분양 (아파트)"
-      ],
-      "location": "경기",
-      "status": "진행중",
-      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-25",
-      "crawled_at": "2026-03-25",
-      "apply_start": "2026-03-25",
-      "apply_end": "2026-03-26"
     },
     {
       "id": "applyhome_other_7a1ba887",
