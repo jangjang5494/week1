@@ -1,7 +1,7 @@
 {
-  "updated": "2026-03-24",
-  "count": 25,
-  "needs_review_count": 7,
+  "updated": "2026-03-25",
+  "count": 24,
+  "needs_review_count": 6,
   "announcements": [
     {
       "id": "lh_rental_ae7387e2",
@@ -15,7 +15,7 @@
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "crawled_at": "2026-03-25",
       "apply_end": "2026-04-09",
       "apply_start": "2026-03-24"
     },
@@ -31,7 +31,7 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301840&multi_itm_seq=2",
       "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
     {
@@ -46,7 +46,7 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302027&multi_itm_seq=2",
       "posted_date": "2026-03-20",
-      "crawled_at": "2026-03-24",
+      "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
     {
@@ -61,7 +61,7 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=301949&multi_itm_seq=2",
       "posted_date": "2026-03-20",
-      "crawled_at": "2026-03-24",
+      "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
     {
@@ -76,7 +76,7 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301479&multi_itm_seq=1",
       "posted_date": "2026-03-10",
-      "crawled_at": "2026-03-24",
+      "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
     {
@@ -91,37 +91,22 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301076&multi_itm_seq=1",
       "posted_date": "2026-02-27",
-      "crawled_at": "2026-03-24",
+      "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
     {
-      "id": "ih_rental_e546594a",
+      "id": "ihwc_af8f7b3f",
       "inst": "iH",
-      "source_key": "ih_rental",
+      "source_key": "ihwc",
       "title": "2026년 인천도시공사(iH) 기존주택 전세임대 예비입주자 모집공고",
       "types": [
         "기타(iH)"
       ],
       "location": "인천",
       "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245",
-      "posted_date": "2026-03-18",
-      "crawled_at": "2026-03-24",
-      "needs_pdf": true
-    },
-    {
-      "id": "ih_rental_fd45ebc1",
-      "inst": "iH",
-      "source_key": "ih_rental",
-      "title": "2026년 천원주택(전세임대주택) 예비입주자 모집공고",
-      "types": [
-        "기타(iH)"
-      ],
-      "location": "인천",
-      "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4234",
-      "posted_date": "2026-02-27",
-      "crawled_at": "2026-03-24",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245&bcd=notice&cate1=general&pgdiv=general",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
     {
@@ -136,7 +121,7 @@
       "status": "진행중",
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6471",
       "posted_date": "2026-03-19",
-      "crawled_at": "2026-03-24",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-19",
       "apply_end": "2026-03-25"
     },
@@ -151,8 +136,8 @@
       "location": "서울",
       "status": "예정",
       "url": "https://www.applyhome.co.kr#b",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-30",
       "apply_end": "2026-04-02"
     },
@@ -167,8 +152,8 @@
       "location": "서울",
       "status": "예정",
       "url": "https://www.applyhome.co.kr#b",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-31",
       "apply_end": "2026-04-03"
     },
@@ -183,8 +168,8 @@
       "location": "인천",
       "status": "예정",
       "url": "https://www.applyhome.co.kr#b",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-30",
       "apply_end": "2026-04-01"
     },
@@ -199,8 +184,8 @@
       "location": "경기",
       "status": "진행중",
       "url": "https://www.applyhome.co.kr#b",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-23",
       "apply_end": "2026-03-25"
     },
@@ -215,8 +200,8 @@
       "location": "경기",
       "status": "진행중",
       "url": "https://www.applyhome.co.kr#b",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-23",
       "apply_end": "2026-03-25"
     },
@@ -231,8 +216,8 @@
       "location": "서울",
       "status": "진행중",
       "url": "https://www.applyhome.co.kr#b",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-23",
       "apply_end": "2026-03-26"
     },
@@ -247,8 +232,8 @@
       "location": "경기",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-30",
       "apply_end": "2026-03-30"
     },
@@ -263,8 +248,8 @@
       "location": "인천",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-27",
       "apply_end": "2026-03-27"
     },
@@ -279,8 +264,8 @@
       "location": "인천",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-30",
       "apply_end": "2026-03-30"
     },
@@ -295,8 +280,8 @@
       "location": "경기",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-02"
     },
@@ -311,8 +296,8 @@
       "location": "서울",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-30",
       "apply_end": "2026-03-30"
     },
@@ -327,8 +312,8 @@
       "location": "경기",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-30",
       "apply_end": "2026-03-30"
     },
@@ -341,10 +326,10 @@
         "민간분양 (아파트)"
       ],
       "location": "인천",
-      "status": "예정",
+      "status": "진행중",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-25",
       "apply_end": "2026-03-31"
     },
@@ -357,10 +342,10 @@
         "민간분양 (아파트)"
       ],
       "location": "경기",
-      "status": "예정",
+      "status": "진행중",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-25",
       "apply_end": "2026-03-26"
     },
@@ -375,8 +360,8 @@
       "location": "서울",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-30",
       "apply_end": "2026-03-30"
     },
@@ -389,10 +374,10 @@
         "오피스텔 청약"
       ],
       "location": "서울",
-      "status": "예정",
+      "status": "진행중",
       "url": "https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do",
-      "posted_date": "2026-03-24",
-      "crawled_at": "2026-03-24",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
       "apply_start": "2026-03-25",
       "apply_end": "2026-03-27"
     }
