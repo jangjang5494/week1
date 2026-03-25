@@ -750,6 +750,13 @@
         <div class="collapsible-body collapsed" id="ineligible-body">
             <div class="result-grid" id="grid-ineligible"></div>
         </div>
+        <!-- 기타 공고 (유형 미분류) -->
+        <div id="etc-section" style="display:none">
+            <div class="section-title">📋 기타 공고 <span class="count-badge" id="count-etc">0</span></div>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">자격 분석 유형에 포함되지 않는 공고입니다. 직접 확인해보세요.</p>
+            <div class="result-grid" id="grid-etc"></div>
+        </div>
+
         <div class="notice-box">
             ⚠ 본 분석은 2026년 기준 참고용이며 실제 신청 전 공고문 원문을 반드시 확인하세요.<br>
             SH <strong>1600-3456</strong> · LH <strong>1600-1004</strong> · GH <strong>031-250-7100</strong> · iH <strong>032-120</strong> · 주택도시기금 <strong>1599-0001</strong>
@@ -2841,6 +2848,48 @@ function runAnalysis() {
     // 신청가능 카드 저장 후 필터 렌더링
     _allEligibleCards = eligible.map(r => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true) }));
     filterResults('ALL');
+
+    // 기타 공고 (알려진 유형에 매칭 안 되는 공고)
+    {
+        const knownTypes = new Set(results.map(r => r.name));
+        const etcList = announcementsData.filter(a =>
+            !a.types || a.types.length === 0 || a.types.every(t => !knownTypes.has(t))
+        );
+        const etcSection = document.getElementById('etc-section');
+        document.getElementById('count-etc').textContent = etcList.length;
+        if (etcList.length > 0) {
+            etcSection.style.display = '';
+            const etcInstMap = {
+                'SH': '<span class="inst-badge inst-sh">SH</span>',
+                'LH': '<span class="inst-badge inst-lh">LH</span>',
+                'iH': '<span class="inst-badge inst-ih">iH</span>',
+                'GH': '<span class="inst-badge inst-gh">GH</span>',
+                '청약홈': '<span class="inst-badge inst-private">청약홈</span>',
+            };
+            document.getElementById('grid-etc').innerHTML = etcList.map(a => {
+                const title = a.title.length > 50 ? a.title.slice(0, 50) + '…' : a.title;
+                const types = Array.isArray(a.types) ? a.types.join(' · ') : (a.types || '');
+                const badge = etcInstMap[a.institution] || `<span class="inst-badge inst-gov">${a.institution||'기타'}</span>`;
+                const statusLabel = {'진행중':'진행중','예정':'예정'}[a.status] || '확인필요';
+                const rankCls = a.status === '진행중' ? 'rank-1' : a.status === '예정' ? 'rank-2' : 'rank-na';
+                const period = (a.apply_start && a.apply_end)
+                    ? `<div class="announce-period">신청기간: ${a.apply_start} ~ ${a.apply_end}</div>` : '';
+                return `<div class="result-card" data-inst="${a.institution||''}" data-cat-group="etc">
+                    <div class="result-card-header">
+                        <div class="result-card-name">${badge}${title}</div>
+                        <span class="rank-badge ${rankCls}">${statusLabel}</span>
+                    </div>
+                    ${types ? `<div class="result-tags"><span class="result-tag">${types}</span></div>` : ''}
+                    ${period}
+                    <div class="card-btn-row">
+                        <a class="type-detail-btn" href="${a.url}" target="_blank" style="text-decoration:none">🔗 공고 바로가기</a>
+                    </div>
+                </div>`;
+            }).join('');
+        } else {
+            etcSection.style.display = 'none';
+        }
+    }
 
     // 미충족 카드 렌더링 (접힌 상태로)
     document.getElementById('grid-ineligible').innerHTML = ineligible.map(r=>card(r,false)).join('');
