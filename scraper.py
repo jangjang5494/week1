@@ -182,7 +182,12 @@ RECRUIT_INCLUDE = ["모집공고", "입주자모집", "모집 공고", "공급�
 RECRUIT_EXCLUDE = ["당첨자", "예비자 발표", "예비자 계약", "재계약", "결과발표",
                    "채용", "입찰", "입주안내", "동호추첨", "서류심사대상자",
                    "청약접수결과", "심사결과", "취소", "철회", "계약결과",
-                   "입주대상자 발표", "연장공고"]
+                   "입주대상자 발표", "연장공고",
+                   "모집결과", "모집 결과",           # 예비자 모집결과 발표·계약 안내
+                   "상가",                            # 단지 내 상가 입점자 모집
+                   "업무시설",                        # 오피스·업무시설 임대
+                   "운영자 모집",                     # 특화시설 운영자 모집
+                   ]
 
 def is_recruitment(title):
     if any(e in title for e in RECRUIT_EXCLUDE):
@@ -1201,6 +1206,21 @@ def save_to_supabase(announcements):
             "apply_end":   a.get("apply_end") or None,
             "raw_data":    {"source_key": a.get("source_key", "")},
         })
+
+    # 만료 공고 삭제 (apply_end 지난 것)
+    today_str = date.today().isoformat()
+    cleanup_url = f"{sb_url}/rest/v1/announcements?apply_end=lt.{today_str}&apply_end=not.is.null"
+    cleanup_headers = {
+        "apikey":        sb_key,
+        "Authorization": f"Bearer {sb_key}",
+        "Content-Type":  "application/json",
+    }
+    try:
+        req = urllib.request.Request(cleanup_url, headers=cleanup_headers, method="DELETE")
+        urllib.request.urlopen(req, timeout=30)
+        print(f"  [Supabase] 만료 공고 삭제 완료 (apply_end < {today_str})")
+    except Exception as e:
+        print(f"  [Supabase] 만료 공고 삭제 오류: {e}")
 
     # 배치 upsert (100개씩) — on_conflict 명시 필요
     endpoint = f"{sb_url}/rest/v1/announcements?on_conflict=institution,seq"
