@@ -207,6 +207,21 @@
         .inst-gov { background: #f1f5f9; color: #374151; } /* 국토부·지자체 */
         .inst-private { background: #fef3c7; color: #92400e; } /* 청약홈·민간 */
 
+        /* ===== 결과 3단계 탭 ===== */
+        .result-tabs { display: flex; gap: 0.5rem; margin: 0.75rem 0; }
+        .result-tab {
+            flex: 1; padding: 0.65rem 0.4rem; border: 2px solid var(--input-border, #e5e7eb);
+            border-radius: 14px; cursor: pointer; background: var(--card-bg, #fff);
+            font-size: 0.8rem; font-weight: 700; text-align: center; transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+        }
+        .result-tab:hover { border-color: var(--primary-color, #4f46e5); }
+        .result-tab .tab-sub { font-size: 0.67rem; font-weight: 400; opacity: 0.75; }
+        .result-tab[data-rtab="active"].active  { background: #059669; border-color: #059669; color: #fff; }
+        .result-tab[data-rtab="inactive"].active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+        .result-tab[data-rtab="ineligible"].active { background: #6b7280; border-color: #6b7280; color: #fff; }
+        .result-tab.active .count-badge { background: rgba(255,255,255,0.28); color: #fff; }
+
         /* ===== 기관별 필터 탭 ===== */
         .filter-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
         .filter-tab {
@@ -739,17 +754,35 @@
             <button class="filter-tab" data-inst="iH" onclick="filterResults('iH')"><span class="inst-badge inst-ih" style="margin-right:0.2rem;">iH</span>인천</button>
         </div>
 
-        <div class="section-title">✅ 신청 가능 유형 <span class="count-badge" id="count-eligible">0</span></div>
-        <div class="result-grid" id="grid-eligible"></div>
-
-        <!-- 미충족 섹션 (접기/펼치기) -->
-        <div class="section-title collapsible-header" id="ineligible-header" onclick="toggleIneligible()">
-            <span>❌ 조건 미충족 유형 <span class="count-badge" id="count-ineligible">0</span></span>
-            <span class="collapsible-arrow" id="ineligible-arrow">▼</span>
+        <!-- 결과 3단계 탭 -->
+        <div class="result-tabs">
+            <button class="result-tab active" data-rtab="active" onclick="switchResultTab('active')">
+                🟢 신청 가능
+                <span class="tab-sub">현재 모집중</span>
+                <span class="count-badge" id="rt-count-active">0</span>
+            </button>
+            <button class="result-tab" data-rtab="inactive" onclick="switchResultTab('inactive')">
+                🔵 신청 가능
+                <span class="tab-sub">현재 모집없음</span>
+                <span class="count-badge" id="rt-count-inactive">0</span>
+            </button>
+            <button class="result-tab" data-rtab="ineligible" onclick="switchResultTab('ineligible')">
+                ⬜ 조건미충족
+                <span class="tab-sub">&nbsp;</span>
+                <span class="count-badge" id="rt-count-ineligible">0</span>
+            </button>
         </div>
-        <div class="collapsible-body collapsed" id="ineligible-body">
+
+        <div id="rt-panel-active">
+            <div class="result-grid" id="grid-active"></div>
+        </div>
+        <div id="rt-panel-inactive" style="display:none">
+            <div class="result-grid" id="grid-inactive"></div>
+        </div>
+        <div id="rt-panel-ineligible" style="display:none">
             <div class="result-grid" id="grid-ineligible"></div>
         </div>
+
         <!-- 기타 공고 (유형 미분류) -->
         <div id="etc-section" style="display:none">
             <div class="section-title">📋 기타 공고 <span class="count-badge" id="count-etc">0</span></div>
@@ -801,24 +834,18 @@
     }
 })();
 
-// ===== 미충족 섹션 토글 =====
-function toggleIneligible() {
-    const body = document.getElementById('ineligible-body');
-    const arrow = document.getElementById('ineligible-arrow');
-    const collapsed = body.classList.contains('collapsed');
-    if (collapsed) {
-        body.style.maxHeight = '9999px';
-        body.classList.remove('collapsed');
-        arrow.classList.add('open');
-    } else {
-        body.style.maxHeight = '0';
-        body.classList.add('collapsed');
-        arrow.classList.remove('open');
-    }
+// ===== 결과 3단계 탭 전환 =====
+let _currentResultTab = 'active';
+function switchResultTab(tab) {
+    _currentResultTab = tab;
+    document.querySelectorAll('.result-tab').forEach(t => t.classList.toggle('active', t.dataset.rtab === tab));
+    ['active','inactive','ineligible'].forEach(t => {
+        document.getElementById(`rt-panel-${t}`).style.display = t === tab ? '' : 'none';
+    });
 }
 
-// ===== 기관별 필터 =====
-let _allEligibleCards = [];
+// ===== 기관별 / 카테고리 필터 =====
+let _activeCards = [], _inactiveCards = [], _ineligibleCards = [];
 let _currentFilter = 'ALL';
 let _currentCatFilter = 'ALL';
 function filterResults(inst) {
@@ -826,25 +853,28 @@ function filterResults(inst) {
     document.querySelectorAll('#filter-tabs .filter-tab').forEach(t => {
         t.classList.toggle('active', t.dataset.inst === inst);
     });
-    const grid = document.getElementById('grid-eligible');
-    const visible = _allEligibleCards.filter(c => {
-        const instMatch = inst === 'ALL' || c.inst === inst;
-        const catMatch = _currentCatFilter === 'ALL' || c.catGroup === _currentCatFilter;
-        return instMatch && catMatch;
-    });
-    document.getElementById('count-eligible').textContent = visible.length;
-    document.getElementById('eligible-count-badge').textContent = `신청 가능 유형 ${visible.length}가지` + (inst !== 'ALL' ? ` (${inst})` : '');
-    grid.innerHTML = visible.length
-        ? visible.map(c => c.html).join('')
-        : `<div class="result-card ineligible"><div class="result-card-name">해당 조건의 신청 가능한 유형이 없습니다.</div></div>`;
-    // 미충족 카드도 같은 필터 적용
-    document.querySelectorAll('.result-card.ineligible').forEach(el => {
-        const inst_ = el.dataset.inst || '';
-        const cat_ = el.dataset.catGroup || '';
-        const instMatch = inst === 'ALL' || inst_ === inst;
-        const catMatch = _currentCatFilter === 'ALL' || cat_ === _currentCatFilter;
-        el.style.display = (instMatch && catMatch) ? '' : 'none';
-    });
+    function applyFilter(cards) {
+        return cards.filter(c => {
+            const instMatch = inst === 'ALL' || c.inst === inst;
+            const catMatch = _currentCatFilter === 'ALL' || c.catGroup === _currentCatFilter;
+            return instMatch && catMatch;
+        });
+    }
+    const visActive     = applyFilter(_activeCards);
+    const visInactive   = applyFilter(_inactiveCards);
+    const visIneligible = applyFilter(_ineligibleCards);
+
+    const EMPTY = (msg) => `<p style="color:var(--text-muted);text-align:center;padding:2rem 0;font-size:0.88rem">${msg}</p>`;
+    document.getElementById('grid-active').innerHTML     = visActive.length     ? visActive.map(c=>c.html).join('')     : EMPTY('현재 모집 중인 공고가 없습니다.');
+    document.getElementById('grid-inactive').innerHTML   = visInactive.length   ? visInactive.map(c=>c.html).join('')   : EMPTY('해당 유형이 없습니다.');
+    document.getElementById('grid-ineligible').innerHTML = visIneligible.length ? visIneligible.map(c=>c.html).join('') : EMPTY('조건 미충족 유형이 없습니다.');
+
+    const totalElig = visActive.length + visInactive.length;
+    document.getElementById('eligible-count-badge').textContent =
+        `신청 가능 유형 ${totalElig}가지` + (inst !== 'ALL' ? ` (${inst})` : '');
+    document.getElementById('rt-count-active').textContent     = visActive.length;
+    document.getElementById('rt-count-inactive').textContent   = visInactive.length;
+    document.getElementById('rt-count-ineligible').textContent = visIneligible.length;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -2808,13 +2838,16 @@ function runAnalysis() {
         }
     }
 
-    // Render
-    const eligible = results.filter(r => r.eligible);
+    // Render — 3그룹 분류
+    const eligible   = results.filter(r => r.eligible);
     const ineligible = results.filter(r => !r.eligible);
 
-    document.getElementById('eligible-count-badge').textContent = `신청 가능 유형 ${eligible.length}가지`;
-    document.getElementById('count-eligible').textContent = eligible.length;
-    document.getElementById('count-ineligible').textContent = ineligible.length;
+    // 신청가능 → 현재 모집중 vs 모집없음
+    const activeEligible = [], inactiveEligible = [];
+    for (const r of eligible) {
+        const hasActive = getMatchingAnnouncements(r.name).some(a => a.status === '진행중');
+        (hasActive ? activeEligible : inactiveEligible).push(r);
+    }
 
     // 조건 요약 카드 렌더링
     const maritalLabel = { single:'미혼', prenuptial:'예비신혼', newlywed:'신혼(7년이내)', married:'기혼(7년초과)', divorced:'이혼/사별' };
@@ -2839,8 +2872,10 @@ function runAnalysis() {
     // 필터 초기화
     _currentFilter = 'ALL';
     _currentCatFilter = 'ALL';
+    _currentResultTab = 'active';
     document.querySelectorAll('#filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.inst === 'ALL'));
     document.querySelectorAll('#cat-filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'ALL'));
+    switchResultTab('active');
 
     const catLabel = {
         youth:'청년', newlywed:'신혼·신생아', longterm:'장기전세', national:'국민·매입임대', jeonse:'전세지원',
@@ -2918,8 +2953,10 @@ function runAnalysis() {
         </div>`;
     }
 
-    // 신청가능 카드 저장 후 필터 렌더링
-    _allEligibleCards = eligible.map(r => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true) }));
+    // 카드 저장 후 필터 렌더링
+    _activeCards     = activeEligible.map(r   => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true)  }));
+    _inactiveCards   = inactiveEligible.map(r => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true)  }));
+    _ineligibleCards = ineligible.map(r       => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, false) }));
     filterResults('ALL');
 
     // 기타 공고 (알려진 유형에 매칭 안 되는 공고)
@@ -2964,13 +3001,6 @@ function runAnalysis() {
         }
     }
 
-    // 미충족 카드 렌더링 (접힌 상태로)
-    document.getElementById('grid-ineligible').innerHTML = ineligible.map(r=>card(r,false)).join('');
-    const ineligibleBody = document.getElementById('ineligible-body');
-    ineligibleBody.classList.add('collapsed');
-    ineligibleBody.style.maxHeight = '0';
-    const arrow = document.getElementById('ineligible-arrow');
-    if (arrow) arrow.classList.remove('open');
 
     document.querySelectorAll('.step-panel').forEach(p => p.style.display='none');
     document.getElementById('step-indicator').style.display='none';
@@ -2982,7 +3012,7 @@ function restart() {
     document.querySelectorAll('.step-panel').forEach(p => { p.style.display=''; });
     document.getElementById('step-indicator').style.display='';
     document.getElementById('results').style.display='none';
-    _allEligibleCards = [];
+    _activeCards = []; _inactiveCards = []; _ineligibleCards = [];
     _currentFilter = 'ALL';
     _currentCatFilter = 'ALL';
     goTo(1);
