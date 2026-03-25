@@ -1,7 +1,7 @@
 {
   "updated": "2026-03-25",
-  "count": 24,
-  "needs_review_count": 6,
+  "count": 26,
+  "needs_review_count": 7,
   "announcements": [
     {
       "id": "lh_rental_ae7387e2",
@@ -95,17 +95,32 @@
       "needs_pdf": true
     },
     {
-      "id": "ihwc_af8f7b3f",
+      "id": "ih_rental_e546594a",
       "inst": "iH",
-      "source_key": "ihwc",
+      "source_key": "ih_rental",
       "title": "2026년 인천도시공사(iH) 기존주택 전세임대 예비입주자 모집공고",
       "types": [
         "기타(iH)"
       ],
       "location": "인천",
       "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245&bcd=notice&cate1=general&pgdiv=general",
-      "posted_date": "2026-03-25",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245",
+      "posted_date": "2026-03-18",
+      "crawled_at": "2026-03-25",
+      "needs_pdf": true
+    },
+    {
+      "id": "ih_rental_fd45ebc1",
+      "inst": "iH",
+      "source_key": "ih_rental",
+      "title": "2026년 천원주택(전세임대주택) 예비입주자 모집공고",
+      "types": [
+        "기타(iH)"
+      ],
+      "location": "인천",
+      "status": "needs_review",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4234",
+      "posted_date": "2026-02-27",
       "crawled_at": "2026-03-25",
       "needs_pdf": true
     },
@@ -348,6 +363,22 @@
       "crawled_at": "2026-03-25",
       "apply_start": "2026-03-25",
       "apply_end": "2026-03-26"
+    },
+    {
+      "id": "applyhome_other_7a1ba887",
+      "inst": "청약홈",
+      "source_key": "applyhome_other",
+      "title": "오산세교아트피에프브이 주식회사",
+      "types": [
+        "민간임대 (공공지원)"
+      ],
+      "location": "경기",
+      "status": "예정",
+      "url": "https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do",
+      "posted_date": "2026-03-25",
+      "crawled_at": "2026-03-25",
+      "apply_start": "2026-03-31",
+      "apply_end": "2026-03-31"
     },
     {
       "id": "applyhome_other_105dfb34",
