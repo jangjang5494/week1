@@ -1,24 +1,15 @@
 -- ============================================================
 -- 수도권 주거지원 통합 DB 스키마
--- 설계일: 2026-03-21
+-- 설계일: 2026-03-21 | 최종수정: 2026-03-26
 -- Supabase(PostgreSQL) 기준
+-- ★ 멱등성 보장: 반복 실행해도 안전 (CREATE IF NOT EXISTS + ON CONFLICT DO NOTHING)
 -- ============================================================
-
-
--- ============================================================
--- 0. 기존 테이블 초기화 (재설계)
--- ============================================================
-DROP TABLE IF EXISTS announcements CASCADE;
-DROP TABLE IF EXISTS housing_products CASCADE;
-DROP TABLE IF EXISTS income_standards CASCADE;
-DROP TABLE IF EXISTS programs CASCADE;
-DROP TABLE IF EXISTS user_conditions CASCADE;
 
 
 -- ============================================================
 -- 1. 소득 기준 참조 테이블
 -- ============================================================
-CREATE TABLE income_standards (
+CREATE TABLE IF NOT EXISTS income_standards (
   id            SERIAL PRIMARY KEY,
   standard_type TEXT    NOT NULL,  -- '중위소득' | '도시근로자월평균'
   year          INTEGER NOT NULL,
@@ -38,7 +29,8 @@ INSERT INTO income_standards (standard_type, year, household_size, amount) VALUE
   ('중위소득', 2026, 3, 5359036),
   ('중위소득', 2026, 4, 6494738),
   ('중위소득', 2026, 5, 7556719),
-  ('중위소득', 2026, 6, 8555952);
+  ('중위소득', 2026, 6, 8555952)
+ON CONFLICT (standard_type, year, household_size) DO NOTHING;
 
 -- 2025년 도시근로자 월평균소득 (원/월) ★2026-03-21 갱신
 INSERT INTO income_standards (standard_type, year, household_size, amount) VALUES
@@ -46,13 +38,14 @@ INSERT INTO income_standards (standard_type, year, household_size, amount) VALUE
   ('도시근로자월평균', 2025, 2, 6452897),
   ('도시근로자월평균', 2025, 3, 8168429),
   ('도시근로자월평균', 2025, 4, 8802202),
-  ('도시근로자월평균', 2025, 5, 9326985);
+  ('도시근로자월평균', 2025, 5, 9326985)
+ON CONFLICT (standard_type, year, household_size) DO NOTHING;
 
 
 -- ============================================================
 -- 2. 주거지원 프로그램 테이블 (핵심)
 -- ============================================================
-CREATE TABLE programs (
+CREATE TABLE IF NOT EXISTS programs (
   id            SERIAL PRIMARY KEY,
   code          TEXT UNIQUE NOT NULL,  -- 내부 식별코드 (예: 'LH_HAPPY_YOUTH')
 
@@ -206,17 +199,17 @@ CREATE TABLE programs (
 COMMENT ON TABLE programs IS '주거지원 프로그램 마스터. 임대주택/금융지원/주거비지원/지자체사업 통합';
 
 -- 자주 쓰는 조건 인덱스
-CREATE INDEX idx_programs_category    ON programs (category);
-CREATE INDEX idx_programs_institution ON programs (institution);
-CREATE INDEX idx_programs_region      ON programs (region);
-CREATE INDEX idx_programs_is_active   ON programs (is_active);
-CREATE INDEX idx_programs_eligibility ON programs USING GIN (eligibility);
+CREATE INDEX IF NOT EXISTS idx_programs_category    ON programs (category);
+CREATE INDEX IF NOT EXISTS idx_programs_institution ON programs (institution);
+CREATE INDEX IF NOT EXISTS idx_programs_region      ON programs (region);
+CREATE INDEX IF NOT EXISTS idx_programs_is_active   ON programs (is_active);
+CREATE INDEX IF NOT EXISTS idx_programs_eligibility ON programs USING GIN (eligibility);
 
 
 -- ============================================================
 -- 3. 공고 테이블 (크롤링 + 수동 입력)
 -- ============================================================
-CREATE TABLE announcements (
+CREATE TABLE IF NOT EXISTS announcements (
   id          SERIAL PRIMARY KEY,
   program_id  INTEGER REFERENCES programs (id) ON DELETE SET NULL,
   -- 매칭된 프로그램 (null=미매칭)
@@ -238,16 +231,16 @@ CREATE TABLE announcements (
   UNIQUE (institution, seq)
 );
 
-CREATE INDEX idx_announcements_status     ON announcements (status);
-CREATE INDEX idx_announcements_institution ON announcements (institution);
-CREATE INDEX idx_announcements_program    ON announcements (program_id);
-CREATE INDEX idx_announcements_apply_end  ON announcements (apply_end);
+CREATE INDEX IF NOT EXISTS idx_announcements_status     ON announcements (status);
+CREATE INDEX IF NOT EXISTS idx_announcements_institution ON announcements (institution);
+CREATE INDEX IF NOT EXISTS idx_announcements_program    ON announcements (program_id);
+CREATE INDEX IF NOT EXISTS idx_announcements_apply_end  ON announcements (apply_end);
 
 
 -- ============================================================
 -- 4. 사용자 조건 테이블 (향후 맞춤 알림 서비스)
 -- ============================================================
-CREATE TABLE user_conditions (
+CREATE TABLE IF NOT EXISTS user_conditions (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- 기본 인적사항
@@ -314,15 +307,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_programs_updated_at
+CREATE OR REPLACE TRIGGER trg_programs_updated_at
   BEFORE UPDATE ON programs
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
-CREATE TRIGGER trg_announcements_updated_at
+CREATE OR REPLACE TRIGGER trg_announcements_updated_at
   BEFORE UPDATE ON announcements
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
-CREATE TRIGGER trg_user_conditions_updated_at
+CREATE OR REPLACE TRIGGER trg_user_conditions_updated_at
   BEFORE UPDATE ON user_conditions
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
@@ -336,35 +329,44 @@ ALTER TABLE income_standards  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_conditions   ENABLE ROW LEVEL SECURITY;
 
 -- programs, announcements, income_standards: 누구나 읽기 가능
+DROP POLICY IF EXISTS "public read programs" ON programs;
 CREATE POLICY "public read programs"
   ON programs FOR SELECT TO anon, authenticated USING (true);
 
+DROP POLICY IF EXISTS "public read announcements" ON announcements;
 CREATE POLICY "public read announcements"
   ON announcements FOR SELECT TO anon, authenticated USING (true);
 
+DROP POLICY IF EXISTS "public read income_standards" ON income_standards;
 CREATE POLICY "public read income_standards"
   ON income_standards FOR SELECT TO anon, authenticated USING (true);
 
 -- user_conditions: 본인 데이터만 접근 (미래 인증 도입 시)
+DROP POLICY IF EXISTS "user read own conditions" ON user_conditions;
 CREATE POLICY "user read own conditions"
   ON user_conditions FOR SELECT TO authenticated
   USING (auth.uid()::text = id::text);
 
+DROP POLICY IF EXISTS "user insert own conditions" ON user_conditions;
 CREATE POLICY "user insert own conditions"
   ON user_conditions FOR INSERT TO authenticated
   WITH CHECK (auth.uid()::text = id::text);
 
+DROP POLICY IF EXISTS "user update own conditions" ON user_conditions;
 CREATE POLICY "user update own conditions"
   ON user_conditions FOR UPDATE TO authenticated
   USING (auth.uid()::text = id::text);
 
 -- service_role: 모든 테이블 full access (GitHub Actions 크롤러용)
+DROP POLICY IF EXISTS "service full access programs" ON programs;
 CREATE POLICY "service full access programs"
   ON programs FOR ALL TO service_role USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "service full access announcements" ON announcements;
 CREATE POLICY "service full access announcements"
   ON announcements FOR ALL TO service_role USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "service full access income_standards" ON income_standards;
 CREATE POLICY "service full access income_standards"
   ON income_standards FOR ALL TO service_role USING (true) WITH CHECK (true);
 
@@ -672,7 +674,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"marital_status":["신혼(7년이내)","신생아가구","한부모"],"homeless_required":true,"region_required":"인천","notes":["소득·자산 기준 없음"]}',
  '{"rent_fixed":30000,"loan_limit":200000000,"loan_pct":80,"period_years":6}',
  '{"method":["방문"],"contact":"1522-0072","period_type":"공고별"}',
- 'https://www.incheon.go.kr/housing');
+ 'https://www.incheon.go.kr/housing')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ============================================================
@@ -734,7 +737,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"marital_status":["미혼"],"homeless_required":true,"enrollment_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":104000000,"car_limit":0,"region_required":"서울","notes":["1순위: 주택소재 자치구 대학 재학","2순위: 서울 내 타 자치구 대학"]}',
  '{"rent_pct_min":60,"rent_pct_max":80,"notes":["2세미만 자녀→순위→배점→추첨 순 선정"]}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
- 'https://www.i-sh.co.kr/app/lay2/S48T1594C1603/sublink.do');
+ 'https://www.i-sh.co.kr/app/lay2/S48T1594C1603/sublink.do')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ============================================================
@@ -805,7 +809,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"homeless_required":true,"region_required":"서울","income_required":false,"asset_required":false,"notes":["소득·자산 기준 없음","1순위: 신생아·다자녀","2순위: 신혼부부·예비신혼","3순위: 일반","SH 최대 2억원 지원 / 입주자 20% 부담"]}',
  '{"tenant_burden_pct":20,"loan_limit":200000000,"period_max_years":8,"renewal_count":3}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
- 'https://www.i-sh.co.kr');
+ 'https://www.i-sh.co.kr')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ============================================================
@@ -828,7 +833,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"age_min":19,"age_max":39,"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"asset_limit":345000000,"asset_limit_rank3":273000000,"car_limit":37080000,"notes":["1순위: 수급자·차상위·한부모 (소득·자산 없음)","2순위: 본인+부모 100%이하 / 자산34,500만원이하","3순위: 본인만 100%이하 / 자산27,300만원이하","★GH 자동차 기준 3,708만원","경기 거주 우선, 전국 신청 가능"]}',
  '{"rent_pct_min":30,"rent_pct_max":50,"period_max_years":10}',
  '{"method":["온라인"],"url":"https://apply.gh.or.kr","contact":"1588-7013","period_type":"공고별"}',
- 'https://apply.gh.or.kr/sb/sr/sr7155/selectPbancRentHouseList.do');
+ 'https://apply.gh.or.kr/sb/sr/sr7155/selectPbancRentHouseList.do')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ============================================================
@@ -908,7 +914,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"homeless_required":true,"region_required":"수도권","income_type":"도시근로자월평균","income_pct":120,"income_pct_married":200,"asset_real_limit":215500000,"car_limit":45630000,"children_min":2,"notes":["청약저축 6개월이상·6회이상 납입","생애 1회 제한"]}',
  '{"once_per_life":true}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
- 'https://www.i-sh.co.kr/app/lay2/S48T7334C1663/contents.do');
+ 'https://www.i-sh.co.kr/app/lay2/S48T7334C1663/contents.do')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ── LH 공공분양 ───────────────────────────────────────────────
@@ -962,7 +969,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"homeless_required":true,"is_household_head":true,"income_type":"도시근로자월평균","income_pct":120,"income_pct_married":200,"asset_real_limit":215500000,"car_limit":45630000,"notes":["65세이상 직계존속 3년이상 동일 주민등록 부양","청약저축 24회이상 납입","생애 1회 제한"]}',
  '{"once_per_life":true}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
- 'https://apply.lh.or.kr/lhapply/cm/cntnts/cntntsView.do?mi=1178&cntntsId=1048');
+ 'https://apply.lh.or.kr/lhapply/cm/cntnts/cntntsView.do?mi=1178&cntntsId=1048')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ── 금융지원 ─────────────────────────────────────────────────
@@ -1048,7 +1056,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"marital_status":["신혼(7년이내)","예비신혼"],"homeless_required":true,"income_type":"절대금액(연소득)","income_abs":85000000,"asset_limit":511000000,"life_first_required":true,"notes":["생애최초 주택구입자 필수","주택가액 6억이하","전용85㎡이하","LTV 80%(수도권규제지역70%)"]}',
  '{"loan_limit":320000000,"loan_pct":80,"interest_min":2.55,"interest_max":3.85,"period_years":30,"house_price_limit":600000000,"desc":"연 2.55~3.85% / 최대 3.2억 (LTV 80%, 생애최초)"}',
  '{"method":["은행방문","비대면"],"url":"https://enhuf.molit.go.kr","contact":"1599-0001","period_type":"수시","bank":["우리","국민","농협","신한","하나","대구","부산"]}',
- 'https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030601.jsp');
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030601.jsp')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ── 주거비지원 ───────────────────────────────────────────────
@@ -1086,7 +1095,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"income_type":"중위소득","income_pct":48,"notes":["부양의무자 기준 없음"]}',
  '{"monthly_support_seoul":369000,"monthly_support_gyeonggi":300000,"monthly_support_incheon":300000,"notes":["서울1인 36.9만","경기·인천1인 30만","가구원수별 차등"]}',
  '{"method":["방문","온라인"],"url":"https://www.bokjiro.go.kr","contact":"1600-0777","period_type":"수시"}',
- 'https://www.myhome.go.kr');
+ 'https://www.myhome.go.kr')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ── 이자지원 (지자체 고유) ────────────────────────────────────
@@ -1124,7 +1134,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"newborn_required":true,"region_required":"인천","income_type":"절대금액(연소득)","income_abs_married":130000000,"notes":["2025.1.1이후 출생 자녀","주택가액 6억이하","전용85㎡이하","주담대 3억이하","1가구1주택"]}',
  '{"annual_max":3000000,"period_years":5,"total_max":15000000,"notes":["1자녀: 시중 0.8%/정부 0.4~0.8%","2자녀이상: 시중 1.0%/정부 0.6~1.0%"]}',
  '{"method":["온라인"],"url":"https://www.incheon.go.kr/housing","contact":"032-440-4759","period_type":"정기","period_note":"신규 2026.7.16~8.31"}',
- 'https://www.incheon.go.kr/housing');
+ 'https://www.incheon.go.kr/housing')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ── 기타 지자체 고유 사업 ─────────────────────────────────────
@@ -1154,7 +1165,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"homeless_required":true,"region_required":"인천","income_type":"절대금액(연소득)","income_abs":50000000,"income_abs_married":75000000,"notes":["청년 만18~39세 5천만","신혼부부 7.5천만","일반 6천만","보증금 3억이하"]}',
  '{"total_max":400000,"notes":["2025.3.31이후 가입: 최대40만","이전가입: 최대30만","기납부 보증료 실비"]}',
  '{"method":["온라인","방문"],"url":"https://www.gov.kr","contact":"032-120","period_type":"수시","period_note":"예산 소진 시 조기 마감"}',
- 'https://youth.incheon.go.kr');
+ 'https://youth.incheon.go.kr')
+ON CONFLICT (code) DO NOTHING;
 
 
 -- ============================================================
