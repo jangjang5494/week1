@@ -456,9 +456,21 @@
                     </div>
                     <div class="toggle-group" id="tg-student">
                         <button class="toggle-btn selected" data-val="no">아니오</button>
-                        <button class="toggle-btn" data-val="yes">예 — 서울 소재 대학(원) 재학·복학·입학예정</button>
+                        <button class="toggle-btn" data-val="yes">예 — 재학·복학·입학예정</button>
                     </div>
-                    <p class="hint">희망하우징·청년매입임대 대학생 우선공급 적용 여부</p>
+                    <p class="hint">행복주택 대학생·희망하우징·청년매입임대 대학생 우선공급 적용 여부</p>
+                </div>
+
+                <div class="fg" id="school-region-field" style="display:none">
+                    <div class="fg-label-row">
+                        <label>학교 소재지</label>
+                    </div>
+                    <div class="toggle-group" id="tg-school-region">
+                        <button class="toggle-btn selected" data-val="seoul">서울</button>
+                        <button class="toggle-btn" data-val="gyeonggi">경기·인천</button>
+                        <button class="toggle-btn" data-val="other">기타 지역</button>
+                    </div>
+                    <p class="hint">희망하우징은 서울 소재 대학만 신청 가능</p>
                 </div>
 
                 <div class="fg">
@@ -1004,6 +1016,7 @@ document.querySelectorAll('.toggle-group').forEach(group => {
             btn.classList.add('selected');
             if (group.id === 'tg-region') updateDistrictUI();
             if (group.id === 'tg-marital') updateFormVisibility();
+            if (group.id === 'tg-student') updateSchoolRegionVisibility();
         });
     });
 });
@@ -1012,6 +1025,11 @@ updateDistrictUI();
 function getToggle(id) {
     const btn = document.querySelector(`#${id} .toggle-btn.selected`);
     return btn ? btn.dataset.val : null;
+}
+
+function updateSchoolRegionVisibility() {
+    const isStudent = getToggle('tg-student') === 'yes';
+    document.getElementById('school-region-field').style.display = isStudent ? '' : 'none';
 }
 
 // ===== 동적 폼 표시 =====
@@ -1520,8 +1538,10 @@ function runAnalysis() {
     const youngChild  = getToggle('tg-youngchild') === 'yes';
     const infant      = getToggle('tg-infant') === 'yes';
     const dualInc     = getToggle('tg-dual') === 'yes';
-    const isStudent   = getToggle('tg-student') === 'yes';
-    const isJobSeeker = getToggle('tg-jobseeker') === 'yes';
+    const isStudent    = getToggle('tg-student') === 'yes';
+    const schoolRegion = getToggle('tg-school-region') || 'seoul'; // 대학생 아닐 경우 무관
+    const isSeoulStudent = isStudent && schoolRegion === 'seoul';
+    const isJobSeeker  = getToggle('tg-jobseeker') === 'yes';
     const monthlyIncome = parseFloat(document.getElementById('income').value) || 0;
     const totalAssets   = parseFloat(document.getElementById('total-assets').value) || 0;
     const realEstate    = parseFloat(document.getElementById('real-estate').value) || 0;
@@ -1733,13 +1753,14 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_lh) r.push('무주택 필요');
-        if (!isStudent) r.push('서울 소재 대학(전문대 포함) 재학·복학·입학예정자만 신청 가능');
+        if (!isStudent) r.push('대학(전문대 포함) 재학·복학·입학예정자만 신청 가능');
+        else if (!isSeoulStudent) r.push('서울 소재 대학만 신청 가능 (학교 소재지 확인)');
         if (isMarried) r.push('미혼 조건');
         const db9 = getE('SH_HOPE_HOUSING');
         const aLim9_2=db9.asset2||33700, aLim9_3=db9.asset3||10400;
         const cLim9_2=db9.car!=null?db9.car:4563, cLim9_3=db9.car3!=null?db9.car3:0;
         let eligible=false, rank='';
-        if (baseOk_lh && isStudent && !isMarried) {
+        if (baseOk_lh && isSeoulStudent && !isMarried) {
             if (is1st) { eligible=true; rank='1순위 (우대 대상)'; }
             else if (under(100)) {
                 if (parentIncome&&totalAssets<=aLim9_2&&carVal<=cLim9_2) { eligible=true; rank=`2순위 (본인+부모 100%)`; }
