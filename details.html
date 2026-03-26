@@ -1782,8 +1782,14 @@ function runAnalysis() {
         const aLim11=db11.asset||10800;
         let eligible=false, rank='';
         if (baseOk_lh && grp && !isMarried) {
-            if (under(100)&&totalAssets<=aLim11) { eligible=true; rank='청약저축 가입 필요'+(subCount>=24?' (가점 최상)':''); }
-            else { if (!under(100)) r.push('소득 100% 이하 필요'); if (totalAssets>aLim11) r.push(`총자산 ${aLim11}만원 이하 필요`); }
+            const incOk = hhSize===1?under(120):hhSize===2?under(110):under(100);
+            if (incOk && totalAssets<=aLim11) {
+                eligible=true;
+                rank = isStudent ? '순위·배점제 (소재자치구 재학 시 1순위)' : '순위·배점제 (소재자치구 거주 시 1순위)';
+            } else {
+                if (!incOk) r.push(`소득 ${hhSize===1?120:hhSize===2?110:100}% 이하 필요`);
+                if (totalAssets>aLim11) r.push(`총자산 ${aLim11}만원 이하 필요`);
+            }
         }
         add('행복주택 (대학생)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'SH', 'rental');
     }

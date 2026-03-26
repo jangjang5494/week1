@@ -734,7 +734,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 행복주택 대학생
 ('SH_HAPPY_STUDENT', '임대주택', '공공임대', '행복주택', 'SH', '서울', 'SH 행복주택 (대학생)',
  '서울 소재 대학 재학생 (미혼 무주택)', TRUE,
- '{"marital_status":["미혼"],"homeless_required":true,"enrollment_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":104000000,"car_limit":0,"notes":["서울 거주 요건 없음 (전국 신청 가능)","1순위: 주택소재 자치구 재학 또는 거주지","2순위: 서울 내 타 자치구"]}',
+ '{"marital_status":["미혼"],"homeless_required":true,"enrollment_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":104000000,"car_limit":0,"notes":["서울 거주 요건 없음 (전국 신청 가능)","1순위: 주택소재 자치구에 재학대학 소재 또는 본인 거주지","2순위: 서울 내 타 자치구에 재학대학 소재 또는 거주지","배점(1순위): 대학생-부모 모두 서울 외 3점/1인 서울 외 1점","배점(1순위): 취업준비생-해당자치구 3년이상거주 3점/미만 1점","선정순서: 2세미만자녀→순위→배점→추첨","취업준비생: 대학·고교 졸업·중퇴 2년 이내"]}',
  '{"rent_pct_min":60,"rent_pct_max":80,"notes":["2세미만 자녀→순위→배점→추첨 순 선정"]}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T1594C1603/sublink.do')
