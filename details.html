@@ -1893,7 +1893,7 @@ function runAnalysis() {
     // 18. 청년안심주택
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 필요');
+        if (!baseOk_lh) r.push('무주택 필요');
         if (!isYouth&&!isNewlywedStrict) r.push('만 19~39세 또는 신혼부부·예비신혼 필요');
         const db18 = getE('SH_SAFETY_PUBLIC');
         const aLim18=db18.asset||25400, cLim18=db18.car||4563;
@@ -1901,7 +1901,7 @@ function runAnalysis() {
         if (!aOk18) r.push(`총자산 ${aLim18}만원 이하 필요 (1순위 완화)`);
         if (!carOk18) r.push(`자동차 ${cLim18}만원 이하 필요 (1순위 완화)`);
         let eligible=false, rank='';
-        if (baseOk && (isYouth||isNewlywedStrict) && aOk18 && carOk18) {
+        if (baseOk_lh && (isYouth||isNewlywedStrict) && aOk18 && carOk18) {
             if (is1st) { eligible=true; rank='1순위 (우대 대상, 소득·자산 완화)'; }
             else if (isNewlywedStrict) {
                 const i1 = dualInc?underDual(70,20):under(70);

@@ -591,7 +591,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 청년안심주택 공공임대
 ('SH_SAFETY_PUBLIC', '임대주택', '공공임대', '청년안심주택', 'SH', '서울', 'SH 청년안심주택 (공공임대)',
  '만19~39세 청년·신혼부부, 역세권 무주택', FALSE,
- '{"age_min":19,"age_max":39,"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct_youth":100,"income_pct_newlywed":120,"asset_limit":254000000,"car_limit":45630000,"notes":["1순위: 수급자·한부모·차상위 (소득·자산심사 없음)","2순위: 본인+부모 도시근로자 100%이하 (청년) / 120%이하 (신혼부부)","3순위: 본인 도시근로자 100%이하","소득120%초과시 일반공급만 가능"]}',
+ '{"age_min":19,"age_max":39,"homeless_required":true,"income_type":"도시근로자월평균","income_pct_youth":100,"income_pct_newlywed":120,"asset_limit":254000000,"car_limit":45630000,"notes":["1순위: 수급자·한부모·차상위 (소득·자산심사 없음)","2순위: 본인+부모 도시근로자 100%이하 (청년) / 120%이하 (신혼부부)","3순위: 본인 도시근로자 100%이하","소득120%초과시 일반공급만 가능","서울 거주 요건 없음 (역세권 민관협력 사업)"]}',
  '{"rent_pct_min":30,"rent_pct_max":70,"area_max_sqm":85}',
  '{"method":["온라인"],"url":"https://soco.seoul.go.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://soco.seoul.go.kr'),
@@ -599,7 +599,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 청년안심주택 민간임대
 ('SH_SAFETY_PRIVATE', '임대주택', '민간임대', '청년안심주택', 'SH', '서울', 'SH 청년안심주택 (민간임대)',
  '만19~39세 청년·신혼부부, 역세권 무주택', FALSE,
- '{"age_min":19,"age_max":39,"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct_youth":100,"income_pct_newlywed":120,"asset_limit":254000000,"car_limit":45630000,"notes":["1순위: 수급자·한부모·차상위 (소득·자산심사 없음)","2순위: 본인+부모 도시근로자 100%이하 (청년) / 120%이하 (신혼부부)","3순위: 본인 도시근로자 100%이하","공급비율: 특별공급 20% / 일반공급 80%"]}',
+ '{"age_min":19,"age_max":39,"homeless_required":true,"income_type":"도시근로자월평균","income_pct_youth":100,"income_pct_newlywed":120,"asset_limit":254000000,"car_limit":45630000,"notes":["1순위: 수급자·한부모·차상위 (소득·자산심사 없음)","2순위: 본인+부모 도시근로자 100%이하 (청년) / 120%이하 (신혼부부)","3순위: 본인 도시근로자 100%이하","공급비율: 특별공급 20% / 일반공급 80%","서울 거주 요건 없음 (역세권 민관협력 사업)"]}',
  '{"special_supply_pct":20,"general_supply_pct":80,"rent_pct_special":75,"rent_pct_general":85}',
  '{"method":["온라인"],"url":"https://soco.seoul.go.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://soco.seoul.go.kr'),
