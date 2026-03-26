@@ -1774,14 +1774,14 @@ function runAnalysis() {
     // 11. 행복주택 (대학생)
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 필요');
+        if (!baseOk_lh) r.push('무주택 필요');
         const grp=isStudent||isJobSeeker;
-        if (!grp) r.push('서울 소재 대학생 또는 졸업 2년이내 취업준비생');
+        if (!grp) r.push('대학생 또는 졸업 2년이내 취업준비생');
         if (isMarried) r.push('미혼 필요');
         const db11 = getE('SH_HAPPY_STUDENT');
         const aLim11=db11.asset||10800;
         let eligible=false, rank='';
-        if (baseOk && grp && !isMarried) {
+        if (baseOk_lh && grp && !isMarried) {
             if (under(100)&&totalAssets<=aLim11) { eligible=true; rank='청약저축 가입 필요'+(subCount>=24?' (가점 최상)':''); }
             else { if (!under(100)) r.push('소득 100% 이하 필요'); if (totalAssets>aLim11) r.push(`총자산 ${aLim11}만원 이하 필요`); }
         }
