@@ -607,7 +607,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 희망하우징
 ('SH_HOPE_HOUSING', '임대주택', '매입임대', '희망하우징', 'SH', '서울', 'SH 희망하우징',
  '서울 소재 대학 재학생 (미혼 무주택)', FALSE,
- '{"marital_status":["미혼"],"homeless_required":true,"region_required":"서울","enrollment_required":true,"income_type":"도시근로자월평균","income_pct_rank2":100,"income_pct_rank3":100,"asset_limit_rank2":337000000,"asset_limit_rank3":104000000,"car_limit_rank2":45630000,"car_limit_rank3":0,"notes":["1순위: 수급자·한부모·차상위","2순위: 본인+부모 100%이하·자산33,700만·차량4,563만","3순위: 본인 100%이하·자산10,400만·차량무소유","내발산기숙사: 수도권 대학원생 포함","시설: 연남·공릉원룸텔, 내발산·공릉·갈현·정릉기숙사"]}',
+ '{"marital_status":["미혼"],"homeless_required":true,"school_region_required":"서울","enrollment_required":true,"income_type":"도시근로자월평균","income_pct_rank2":100,"income_pct_rank3":100,"asset_limit_rank2":337000000,"asset_limit_rank3":104000000,"car_limit_rank2":45630000,"car_limit_rank3":0,"notes":["거주지 조건 없음 - 서울 소재 대학 재학이 핵심 조건","1순위: 수급자·한부모·차상위","2순위: 본인+부모 100%이하·자산33,700만·차량4,563만","3순위: 본인 100%이하·자산10,400만·차량무소유","내발산기숙사: 수도권 대학원생 포함","시설: 연남·공릉원룸텔, 내발산·공릉·갈현·정릉기숙사"]}',
  '{"deposit_fixed":1090000,"rent_fixed_min":70000,"rent_fixed_max":140000,"period_years":2,"renewal_count":2,"period_max_years":6}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T1591C592/contents.do'),

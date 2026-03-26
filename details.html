@@ -1732,14 +1732,14 @@ function runAnalysis() {
     // 9. 희망하우징
     {
         const r = [];
-        if (!baseOk) r.push('서울 거주 무주택 필요');
-        if (!isStudent) r.push('서울 소재 대학(원) 재학·복학·입학예정자만 신청 가능');
-        if (isMarried) r.push('미혼 단독 세대 조건');
+        if (!baseOk_lh) r.push('무주택 필요');
+        if (!isStudent) r.push('서울 소재 대학(전문대 포함) 재학·복학·입학예정자만 신청 가능');
+        if (isMarried) r.push('미혼 조건');
         const db9 = getE('SH_HOPE_HOUSING');
         const aLim9_2=db9.asset2||33700, aLim9_3=db9.asset3||10400;
         const cLim9_2=db9.car!=null?db9.car:4563, cLim9_3=db9.car3!=null?db9.car3:0;
         let eligible=false, rank='';
-        if (baseOk && isStudent && !isMarried) {
+        if (baseOk_lh && isStudent && !isMarried) {
             if (is1st) { eligible=true; rank='1순위 (우대 대상)'; }
             else if (under(100)) {
                 if (parentIncome&&totalAssets<=aLim9_2&&carVal<=cLim9_2) { eligible=true; rank=`2순위 (본인+부모 100%)`; }
