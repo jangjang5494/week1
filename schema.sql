@@ -1170,6 +1170,80 @@ ON CONFLICT (code) DO NOTHING;
 
 
 -- ============================================================
+-- ★2026-03-26 신규 8개 추가 (취약계층·자립준비·분리지급·보증료 등)
+-- ============================================================
+
+INSERT INTO programs (code, category, subcategory, program_type, institution, region, name, target_summary, is_central,
+  eligibility, support_content, application_info, source_url) VALUES
+
+-- 신혼희망타운 전용 주담대
+('HF_HOPE_TOWN_JEONSE', '금융지원', '구입자금', '주담대', '주택도시기금', '전국', '신혼희망타운 전용 주택담보대출',
+ 'LH 신혼희망타운 분양계약 체결자 (세대원 전원 무주택)', TRUE,
+ '{"homeless_required":true,"special_condition":"LH 신혼희망타운 분양계약 체결자","notes":["세대원 전원 무주택 조건","소득·자산 별도 기준 없음","처분이익 공유 조건 있음"]}',
+ '{"loan_limit":400000000,"ltv_max":70,"interest_fixed":1.6,"interest_early":1.3,"period_years_options":[20,30],"notes":["고정금리 연 1.6%","2023.8.30이전 사전청약 사업장 연 1.3%","처분이익 50% 이내 공유","조기상환수수료 없음"]}',
+ '{"method":["은행방문"],"contact":"1600-0800","period_type":"수시","bank":["우리","KB국민","신한"],"period_note":"잔금지급일 약 2개월 전부터 신청"}',
+ 'https://nhuf.molit.go.kr/FP/FP05/FP0503/FP05030701.jsp'),
+
+-- 청년가구 주거급여 분리지급
+('GOV_SEPARATION_HOUSING_BENEFIT', '주거비지원', '주거급여', '주거급여분리지급', '국토교통부', '전국', '청년가구 주거급여 분리지급',
+ '주거급여 수급가구 내 만19~30세 미만 미혼 자녀 (부모와 별거)', TRUE,
+ '{"age_min":19,"age_max":29,"marital_status":["미혼"],"income_type":"중위소득","income_pct":48,"notes":["부모와 시·군 상이하게 거주 필수","청년 명의 임대차계약+임차료납부+전입신고 필수","예외: 대중교통 편도 90분 초과, 장애·만성질환"]}',
+ '{"monthly_support_seoul":369000,"monthly_support_gyeonggi":300000,"monthly_support_incheon":300000,"notes":["기준임대료 지역별 지급","서울1인 36.9만","경기·인천1인 30만","별도 청년 계좌로 직접 지급"]}',
+ '{"method":["방문","온라인"],"contact":"1600-0777","period_type":"수시","period_note":"부모 거주지 읍면동 행정복지센터 신청"}',
+ 'https://www.myhome.go.kr'),
+
+-- 긴급주거지원
+('GOV_EMERGENCY_HOUSING', '주거비지원', '긴급지원', '긴급주거지원', '국토교통부', '전국', '긴급주거지원',
+ '위기상황 발생으로 거주공간이 필요한 중위소득 75% 이하 가구', TRUE,
+ '{"income_type":"중위소득","income_pct":75,"asset_limit_metro":31000000,"asset_limit_mid":19400000,"asset_limit_rural":16500000,"notes":["위기사유: 주소득자 사망·가출·구금·중한질병·가정폭력·화재 등 9가지","소득기준: 1인 167만·2인 276만·3인 354만·4인 430만원"]}',
+ '{"monthly_metro_12":398900,"monthly_metro_34":662500,"monthly_metro_56":874100,"monthly_mid_12":299100,"monthly_mid_34":435600,"monthly_mid_56":574200,"notes":["대도시 1~2인 39.9만/월","위기상황 완화시까지 지원"]}',
+ '{"method":["방문","전화"],"contact":"129","period_type":"수시","period_note":"시·군·구청 또는 보건복지콜센터 129"}',
+ 'https://www.myhome.go.kr'),
+
+-- 비정상거처 이사비 지원
+('GOV_VULNERABLE_RELOCATION', '주거비지원', '이사비', '이사비지원', '국토교통부', '전국', '비정상거처 거주자 이사비 지원',
+ '쪽방·고시원 등 비정상거처 3개월 이상 거주 후 이주한 자', TRUE,
+ '{"special_condition":"비정상거처 3개월이상 거주","notes":["쪽방·고시원·여인숙·비닐하우스·컨테이너·지하층 등","소득·자산 기준 없음","전입일 기준 3개월 내 신청"]}',
+ '{"total_max":400000,"once_per_life":true,"notes":["이사비+생필품 구입비","일회성 지원"]}',
+ '{"method":["방문"],"contact":"1600-1004","period_type":"수시","period_note":"새 주택 소재지 읍면동 주민센터 방문"}',
+ 'https://www.myhome.go.kr'),
+
+-- 주거취약계층 주거지원
+('GOV_VULNERABLE_HOUSING', '임대주택', '공공임대', '취약계층임대', '국토교통부', '전국', '주거취약계층 주거지원',
+ '쪽방·고시원 등 비정상거처 3개월이상 거주 저소득 가구 (소득 50% 이하)', TRUE,
+ '{"income_type":"도시근로자월평균","income_pct":50,"asset_limit":241000000,"car_limit":37080000,"special_condition":"비정상거처 3개월이상 거주 또는 범죄피해자 또는 최저주거기준미달 아동가구","notes":["쪽방·고시원·여인숙·비닐하우스·노숙인시설 등","소득 50%이하: 1인 174만·2인 271만·3인 360만·4인 412만원"]}',
+ '{"deposit":500000,"rent_pct_of_market":null,"period_max_years":20,"renewal_count":9,"notes":["보증금 50만원","매입임대·전세임대·국민임대 연계","2년 단위 재계약, 최장 20년"]}',
+ '{"method":["방문"],"contact":"1600-1004","period_type":"수시","period_note":"주민센터 방문 신청"}',
+ 'https://www.myhome.go.kr'),
+
+-- 자립준비청년 주거지원
+('GOV_INDEPENDENCE_YOUTH', '임대주택', '공공임대', '자립준비청년임대', '국토교통부', '전국', '자립준비청년 주거지원',
+ '아동복지시설·가정위탁 퇴소 예정 또는 퇴소 후 5년 이내 청년', TRUE,
+ '{"special_condition":"아동복지시설·가정위탁 퇴소 5년 이내","notes":["아동권리보장원 추천 필요","영구임대 자산: 총23,700만·차4,563만","국민임대 자산: 총33,700만·차4,563만","행복주택 자산: 총25,400만·차량미보유"]}',
+ '{"deposit":1000000,"notes":["보증금 100만원","건설임대: 영구50년·국민30년·행복6년","매입임대: 최장 20년","전세임대: 수도권 최대 1.2~1.3억","22세이하 전세임대 무이자·5년내 50% 감면"]}',
+ '{"method":["방문","온라인"],"contact":"1600-1004","period_type":"수시","period_note":"LH청약플러스 또는 행정복지센터"}',
+ 'https://www.myhome.go.kr'),
+
+-- 경기도 취약계층 이사비 지원
+('GG_VULNERABLE_MOVING', '주거비지원', '이사비', '이사비지원', '경기도', '경기', '경기도 주거취약계층 이사비 지원',
+ '경기도 내 비정상거처 3개월이상 거주 후 이주한 자', FALSE,
+ '{"region_required":"경기","special_condition":"비정상거처 3개월이상 거주","notes":["쪽방·고시원·여인숙·비닐하우스·컨테이너·반지하(침수위험)·옥탑방 등","소득·자산 기준 없음","전입일 기준 3개월 이내 신청"]}',
+ '{"total_max":400000,"once_per_life":true,"notes":["이사비+생필품 구입비","일회성 지원"]}',
+ '{"method":["방문"],"contact":"031-8008-4114","period_type":"수시","period_note":"전입지 관할 읍·면·동 행정복지센터"}',
+ 'https://housing.gg.go.kr'),
+
+-- 서울시 신혼부부 전세보증금반환보증 보증료 지원
+('SEOUL_NEWLYWED_GUARANTEE', '보증료지원', '보증료지원', '보증료지원', '서울시', '서울', '서울시 신혼부부 전세보증금반환보증 보증료 지원',
+ '서울 거주 혼인7년이내 신혼부부 (보증 가입자)', FALSE,
+ '{"marital_status":["신혼(7년이내)","예비신혼"],"region_required":"서울","marriage_years_max":7,"notes":["소득·자산 기준 없음","전세보증금반환보증 가입 필수","보증서 발급일로부터 90일 이내 신청"]}',
+ '{"total_max":300000,"once_per_life":true,"notes":["중앙정부 보증료 지원과 별도 추가 지원","일회성"]}',
+ '{"method":["방문","전화"],"contact":"02-120","period_type":"수시","period_note":"다산콜센터 02-120 또는 서울시 주택정책과 02-2133-7026"}',
+ 'https://housing.seoul.go.kr')
+
+ON CONFLICT (code) DO NOTHING;
+
+
+-- ============================================================
 -- 온통청년 API 연계 (plcyNo 매핑)
 -- API: GET https://www.youthcenter.go.kr/go/ythip/getPlcy
 --      ?apiKeyNm={ONTONG_API_KEY}&rtnType=json&lclsfNm=주거&pageSize=200
