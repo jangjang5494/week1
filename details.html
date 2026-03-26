@@ -961,6 +961,28 @@ fetch(`${SB_URL}/rest/v1/announcements?raw_data->>source=eq.pdf_parsed&status=ne
     .then(data => { sbExceptions = data || []; })
     .catch(() => {});
 
+// income_standards → URBAN100 / MID100 갱신
+fetch(`${SB_URL}/rest/v1/income_standards?select=standard_type,year,household_size,amount&order=year.desc,household_size.asc`, {
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+})
+    .then(r => r.ok ? r.json() : [])
+    .then(rows => {
+        const build = (type) => {
+            const filtered = rows.filter(r => r.standard_type === type);
+            const latestYear = filtered[0]?.year;
+            if (!latestYear) return null;
+            const arr = filtered.filter(r => r.year === latestYear)
+                                .sort((a, b) => a.household_size - b.household_size)
+                                .map(r => r.amount);
+            return arr.length >= 4 ? arr : null;
+        };
+        const urban = build('도시근로자월평균');
+        const mid   = build('중위소득');
+        if (urban) URBAN100 = urban;
+        if (mid)   MID100   = mid;
+    })
+    .catch(() => {});
+
 // ===== Theme =====
 const savedTheme = localStorage.getItem('theme') || 'light';
 document.body.setAttribute('data-theme', savedTheme);
@@ -1461,21 +1483,23 @@ function closeHelpDirect() {
     document.body.style.overflow = '';
 }
 
-// ===== Income thresholds (2025 도시근로자, 원) =====
-let INC = {
-    50:  [2288018, 3226449, 4084215, 4401101, 4663493, 4953132, 5242771],
-    70:  [3203225, 4517028, 5717900, 6161541, 6528890, 6934384, 7339879],
-    80:  [null,    5162318, 6534743, 7041762, 7461588, 7925010, null],
-    90:  [null,    5807607, 7351586, 7921982, 8394287, 8915637, null],
-    100: [4576036, 6452897, 8168429, 8802202, 9326985, 9906263, 10485541],
-    130: [5948847, 8388766, 10618958, 11442863, 12125081, 12878142, null],
-    200: [null,    12905794, 16336858, 17604404, 18653970, 19812526, null]
-};
+// ===== 소득기준 (Supabase income_standards에서 갱신, 하드코딩은 초기값/폴백) =====
+// 도시근로자 월평균소득 100% (원) — 2025년 기준
+let URBAN100 = [4576036, 6452897, 8168429, 8802202, 9326985, 9906263, 10485541];
+// 기준중위소득 100% (원) — 2026년 기준
+let MID100   = [2564238, 4199292, 5359036, 6494738, 7556719, 8555952, 9515150];
 
 function incomeLimit(pct, size) {
     const idx = Math.min(size, 7) - 1;
-    const v = INC[pct] && INC[pct][idx];
-    return (v !== null && v !== undefined) ? v : null;
+    const base = URBAN100[idx];
+    return base ? Math.round(base * pct / 100) : null;
+}
+function midLimit(pct, size, person1pct, person2pct) {
+    const idx = Math.min(size, 7) - 1;
+    let base = MID100[idx] * (pct / 100);
+    if (size === 1 && person1pct) base = MID100[0] * (person1pct / 100);
+    if (size === 2 && person2pct) base = MID100[1] * (person2pct / 100);
+    return base;
 }
 
 // ===== Analysis Engine =====
@@ -1551,7 +1575,8 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
-        const reOk = realEstate <= 21550, carOk = carVal <= 4563;
+        const db1 = getE('SH_JANGKI_JEONSE');
+        const reOk = realEstate <= (db1.assetReal||21550), carOk = carVal <= (db1.car||4563);
         if (!reOk) r.push(`부동산 21,550만원 이하 (현재 ${realEstate}만원)`);
         if (!carOk) r.push(`자동차 4,563만원 이하 (현재 ${carVal}만원)`);
         let eligible=false, rank='';
@@ -1570,7 +1595,8 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
-        const aOk = totalAssets<=35400, carOk=carVal<=4563;
+        const db2 = getE('SH_MIRINAE_JIP');
+        const aOk = totalAssets<=(db2.assetReal||35400), carOk=carVal<=(db2.car||4563);
         if (!aOk) r.push(`총자산 35,400만원 이하 (현재 ${totalAssets}만원)`);
         if (!carOk) r.push(`자동차 4,563만원 이하`);
         let eligible=false, rank='';
@@ -1586,9 +1612,11 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
-        const aOk=totalAssets<=33700, carOk=carVal<=4563;
-        if (!aOk) r.push('총자산 33,700만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const db3 = getE('SH_NATIONAL_RENT');
+        const aLim3=db3.asset||33700, cLim3=db3.car||4563;
+        const aOk=totalAssets<=aLim3, carOk=carVal<=cLim3;
+        if (!aOk) r.push(`총자산 ${aLim3}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${cLim3}만원 이하 필요`);
         let eligible=false, rank='';
         if (baseOk && aOk && carOk) {
             if (is1st||(disabled&&under(50))) { eligible=true; rank='1순위 (우대 대상)'; }
@@ -1603,8 +1631,10 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
+        const db4 = getE('SH_BUY_GENERAL');
         const childB = childCnt>=2?4700:childCnt===1?2400:0;
-        const aLim=23700+childB, carLim=4563+(childCnt>=2?760:childCnt===1?380:0);
+        const carB = childCnt>=2?760:childCnt===1?380:0;
+        const aLim=(db4.asset||23700)+childB, carLim=(db4.car||4563)+carB;
         const aOk=totalAssets<=aLim, carOk=carVal<=carLim;
         if (!aOk) r.push(`총자산 ${aLim}만원 이하 필요`);
         if (!carOk) r.push(`자동차 ${carLim}만원 이하 필요`);
@@ -1626,13 +1656,15 @@ function runAnalysis() {
         if (!baseOk) r.push('서울 거주 무주택 필요');
         const isYouthElig = isYouth||isStudent||isJobSeeker;
         if (!isYouthElig) r.push('만 19~39세 청년 또는 대학생·취업준비생만 신청 가능');
+        const db5 = getE('SH_PURCHASE_RENT_YOUTH');
+        const aLim5_2=db5.asset2||33700, aLim5_3=db5.asset3||25400, cLim5=db5.car||4563;
         let eligible=false, rank='', rent='시세 50%';
         if (baseOk && isYouthElig) {
             if (is1st) { eligible=true; rank='1순위 (우대 대상)'; rent='시세 30%'; }
             else if (under(100)) {
-                if (parentIncome&&totalAssets<=33700&&carVal<=4563) { eligible=true; rank='2순위 (본인+부모 소득 100%)'; }
-                else if (!parentIncome&&totalAssets<=25400&&carVal<=4563) { eligible=true; rank='3순위 (본인 소득 100%)'; }
-                else if (!parentIncome&&totalAssets>25400) { r.push('3순위: 총자산 25,400만원 이하 필요'); }
+                if (parentIncome&&totalAssets<=aLim5_2&&carVal<=cLim5) { eligible=true; rank='2순위 (본인+부모 소득 100%)'; }
+                else if (!parentIncome&&totalAssets<=aLim5_3&&carVal<=cLim5) { eligible=true; rank='3순위 (본인 소득 100%)'; }
+                else if (!parentIncome&&totalAssets>aLim5_3) { r.push(`3순위: 총자산 ${aLim5_3}만원 이하 필요`); }
                 else { r.push('총자산 기준 초과'); }
             } else r.push('소득 100% 이하 필요');
         }
@@ -1645,9 +1677,11 @@ function runAnalysis() {
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
         const grp = isNewlywedStrict||infant||(singleParent&&youngChild)||(youngChild&&isMarried);
         if (!grp) r.push('신혼부부(7년이내)·예비신혼·신생아가구·한부모(6세이하)만 해당');
-        const aOk=totalAssets<=33700, carOk=carVal<=4563;
-        if (!aOk) r.push('총자산 33,700만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const db6 = getE('SH_BUY_NEWLYWED_1');
+        const aLim6=db6.asset||33700, cLim6=db6.car||4563;
+        const aOk=totalAssets<=aLim6, carOk=carVal<=cLim6;
+        if (!aOk) r.push(`총자산 ${aLim6}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${cLim6}만원 이하 필요`);
         let eligible=false, rank='', rent='시세 50%';
         if (baseOk && grp && aOk && carOk) {
             if (infant||singleParent) { eligible=true; rank='1순위 (신생아가구·보호대상한부모)'; }
@@ -1666,8 +1700,9 @@ function runAnalysis() {
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
         const grp = isMarried||infant||singleParent;
         if (!grp) r.push('혼인가구·신생아가구·한부모가족만 해당');
+        const db7 = getE('SH_BUY_NEWLYWED_2');
         const bonus = childCnt>=2?84000:childCnt===1?5000:0;
-        const aLim=35400+bonus, aOk=totalAssets<=aLim;
+        const aLim=(db7.asset||35400)+bonus, aOk=totalAssets<=aLim;
         if (!aOk) r.push(`총자산 ${aLim}만원 이하 필요`);
         let eligible=false, rank='', rent='시세 70%';
         if (baseOk && grp && aOk) {
@@ -1700,14 +1735,17 @@ function runAnalysis() {
         if (!baseOk) r.push('서울 거주 무주택 필요');
         if (!isStudent) r.push('서울 소재 대학(원) 재학·복학·입학예정자만 신청 가능');
         if (isMarried) r.push('미혼 단독 세대 조건');
+        const db9 = getE('SH_HOPE_HOUSING');
+        const aLim9_2=db9.asset2||33700, aLim9_3=db9.asset3||10400;
+        const cLim9_2=db9.car!=null?db9.car:4563, cLim9_3=db9.car3!=null?db9.car3:0;
         let eligible=false, rank='';
         if (baseOk && isStudent && !isMarried) {
             if (is1st) { eligible=true; rank='1순위 (우대 대상)'; }
             else if (under(100)) {
-                if (parentIncome&&totalAssets<=33700&&carVal<=4563) { eligible=true; rank='2순위 (본인+부모 100%)'; }
-                else if (!parentIncome&&totalAssets<=10400&&carVal===0) { eligible=true; rank='3순위 (본인 100%, 자동차 무소유)'; }
-                else if (!parentIncome&&carVal>0) r.push('3순위: 자동차 무소유 필수');
-                else if (!parentIncome&&totalAssets>10400) r.push('3순위: 총자산 10,400만원 이하');
+                if (parentIncome&&totalAssets<=aLim9_2&&carVal<=cLim9_2) { eligible=true; rank=`2순위 (본인+부모 100%)`; }
+                else if (!parentIncome&&totalAssets<=aLim9_3&&carVal<=cLim9_3) { eligible=true; rank=`3순위 (본인 100%, 자동차 무소유)`; }
+                else if (!parentIncome&&carVal>cLim9_3) r.push('3순위: 자동차 무소유 필수');
+                else if (!parentIncome&&totalAssets>aLim9_3) r.push(`3순위: 총자산 ${aLim9_3}만원 이하`);
                 else r.push('자산 기준 초과');
             } else r.push('소득 100% 이하 필요');
         }
@@ -1718,7 +1756,8 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
-        const reOk=realEstate<=21550, carOk=carVal<=4563;
+        const db10 = getE('SH_ANSIM_JEONSE');
+        const reOk=realEstate<=(db10.assetReal||21550), carOk=carVal<=(db10.car||4563);
         if (!reOk) r.push('부동산 21,550만원 이하 필요');
         if (!carOk) r.push('자동차 4,563만원 이하 필요');
         let eligible=false, rank='';
@@ -1739,10 +1778,12 @@ function runAnalysis() {
         const grp=isStudent||isJobSeeker;
         if (!grp) r.push('서울 소재 대학생 또는 졸업 2년이내 취업준비생');
         if (isMarried) r.push('미혼 필요');
+        const db11 = getE('SH_HAPPY_STUDENT');
+        const aLim11=db11.asset||10800;
         let eligible=false, rank='';
         if (baseOk && grp && !isMarried) {
-            if (under(100)&&totalAssets<=33700) { eligible=true; rank='청약저축 가입 필요'+(subCount>=24?' (가점 최상)':''); }
-            else { if (!under(100)) r.push('소득 100% 이하 필요'); if (totalAssets>33700) r.push('총자산 33,700만원 이하 필요'); }
+            if (under(100)&&totalAssets<=aLim11) { eligible=true; rank='청약저축 가입 필요'+(subCount>=24?' (가점 최상)':''); }
+            else { if (!under(100)) r.push('소득 100% 이하 필요'); if (totalAssets>aLim11) r.push(`총자산 ${aLim11}만원 이하 필요`); }
         }
         add('행복주택 (대학생)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'SH', 'rental');
     }
@@ -1753,10 +1794,12 @@ function runAnalysis() {
         if (!baseOk) r.push('서울 거주 무주택 필요');
         if (!isYouth) r.push('만 19~39세 필요');
         if (isMarried&&marital!=='single') r.push('미혼 또는 한부모가족');
+        const db12 = getE('SH_HAPPY_YOUTH');
+        const aLim12=db12.asset||25400, cLim12=db12.car||4563;
         let eligible=false, rank='';
         if (baseOk && isYouth && (marital==='single'||singleParent)) {
-            if (under(100)&&totalAssets<=33700) { eligible=true; rank='청약저축 필요'+(subCount>=24?' (가점 최상)':''); }
-            else { if (!under(100)) r.push('소득 100%(1인 120%) 이하 필요'); if (totalAssets>33700) r.push('총자산 33,700만원 이하 필요'); }
+            if (under(100)&&totalAssets<=aLim12&&carVal<=cLim12) { eligible=true; rank='청약저축 필요'+(subCount>=24?' (가점 최상)':''); }
+            else { if (!under(100)) r.push('소득 100%(1인 120%) 이하 필요'); if (totalAssets>aLim12) r.push(`총자산 ${aLim12}만원 이하 필요`); if (carVal>cLim12) r.push(`자동차 ${cLim12}만원 이하 필요`); }
         }
         add('행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'SH', 'rental');
     }
@@ -1767,11 +1810,13 @@ function runAnalysis() {
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
         const grp = isNewlywedStrict||(singleParent&&youngChild);
         if (!grp) r.push('혼인 7년 이내 신혼부부·예비신혼·6세이하자녀 한부모만 해당');
+        const db13 = getE('SH_HAPPY_NEWLYWED');
+        const aLim13=db13.asset||33700;
         let eligible=false, rank='';
         if (baseOk && grp) {
             const incOk = dualInc?under(130):under(100);
-            if (incOk&&totalAssets<=33700) { eligible=true; rank='청약저축 필요'+(dualInc?' (맞벌이 120%)':' (외벌이 100%)'); }
-            else { if (!incOk) r.push(`소득 ${dualInc?'120%':'100%'} 이하 필요`); if (totalAssets>33700) r.push('총자산 33,700만원 이하 필요'); }
+            if (incOk&&totalAssets<=aLim13) { eligible=true; rank='청약저축 필요'+(dualInc?' (맞벌이 120%)':' (외벌이 100%)'); }
+            else { if (!incOk) r.push(`소득 ${dualInc?'120%':'100%'} 이하 필요`); if (totalAssets>aLim13) r.push(`총자산 ${aLim13}만원 이하 필요`); }
         }
         add('행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', r, 'SH', 'rental');
     }
@@ -1780,9 +1825,11 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
-        const aOk=totalAssets<=23700, carOk=carVal<=4563;
-        if (!aOk) r.push('총자산 23,700만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const db14 = getE('SH_JEONSE_RENT');
+        const aLim14=db14.asset||23700, cLim14=db14.car||4563;
+        const aOk=totalAssets<=aLim14, carOk=carVal<=cLim14;
+        if (!aOk) r.push(`총자산 ${aLim14}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${cLim14}만원 이하 필요`);
         let eligible=false, rank='';
         if (baseOk && aOk && carOk) {
             if (is1st||(disabled&&under(70))) { eligible=true; rank='1순위 (우대 대상)'; }
@@ -1799,9 +1846,11 @@ function runAnalysis() {
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
         const grp = isNewlywedStrict||infant||(singleParent&&youngChild)||(youngChild&&isMarried);
         if (!grp) r.push('신혼부부·예비신혼·신생아가구·6세이하자녀 한부모만 해당');
-        const aOk=totalAssets<=33700, carOk=carVal<=4563;
-        if (!aOk) r.push('총자산 33,700만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const db15 = getE('SH_JEONSE_NEWLYWED_1');
+        const aLim15=db15.asset||33700, cLim15=db15.car||4563;
+        const aOk=totalAssets<=aLim15, carOk=carVal<=cLim15;
+        if (!aOk) r.push(`총자산 ${aLim15}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${cLim15}만원 이하 필요`);
         let eligible=false, rank='';
         if (baseOk && grp && aOk && carOk) {
             if (dualInc?underDual(70,20):under(70)) { eligible=true; rank=infant?'1순위 (신생아가구)':'2~3순위'; }
@@ -1816,8 +1865,10 @@ function runAnalysis() {
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
         const grp = isMarried||infant||singleParent;
         if (!grp) r.push('혼인가구·신생아가구·한부모가족만 해당');
-        const aOk=totalAssets<=35400;
-        if (!aOk) r.push('총자산 35,400만원 이하 필요');
+        const db16 = getE('SH_JEONSE_NEWLYWED_2');
+        const aLim16=db16.asset||35400;
+        const aOk=totalAssets<=aLim16;
+        if (!aOk) r.push(`총자산 ${aLim16}만원 이하 필요`);
         let eligible=false, rank='';
         if (baseOk && grp && aOk) {
             const incOk = dualInc?under(200)||under(130):under(130);
@@ -1844,8 +1895,13 @@ function runAnalysis() {
         const r = [];
         if (!baseOk) r.push('서울 거주 무주택 필요');
         if (!isYouth&&!isNewlywedStrict) r.push('만 19~39세 또는 신혼부부·예비신혼 필요');
+        const db18 = getE('SH_SAFETY_PUBLIC');
+        const aLim18=db18.asset||25400, cLim18=db18.car||4563;
+        const aOk18=is1st||(totalAssets<=aLim18), carOk18=is1st||(carVal<=cLim18);
+        if (!aOk18) r.push(`총자산 ${aLim18}만원 이하 필요 (1순위 완화)`);
+        if (!carOk18) r.push(`자동차 ${cLim18}만원 이하 필요 (1순위 완화)`);
         let eligible=false, rank='';
-        if (baseOk && (isYouth||isNewlywedStrict)) {
+        if (baseOk && (isYouth||isNewlywedStrict) && aOk18 && carOk18) {
             if (is1st) { eligible=true; rank='1순위 (우대 대상, 소득·자산 완화)'; }
             else if (isNewlywedStrict) {
                 const i1 = dualInc?underDual(70,20):under(70);
@@ -1861,24 +1917,38 @@ function runAnalysis() {
     }
 
     // ===== LH 유형 분석 (전국) =====
-    // 기준중위소득 2025년 (원)
-    const MID100 = [2564238, 4199292, 5359036, 6494738, 7556719, 8555952, 9515150]; // 2026년 기준중위소득
-    function midLimit(pct, size, person1pct, person2pct) {
-        const idx = Math.min(size, 7) - 1;
-        let base = MID100[idx] * (pct / 100);
-        if (size === 1 && person1pct) base = MID100[0] * (person1pct / 100);
-        if (size === 2 && person2pct) base = MID100[1] * (person2pct / 100);
-        return base;
-    }
+    // MID100 / midLimit → 모듈 레벨 (income_standards Supabase 연동)
     function underMid(pct, p1, p2) { return incWon <= midLimit(pct, hhSize, p1, p2); }
+
+    // DB(programs.eligibility)에서 자격조건 수치 가져오기 (원 → 만원 변환)
+    function getE(code) {
+        const p = sbPrograms.find(x => x.code === code);
+        if (!p?.eligibility) return {};
+        const e = p.eligibility;
+        const m = v => v != null ? Math.round(v / 10000) : null;
+        return {
+            asset:     m(e.asset_limit),
+            asset2:    m(e.asset_limit_rank2),
+            asset3:    m(e.asset_limit_rank3),
+            assetReal: m(e.asset_real_limit),
+            car:       m(e.car_limit),
+            car3:      e.car_limit_rank3 != null ? Math.round(e.car_limit_rank3 / 10000) : null,
+            inc:       e.income_pct,
+            incM:      e.income_pct_married,
+            incPri:    e.income_pct_priority,
+            incGen:    e.income_pct_general,
+        };
+    }
 
     // LH 19. 통합공공임대
     {
         const r = [];
         if (!baseOk_lh) r.push('무주택 세대구성원 필요');
-        const aOk = totalAssets <= 34500, carOk = carVal <= 4563;
-        if (!aOk) r.push('총자산 34,500만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const db19 = getE('LH_INTEGRATED');
+        const aLim19=db19.asset||34500, cLim19=db19.car||4563;
+        const aOk = totalAssets <= aLim19, carOk = carVal <= cLim19;
+        if (!aOk) r.push(`총자산 ${aLim19}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${cLim19}만원 이하 필요`);
         let eligible = false, rank = '';
         if (baseOk_lh && aOk && carOk) {
             // 우선공급: 중위소득 100% (1인 120%, 2인 110%)
@@ -1894,9 +1964,11 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_lh) r.push('무주택 세대구성원 필요');
-        const aOk = totalAssets <= 34500, carOk = carVal <= 4563;
-        if (!aOk) r.push('총자산 34,500만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const db20 = getE('LH_NATIONAL_RENT');
+        const aLim20=db20.asset||34500, cLim20=db20.car||4563;
+        const aOk = totalAssets <= aLim20, carOk = carVal <= cLim20;
+        if (!aOk) r.push(`총자산 ${aLim20}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${cLim20}만원 이하 필요`);
         let eligible = false, rank = '';
         if (baseOk_lh && aOk && carOk) {
             if (is1st) { eligible = true; rank = '1순위 (우대 대상)'; }
@@ -1928,14 +2000,16 @@ function runAnalysis() {
         if (!baseOk_lh) r.push('무주택 필요');
         if (!isYouth) r.push('만 19~39세 필요');
         if (isMarried && !singleParent) r.push('미혼 또는 한부모가족');
+        const db22 = getE('LH_HAPPY_YOUTH');
+        const aLim22=db22.asset||27300, cLim22=db22.car||4542;
         let eligible = false, rank = '';
         if (baseOk_lh && isYouth && (!isMarried || singleParent)) {
-            if (under(100) && totalAssets <= 27300 && carVal <= 4563) {
+            if (under(100) && totalAssets <= aLim22 && carVal <= cLim22) {
                 eligible = true; rank = '청약저축 필요' + (subCount >= 24 ? ' (가점 최상)' : '');
             } else {
                 if (!under(100)) r.push('소득 100%(1인 120%) 이하 필요');
-                if (totalAssets > 27300) r.push('총자산 27,300만원 이하 필요');
-                if (carVal > 4563) r.push('자동차 4,563만원 이하 필요');
+                if (totalAssets > aLim22) r.push(`총자산 ${aLim22}만원 이하 필요`);
+                if (carVal > cLim22) r.push(`자동차 ${cLim22}만원 이하 필요`);
             }
         }
         add('LH 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'LH', 'rental');
@@ -1947,15 +2021,17 @@ function runAnalysis() {
         if (!baseOk_lh) r.push('무주택 세대구성원 필요');
         const grp = isNewlywedStrict || (singleParent && youngChild);
         if (!grp) r.push('혼인 7년 이내 신혼부부·예비신혼·6세이하 자녀 한부모 해당');
+        const db23 = getE('LH_HAPPY_NEWLYWED');
+        const aLim23=db23.asset||34500, cLim23=db23.car||4542;
         let eligible = false, rank = '';
         if (baseOk_lh && grp) {
             const incOk = dualInc ? under(130) : under(100);
-            if (incOk && totalAssets <= 34500 && carVal <= 4563) {
+            if (incOk && totalAssets <= aLim23 && carVal <= cLim23) {
                 eligible = true; rank = '청약저축 필요' + (dualInc ? ' (맞벌이 120%)' : ' (외벌이 100%)');
             } else {
                 if (!incOk) r.push('소득 ' + (dualInc ? '120%' : '100%') + ' 이하 필요');
-                if (totalAssets > 34500) r.push('총자산 34,500만원 이하 필요');
-                if (carVal > 4563) r.push('자동차 4,563만원 이하 필요');
+                if (totalAssets > aLim23) r.push(`총자산 ${aLim23}만원 이하 필요`);
+                if (carVal > cLim23) r.push(`자동차 ${cLim23}만원 이하 필요`);
             }
         }
         add('LH 행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', r, 'LH', 'rental');
@@ -1967,13 +2043,15 @@ function runAnalysis() {
         if (!baseOk_lh) r.push('무주택 필요');
         const isYouthElig = isYouth || isStudent || isJobSeeker;
         if (!isYouthElig) r.push('만 19~39세 청년 또는 대학생·취업준비생만 신청 가능');
+        const db24 = getE('LH_BUY_YOUTH');
+        const aLim24_2=db24.asset2||34500, aLim24_3=db24.asset3||27300, cLim24=db24.car||4563;
         let eligible = false, rank = '';
         if (baseOk_lh && isYouthElig) {
             if (is1st) { eligible = true; rank = '1순위 (우대 대상, 보증금 100만원)'; }
             else if (under(100)) {
-                if (parentIncome && totalAssets <= 34500 && carVal <= 4563) { eligible = true; rank = '2순위 (본인+부모 소득 100%)'; }
-                else if (!parentIncome && totalAssets <= 27300 && carVal <= 4563) { eligible = true; rank = '3순위 (본인 소득 100%)'; }
-                else { r.push('자산 기준 초과 (2순위 34,500만원·3순위 27,300만원)'); }
+                if (parentIncome && totalAssets <= aLim24_2 && carVal <= cLim24) { eligible = true; rank = '2순위 (본인+부모 소득 100%)'; }
+                else if (!parentIncome && totalAssets <= aLim24_3 && carVal <= cLim24) { eligible = true; rank = '3순위 (본인 소득 100%)'; }
+                else { r.push(`자산 기준 초과 (2순위 ${aLim24_2}만원·3순위 ${aLim24_3}만원)`); }
             } else r.push('소득 100% 이하 필요');
         }
         add('LH 청년 매입임대', eligible, rank, rank.includes('1순위') ? '시세 40%' : '시세 50%', '최장 10년', 'youth', r, 'LH', 'rental');
@@ -1985,9 +2063,11 @@ function runAnalysis() {
         if (!baseOk_lh) r.push('무주택 세대구성원 필요');
         const grp = isNewlywedStrict || infant || (singleParent && youngChild) || (youngChild && isMarried);
         if (!grp) r.push('신혼부부(7년이내)·예비신혼·신생아가구·한부모(6세이하)만 해당');
-        const aOk = totalAssets <= 34500, carOk = carVal <= 4563;
-        if (!aOk) r.push('총자산 34,500만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const db25 = getE('LH_BUY_NEWLYWED_1');
+        const aLim25=db25.asset||34500, cLim25=db25.car||4563;
+        const aOk = totalAssets <= aLim25, carOk = carVal <= cLim25;
+        if (!aOk) r.push(`총자산 ${aLim25}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${cLim25}만원 이하 필요`);
         let eligible = false, rank = '', rent = '시세 50%';
         if (baseOk_lh && grp && aOk && carOk) {
             if (infant || singleParent) { eligible = true; rank = '1순위 (신생아·한부모)'; }
@@ -2006,8 +2086,10 @@ function runAnalysis() {
         if (!baseOk_lh) r.push('무주택 세대구성원 필요');
         const grp = isMarried || infant || singleParent;
         if (!grp) r.push('혼인가구·신생아가구·한부모가족만 해당');
-        const aOk = totalAssets <= 34500;
-        if (!aOk) r.push('총자산 34,500만원 이하 필요 (자녀 수에 따라 최대 37,900만원)');
+        const db26 = getE('LH_BUY_NEWLYWED_2');
+        const aLim26=db26.asset||34500;
+        const aOk = totalAssets <= aLim26;
+        if (!aOk) r.push(`총자산 ${aLim26}만원 이하 필요 (자녀 수에 따라 최대 37,900만원)`);
         let eligible = false, rank = '', rent = '시세 80%';
         if (baseOk_lh && grp && aOk) {
             const incOk = dualInc ? under(200) || under(130) : under(130);
@@ -2036,9 +2118,11 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_lh) r.push('무주택 세대구성원 필요');
-        const aOk = totalAssets <= 24100, carOk = carVal <= 4563;
-        if (!aOk) r.push('총자산 24,100만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const db28 = getE('LH_JEONSE_GENERAL');
+        const aLim28=db28.asset||24100, cLim28=db28.car||4563;
+        const aOk = totalAssets <= aLim28, carOk = carVal <= cLim28;
+        if (!aOk) r.push(`총자산 ${aLim28}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${cLim28}만원 이하 필요`);
         let eligible = false, rank = '';
         if (baseOk_lh && aOk && carOk) {
             if (is1st || (disabled && under(70))) { eligible = true; rank = '1순위 (우대 대상)'; }
@@ -2058,9 +2142,11 @@ function runAnalysis() {
         if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
         const isYouthElig = isYouth && (!isMarried || singleParent);
         if (!isYouthElig) r.push('만 19~39세 미혼(또는 한부모) 필요');
-        const aOk = totalAssets <= 27300, carOk = carVal <= 4563;
-        if (!aOk) r.push(`총자산 27,300만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 4,563만원 이하`);
+        const db29 = getE('GH_HAPPY_YOUTH');
+        const aLim29=db29.asset||27300, cLim29=db29.car||3708;
+        const aOk = totalAssets <= aLim29, carOk = carVal <= cLim29;
+        if (!aOk) r.push(`총자산 ${aLim29}만원 이하 (현재 ${totalAssets}만원)`);
+        if (!carOk) r.push(`자동차 ${cLim29}만원 이하`);
         let eligible = false, rank = '';
         if (baseOk_gh && isYouthElig && aOk && carOk) {
             if (under(80)) { eligible = true; rank = ghPriority ? '1순위 (소득 80% 이하, 경기거주)' : '1순위 (소득 80% 이하)'; }
@@ -2077,9 +2163,11 @@ function runAnalysis() {
         if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
         const grp = isNewlywedStrict || infant || (youngChild && isMarried) || (singleParent && youngChild);
         if (!grp) r.push('혼인 7년 이내 신혼(또는 예비신혼) 또는 신생아 가구 필요');
-        const aOk = totalAssets <= 34500, carOk = carVal <= 4563;
-        if (!aOk) r.push(`총자산 34,500만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 4,563만원 이하`);
+        const db30 = getE('GH_HAPPY_NEWLYWED');
+        const aLim30=db30.asset||34500, cLim30=db30.car||3708;
+        const aOk = totalAssets <= aLim30, carOk = carVal <= cLim30;
+        if (!aOk) r.push(`총자산 ${aLim30}만원 이하 (현재 ${totalAssets}만원)`);
+        if (!carOk) r.push(`자동차 ${cLim30}만원 이하`);
         let eligible = false, rank = '';
         if (baseOk_gh && grp && aOk && carOk) {
             if (under(80)) { eligible = true; rank = '1순위 (소득 80% 이하)'; }
@@ -2094,9 +2182,11 @@ function runAnalysis() {
         const r = [];
         if (!baseOk_gh) r.push('무주택 세대구성원 필요');
         if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
-        const aOk = totalAssets <= 33700, carOk = carVal <= 4563;
-        if (!aOk) r.push(`총자산 33,700만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 4,563만원 이하`);
+        const db31 = getE('GH_NATIONAL_RENT');
+        const aLim31=db31.asset||34500, cLim31=db31.car||3708;
+        const aOk = totalAssets <= aLim31, carOk = carVal <= cLim31;
+        if (!aOk) r.push(`총자산 ${aLim31}만원 이하 (현재 ${totalAssets}만원)`);
+        if (!carOk) r.push(`자동차 ${cLim31}만원 이하`);
         let eligible = false, rank = '';
         if (baseOk_gh && aOk && carOk) {
             if (is1st) { eligible = true; rank = '1순위 (우대 대상)'; }
@@ -2112,9 +2202,11 @@ function runAnalysis() {
         const r = [];
         if (!baseOk_gh) r.push('무주택 세대구성원 필요');
         if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
-        const aOk = totalAssets <= 34500, carOk = carVal <= 4563;
-        if (!aOk) r.push(`총자산 34,500만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 4,563만원 이하`);
+        const db32 = getE('GH_BUY_YOUTH');
+        const aLim32=db32.asset||34500, cLim32=db32.car||3708;
+        const aOk = totalAssets <= aLim32, carOk = carVal <= cLim32;
+        if (!aOk) r.push(`총자산 ${aLim32}만원 이하 (현재 ${totalAssets}만원)`);
+        if (!carOk) r.push(`자동차 ${cLim32}만원 이하`);
         let eligible = false, rank = '';
         if (baseOk_gh && aOk && carOk) {
             if (isRecipient) { eligible = true; rank = '1순위 (수급자·차상위)'; }
@@ -2133,9 +2225,11 @@ function runAnalysis() {
         if (!ihPriority) r.push('※ 인천 거주자 우선 (비인천 거주도 신청 가능, 가점 불이익)');
         const isYouthElig = isYouth && (!isMarried || singleParent);
         if (!isYouthElig) r.push('만 19~39세 미혼(또는 한부모) 필요');
-        const aOk = totalAssets <= 27300, carOk = carVal <= 4563;
-        if (!aOk) r.push(`총자산 27,300만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 4,563만원 이하`);
+        const db33 = getE('IH_HAPPY_YOUTH');
+        const aLim33=db33.asset||27300, cLim33=db33.car||4563;
+        const aOk = totalAssets <= aLim33, carOk = carVal <= cLim33;
+        if (!aOk) r.push(`총자산 ${aLim33}만원 이하 (현재 ${totalAssets}만원)`);
+        if (!carOk) r.push(`자동차 ${cLim33}만원 이하`);
         let eligible = false, rank = '';
         if (baseOk_ih && isYouthElig && aOk && carOk) {
             if (under(80)) { eligible = true; rank = '1순위 (소득 80% 이하)'; }
@@ -2152,9 +2246,11 @@ function runAnalysis() {
         if (!ihPriority) r.push('※ 인천 거주자 우선 (비인천 거주도 신청 가능, 가점 불이익)');
         const grp = isNewlywedStrict || infant || (youngChild && isMarried);
         if (!grp) r.push('혼인 7년 이내 신혼(또는 예비신혼) 또는 신생아 가구 필요');
-        const aOk = totalAssets <= 34500, carOk = carVal <= 4563;
-        if (!aOk) r.push(`총자산 34,500만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 4,563만원 이하`);
+        const db34 = getE('IH_HAPPY_NEWLYWED');
+        const aLim34=db34.asset||34500, cLim34=db34.car||4563;
+        const aOk = totalAssets <= aLim34, carOk = carVal <= cLim34;
+        if (!aOk) r.push(`총자산 ${aLim34}만원 이하 (현재 ${totalAssets}만원)`);
+        if (!carOk) r.push(`자동차 ${cLim34}만원 이하`);
         let eligible = false, rank = '';
         if (baseOk_ih && grp && aOk && carOk) {
             if (under(80)) { eligible = true; rank = '1순위 (소득 80% 이하)'; }
@@ -2168,9 +2264,11 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_ih) r.push('무주택 세대구성원 필요');
-        const aOk = totalAssets <= 34500, carOk = carVal <= 4563;
-        if (!aOk) r.push(`총자산 34,500만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 4,563만원 이하`);
+        const db35 = getE('IH_NATIONAL_RENT');
+        const aLim35=db35.asset||34500, cLim35=db35.car||4563;
+        const aOk = totalAssets <= aLim35, carOk = carVal <= cLim35;
+        if (!aOk) r.push(`총자산 ${aLim35}만원 이하 (현재 ${totalAssets}만원)`);
+        if (!carOk) r.push(`자동차 ${cLim35}만원 이하`);
         let eligible = false, rank = '';
         if (baseOk_ih && aOk && carOk) {
             if (is1st) { eligible = true; rank = '1순위 (우대 대상)'; }
@@ -2741,12 +2839,11 @@ function runAnalysis() {
     // 주거급여
     {
         const r = [];
-        const midLimits = [1230834, 2015660, 2572337, 3117474, 3627225, 4106857, 4567272]; // 2026년 기준중위소득 48%
-        const midLimit = midLimits[Math.min(hhSize, 7) - 1];
+        const limit48 = midLimit(48, hhSize);
         const incWon2 = monthlyIncome * 10000;
-        if (incWon2 > midLimit) r.push(`소득 기준중위 48% 이하 필요 (${hhSize}인 약 ${Math.round(midLimit/10000)}만원)`);
+        if (incWon2 > limit48) r.push(`소득 기준중위 48% 이하 필요 (${hhSize}인 약 ${Math.round(limit48/10000)}만원)`);
         let eligible = false, rank = '';
-        if (incWon2 <= midLimit) {
+        if (incWon2 <= limit48) {
             eligible = true; rank = '임차가구 월세 지원 / 자가가구 수선비 지원';
         }
         add('주거급여', eligible, rank, '지역·가구원수별 지급기준액', '수급기간 유지', 'welfare', r, '국토교통부', 'welfare');
