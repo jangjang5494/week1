@@ -497,6 +497,40 @@
                 </div>
             </div>
 
+            <!-- 재직 여부 (공통) -->
+            <div class="fg">
+                <div class="fg-label-row">
+                    <label>재직 중 여부</label>
+                </div>
+                <div class="toggle-group" id="tg-employed">
+                    <button class="toggle-btn selected" data-val="no">아니오 (학생·취준생·무직 등)</button>
+                    <button class="toggle-btn" data-val="yes">예 — 현재 취업 중</button>
+                </div>
+            </div>
+
+            <div class="fg" id="workplace-region-field" style="display:none">
+                <div class="fg-label-row">
+                    <label>직장 소재지</label>
+                </div>
+                <div class="toggle-group" id="tg-workplace-region">
+                    <button class="toggle-btn selected" data-val="seoul">서울</button>
+                    <button class="toggle-btn" data-val="gyeonggi">경기·인천</button>
+                    <button class="toggle-btn" data-val="other">기타 지역</button>
+                </div>
+                <p class="hint">청년안심주택: 서울 거주·재학·재직 중 하나 충족 시 신청 가능</p>
+            </div>
+
+            <div class="fg" id="sme-field" style="display:none">
+                <div class="fg-label-row">
+                    <label>중소기업 재직 여부</label>
+                </div>
+                <div class="toggle-group" id="tg-sme">
+                    <button class="toggle-btn selected" data-val="no">해당 없음</button>
+                    <button class="toggle-btn" data-val="yes">중소기업 재직 중</button>
+                </div>
+                <p class="hint">버팀목 전세대출 금리 -0.3%p 우대</p>
+            </div>
+
             <!-- 기혼/신혼/예비신혼 전용 필드 -->
             <div id="married-fields" style="display:none;">
                 <div class="fg">
@@ -1017,6 +1051,7 @@ document.querySelectorAll('.toggle-group').forEach(group => {
             if (group.id === 'tg-region') updateDistrictUI();
             if (group.id === 'tg-marital') updateFormVisibility();
             if (group.id === 'tg-student') updateSchoolRegionVisibility();
+            if (group.id === 'tg-employed') updateWorkplaceVisibility();
         });
     });
 });
@@ -1030,6 +1065,12 @@ function getToggle(id) {
 function updateSchoolRegionVisibility() {
     const isStudent = getToggle('tg-student') === 'yes';
     document.getElementById('school-region-field').style.display = isStudent ? '' : 'none';
+}
+
+function updateWorkplaceVisibility() {
+    const employed = getToggle('tg-employed') === 'yes';
+    document.getElementById('workplace-region-field').style.display = employed ? '' : 'none';
+    document.getElementById('sme-field').style.display = employed ? '' : 'none';
 }
 
 // ===== 동적 폼 표시 =====
@@ -1538,10 +1579,14 @@ function runAnalysis() {
     const youngChild  = getToggle('tg-youngchild') === 'yes';
     const infant      = getToggle('tg-infant') === 'yes';
     const dualInc     = getToggle('tg-dual') === 'yes';
-    const isStudent    = getToggle('tg-student') === 'yes';
-    const schoolRegion = getToggle('tg-school-region') || 'seoul'; // 대학생 아닐 경우 무관
+    const isStudent      = getToggle('tg-student') === 'yes';
+    const schoolRegion   = getToggle('tg-school-region') || 'seoul';
     const isSeoulStudent = isStudent && schoolRegion === 'seoul';
-    const isJobSeeker  = getToggle('tg-jobseeker') === 'yes';
+    const isJobSeeker    = getToggle('tg-jobseeker') === 'yes';
+    const isEmployed     = getToggle('tg-employed') === 'yes';
+    const workplaceRegion = getToggle('tg-workplace-region') || 'other';
+    const isSeoulWorker  = isEmployed && workplaceRegion === 'seoul';
+    const isSME          = getToggle('tg-sme') === 'yes';
     const monthlyIncome = parseFloat(document.getElementById('income').value) || 0;
     const totalAssets   = parseFloat(document.getElementById('total-assets').value) || 0;
     const realEstate    = parseFloat(document.getElementById('real-estate').value) || 0;
@@ -1921,6 +1966,8 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_lh) r.push('무주택 필요');
+        const seoulConnect = seoulRes || isSeoulStudent || isSeoulWorker;
+        if (!seoulConnect) r.push('서울 거주 또는 서울 소재 학교 재학 또는 서울 재직 중 하나 필요');
         if (!isYouth&&!isNewlywedStrict) r.push('만 19~39세 또는 신혼부부·예비신혼 필요');
         const db18 = getE('SH_SAFETY_PUBLIC');
         const aLim18=db18.asset||25400, cLim18=db18.car||4563;
@@ -1928,7 +1975,7 @@ function runAnalysis() {
         if (!aOk18) r.push(`총자산 ${aLim18}만원 이하 필요 (1순위 완화)`);
         if (!carOk18) r.push(`자동차 ${cLim18}만원 이하 필요 (1순위 완화)`);
         let eligible=false, rank='';
-        if (baseOk_lh && (isYouth||isNewlywedStrict) && aOk18 && carOk18) {
+        if (baseOk_lh && seoulConnect && (isYouth||isNewlywedStrict) && aOk18 && carOk18) {
             if (is1st) { eligible=true; rank='1순위 (우대 대상, 소득·자산 완화)'; }
             else if (isNewlywedStrict) {
                 const i1 = dualInc?underDual(70,20):under(70);
