@@ -1,24 +1,8 @@
 {
   "updated": "2026-03-30",
   "count": 32,
-  "needs_review_count": 4,
+  "needs_review_count": 5,
   "announcements": [
-    {
-      "id": "lh_rental_cfb217e6",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅱ(전세형) 예비입주자 모집공고(인천,부천)",
-      "types": [
-        "기타(LH)"
-      ],
-      "location": "인천광역시 외",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-26",
-      "crawled_at": "2026-03-30",
-      "apply_end": "2026-04-08",
-      "apply_start": "2026-03-26"
-    },
     {
       "id": "lh_rental_5793c357",
       "inst": "LH",
@@ -42,6 +26,22 @@
       "title": "[인천지역본부] 26년 2차 청년 매입임대 예비입주자 모집공고(인천,부천)",
       "types": [
         "LH 청년 매입임대"
+      ],
+      "location": "인천광역시 외",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-26",
+      "crawled_at": "2026-03-30",
+      "apply_end": "2026-04-08",
+      "apply_start": "2026-03-26"
+    },
+    {
+      "id": "lh_rental_cfb217e6",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅱ(전세형) 예비입주자 모집공고(인천,부천)",
+      "types": [
+        "기타(LH)"
       ],
       "location": "인천광역시 외",
       "status": "예정",
@@ -99,6 +99,21 @@
       "needs_pdf": true
     },
     {
+      "id": "sh_rental_81a80970",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[청년형] 특화형 매입임대주택(서초구) 입주자 모집 공고(운영기관 : 한지붕 협동조합)",
+      "types": [
+        "일반 매입임대주택"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302330&multi_itm_seq=2",
+      "posted_date": "2026-03-30",
+      "crawled_at": "2026-03-30",
+      "needs_pdf": true
+    },
+    {
       "id": "sh_rental_d6daf76c",
       "inst": "SH",
       "source_key": "sh_rental",
@@ -129,17 +144,17 @@
       "needs_pdf": true
     },
     {
-      "id": "ihwc_af8f7b3f",
+      "id": "ih_rental_e546594a",
       "inst": "iH",
-      "source_key": "ihwc",
+      "source_key": "ih_rental",
       "title": "2026년 인천도시공사(iH) 기존주택 전세임대 예비입주자 모집공고",
       "types": [
         "기타(iH)"
       ],
       "location": "인천",
       "status": "needs_review",
-      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245&bcd=notice&cate1=general&pgdiv=general",
-      "posted_date": "2026-03-30",
+      "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245",
+      "posted_date": "2026-03-18",
       "crawled_at": "2026-03-30",
       "needs_pdf": true
     },
@@ -460,22 +475,6 @@
       "crawled_at": "2026-03-30",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-02"
-    },
-    {
-      "id": "applyhome_remndr_e4b2b8d2",
-      "inst": "청약홈",
-      "source_key": "applyhome_remndr",
-      "title": "신림 스카이 아파트 (잔여세대)",
-      "types": [
-        "민간분양 (아파트)"
-      ],
-      "location": "서울",
-      "status": "진행중",
-      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-03-30",
-      "crawled_at": "2026-03-30",
-      "apply_start": "2026-03-30",
-      "apply_end": "2026-03-30"
     },
     {
       "id": "applyhome_other_5186fb0b",
