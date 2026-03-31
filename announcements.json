@@ -1,15 +1,79 @@
 {
   "updated": "2026-03-31",
-  "count": 29,
-  "needs_review_count": 4,
+  "count": 37,
+  "needs_review_count": 5,
   "announcements": [
     {
-      "id": "lh_rental_eb907b37",
+      "id": "lh_rental_bfbcf832",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "[경기남부] 26년 1차 신혼·신생아 매입임대주택Ⅰ 예비입주자 모집공고",
+      "title": "고양장항 A-2BL 신혼희망타운 행복주택 예비입주자 모집공고",
       "types": [
-        "LH 신혼·신생아 매입임대 Ⅰ형"
+        "LH 행복주택 (신혼부부)"
+      ],
+      "location": "경기도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-03-31",
+      "apply_end": "2026-04-13",
+      "apply_start": "2026-03-31"
+    },
+    {
+      "id": "lh_rental_8349bff7",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[서울지역본부] 26년 1차 신혼·신생아 매입임대Ⅱ(전세형) 예비입주자 모집공고",
+      "types": [
+        "LH 신혼·신생아 매입임대 Ⅱ형"
+      ],
+      "location": "서울특별시",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-03-31",
+      "apply_end": "2026-04-17",
+      "apply_start": "2026-03-31"
+    },
+    {
+      "id": "lh_rental_4d11d73d",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[서울지역본부] 26년 1차 청년 매입임대주택 예비입주자 모집공고",
+      "types": [
+        "LH 청년 매입임대"
+      ],
+      "location": "서울특별시",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-03-31",
+      "apply_end": "2026-04-17",
+      "apply_start": "2026-03-31"
+    },
+    {
+      "id": "lh_rental_6ba13a17",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[서울지역본부] 26년 1차 기숙사형 청년주택 예비입주자 모집 공고",
+      "types": [
+        "LH 기숙사형 청년주택"
+      ],
+      "location": "서울특별시",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-03-31",
+      "apply_end": "2026-04-17",
+      "apply_start": "2026-03-31"
+    },
+    {
+      "id": "lh_rental_bb8120fe",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[경기남부] 26년 1차 청년 매입임대주택 예비입주자 모집공고",
+      "types": [
+        "LH 청년 매입임대"
       ],
       "location": "경기도",
       "status": "예정",
@@ -20,12 +84,12 @@
       "apply_start": "2026-03-31"
     },
     {
-      "id": "lh_rental_bb8120fe",
+      "id": "lh_rental_eb907b37",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "[경기남부] 26년 1차 청년 매입임대주택 예비입주자 모집공고",
+      "title": "[경기남부] 26년 1차 신혼·신생아 매입임대주택Ⅰ 예비입주자 모집공고",
       "types": [
-        "LH 청년 매입임대"
+        "LH 신혼·신생아 매입임대 Ⅰ형"
       ],
       "location": "경기도",
       "status": "예정",
@@ -132,6 +196,37 @@
       "apply_start": "2026-03-27"
     },
     {
+      "id": "sh_rental_d18999d4",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "2026년 1차 청년안심주택(공공임대) 입주자 모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "예정",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302414&multi_itm_seq=2",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-03-31",
+      "apply_start": "2026-04-29",
+      "apply_end": "2026-05-04"
+    },
+    {
+      "id": "sh_rental_8ac16802",
+      "inst": "SH",
+      "source_key": "sh_rental",
+      "title": "[토지지원 사회주택] 어울리 에어스페이스 신림4호점 입주자 모집공고",
+      "types": [
+        "기타"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302394&multi_itm_seq=2",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-03-31",
+      "needs_pdf": true
+    },
+    {
       "id": "sh_rental_f0194edd",
       "inst": "SH",
       "source_key": "sh_rental",
@@ -190,6 +285,22 @@
       "posted_date": "2026-03-31",
       "crawled_at": "2026-03-31",
       "needs_pdf": true
+    },
+    {
+      "id": "youth_263fc48a",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[공공임대] 2026년 1차 청년안심주택 모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6485",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-03-31",
+      "apply_start": "2026-03-31",
+      "apply_end": "2026-04-10"
     },
     {
       "id": "applyhome_apt_f45b127a",
@@ -368,6 +479,22 @@
       "crawled_at": "2026-03-31",
       "apply_start": "2026-03-30",
       "apply_end": "2026-04-01"
+    },
+    {
+      "id": "applyhome_remndr_73184ef7",
+      "inst": "청약홈",
+      "source_key": "applyhome_remndr",
+      "title": "경기주택도시공사 (잔여세대)",
+      "types": [
+        "민간분양 (아파트)"
+      ],
+      "location": "경기",
+      "status": "예정",
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-03-31",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-02"
     },
     {
       "id": "applyhome_remndr_38a21fb6",
