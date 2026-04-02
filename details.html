@@ -1914,9 +1914,12 @@ function runAnalysis() {
         const aLim13=db13.asset||33700;
         let eligible=false, rank='';
         if (baseOk && grp) {
-            const incOk = underIncM(db13) || (dualInc?under(130):under(100));
-            if (incOk&&totalAssets<=aLim13) { eligible=true; rank='청약저축 필요'+(dualInc?` (맞벌이 ${db13.incM||120}%)`:`(외벌이 ${db13.inc||100}%)`); }
-            else { if (!incOk) r.push(`소득 ${dualInc?(db13.incM||120):(db13.inc||100)}% 이하 필요`); if (totalAssets>aLim13) r.push(`총자산 ${aLim13}만원 이하 필요`); }
+            const incLim = dualInc
+                ? (hhSize===2 && db13.incM2p ? db13.incM2p : db13.incM||120)
+                : (hhSize===1 ? db13.inc1p||120 : hhSize===2 ? db13.inc2p||110 : db13.inc||100);
+            const incOk = under(incLim);
+            if (incOk&&totalAssets<=aLim13) { eligible=true; rank=`청약저축 필요 (${dualInc?'맞벌이 ':''}${incLim}%)`; }
+            else { if (!incOk) r.push(`소득 ${incLim}% 이하 필요`); if (totalAssets>aLim13) r.push(`총자산 ${aLim13}만원 이하 필요`); }
         }
         add('행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', r, 'SH', 'rental');
     }
@@ -2318,11 +2321,14 @@ function runAnalysis() {
         const aLim23=db23.asset||34500, cLim23=db23.car||4542;
         let eligible = false, rank = '';
         if (baseOk_lh && grp) {
-            const incOk = underIncM(db23) || (dualInc ? under(130) : under(100));
+            const incLim23 = dualInc
+                ? (hhSize===2 && db23.incM2p ? db23.incM2p : db23.incM||120)
+                : (hhSize===1 ? db23.inc1p||120 : hhSize===2 ? db23.inc2p||110 : db23.inc||100);
+            const incOk = under(incLim23);
             if (incOk && totalAssets <= aLim23 && carVal <= cLim23) {
-                eligible = true; rank = '청약저축 필요' + (dualInc ? ` (맞벌이 ${db23.incM||120}%)` : ` (외벌이 ${db23.inc||100}%)`);
+                eligible = true; rank = `청약저축 필요 (${dualInc?'맞벌이 ':''}${incLim23}%)`;
             } else {
-                if (!incOk) r.push(`소득 ${dualInc?(db23.incM||120):(db23.inc||100)}% 이하 필요`);
+                if (!incOk) r.push(`소득 ${incLim23}% 이하 필요`);
                 if (totalAssets > aLim23) r.push(`총자산 ${aLim23}만원 이하 필요`);
                 if (carVal > cLim23) r.push(`자동차 ${cLim23}만원 이하 필요`);
             }
