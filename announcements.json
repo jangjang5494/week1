@@ -1,8 +1,40 @@
 {
-  "updated": "2026-04-01",
-  "count": 37,
-  "needs_review_count": 6,
+  "updated": "2026-04-02",
+  "count": 40,
+  "needs_review_count": 8,
   "announcements": [
+    {
+      "id": "lh_rental_cbf51c27",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[경기북부] 26년 1차 신혼·신생아 매입임대Ⅱ(전세형) 예비입주자 모집 공고",
+      "types": [
+        "LH 신혼·신생아 매입임대 Ⅱ형"
+      ],
+      "location": "경기도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_end": "2026-04-16",
+      "apply_start": "2026-04-02"
+    },
+    {
+      "id": "lh_rental_9ad4afea",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[경기북부] 26년 1차 청년 매입임대 예비입주자 모집공고",
+      "types": [
+        "LH 청년 매입임대"
+      ],
+      "location": "경기도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_end": "2026-04-16",
+      "apply_start": "2026-04-02"
+    },
     {
       "id": "lh_rental_d84d6273",
       "inst": "LH",
@@ -15,7 +47,7 @@
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-13",
       "apply_start": "2026-04-01"
     },
@@ -31,8 +63,24 @@
       "status": "진행중",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-13",
+      "apply_start": "2026-03-31"
+    },
+    {
+      "id": "lh_rental_023c85b7",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[서울지역본부] 26년 1차 신혼·신생아 매입임대Ⅰ 예비입주자 모집공고",
+      "types": [
+        "LH 신혼·신생아 매입임대 Ⅰ형"
+      ],
+      "location": "서울특별시",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-04-02",
+      "apply_end": "2026-04-17",
       "apply_start": "2026-03-31"
     },
     {
@@ -47,7 +95,7 @@
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-17",
       "apply_start": "2026-03-31"
     },
@@ -63,40 +111,8 @@
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-17",
-      "apply_start": "2026-03-31"
-    },
-    {
-      "id": "lh_rental_8349bff7",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[서울지역본부] 26년 1차 신혼·신생아 매입임대Ⅱ(전세형) 예비입주자 모집공고",
-      "types": [
-        "LH 신혼·신생아 매입임대 Ⅱ형"
-      ],
-      "location": "서울특별시",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
-      "apply_end": "2026-04-17",
-      "apply_start": "2026-03-31"
-    },
-    {
-      "id": "lh_rental_eb907b37",
-      "inst": "LH",
-      "source_key": "lh_rental",
-      "title": "[경기남부] 26년 1차 신혼·신생아 매입임대주택Ⅰ 예비입주자 모집공고",
-      "types": [
-        "LH 신혼·신생아 매입임대 Ⅰ형"
-      ],
-      "location": "경기도",
-      "status": "예정",
-      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
-      "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
-      "apply_end": "2026-04-15",
       "apply_start": "2026-03-31"
     },
     {
@@ -111,23 +127,39 @@
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-15",
       "apply_start": "2026-03-31"
     },
     {
-      "id": "lh_rental_5793c357",
+      "id": "lh_rental_eb907b37",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅰ 예비입주자 모집공고(인천,부천)",
+      "title": "[경기남부] 26년 1차 신혼·신생아 매입임대주택Ⅰ 예비입주자 모집공고",
       "types": [
-        "기타(LH)"
+        "LH 신혼·신생아 매입임대 Ⅰ형"
+      ],
+      "location": "경기도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-03-31",
+      "crawled_at": "2026-04-02",
+      "apply_end": "2026-04-15",
+      "apply_start": "2026-03-31"
+    },
+    {
+      "id": "lh_rental_a8deed83",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "[인천지역본부] 26년 2차 청년 매입임대 예비입주자 모집공고(인천,부천)",
+      "types": [
+        "LH 청년 매입임대"
       ],
       "location": "인천광역시 외",
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-26",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-08",
       "apply_start": "2026-03-26"
     },
@@ -143,23 +175,23 @@
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-26",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-08",
       "apply_start": "2026-03-26"
     },
     {
-      "id": "lh_rental_a8deed83",
+      "id": "lh_rental_5793c357",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "[인천지역본부] 26년 2차 청년 매입임대 예비입주자 모집공고(인천,부천)",
+      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅰ 예비입주자 모집공고(인천,부천)",
       "types": [
-        "LH 청년 매입임대"
+        "기타(LH)"
       ],
       "location": "인천광역시 외",
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
       "posted_date": "2026-03-26",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-08",
       "apply_start": "2026-03-26"
     },
@@ -175,7 +207,7 @@
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1027",
       "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-10",
       "apply_start": "2026-03-31"
     },
@@ -191,7 +223,7 @@
       "status": "예정",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1027",
       "posted_date": "2026-03-30",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-07",
       "apply_start": "2026-03-30"
     },
@@ -207,7 +239,7 @@
       "status": "진행중",
       "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1027",
       "posted_date": "2026-03-27",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_end": "2026-04-10",
       "apply_start": "2026-03-27"
     },
@@ -223,7 +255,7 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302368&multi_itm_seq=2",
       "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "needs_pdf": true
     },
     {
@@ -238,7 +270,7 @@
       "status": "예정",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302414&multi_itm_seq=2",
       "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-29",
       "apply_end": "2026-05-04"
     },
@@ -254,7 +286,7 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302394&multi_itm_seq=2",
       "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "needs_pdf": true
     },
     {
@@ -269,7 +301,7 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302323&multi_itm_seq=2",
       "posted_date": "2026-03-30",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "needs_pdf": true
     },
     {
@@ -284,7 +316,7 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302330&multi_itm_seq=2",
       "posted_date": "2026-03-30",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "needs_pdf": true
     },
     {
@@ -299,7 +331,37 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301479&multi_itm_seq=1",
       "posted_date": "2026-03-10",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_notice_7ec31d38",
+      "inst": "SH",
+      "source_key": "sh_notice",
+      "title": "(주)온썸 리모델링형 사회주택 어느가족은평 입주자 모집 공고",
+      "types": [
+        "기타"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/view.do?seq=302451&multi_itm_seq=1,2,4,8,16,32,64,128,256,512",
+      "posted_date": "2026-04-01",
+      "crawled_at": "2026-04-02",
+      "needs_pdf": true
+    },
+    {
+      "id": "sh_notice_449c2225",
+      "inst": "SH",
+      "source_key": "sh_notice",
+      "title": "(주)온썸 리모델링형 사회주택 어느가족독산 입주자 모집 공고",
+      "types": [
+        "기타"
+      ],
+      "location": "서울",
+      "status": "needs_review",
+      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C295/www/brd/m_241/view.do?seq=302449&multi_itm_seq=1,2,4,8,16,32,64,128,256,512",
+      "posted_date": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "needs_pdf": true
     },
     {
@@ -314,7 +376,7 @@
       "status": "needs_review",
       "url": "https://www.ih.co.kr/main/bbs/bbsMsgDetail.do?msg_seq=4245",
       "posted_date": "2026-03-18",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "needs_pdf": true
     },
     {
@@ -329,7 +391,7 @@
       "status": "진행중",
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6485",
       "posted_date": "2026-03-31",
-      "crawled_at": "2026-04-01",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-03-31",
       "apply_end": "2026-04-10"
     },
@@ -348,8 +410,8 @@
       "location": "서울",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?pblancNo=2026000058&houseManageNo=2026000058",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-10",
       "apply_end": "2026-04-15"
     },
@@ -366,8 +428,8 @@
       "location": "서울",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?pblancNo=2026000048&houseManageNo=2026000048",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-09",
       "apply_end": "2026-04-14"
     },
@@ -386,8 +448,8 @@
       "location": "경기",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?pblancNo=2026000070&houseManageNo=2026000070",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-06",
       "apply_end": "2026-04-08"
     },
@@ -406,8 +468,8 @@
       "location": "인천",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?pblancNo=2026000065&houseManageNo=2026000065",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-06",
       "apply_end": "2026-04-08"
     },
@@ -426,8 +488,8 @@
       "location": "인천",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?pblancNo=2026000062&houseManageNo=2026000062",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-06",
       "apply_end": "2026-04-08"
     },
@@ -446,8 +508,8 @@
       "location": "경기",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?pblancNo=2026000055&houseManageNo=2026000055",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-07",
       "apply_end": "2026-04-09"
     },
@@ -466,8 +528,8 @@
       "location": "서울",
       "status": "진행중",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?pblancNo=2026000064&houseManageNo=2026000064",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-03-30",
       "apply_end": "2026-04-02"
     },
@@ -486,30 +548,26 @@
       "location": "서울",
       "status": "진행중",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?pblancNo=2025000497&houseManageNo=2025000497",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-03-31",
       "apply_end": "2026-04-03"
     },
     {
-      "id": "applyhome_apt_b4607242",
+      "id": "applyhome_remndr_675d7b80",
       "inst": "청약홈",
-      "source_key": "applyhome_apt",
-      "title": "오션포레베네스트하우스(미단시티 공동8BL)",
+      "source_key": "applyhome_remndr",
+      "title": "(주)무궁화신탁 (잔여세대)",
       "types": [
-        "민간분양 (아파트)",
-        "분양 다자녀",
-        "분양 신혼특공",
-        "분양 생애최초",
-        "분양 노부모부양"
+        "민간분양 (아파트)"
       ],
-      "location": "인천",
-      "status": "진행중",
-      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?pblancNo=2026000063&houseManageNo=2026000063",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
-      "apply_start": "2026-03-30",
-      "apply_end": "2026-04-01"
+      "location": "서울",
+      "status": "예정",
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-07",
+      "apply_end": "2026-04-09"
     },
     {
       "id": "applyhome_remndr_73184ef7",
@@ -520,10 +578,10 @@
         "민간분양 (아파트)"
       ],
       "location": "경기",
-      "status": "예정",
+      "status": "진행중",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-02"
     },
@@ -538,42 +596,26 @@
       "location": "경기",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-06",
       "apply_end": "2026-04-07"
     },
     {
-      "id": "applyhome_remndr_a5f12282",
+      "id": "applyhome_other_a12d1133",
       "inst": "청약홈",
-      "source_key": "applyhome_remndr",
-      "title": "황학동청계지역주택조합 (잔여세대)",
+      "source_key": "applyhome_other",
+      "title": "마스턴제83호청량피에프브이 주식회사",
       "types": [
-        "민간분양 (아파트)"
+        "오피스텔 청약"
       ],
       "location": "서울",
-      "status": "진행중",
-      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
-      "apply_start": "2026-04-01",
-      "apply_end": "2026-04-01"
-    },
-    {
-      "id": "applyhome_remndr_76e6f547",
-      "inst": "청약홈",
-      "source_key": "applyhome_remndr",
-      "title": "(주)무궁화신탁 (잔여세대)",
-      "types": [
-        "민간분양 (아파트)"
-      ],
-      "location": "경기",
-      "status": "진행중",
-      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
-      "apply_start": "2026-03-31",
-      "apply_end": "2026-04-06"
+      "status": "예정",
+      "url": "https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-07",
+      "apply_end": "2026-04-08"
     },
     {
       "id": "applyhome_other_df4bc496",
@@ -586,8 +628,8 @@
       "location": "경기",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-08",
       "apply_end": "2026-04-08"
     },
@@ -602,8 +644,8 @@
       "location": "서울",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-09",
       "apply_end": "2026-04-10"
     },
@@ -618,8 +660,8 @@
       "location": "서울",
       "status": "예정",
       "url": "https://www.applyhome.co.kr/ai/aia/selectOtherLttotPblancListView.do",
-      "posted_date": "2026-04-01",
-      "crawled_at": "2026-04-01",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
       "apply_start": "2026-04-06",
       "apply_end": "2026-04-07"
     }
