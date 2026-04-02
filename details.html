@@ -1979,8 +1979,9 @@ function runAnalysis() {
             if (incOk) {
                 eligible=true;
                 if (infant||singleParent) rank='1순위 (신생아가구·한부모, '+(dualInc?'맞벌이 200%':'130%')+')';
-                else if (childCnt>0) rank='2순위 (자녀있는 혼인가구)';
-                else rank='3순위 (자녀없는 혼인가구)';
+                else if (isNewlywedStrict && childCnt>0) rank='2순위 (미성년자녀 있는 신혼)';
+                else if (isNewlywedStrict) rank='3순위 (자녀없는 신혼)';
+                else rank='4순위 (6세이하자녀 혼인가구)';
             } else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
         }
         add('신혼·신생아 전세임대 Ⅱ형', eligible, rank, '보증금 20% 부담 / SH 최대 6억 지원', '최장 14년', 'jeonse', r, 'SH', 'rental');
@@ -2386,10 +2387,13 @@ function runAnalysis() {
         if (!aOk) r.push(`총자산 ${aLim26}만원 이하 필요 (자녀 수에 따라 최대 37,900만원)`);
         let eligible = false, rank = '', rent = '시세 80%';
         if (baseOk_lh && grp && aOk) {
-            const incOk = dualInc ? under(200) || under(130) : under(130);
+            const incOk = dualInc ? under(200) : under(130);
             if (incOk) {
                 eligible = true;
-                rank = infant || singleParent ? '1순위 (신생아·한부모)' : childCnt > 0 ? '2순위 (미성년자녀 있는 신혼)' : '3순위';
+                if (infant || singleParent) rank = '1순위 (신생아·한부모)';
+                else if (isNewlywedStrict && childCnt > 0) rank = '2순위 (미성년자녀 있는 신혼)';
+                else if (isNewlywedStrict) rank = '3순위 (자녀없는 신혼)';
+                else rank = '4순위 (6세이하자녀 혼인가구)';
                 if (under(80)) rent = '시세 70% (소득 80% 이하)';
             } else r.push('소득 130%' + (dualInc ? '(맞벌이 200%)' : '') + ' 이하 필요');
         }
@@ -2544,8 +2548,9 @@ function runAnalysis() {
             if (incOk) {
                 eligible=true;
                 if (infant || singleParent) rank='1순위 (신생아가구·한부모, '+(dualInc?'맞벌이 200%':'130%')+')';
-                else if (childCnt > 0) rank='2순위 (자녀있는 혼인가구)';
-                else rank='3순위 (자녀없는 혼인가구)';
+                else if (isNewlywedStrict && childCnt > 0) rank='2순위 (미성년자녀 있는 신혼)';
+                else if (isNewlywedStrict) rank='3순위 (자녀없는 신혼)';
+                else rank='4순위 (6세이하자녀 혼인가구)';
             } else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
         }
         add('LH 신혼·신생아 전세임대 Ⅱ형', eligible, rank, '수도권 최대 3.5억 지원 (보증금 20%)', '최장 14년', 'jeonse', r, 'LH', 'rental');
