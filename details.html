@@ -1731,10 +1731,11 @@ function runAnalysis() {
         if (!carOk) r.push(`자동차 ${cLim3}만원 이하 필요`);
         let eligible=false, rank='';
         if (baseOk && aOk && carOk) {
+            const inc2nd = hhSize===1?under(70):hhSize===2?under(60):under(50);
             if (is1st||(disabled&&under(50))) { eligible=true; rank='1순위 (우대 대상)'; }
-            else if (under(50)) { eligible=true; rank='2순위 (소득 50% 이하)'; }
-            else if (under(70)) { eligible=true; rank='3순위 (소득 70% 이하, 50~60㎡형)'; }
-            else r.push('소득 70% 이하 필요');
+            else if (inc2nd) { eligible=true; rank=`2순위 (소득 50%${hhSize===1?' / 1인 70%':hhSize===2?' / 2인 60%':''} 이하)`; }
+            else if (underInc(db3)) { eligible=true; rank=`3순위 (소득 70%${hhSize===1?' / 1인 90%':hhSize===2?' / 2인 80%':''} 이하, 50~60㎡형)`; }
+            else r.push(`소득 ${db3.inc1p||90}%(1인)·${db3.inc2p||80}%(2인)·70%(3인+) 이하 필요`);
         }
         add('국민임대주택', eligible, rank, '시세 60~80%', '제한 없음 (계속 재계약)', 'national', r, 'SH', 'rental');
     }
@@ -1799,7 +1800,9 @@ function runAnalysis() {
             if (infant||singleParent) { eligible=true; rank='1순위 (신생아가구·보호대상한부모)'; }
             else if (dualInc?underDual(70,20):under(70)) {
                 eligible=true;
-                rank = childCnt>0?'2순위 (미성년자녀 있는 신혼부부)':'3순위 (자녀 없는 신혼부부)';
+                if (isNewlywedStrict && childCnt>0) rank='2순위 (미성년자녀 있는 신혼부부)';
+                else if (isNewlywedStrict) rank='3순위 (자녀 없는 신혼부부)';
+                else rank='4순위 (6세이하자녀 혼인가구)';
                 if (under(50)) rent='시세 30% (소득 50% 이하)';
             } else r.push('소득 70%'+(dualInc?'(맞벌이 90%)':'')+' 이하 필요');
         }
@@ -1854,13 +1857,13 @@ function runAnalysis() {
         let eligible=false, rank='';
         if (baseOk_lh && isSeoulStudent && !isMarried) {
             if (is1st) { eligible=true; rank='1순위 (우대 대상)'; }
-            else if (under(100)) {
-                if (parentIncome&&totalAssets<=aLim9_2&&carVal<=cLim9_2) { eligible=true; rank=`2순위 (본인+부모 100%)`; }
-                else if (!parentIncome&&totalAssets<=aLim9_3&&carVal<=cLim9_3) { eligible=true; rank=`3순위 (본인 100%, 자동차 무소유)`; }
+            else if (underInc(db9)) {
+                if (parentIncome&&totalAssets<=aLim9_2&&carVal<=cLim9_2) { eligible=true; rank=`2순위 (본인+부모 100%${hhSize===1?' / 1인 120%':hhSize===2?' / 2인 110%':''})`; }
+                else if (!parentIncome&&totalAssets<=aLim9_3&&carVal<=cLim9_3) { eligible=true; rank=`3순위 (본인 100%${hhSize===1?' / 1인 120%':hhSize===2?' / 2인 110%':''}, 자동차 무소유)`; }
                 else if (!parentIncome&&carVal>cLim9_3) r.push('3순위: 자동차 무소유 필수');
                 else if (!parentIncome&&totalAssets>aLim9_3) r.push(`3순위: 총자산 ${aLim9_3}만원 이하`);
                 else r.push('자산 기준 초과');
-            } else r.push('소득 100% 이하 필요');
+            } else r.push(`소득 100%(1인 ${db9.inc1p||120}%·2인 ${db9.inc2p||110}%) 이하 필요`);
         }
         add('희망하우징', eligible, rank, '월 79,000~145,000원', '최장 6년', 'youth', r, 'SH', 'rental');
     }
@@ -1953,8 +1956,13 @@ function runAnalysis() {
         if (!carOk) r.push(`자동차 ${cLim15}만원 이하 필요`);
         let eligible=false, rank='';
         if (baseOk && grp && aOk && carOk) {
-            if (dualInc?underDual(70,20):under(70)) { eligible=true; rank=infant?'1순위 (신생아가구)':'2~3순위'; }
-            else r.push('소득 70%'+(dualInc?'(맞벌이 90%)':'')+' 이하 필요');
+            if (dualInc?underDual(70,20):under(70)) {
+                eligible=true;
+                if (infant||singleParent) rank='1순위 (신생아가구·한부모)';
+                else if (isNewlywedStrict && childCnt>0) rank='2순위 (미성년자녀 있는 신혼)';
+                else if (isNewlywedStrict) rank='3순위 (자녀 없는 신혼)';
+                else rank='4순위 (6세이하자녀 혼인가구)';
+            } else r.push('소득 70%'+(dualInc?'(맞벌이 90%)':'')+' 이하 필요');
         }
         add('신혼·신생아 전세임대 Ⅰ형', eligible, rank, '보증금 5% 부담 / SH 최대 1.38억 지원', '최장 20년', 'jeonse', r, 'SH', 'rental');
     }
@@ -1971,9 +1979,13 @@ function runAnalysis() {
         if (!aOk) r.push(`총자산 ${aLim16}만원 이하 필요`);
         let eligible=false, rank='';
         if (baseOk && grp && aOk) {
-            const incOk = dualInc?under(200)||under(130):under(130);
-            if (incOk) { eligible=true; rank=infant?'1순위 (신생아가구, '+( dualInc?'맞벌이 200%':'130%')+')':( dualInc?'맞벌이 200%':'소득 130%')+' 이하'; }
-            else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
+            const incOk = dualInc ? under(200) : under(130);
+            if (incOk) {
+                eligible=true;
+                if (infant||singleParent) rank='1순위 (신생아가구·한부모, '+(dualInc?'맞벌이 200%':'130%')+')';
+                else if (childCnt>0) rank='2순위 (자녀있는 혼인가구)';
+                else rank='3순위 (자녀없는 혼인가구)';
+            } else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
         }
         add('신혼·신생아 전세임대 Ⅱ형', eligible, rank, '보증금 20% 부담 / SH 최대 6억 지원', '최장 14년', 'jeonse', r, 'SH', 'rental');
     }
@@ -2332,7 +2344,9 @@ function runAnalysis() {
             if (infant || singleParent) { eligible = true; rank = '1순위 (신생아·한부모)'; }
             else if (dualInc ? underDual(70, 20) : under(70)) {
                 eligible = true;
-                rank = childCnt > 0 ? '2순위 (미성년자녀 있는 신혼)' : '3순위 (자녀 없는 신혼)';
+                if (isNewlywedStrict && childCnt > 0) rank = '2순위 (미성년자녀 있는 신혼)';
+                else if (isNewlywedStrict) rank = '3순위 (자녀 없는 신혼)';
+                else rank = '4순위 (6세이하자녀 혼인가구)';
                 if (under(50)) rent = '시세 40% (소득 50% 이하)';
             } else r.push('소득 70%' + (dualInc ? '(맞벌이 90%)' : '') + ' 이하 필요');
         }
@@ -2467,6 +2481,53 @@ function runAnalysis() {
             r.push(`소득 ${incLimLl}% 이하 필요`);
         }
         add('LH 집주인 임대주택', eligible, rank, '시세 약 85%', '공고별 상이', 'youth', r, 'LH', 'rental');
+    }
+
+    // LH 신혼·신생아 전세임대 Ⅰ형 — LH_JEONSE_NEWLYWED_1
+    {
+        const r = [];
+        if (!baseOk_lh) r.push('무주택 세대구성원 필요');
+        const grp = isNewlywedStrict || infant || (singleParent && youngChild) || (youngChild && isMarried);
+        if (!grp) r.push('신혼부부(7년이내)·예비신혼·신생아가구·6세이하자녀 한부모만 해당');
+        const dbJn1 = getE('LH_JEONSE_NEWLYWED_1');
+        const aLimJn1=dbJn1.asset||33700, cLimJn1=dbJn1.car||4563;
+        const aOkJn1=totalAssets<=aLimJn1, carOkJn1=carVal<=cLimJn1;
+        if (!aOkJn1) r.push(`총자산 ${aLimJn1}만원 이하 필요`);
+        if (!carOkJn1) r.push(`자동차 ${cLimJn1}만원 이하 필요`);
+        let eligible=false, rank='';
+        if (baseOk_lh && grp && aOkJn1 && carOkJn1) {
+            if (dualInc ? underDual(70, 20) : under(70)) {
+                eligible=true;
+                if (infant || singleParent) rank='1순위 (신생아가구·한부모)';
+                else if (isNewlywedStrict && childCnt > 0) rank='2순위 (미성년자녀 있는 신혼)';
+                else if (isNewlywedStrict) rank='3순위 (자녀 없는 신혼)';
+                else rank='4순위 (6세이하자녀 혼인가구)';
+            } else r.push('소득 70%'+(dualInc?'(맞벌이 90%)':'')+' 이하 필요');
+        }
+        add('LH 신혼·신생아 전세임대 Ⅰ형', eligible, rank, '수도권 1.3억 지원 (보증금 2~5%)', '최장 20년', 'jeonse', r, 'LH', 'rental');
+    }
+
+    // LH 신혼·신생아 전세임대 Ⅱ형 — LH_JEONSE_NEWLYWED_2
+    {
+        const r = [];
+        if (!baseOk_lh) r.push('무주택 세대구성원 필요');
+        const grp = isMarried || infant || singleParent;
+        if (!grp) r.push('혼인가구·신생아가구·한부모가족만 해당');
+        const dbJn2 = getE('LH_JEONSE_NEWLYWED_2');
+        const aLimJn2=dbJn2.asset||35400;
+        const aOkJn2=totalAssets<=aLimJn2;
+        if (!aOkJn2) r.push(`총자산 ${aLimJn2}만원 이하 필요`);
+        let eligible=false, rank='';
+        if (baseOk_lh && grp && aOkJn2) {
+            const incOk = dualInc ? under(200) : under(130);
+            if (incOk) {
+                eligible=true;
+                if (infant || singleParent) rank='1순위 (신생아가구·한부모, '+(dualInc?'맞벌이 200%':'130%')+')';
+                else if (childCnt > 0) rank='2순위 (자녀있는 혼인가구)';
+                else rank='3순위 (자녀없는 혼인가구)';
+            } else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
+        }
+        add('LH 신혼·신생아 전세임대 Ⅱ형', eligible, rank, '수도권 최대 3.5억 지원 (보증금 20%)', '최장 14년', 'jeonse', r, 'LH', 'rental');
     }
 
     // LH 다자녀 전세임대 — LH_JEONSE_CHILDREN
@@ -4561,6 +4622,59 @@ const typeDetailData = {
         </div>
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
+    'LH 신혼·신생아 전세임대 Ⅰ형': {
+        title: 'LH 신혼·신생아 전세임대 Ⅰ형',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>신혼부부·신생아가구가 원하는 집을 구하면 LH가 전세계약을 맺고 재임대. 수도권 최대 1.3억원 지원.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>지원 한도: 수도권 1.3억 / 광역시 1.0억 / 기타 9,000만원</li>
+                <li>본인 부담: 전세금의 2~5%</li>
+                <li>거주 기간: 최장 20년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건 (순위)</h4>
+            <ul>
+                <li>1순위: 신생아가구 / 보호대상한부모</li>
+                <li>2순위: 미성년자녀 있는 신혼부부 (소득 70%·맞벌이 90%)</li>
+                <li>3순위: 자녀 없는 신혼부부 (소득 70%·맞벌이 90%)</li>
+                <li>4순위: 6세이하자녀 혼인가구 (혼인기간 무관)</li>
+                <li>총자산 33,700만원 이하 / 자동차 4,563만원 이하</li>
+            </ul>
+        </div>
+        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
+    },
+    'LH 신혼·신생아 전세임대 Ⅱ형': {
+        title: 'LH 신혼·신생아 전세임대 Ⅱ형',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>소득이 더 높은 신혼가구를 위한 전세임대. Ⅰ형보다 소득기준이 완화(130%/맞벌이 200%)되고 지원한도가 높습니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>지원 한도: 수도권 최대 3.5억원</li>
+                <li>본인 부담: 전세금의 20%</li>
+                <li>거주 기간: 최장 14년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>혼인가구·신생아가구·한부모가족, 무주택 세대구성원</li>
+                <li>소득 130% 이하 (맞벌이 200%)</li>
+                <li>총자산 35,400만원 이하</li>
+                <li>1순위: 신생아가구·한부모 / 2순위: 자녀있는 혼인가구 / 3순위: 자녀없는 혼인가구</li>
+            </ul>
+        </div>
+        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
+    },
     'LH 청년전세임대': {
         title: 'LH 청년전세임대',
         body: `
@@ -5918,6 +6032,45 @@ const applyGuideData = {
                 </div>
             </div></div>
             <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>LH 검토 → 계약</h4><p>LH가 해당 주택 적정성 확인 후 집주인과 전세 계약. 입주자는 LH와 전대차 계약.</p></div></div>
+        </div>
+        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
+    },
+    'LH 신혼·신생아 전세임대 Ⅰ형': {
+        title: 'LH 신혼·신생아 전세임대 Ⅰ형 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인 및 신청</h4><p>LH청약플러스(apply.lh.or.kr)에서 「신혼·신생아 전세임대 Ⅰ형」 공고 확인 후 온라인 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>입주 희망 주택 탐색</h4><p>당첨 후 수도권 1.3억원 이내 전세 주택 직접 탐색. LH의 사전 적정성 확인 권장.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
+                    <div class="guide-doc-item">혼인관계증명서 / 가족관계증명서</div>
+                    <div class="guide-doc-item">출생증명서 (신생아 1순위 해당 시)</div>
+                    <div class="guide-doc-item">소득 확인 서류</div>
+                    <div class="guide-doc-item">자산 확인 서류</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>LH 검토 → 계약</h4><p>LH 주택 적정성 확인 → 집주인과 전세계약 → 전대차 계약.</p></div></div>
+        </div>
+        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
+    },
+    'LH 신혼·신생아 전세임대 Ⅱ형': {
+        title: 'LH 신혼·신생아 전세임대 Ⅱ형 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인 및 신청</h4><p>LH청약플러스(apply.lh.or.kr)에서 「신혼·신생아 전세임대 Ⅱ형」 공고 확인. Ⅱ형은 소득기준이 완화되어 맞벌이 200%까지 가능.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>입주 희망 주택 탐색</h4><p>당첨 후 수도권 최대 3.5억원 이내 전세 주택 직접 탐색. 본인 부담 20%.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
+                    <div class="guide-doc-item">혼인관계증명서</div>
+                    <div class="guide-doc-item">소득 확인 서류 (맞벌이 부부 모두)</div>
+                    <div class="guide-doc-item">자산 확인 서류</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>LH 검토 → 계약</h4><p>LH 주택 적정성 확인 → 집주인과 전세계약 → 전대차 계약.</p></div></div>
         </div>
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
