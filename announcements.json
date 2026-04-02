@@ -1,8 +1,24 @@
 {
   "updated": "2026-04-02",
-  "count": 40,
+  "count": 50,
   "needs_review_count": 8,
   "announcements": [
+    {
+      "id": "lh_rental_bf3411f4",
+      "inst": "LH",
+      "source_key": "lh_rental",
+      "title": "오산세교2 21단지 국민임대주택 예비입주자 모집공고-소득150%완화(26.04.02)",
+      "types": [
+        "LH 국민임대"
+      ],
+      "location": "경기도",
+      "status": "예정",
+      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?mi=1026",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_end": "2026-04-15",
+      "apply_start": "2026-04-02"
+    },
     {
       "id": "lh_rental_cbf51c27",
       "inst": "LH",
@@ -148,12 +164,12 @@
       "apply_start": "2026-03-31"
     },
     {
-      "id": "lh_rental_a8deed83",
+      "id": "lh_rental_cfb217e6",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "[인천지역본부] 26년 2차 청년 매입임대 예비입주자 모집공고(인천,부천)",
+      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅱ(전세형) 예비입주자 모집공고(인천,부천)",
       "types": [
-        "LH 청년 매입임대"
+        "기타(LH)"
       ],
       "location": "인천광역시 외",
       "status": "예정",
@@ -164,12 +180,12 @@
       "apply_start": "2026-03-26"
     },
     {
-      "id": "lh_rental_cfb217e6",
+      "id": "lh_rental_a8deed83",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅱ(전세형) 예비입주자 모집공고(인천,부천)",
+      "title": "[인천지역본부] 26년 2차 청년 매입임대 예비입주자 모집공고(인천,부천)",
       "types": [
-        "기타(LH)"
+        "LH 청년 매입임대"
       ],
       "location": "인천광역시 외",
       "status": "예정",
@@ -378,6 +394,150 @@
       "posted_date": "2026-03-18",
       "crawled_at": "2026-04-02",
       "needs_pdf": true
+    },
+    {
+      "id": "youth_3d387d26",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 상봉역 세이지움 상봉 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6490",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-06"
+    },
+    {
+      "id": "youth_49ef08ad",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 신풍역 비스타동원 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6495",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-06"
+    },
+    {
+      "id": "youth_d5b3d8da",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 연신내역 Lumino 816 (루미노 816) 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6487",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-06"
+    },
+    {
+      "id": "youth_aef546f2",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 상봉역 와이센트럴시티 상봉 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6494",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-06"
+    },
+    {
+      "id": "youth_cd17d3ce",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 장한평역 유니트125(UNIT125) 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6491",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-06"
+    },
+    {
+      "id": "youth_685bfde0",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 쌍문역 인히어쌍문 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6489",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-06"
+    },
+    {
+      "id": "youth_d9fea4ca",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 상봉역 상봉동양엔파트 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6488",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-06"
+    },
+    {
+      "id": "youth_def130d0",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 상봉역 제이스타상봉 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6493",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-06"
+    },
+    {
+      "id": "youth_aa8fdbb7",
+      "inst": "SH",
+      "source_key": "youth_housing",
+      "title": "[민간임대] 서울대입구역 BX201 추가모집공고",
+      "types": [
+        "청년안심주택"
+      ],
+      "location": "서울",
+      "status": "진행중",
+      "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6492",
+      "posted_date": "2026-04-02",
+      "crawled_at": "2026-04-02",
+      "apply_start": "2026-04-02",
+      "apply_end": "2026-04-06"
     },
     {
       "id": "youth_263fc48a",
