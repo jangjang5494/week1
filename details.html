@@ -1753,12 +1753,9 @@ function runAnalysis() {
         if (!carOk) r.push(`자동차 ${carLim}만원 이하 필요`);
         let eligible=false, rank='';
         if (baseOk && aOk && carOk) {
-            if (is1st) { eligible=true; rank='1순위 (우대 대상)'; }
-            else if (under(50)) { eligible=true; rank='1순위 (소득 50% 이하)'; }
-            else if (disabled&&under(70)) { eligible=true; rank='1순위 (장애인, 소득 70% 이하)'; }
-            else if (under(70)) { eligible=true; rank='2순위 (소득 50~70%)'; }
-            else if (disabled&&under(100)) { eligible=true; rank='2순위 (장애인, 100% 이하)'; }
-            else r.push('소득 70% 이하 (장애인 100%) 필요');
+            if (is1st || (disabled&&under(70))) { eligible=true; rank='1순위 (우대 대상)'; }
+            else if (under(50) || (disabled&&under(100))) { eligible=true; rank='2순위 (소득 50% 이하 또는 장애인 100% 이하)'; }
+            else r.push('소득 50% 이하 (장애인 100%) 또는 우대 대상 필요');
         }
         add('일반 매입임대주택', eligible, rank, '시세 30~70%', '거주 제한 없음', 'national', r, 'SH', 'rental');
     }
@@ -1936,8 +1933,7 @@ function runAnalysis() {
         let eligible=false, rank='';
         if (baseOk && aOk && carOk) {
             if (is1st||(disabled&&under(70))) { eligible=true; rank='1순위 (우대 대상)'; }
-            else if (under(50)) { eligible=true; rank='2순위 (소득 50% 이하)'; }
-            else if (disabled&&under(100)) { eligible=true; rank='2순위 (장애인 소득 100%)'; }
+            else if (under(50)||(disabled&&under(100))) { eligible=true; rank='2순위 (소득 50% 이하 또는 장애인 100%)'; }
             else r.push('소득 50% 이하 (장애인 100%) 또는 우대 대상 필요');
         }
         add('기존주택 전세임대', eligible, rank, '보증금 5% 부담 (95% SH지원)', '최장 30년', 'jeonse', r, 'SH', 'rental');
@@ -2076,6 +2072,31 @@ function runAnalysis() {
             }
         }
         add('SH 청년안심주택 민간임대 (신혼)', eligible, rank, '특별공급 시세75%/일반공급 시세85%', '최장 20년', 'newlywed', r, 'SH', 'rental');
+    }
+
+    // SH 18c-2. 청년안심주택 민간임대 (청년) — SH_SAFETY_PRIVATE_YOUTH
+    {
+        const r = [];
+        if (!baseOk_lh) r.push('무주택 필요');
+        const seoulConnect = seoulRes || isSeoulStudent || isSeoulWorker;
+        if (!seoulConnect) r.push('서울 거주·재학·재직 중 하나 필요');
+        if (!isYouth) r.push('만 19~39세 청년 필요');
+        if (isMarried) r.push('미혼 청년 대상 (기혼자는 신혼 유형 확인)');
+        const dbSprY = getE('SH_SAFETY_PRIVATE_YOUTH');
+        const aLimSprY=dbSprY.asset||34500, cLimSprY=dbSprY.car||4563;
+        let eligible=false, rank='';
+        if (baseOk_lh && seoulConnect && isYouth && !isMarried) {
+            const r1=dbSprY.incRank1||100, r2=dbSprY.incRank2||110, r3=dbSprY.incRank3||120;
+            eligible=true;
+            if (totalAssets<=aLimSprY && carVal<=cLimSprY && under(r3)) {
+                if (under(r1)) rank='특별공급 1순위 (소득'+r1+'%이하·해당지역)';
+                else if (under(r2)) rank='특별공급 2순위 (소득'+r2+'%이하·서울 타지역)';
+                else rank='특별공급 3순위 (소득'+r3+'%이하·그 외 지역)';
+            } else {
+                rank='일반공급 (소득·자산 무관 추첨)';
+            }
+        }
+        add('SH 청년안심주택 민간임대 (청년)', eligible, rank, '특별공급 시세75%/일반공급 시세85%', '최장 10년', 'youth', r, 'SH', 'rental');
     }
 
     // SH 18d. 공공·주거환경임대주택 — SH_PUBLIC_ENV_RENT
@@ -4256,6 +4277,33 @@ const typeDetailData = {
         </div>
         <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
     },
+    'SH 청년안심주택 민간임대 (청년)': {
+        title: 'SH 청년안심주택 민간임대 (청년)',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>역세권에 공급되는 청년 전용 <strong>민간임대</strong> 청년안심주택. 특별공급(소득·자산 기준)과 일반공급(추첨)으로 나뉩니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>특별공급: 시세 75% 수준</li>
+                <li>일반공급: 시세 85% 수준 (소득·자산 무관 추첨)</li>
+                <li>거주 기간: 최장 10년</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>특별공급 자격 요건</h4>
+            <ul>
+                <li>서울 거주·재학·재직 중 하나에 해당하는 무주택 미혼 청년(만 19~39세)</li>
+                <li>총자산 34,500만원 이하 / 자동차 4,563만원 이하</li>
+                <li>1순위: 소득 100% 이하, 해당 자치구 거주</li>
+                <li>2순위: 소득 110% 이하, 서울 타 지역</li>
+                <li>3순위: 소득 120% 이하, 그 외</li>
+            </ul>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
     'SH 공공·주거환경임대주택': {
         title: 'SH 공공·주거환경임대주택',
         body: `
@@ -5535,6 +5583,25 @@ const applyGuideData = {
                     <div class="guide-doc-item">혼인관계증명서</div>
                     <div class="guide-doc-item">소득 확인 서류</div>
                     <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+                <p class="hint">일반공급은 소득·자산 서류 불필요. 무주택 증빙만으로 추첨 신청 가능.</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>특별공급 당첨 후 소득·자산 검증 → 계약. 일반공급은 추첨 후 계약.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+    },
+    'SH 청년안심주택 민간임대 (청년)': {
+        title: 'SH 청년안심주택 민간임대 (청년) 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 청년안심주택 민간임대 청년 공고 확인. 특별공급과 일반공급 구분 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청 방법</h4><p>공고별 신청처 확인 (SH공사 또는 민간 사업자). 특별공급(소득·자산 기준, 지역 순위) / 일반공급(추첨) 중 선택.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류 (특별공급)</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">소득 확인 서류 (근로·사업·기타소득)</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                    <div class="guide-doc-item">재직·재학 증명서 (해당자)</div>
                 </div>
                 <p class="hint">일반공급은 소득·자산 서류 불필요. 무주택 증빙만으로 추첨 신청 가능.</p>
             </div></div>
