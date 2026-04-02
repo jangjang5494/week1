@@ -2195,6 +2195,8 @@ function runAnalysis() {
             assetRank3:    m(e.asset_limit_rank3),
             asset2:        m(e.asset_limit_rank2),   // 하위호환 alias
             asset3:        m(e.asset_limit_rank3),   // 하위호환 alias
+            assetSelf:     m(e.asset_limit_self),
+            assetParents:  m(e.asset_limit_parents),
             car:           m(e.car_limit),
             carRank2:      m(e.car_limit_rank2),
             carRank3:      m(e.car_limit_rank3),
@@ -2776,21 +2778,23 @@ function runAnalysis() {
 
     // === 공공분양 ===
 
-    // SH 공공분양 일반공급 (수도권 거주 무주택, 소득 100%/맞벌이 140%)
+    // SH 공공분양 일반공급 (수도권 거주 무주택, 소득 100%/맞벌이 200%)
     {
         const r = [];
         if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        const dbSpg = getE('SH_PUBLIC_SALE_GENERAL');
+        const minSub = dbSpg.savingsRank1 || 12;
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
-        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
-        if (!aOk) r.push('부동산 21,550만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const aOk = realEstate <= (dbSpg.assetReal||21550), carOk = carVal <= (dbSpg.car||4563);
+        if (!aOk) r.push(`부동산 ${dbSpg.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbSpg.car||4563}만원 이하 필요`);
         let eligible = false, rank = '';
-        const incOk = dualInc ? under(140) : under(100);
+        const incOk = dualInc ? under(dbSpg.incM||200) : under(dbSpg.inc||100);
         if (baseOk_sale && subCount >= 6 && aOk && carOk && incOk) {
             eligible = true;
-            rank = subCount >= 24 ? '1순위 (납입 24회 이상)' : '2순위 (납입 6회 이상)';
+            rank = subCount >= minSub ? `1순위 (납입 ${minSub}회 이상)` : '2순위 (납입 6회 이상)';
         } else if (baseOk_sale && subCount >= 6 && aOk && carOk) {
-            r.push('소득 100%' + (dualInc ? '(맞벌이 140%)' : '') + ' 이하 필요');
+            r.push(`소득 ${dbSpg.inc||100}%` + (dualInc ? `(맞벌이 ${dbSpg.incM||200}%)` : '') + ' 이하 필요');
         }
         add('SH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-general', r, 'SH', 'sale');
     }
@@ -2814,20 +2818,22 @@ function runAnalysis() {
         add('SH 나눔형 공공분양 (일반공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-general', r, 'SH', 'sale');
     }
 
-    // SH 나눔형 청년특공 (수도권 거주, 소득 140%, 본인자산 27,000)
+    // SH 나눔형 청년특공 (수도권 거주, 소득 140%, 본인자산)
     {
         const r = [];
         if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
         if (!isYouth) r.push('만 19~39세 필요');
         if (isMarried && !singleParent) r.push('미혼 또는 한부모 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
-        const selfAssetOk = totalAssets <= 27000;
-        if (!selfAssetOk) r.push('본인 자산 27,000만원 이하 필요');
+        const dbNy = getE('SH_NAMOOM_YOUTH');
+        const selfLim = dbNy.assetSelf || 27000;
+        const selfAssetOk = totalAssets <= selfLim;
+        if (!selfAssetOk) r.push(`본인 자산 ${selfLim}만원 이하 필요`);
         let eligible = false, rank = '';
-        if (baseOk_sale && isYouth && (!isMarried || singleParent) && subCount >= 6 && selfAssetOk && under(140)) {
-            eligible = true; rank = '청년특공 (소득 140% 이하, 생애1회)';
+        if (baseOk_sale && isYouth && (!isMarried || singleParent) && subCount >= 6 && selfAssetOk && under(dbNy.inc||140)) {
+            eligible = true; rank = `청년특공 (소득 ${dbNy.inc||140}% 이하, 생애1회)`;
         } else if (baseOk_sale && isYouth && (!isMarried || singleParent) && subCount >= 6 && selfAssetOk) {
-            r.push('소득 140% 이하 필요');
+            r.push(`소득 ${dbNy.inc||140}% 이하 필요`);
         }
         add('SH 나눔형 (청년 특별공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-special', r, 'SH', 'sale');
     }
@@ -2851,23 +2857,24 @@ function runAnalysis() {
         add('SH 나눔형 (신혼부부 특별공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-special', r, 'SH', 'sale');
     }
 
-    // SH 공공분양 신혼특공 (수도권 거주, 소득 130%/맞벌이 200%)
+    // SH 공공분양 신혼특공 (수도권 거주, 소득 120%/맞벌이 200%)
     {
         const r = [];
         if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
         const grp = isNewlywedStrict || singleParent;
         if (!grp) r.push('신혼(7년이내)·예비신혼·한부모 필요');
-        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
-        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
-        if (!aOk) r.push('부동산 21,550만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const dbSpN = getE('SH_PUBLIC_SALE_NEWLYWED');
+        if (subCount < (dbSpN.savingsRank1||6)) r.push(`청약저축 ${dbSpN.savingsRank1||6}회 이상 납입 필요`);
+        const aOk = realEstate <= (dbSpN.assetReal||21550), carOk = carVal <= (dbSpN.car||4563);
+        if (!aOk) r.push(`부동산 ${dbSpN.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbSpN.car||4563}만원 이하 필요`);
         let eligible = false, rank = '';
-        if (baseOk_sale && grp && subCount >= 6 && aOk && carOk) {
-            const incOk = dualInc ? under(200) : under(130);
+        if (baseOk_sale && grp && subCount >= (dbSpN.savingsRank1||6) && aOk && carOk) {
+            const incOk = dualInc ? under(dbSpN.incM||200) : under(dbSpN.inc||120);
             if (incOk) {
                 eligible = true;
                 rank = infant ? '우선공급 가능 (2세이하자녀)' : isNewlywedStrict ? '일반공급' : '한부모';
-            } else r.push('소득 130%' + (dualInc ? '(맞벌이 200%)' : '') + ' 이하 필요');
+            } else r.push(`소득 ${dbSpN.inc||120}%` + (dualInc ? `(맞벌이 ${dbSpN.incM||200}%)` : '') + ' 이하 필요');
         }
         add('SH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
     }
@@ -2907,6 +2914,84 @@ function runAnalysis() {
             else r.push('소득 120%' + (dualInc ? '(맞벌이 200%)' : '') + ' 이하 필요');
         }
         add('SH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
+    }
+
+    // SH 공공분양 신생아특공 (SH_PUBLIC_SALE_NEWBORN)
+    {
+        const r = [];
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!infant) r.push('입주자모집공고일 기준 2세 미만(출생 후 2년 이내) 자녀 필요');
+        const dbSpNb = getE('SH_PUBLIC_SALE_NEWBORN');
+        if (subCount < (dbSpNb.savingsRank1||6)) r.push(`청약저축 ${dbSpNb.savingsRank1||6}회 이상 납입 필요`);
+        const aOk = realEstate <= (dbSpNb.assetReal||21550), carOk = carVal <= (dbSpNb.car||4563);
+        if (!aOk) r.push(`부동산 ${dbSpNb.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbSpNb.car||4563}만원 이하 필요`);
+        let eligible = false, rank = '';
+        if (baseOk_sale && infant && subCount >= (dbSpNb.savingsRank1||6) && aOk && carOk) {
+            const incOk = dualInc ? under(dbSpNb.incM||200) : under(dbSpNb.inc||140);
+            if (incOk) { eligible = true; rank = '신생아특공 (2세이하자녀, 생애1회)'; }
+            else r.push(`소득 ${dbSpNb.inc||140}%` + (dualInc ? `(맞벌이 ${dbSpNb.incM||200}%)` : '') + ' 이하 필요');
+        }
+        add('SH 공공분양 (신생아 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
+    }
+
+    // SH 공공분양 노부모부양특공 (SH_PUBLIC_SALE_ELDERLY)
+    {
+        const r = [];
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        r.push('만 65세이상 직계존속(배우자 직계존속 포함) 3년이상 부양 필요 — 현재 폼에서 자동 판단 불가, 공고문 직접 확인 필요');
+        const dbSpEl = getE('SH_PUBLIC_SALE_ELDERLY');
+        if (subCount < (dbSpEl.savingsRank1||12)) r.push(`청약저축 ${dbSpEl.savingsRank1||12}회 이상 납입 필요`);
+        const aOk = realEstate <= (dbSpEl.assetReal||21550), carOk = carVal <= (dbSpEl.car||4563);
+        if (!aOk) r.push(`부동산 ${dbSpEl.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbSpEl.car||4563}만원 이하 필요`);
+        let eligible = false, rank = '';
+        if (baseOk_sale && subCount >= (dbSpEl.savingsRank1||12) && aOk && carOk) {
+            const incOk = dualInc ? under(dbSpEl.incM||200) : under(dbSpEl.inc||120);
+            if (incOk) { eligible = true; rank = '노부모부양특공 (65세이상 부양 3년이상 확인 필요)'; }
+            else r.push(`소득 ${dbSpEl.inc||120}%` + (dualInc ? `(맞벌이 ${dbSpEl.incM||200}%)` : '') + ' 이하 필요');
+        }
+        add('SH 공공분양 (노부모부양 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'SH', 'sale');
+    }
+
+    // SH 나눔형 신생아특공 (SH_NAMOOM_NEWBORN)
+    {
+        const r = [];
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!infant) r.push('입주자모집공고일 기준 2세 미만 자녀 필요');
+        const dbNnb = getE('SH_NAMOOM_NEWBORN');
+        if (subCount < (dbNnb.savingsRank1||6)) r.push(`청약저축 ${dbNnb.savingsRank1||6}회 이상 납입 필요`);
+        const aOk = totalAssets <= (dbNnb.asset||35400), carOk = carVal <= (dbNnb.car||4563);
+        if (!aOk) r.push(`총자산 ${dbNnb.asset||35400}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbNnb.car||4563}만원 이하 필요`);
+        let eligible = false, rank = '';
+        if (baseOk_sale && infant && subCount >= (dbNnb.savingsRank1||6) && aOk && carOk) {
+            const incOk = dualInc ? under(dbNnb.incM||200) : under(dbNnb.inc||140);
+            if (incOk) { eligible = true; rank = '신생아특공 (2세이하자녀, 이익공유형)'; }
+            else r.push(`소득 ${dbNnb.inc||140}%` + (dualInc ? `(맞벌이 ${dbNnb.incM||200}%)` : '') + ' 이하 필요');
+        }
+        add('SH 나눔형 (신생아 특별공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-special', r, 'SH', 'sale');
+    }
+
+    // SH 나눔형 생애최초특공 (SH_NAMOOM_FIRST)
+    {
+        const r = [];
+        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!lifeFirst) r.push('세대원 전원 과거 주택 미소유 필요');
+        if (!taxPaid5yr) r.push('근로자/자영업자 5년 이상 소득세 납부 필요');
+        const dbNf = getE('SH_NAMOOM_FIRST');
+        const minAmt = dbNf.savingsAmt || 600;
+        if (!subAmountEnough) r.push(`청약저축 ${minAmt}만원 이상 납입 필요`);
+        const aOk = totalAssets <= (dbNf.asset||35400), carOk = carVal <= (dbNf.car||4563);
+        if (!aOk) r.push(`총자산 ${dbNf.asset||35400}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbNf.car||4563}만원 이하 필요`);
+        let eligible = false, rank = '';
+        if (baseOk_sale && lifeFirst && taxPaid5yr && subAmountEnough && aOk && carOk) {
+            const incOk = dualInc ? under(dbNf.incM||200) : under(dbNf.inc||130);
+            if (incOk) { eligible = true; rank = '생애최초특공 (이익공유형, 생애 1회)'; }
+            else r.push(`소득 ${dbNf.inc||130}%` + (dualInc ? `(맞벌이 ${dbNf.incM||200}%)` : '') + ' 이하 필요');
+        }
+        add('SH 나눔형 (생애최초 특별공급)', eligible, rank, '시세 70~80% (이익공유형)', '분양', 'sale-special', r, 'SH', 'sale');
     }
 
     // LH 공공분양 일반공급
@@ -5136,6 +5221,88 @@ const typeDetailData = {
             <div class="help-case">인천에서 장기 안정적으로 거주하고 싶은 저소득 무주택 가구.</div>
         </div>
         <a class="help-link" href="https://www.ih.co.kr" target="_blank">🔗 인천도시공사(iH)</a>`
+    },
+    'SH 공공분양 (신생아 특별공급)': {
+        title: 'SH 공공분양 신생아 특별공급',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>출산 가구를 위해 SH공사가 공급하는 <strong>공공분양 특별공급</strong>. 일반분양가보다 저렴하게 내 집 마련 기회를 제공합니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>수도권(서울·경기·인천) 거주 무주택 세대구성원</li>
+                <li>입주자모집공고일 기준 2세 미만(출생 후 2년 이내) 자녀 보유</li>
+                <li>소득 140% 이하 (맞벌이 200% 이하)</li>
+                <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
+                <li>청약저축 6회 이상 납입</li>
+            </ul>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    'SH 공공분양 (노부모부양 특별공급)': {
+        title: 'SH 공공분양 노부모부양 특별공급',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>65세 이상 직계존속을 3년 이상 부양 중인 가구를 위한 <strong>공공분양 특별공급</strong>.</p>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>수도권(서울·경기·인천) 거주 무주택 세대구성원</li>
+                <li>만 65세 이상 직계존속(배우자의 직계존속 포함)을 입주자모집공고일 기준 3년 이상 계속 부양</li>
+                <li>소득 120% 이하 (맞벌이 200% 이하)</li>
+                <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
+                <li>청약저축 12회 이상 납입</li>
+            </ul>
+            <div class="help-case warn">⚠ 부양 여부는 현재 폼에서 자동 판단 불가 — 공고문에서 직접 확인 필요</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    'SH 나눔형 (신생아 특별공급)': {
+        title: 'SH 나눔형 신생아 특별공급 (이익공유형)',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>출산 가구를 위한 SH 나눔형(이익공유형) 공공분양. 시세 70~80%로 분양받고, 추후 매각 차익을 SH와 공유하는 방식입니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>수도권(서울·경기·인천) 거주 무주택 세대구성원</li>
+                <li>입주자모집공고일 기준 2세 미만 자녀 보유</li>
+                <li>소득 140% 이하 (맞벌이 200% 이하)</li>
+                <li>총자산 35,400만원 이하 / 자동차 4,563만원 이하</li>
+                <li>청약저축 6회 이상 납입</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>이익공유 방식</h4>
+            <div class="help-case">매각 시 시세차익의 일부를 SH공사와 공유. 분양가가 낮아진 만큼 이익을 나눔.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    'SH 나눔형 (생애최초 특별공급)': {
+        title: 'SH 나눔형 생애최초 특별공급 (이익공유형)',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>생애 처음으로 집을 사는 가구를 위한 SH 나눔형(이익공유형) 공공분양. 시세 70~80%로 분양받고, 매각 차익을 SH와 공유합니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>핵심 자격 요건</h4>
+            <ul>
+                <li>수도권(서울·경기·인천) 거주 무주택 세대구성원</li>
+                <li>세대원 전원 과거 주택 미소유 (생애최초)</li>
+                <li>근로자/자영업자 5년 이상 소득세 납부</li>
+                <li>소득 130% 이하 (맞벌이 200% 이하)</li>
+                <li>총자산 35,400만원 이하 / 자동차 4,563만원 이하</li>
+                <li>청약저축 600만원 이상 납입</li>
+            </ul>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
     }
 };
 
@@ -6445,6 +6612,79 @@ const applyGuideData = {
             <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 심사 → 당첨자 발표 → 계약 체결.</p></div></div>
         </div>
         <a class="help-link" href="https://www.ih.co.kr" target="_blank">🔗 인천도시공사(iH)</a>`
+    },
+    'SH 공공분양 (신생아 특별공급)': {
+        title: 'SH 공공분양 신생아 특별공급 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지(i-sh.co.kr) 또는 청약홈(applyhome.co.kr)에서 신생아 특별공급 공고 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈에서 온라인 신청. 신생아 특별공급은 일반공급과 별도 청약 접수.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대 전원)</div>
+                    <div class="guide-doc-item">가족관계증명서 (자녀 출생 확인)</div>
+                    <div class="guide-doc-item">소득 확인 서류</div>
+                    <div class="guide-doc-item">청약저축 확인서</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>서류 심사 후 당첨자 발표. 자격 검증 통과 시 분양 계약 체결.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    'SH 공공분양 (노부모부양 특별공급)': {
+        title: 'SH 공공분양 노부모부양 특별공급 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인 및 부양 요건 체크</h4><p>청약홈 또는 SH공사 홈페이지에서 공고 확인. 공고일 기준 65세 이상 직계존속 3년 이상 부양 여부를 먼저 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈에서 노부모부양 특별공급으로 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (부양 직계존속 함께 등재 확인)</div>
+                    <div class="guide-doc-item">가족관계증명서</div>
+                    <div class="guide-doc-item">소득 확인 서류</div>
+                    <div class="guide-doc-item">청약저축 확인서</div>
+                </div>
+                <p class="hint warn">3년 이상 같은 세대에 등재되어 있어야 부양으로 인정될 가능성이 높음</p>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>자격 검증 후 당첨자 발표. 계약 체결.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    'SH 나눔형 (신생아 특별공급)': {
+        title: 'SH 나눔형 신생아 특별공급 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지(i-sh.co.kr)에서 나눔형 신생아 특별공급 공고 확인. 이익공유 조건 확인 필수.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈(applyhome.co.kr)에서 나눔형 신생아 특별공급으로 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">가족관계증명서 (자녀 출생 확인)</div>
+                    <div class="guide-doc-item">소득·자산 확인 서류</div>
+                    <div class="guide-doc-item">청약저축 확인서</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>자격 검증 후 분양 계약. 이익공유 계약서 별도 체결.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+    },
+    'SH 나눔형 (생애최초 특별공급)': {
+        title: 'SH 나눔형 생애최초 특별공급 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지(i-sh.co.kr)에서 나눔형 생애최초 특별공급 공고 확인. 이익공유 조건 확인 필수.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈(applyhome.co.kr)에서 나눔형 생애최초 특별공급으로 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대 전원)</div>
+                    <div class="guide-doc-item">소득세 납부 확인서 (5년분)</div>
+                    <div class="guide-doc-item">소득·자산 확인 서류</div>
+                    <div class="guide-doc-item">청약저축 잔액 확인서 (600만원 이상)</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>자격 검증 후 분양 계약. 이익공유 계약서 별도 체결.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
     }
 };
 
