@@ -1041,7 +1041,7 @@ function updateBulkBtn() {
 async function deleteAnnouncement(id) {
   if (!confirm('이 공고를 삭제하시겠습니까?')) return;
   try {
-    await sbFetch(`announcements?id=eq.${id}`, { method: 'DELETE' });
+    await sbFetchWithServiceKey(`announcements?id=eq.${id}`, { method: 'DELETE' });
     toast('삭제되었습니다.', 'success');
     loadTab1();
   } catch(e) {
@@ -1136,7 +1136,7 @@ async function bulkDelete() {
   if (!ids.length) return;
   if (!confirm(`선택한 ${ids.length}개를 삭제하시겠습니까?`)) return;
   try {
-    await sbFetch(`announcements?id=in.(${ids.join(',')})`, { method: 'DELETE' });
+    await sbFetchWithServiceKey(`announcements?id=in.(${ids.join(',')})`, { method: 'DELETE' });
     toast(`${ids.length}개 삭제 완료`, 'success');
     loadTab1();
   } catch(e) {
@@ -1150,7 +1150,7 @@ async function resetAllAnnouncements() {
   const second = confirm('정말로 전체 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.');
   if (!second) return;
   try {
-    await sbFetch('announcements?id=gt.0', { method: 'DELETE' });
+    await sbFetchWithServiceKey('announcements?id=gt.0', { method: 'DELETE' });
     toast('전체 초기화 완료. 다음 크롤링 후 데이터가 채워집니다.', 'success');
     loadTab1();
     loadTab2();
@@ -1234,7 +1234,7 @@ async function approveReview(id) {
 async function rejectReview(id) {
   if (!confirm('이 공고를 삭제하시겠습니까?')) return;
   try {
-    await sbFetch(`announcements?id=eq.${id}`, { method: 'DELETE' });
+    await sbFetchWithServiceKey(`announcements?id=eq.${id}`, { method: 'DELETE' });
     toast('반려(삭제) 완료', 'success');
     document.getElementById(`review-row-${id}`).remove();
     const cnt = document.querySelectorAll('[id^="review-row-"]').length;
