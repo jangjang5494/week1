@@ -799,6 +799,19 @@ def crawl_youth_housing(initial=False):
                 continue
 
             url = f"{YOUTH_BASE}?menuNo=400008&boardId={board_id}"
+
+            # 상세 페이지에서 소재 구 파싱
+            district = None
+            detail_html = fetch(url, extra_headers={"Referer": YOUTH_REF})
+            if detail_html:
+                # ■주택위치 : 서울특별시 OO구 ... 에서 구 추출
+                m = re.search(r'주택위치\s*[:\：]\s*서울특별시\s*(\S+구)', detail_html)
+                if not m:
+                    # fallback: 카테고리 option selected value로 구 이름 추출
+                    m = re.search(r'<option[^>]+selected[^>]*>([^<]+구)</option>', detail_html)
+                if m:
+                    district = m.group(1).strip()
+
             ann = {
                 "id":          make_id("youth", board_id),
                 "inst":        "SH",
@@ -811,6 +824,8 @@ def crawl_youth_housing(initial=False):
                 "posted_date": posted.isoformat(),
                 "crawled_at":  today.isoformat(),
             }
+            if district:
+                ann["district"] = district
             if apply_start and apply_end:
                 ann["apply_start"] = apply_start.isoformat()
                 ann["apply_end"]   = apply_end.isoformat()
@@ -1241,6 +1256,7 @@ def save_to_supabase(announcements):
             "status":      STATUS_MAP.get(a.get("status", ""), a.get("status", "")),
             "apply_start": a.get("apply_start") or None,
             "apply_end":   a.get("apply_end") or None,
+            "district":    a.get("district") or None,
             "raw_data":    {"source_key": a.get("source_key", "")},
         })
 

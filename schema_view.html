@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">! open /home/user/week1/schema_view.html
+<title>수도권 주거지원 DB 스키마 & 프로그램 목록</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 11px; color: #222; background: #fff; }
+  h1 { font-size: 18px; text-align: center; padding: 20px 0 6px; border-bottom: 3px solid #1a3a6b; }
+  h2 { font-size: 14px; background: #1a3a6b; color: #fff; padding: 6px 12px; margin: 20px 0 8px; }
+  h3 { font-size: 12px; background: #e8eef7; color: #1a3a6b; padding: 4px 10px; margin: 14px 0 6px; border-left: 4px solid #1a3a6b; }
+  .subtitle { text-align: center; color: #666; font-size: 11px; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 10.5px; }
+  th { background: #334e7a; color: #fff; padding: 4px 6px; text-align: left; font-weight: bold; }
+  td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; line-height: 1.5; }
+  tr:nth-child(even) td { background: #f7f9fc; }
+  .code { font-family: monospace; font-size: 10px; color: #555; background: #f0f0f0; padding: 1px 4px; border-radius: 3px; }
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 9.5px; font-weight: bold; color: #fff; margin-right: 3px; }
+  .lh { background: #c8960c; }
+  .sh { background: #1a5bb5; }
+  .gh { background: #2a7a3a; }
+  .ih { background: #0077aa; }
+  .hf { background: #8b3a8b; }
+  .gov { background: #555; }
+  .seoul { background: #b5360a; }
+  .gg { background: #4a7a20; }
+  .ic { background: #0a6688; }
+  .note { color: #666; font-size: 10px; }
+  .section-meta { font-size: 10px; color: #888; margin-bottom: 6px; }
+  .income-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .schema-box { border: 1px solid #ccc; border-radius: 4px; padding: 10px; margin-bottom: 10px; }
+  .schema-box h4 { font-size: 12px; color: #1a3a6b; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-bottom: 6px; }
+  .col-type { color: #8b3a8b; font-family: monospace; font-size: 10px; }
+  .col-note { color: #888; font-size: 10px; }
+  .highlight { background: #fffde7 !important; }
+  .warn { color: #c00; font-size: 10px; }
+
+  @media print {
+    body { font-size: 9px; }
+    h2 { page-break-before: always; }
+    h2:first-of-type { page-break-before: avoid; }
+    table { page-break-inside: auto; }
+    tr { page-break-inside: avoid; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>수도권 주거지원 통합 DB — 스키마 &amp; 데이터 정리</h1>
+<p class="subtitle">Supabase(PostgreSQL) 기준 | 설계일: 2026-03-21 | 최종수정: 2026-03-26 | schema.sql 기준</p>
+
+<!-- ====================================================== -->
+<h2>1. 소득 기준 참조 (income_standards)</h2>
+<!-- ====================================================== -->
+
+<div class="income-grid">
+<div>
+<h3>2026년 기준중위소득 (원/월) ★LH청약플러스 공식 확인</h3>
+<table>
+  <tr><th>가구원수</th><th>100% (원/월)</th><th>60%</th><th>70%</th><th>120%</th><th>150%</th></tr>
+  <tr><td>1인</td><td>2,564,238</td><td>1,538,543</td><td>1,794,967</td><td>3,077,086</td><td>3,846,357</td></tr>
+  <tr><td>2인</td><td>4,199,292</td><td>2,519,575</td><td>2,939,504</td><td>5,039,150</td><td>6,298,938</td></tr>
+  <tr><td>3인</td><td>5,359,036</td><td>3,215,422</td><td>3,751,325</td><td>6,430,843</td><td>8,038,554</td></tr>
+  <tr><td>4인</td><td>6,494,738</td><td>3,896,843</td><td>4,546,317</td><td>7,793,686</td><td>9,742,107</td></tr>
+  <tr><td>5인</td><td>7,556,719</td><td>4,534,031</td><td>5,289,703</td><td>9,068,063</td><td>11,335,079</td></tr>
+  <tr><td>6인</td><td>8,555,952</td><td>5,133,571</td><td>5,989,166</td><td>10,267,142</td><td>12,833,928</td></tr>
+</table>
+<p class="note">★ 통합공공임대, 청년월세 지원사업, 주거급여 등에 사용</p>
+</div>
+<div>
+<h3>2025년 도시근로자 월평균소득 (원/월) ★2026-03-21 갱신</h3>
+<table>
+  <tr><th>가구원수</th><th>100% (원/월)</th><th>70%</th><th>80%</th><th>120%</th><th>150%</th></tr>
+  <tr><td>1인</td><td>4,576,036</td><td>3,203,225</td><td>3,660,829</td><td>5,491,243</td><td>6,864,054</td></tr>
+  <tr><td>2인</td><td>6,452,897</td><td>4,517,028</td><td>5,162,318</td><td>7,743,476</td><td>9,679,346</td></tr>
+  <tr><td>3인</td><td>8,168,429</td><td>5,717,900</td><td>6,534,743</td><td>9,802,115</td><td>12,252,644</td></tr>
+  <tr><td>4인</td><td>8,802,202</td><td>6,161,541</td><td>7,041,762</td><td>10,562,642</td><td>13,203,303</td></tr>
+  <tr><td>5인</td><td>9,326,985</td><td>6,528,890</td><td>7,461,588</td><td>11,192,382</td><td>13,990,478</td></tr>
+</table>
+<p class="note">★ 행복주택, 국민임대, 청년매입, 버팀목 등 대부분 임대·금융에 사용<br>1인 +20%p, 2인 +10%p 가산 적용</p>
+</div>
+</div>
+
+<!-- ====================================================== -->
+<h2>2. DB 스키마 (테이블 구조)</h2>
+<!-- ====================================================== -->
+
+<div class="schema-box">
+<h4>① income_standards — 소득기준 참조 테이블</h4>
+<table>
+  <tr><th>컬럼</th><th>타입</th><th>설명</th></tr>
+  <tr><td>id</td><td class="col-type">SERIAL PK</td><td></td></tr>
+  <tr><td>standard_type</td><td class="col-type">TEXT NOT NULL</td><td>'중위소득' | '도시근로자월평균'</td></tr>
+  <tr><td>year</td><td class="col-type">INTEGER NOT NULL</td><td>기준 연도</td></tr>
+  <tr><td>household_size</td><td class="col-type">INTEGER NOT NULL</td><td>가구원수 1~6 (7인 이상 별도 계산)</td></tr>
+  <tr><td>amount</td><td class="col-type">BIGINT NOT NULL</td><td>100% 기준 금액 (원/월). 실적용: amount × (pct/100)</td></tr>
+  <tr><td colspan="3" class="col-note">UNIQUE (standard_type, year, household_size)</td></tr>
+</table>
+</div>
+
+<div class="schema-box">
+<h4>② programs — 주거지원 프로그램 마스터 (핵심 테이블)</h4>
+<table>
+  <tr><th>컬럼</th><th>타입</th><th>설명</th></tr>
+  <tr><td>id</td><td class="col-type">SERIAL PK</td><td></td></tr>
+  <tr><td>code</td><td class="col-type">TEXT UNIQUE NOT NULL</td><td>내부 식별코드 (예: 'LH_HAPPY_YOUTH')</td></tr>
+  <tr><td>category</td><td class="col-type">TEXT NOT NULL</td><td>'임대주택' | '금융지원' | '주거비지원' | '이자지원' | '보증료지원' | '기타복지' | '분양주택'</td></tr>
+  <tr><td>subcategory</td><td class="col-type">TEXT</td><td>임대: '공공임대'|'매입임대'|'전세임대'|'민간임대' / 금융: '구입자금'|'전세자금'|'월세자금' 등</td></tr>
+  <tr><td>program_type</td><td class="col-type">TEXT</td><td>'행복주택'|'국민임대'|'영구임대'|'통합공공임대'|'장기전세'|'매입임대'|'전세임대'|'디딤돌'|'버팀목' 등</td></tr>
+  <tr><td>institution</td><td class="col-type">TEXT NOT NULL</td><td>'LH'|'SH'|'GH'|'iH'|'서울시'|'경기도'|'인천시'|'국토교통부'|'주택도시기금'</td></tr>
+  <tr><td>region</td><td class="col-type">TEXT NOT NULL DEFAULT '전국'</td><td>'전국'|'서울'|'경기'|'인천'|'성남'</td></tr>
+  <tr><td>name</td><td class="col-type">TEXT NOT NULL</td><td>프로그램 공식 명칭</td></tr>
+  <tr><td>target_summary</td><td class="col-type">TEXT</td><td>대상 한줄 요약</td></tr>
+  <tr><td>eligibility</td><td class="col-type">JSONB</td><td>자격조건 (age, income, asset, car, region 등)</td></tr>
+  <tr><td>support_content</td><td class="col-type">JSONB</td><td>지원내용 (임대료%, 대출한도, 금리, 기간 등)</td></tr>
+  <tr><td>application_info</td><td class="col-type">JSONB</td><td>신청방법, URL, 연락처, 신청시기 등</td></tr>
+  <tr><td>is_active</td><td class="col-type">BOOLEAN DEFAULT TRUE</td><td></td></tr>
+  <tr><td>is_central</td><td class="col-type">BOOLEAN DEFAULT TRUE</td><td>중앙정부 사업 여부 (false=지자체 고유)</td></tr>
+  <tr><td>data_year</td><td class="col-type">INTEGER DEFAULT 2026</td><td></td></tr>
+  <tr><td>ontong_plcy_no</td><td class="col-type">TEXT</td><td>온통청년 API plcyNo 연계 키</td></tr>
+  <tr><td>source_url</td><td class="col-type">TEXT</td><td>출처 URL</td></tr>
+</table>
+<p class="note">인덱스: category, institution, region, is_active, eligibility(GIN), ontong_plcy_no</p>
+</div>
+
+<div class="schema-box">
+<h4>③ announcements — 공고 테이블 (크롤링 + 수동)</h4>
+<table>
+  <tr><th>컬럼</th><th>타입</th><th>설명</th></tr>
+  <tr><td>id</td><td class="col-type">SERIAL PK</td><td></td></tr>
+  <tr><td>program_id</td><td class="col-type">INTEGER → programs(id)</td><td>매칭된 프로그램 (null=미매칭)</td></tr>
+  <tr><td>institution</td><td class="col-type">TEXT NOT NULL</td><td>'SH'|'LH'|'GH'|'iH'</td></tr>
+  <tr><td>seq</td><td class="col-type">TEXT</td><td>원본 공고 번호</td></tr>
+  <tr><td>title</td><td class="col-type">TEXT NOT NULL</td><td></td></tr>
+  <tr><td>date</td><td class="col-type">DATE</td><td></td></tr>
+  <tr><td>types</td><td class="col-type">TEXT[]</td><td>공고 분류 태그 (예: ['행복주택','청년'])</td></tr>
+  <tr><td>status</td><td class="col-type">TEXT</td><td>'진행중'|'예정'|'마감'|'확인필요'</td></tr>
+  <tr><td>apply_start / apply_end</td><td class="col-type">DATE</td><td>신청 기간</td></tr>
+  <tr><td>raw_data</td><td class="col-type">JSONB</td><td>크롤링 원본 데이터</td></tr>
+  <tr><td colspan="3" class="col-note">UNIQUE (institution, seq)</td></tr>
+</table>
+</div>
+
+<div class="schema-box">
+<h4>④ user_conditions — 사용자 조건 (향후 맞춤 알림)</h4>
+<table>
+  <tr><th>컬럼 그룹</th><th>주요 컬럼</th></tr>
+  <tr><td>기본 인적사항</td><td>birth_year, marital_status ('미혼'|'기혼'|'신혼(7년이내)'|'예비신혼'|'한부모')</td></tr>
+  <tr><td>자녀</td><td>children_count, youngest_child_age, has_newborn</td></tr>
+  <tr><td>소득</td><td>annual_income, spouse_income, income_pct_mid(계산값), income_pct_urban(계산값)</td></tr>
+  <tr><td>자산</td><td>total_assets, car_value</td></tr>
+  <tr><td>주거 현황</td><td>region, is_homeless, is_household_head, current_housing, current_deposit, current_monthly_rent</td></tr>
+  <tr><td>학력/직업</td><td>is_student, school_region, is_employed, employment_years</td></tr>
+  <tr><td>특수자격</td><td>is_basic_recipient, is_near_poor, is_independence_youth, is_disabled, is_national_merit, is_single_parent, military_service</td></tr>
+  <tr><td>알림 설정</td><td>alert_email, interested_categories[], interested_regions[]</td></tr>
+</table>
+</div>
+
+<p class="note" style="margin: 0 0 8px 4px">RLS: programs·announcements·income_standards = 누구나 읽기 / user_conditions = 본인만 / service_role = 전체 접근 (크롤러용)</p>
+
+<!-- ====================================================== -->
+<h2>3. 임대주택 — LH (전국)</h2>
+<!-- ====================================================== -->
+
+<p class="section-meta">콜센터: 1600-1004 | 신청: apply.lh.or.kr | 기준일: 2026-03-24</p>
+
+<h3>행복주택 (건설임대)</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>임대료</th><th>기간</th><th>주요 조건·특이사항</th></tr>
+  <tr>
+    <td><span class="code">LH_HAPPY_STUDENT</span></td>
+    <td><span class="badge lh">LH</span>행복주택 (대학생)</td>
+    <td>대학 재학생·취업준비생 미혼 무주택</td>
+    <td>도시근로자 100% (1인 120%, 2인 110%)</td>
+    <td>총 1.08억 / 차량 소유불가</td>
+    <td>시세 60~80%</td>
+    <td>최장 6년</td>
+    <td>취업준비생: 졸업·중퇴 2년이내 / 자산평가 본인만(부모소득 합산) / 1순위: 자치구 거주or대학소재지 / ★2026년 자산 1.08억</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_HAPPY_YOUTH</span></td>
+    <td><span class="badge lh">LH</span>행복주택 (청년·사회초년생)</td>
+    <td>만19~39세 미혼 무주택 청년·사회초년생</td>
+    <td>도시근로자 100% (1인 120%, 2인 110%)</td>
+    <td>총 2.73억 / 차량 4,542만</td>
+    <td>시세 60~80%</td>
+    <td>최장 10년</td>
+    <td>사회초년생: 소득활동 5년이내 / 청약저축 필수 / 신생아(2023.3.28이후): 소득·자산 최대20%p완화 / ★2026-03-24 전기관 통일</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_HAPPY_NEWLYWED</span></td>
+    <td><span class="badge lh">LH</span>행복주택 (신혼부부·한부모)</td>
+    <td>혼인7년이내·예비신혼·6세이하자녀 한부모</td>
+    <td>도시근로자 100% (기혼 120%, 1인 120%, 2인 110%)</td>
+    <td>총 3.45억 / 차량 4,542만</td>
+    <td>시세 60~80%</td>
+    <td>최장 10년 (자녀있으면 14년)</td>
+    <td>청약저축: 부부 중 1인이상 / 신생아 소득·자산 최대20%p완화 / ★2026년 건설형 차량4,542만</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_HAPPY_ELDERLY</span></td>
+    <td><span class="badge lh">LH</span>행복주택 (고령자)</td>
+    <td>만65세이상 무주택세대구성원</td>
+    <td>도시근로자 100% (1인 120%, 2인 110%)</td>
+    <td>총 3.45억 / 차량 4,542만</td>
+    <td>시세 60~80%</td>
+    <td>최장 20년</td>
+    <td>★2026년 건설형 차량4,542만</td>
+  </tr>
+</table>
+
+<h3>건설임대 (국민·통합공공·영구·장기전세·분양전환)</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>임대료</th><th>기간</th><th>주요 조건·특이사항</th></tr>
+  <tr>
+    <td><span class="code">LH_NATIONAL_RENT</span></td>
+    <td><span class="badge lh">LH</span>국민임대주택</td>
+    <td>무주택 저소득 가구</td>
+    <td>도시근로자 70% (1인 90%, 2인 80%)</td>
+    <td>총 3.45억 / 차량 4,542만</td>
+    <td>시세 60~80%</td>
+    <td>30년</td>
+    <td>청약저축 50㎡이상 2년+24회(1순위) / 가점제 84점 / 우선공급: 신혼30%·장애인20%·다자녀10%·국가유공자10% / 감점: 최근1년 공공임대 -5점</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_INTEGRATED</span></td>
+    <td><span class="badge lh">LH</span>통합공공임대주택</td>
+    <td>중위소득 150% 이하 무주택 가구</td>
+    <td>★중위소득 기준: 우선공급 100% / 일반공급 150%</td>
+    <td>총 3.45억 / 차량 4,542만</td>
+    <td>소득구간별 시세 35~90%</td>
+    <td>30년</td>
+    <td>중위30%이하→35% / 30~50%→45% / 50~70%→50% / 70~100%→65% / 100~130%→80% / 130~150%→90%</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_PERMANENT</span></td>
+    <td><span class="badge lh">LH</span>영구임대주택</td>
+    <td>생계·의료수급자, 국가유공자, 한부모, 장애인 등 취약계층</td>
+    <td>소득요건 없음 (자격요건으로 대체)</td>
+    <td>-</td>
+    <td>시세 30%</td>
+    <td>50년</td>
+    <td class="warn">★신청: 행정복지센터(주민센터) — LH청약플러스 아님 / 절차: 행정복지센터→지자체예비명단→LH통보→퇴거시입주</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_LONG_JEONSE</span></td>
+    <td><span class="badge lh">LH</span>장기전세주택 (시프트)</td>
+    <td>무주택세대구성원</td>
+    <td>60㎡이하: 100%(1인120%,2인110%) / 60~85㎡: 120%</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>시세 80% 전세</td>
+    <td>20년</td>
+    <td class="warn">★서울 장기전세는 SH(시프트)로 공급</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_PUBLIC_5_10</span></td>
+    <td><span class="badge lh">LH</span>5·10·50년 공공임대 (분양전환형)</td>
+    <td>무주택세대구성원 (소득 100% 이하)</td>
+    <td>도시근로자 100% (기혼 130%)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>시세 90%</td>
+    <td>5년/10년/50년 후 분양전환</td>
+    <td>특별공급: 신혼10%·생애최초15%·다자녀10%·노부모5%·기관추천20%·일반20% / 5년: (건설원가+감정평가)÷2 / 10년: 감정평가액</td>
+  </tr>
+</table>
+
+<h3>매입임대</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>임대료</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">LH_BUY_GENERAL</span></td>
+    <td><span class="badge lh">LH</span>일반 매입임대</td>
+    <td>수급자·한부모·장애인·고령자 등 취약계층</td>
+    <td>1순위 70% / 2순위 50%</td>
+    <td>총 2.41억 / 차량 4,563만</td>
+    <td>시세 30% / 보증금 약 475만·월세 10만</td>
+    <td>1순위 무제한 / 2순위 최장 20년(9회)</td>
+    <td>1순위: 생계·의료수급자/한부모/65세이상수급자·차상위/장애인70%이하 / 2순위: 소득50%이하</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_BUY_YOUTH</span></td>
+    <td><span class="badge lh">LH</span>청년 매입임대</td>
+    <td>만19~39세 미혼 무주택 청년·대학생·취준생</td>
+    <td>2·3순위: 100%</td>
+    <td>2순위: 3.45억 / 3순위: 2.73억 / 차량 4,563만</td>
+    <td>1순위 30~40% / 2순위 50%</td>
+    <td>최장 10년(4회)</td>
+    <td>1순위: 수급자·한부모·차상위 / 2순위: 본인+부모 합산 100% / 3순위: 본인 100% / 부모 유주택이어도 신청 가능</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_BUY_NEWLYWED_1</span></td>
+    <td><span class="badge lh">LH</span>신혼·신생아 매입임대 Ⅰ형</td>
+    <td>혼인7년이내·신생아·한부모 (소득 70% 이하)</td>
+    <td>외벌이 70% / 맞벌이 90%</td>
+    <td>총 2.37억 / 차량 4,563만</td>
+    <td>시세 30~40%</td>
+    <td>최장 20년(9회)</td>
+    <td>1순위: 신생아·보호대상한부모 / 2순위: 미성년자녀있는신혼 / 3순위: 자녀없는신혼</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_BUY_NEWLYWED_2</span></td>
+    <td><span class="badge lh">LH</span>신혼·신생아 매입임대 Ⅱ형</td>
+    <td>혼인7년이내·신생아·한부모·혼인가구 (소득 100% 이하)</td>
+    <td>1~4순위: 외벌이 100%/맞벌이 120% / 5순위: 외벌이 120%/맞벌이 140%</td>
+    <td>총 3.45억 / 차량 4,563만</td>
+    <td>시세 70~80%</td>
+    <td>최장 10년(4회) / 자녀있으면 14년(6회)</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_BUY_MULTICHILDREN</span></td>
+    <td><span class="badge lh">LH</span>다자녀 매입임대</td>
+    <td>미성년 자녀 2인이상 무주택 가구 (소득 70%이하)</td>
+    <td>도시근로자 70%</td>
+    <td>총 3.45억 / 차량 4,542만</td>
+    <td>시세 30~40%</td>
+    <td>최장 20년(9회)</td>
+    <td class="warn">★신청: 지자체(행정복지센터) — LH청약플러스 아님 / 태아 포함 미성년 자녀 2인이상</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_VULNERABLE</span></td>
+    <td><span class="badge lh">LH</span>주거취약계층 주거지원</td>
+    <td>쪽방·고시원·여인숙 등 비정상거처 3개월이상 거주</td>
+    <td>도시근로자 50%</td>
+    <td>총 2.41억 / 차량 4,563만</td>
+    <td>시세 30%</td>
+    <td>최장 20년(9회)</td>
+    <td>쪽방·고시원·여인숙·비닐하우스·노숙인쉼터 3개월이상 / 범죄피해자 / 최저주거기준미달아동가구</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_RITZ_NEWLYWED</span></td>
+    <td><span class="badge lh">LH</span>청년신혼부부 매입임대리츠(아파트)</td>
+    <td>신혼(혼인7년이내)·청년(19~39세)·6세이하자녀 혼인가구</td>
+    <td>도시근로자 100% (기혼 120%)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,542만</td>
+    <td>시세 90% 아파트</td>
+    <td>최장 10년(4회)</td>
+    <td>1순위: 신혼부부 / 2순위: 청년 / 3순위: 6세이하자녀 혼인가구</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_DORM_YOUTH</span></td>
+    <td><span class="badge lh">LH</span>기숙사형 청년주택</td>
+    <td>대학생·대학원생 무주택 (입학·복학 예정자 포함)</td>
+    <td>2순위: 본인+부모 100% / 3순위: 본인 100%</td>
+    <td>총 1.08억 / 차량 소유불가</td>
+    <td>시세 약 40% / 보증금 60만 고정</td>
+    <td>최장 10년(4회)</td>
+    <td>1순위: 수급자·차상위·한부모 / 공급시기: 반기별(6월·12월)</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_INDEPENDENCE_YOUTH</span></td>
+    <td><span class="badge lh">LH</span>자립준비청년 임대주택</td>
+    <td>가정위탁 종료 또는 아동복지시설 퇴소 후 5년이내</td>
+    <td>소득·자산 기준 없음</td>
+    <td>없음</td>
+    <td>건설: 시세30~80% / 매입: 시세40%</td>
+    <td>매입 최장 20년 / 전세 최장 20년</td>
+    <td>보증금 100만원 / 22세이하: 전세임대 무이자 / 5년이내: 임대료 50% 감면 가능 / 연중 수시</td>
+  </tr>
+</table>
+
+<h3>전세임대</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>전세지원한도 (수도권/수도권외)</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">LH_JEONSE_GENERAL</span></td>
+    <td><span class="badge lh">LH</span>기존주택 전세임대 (일반)</td>
+    <td>수급자·한부모·장애인·고령자 취약계층</td>
+    <td>1순위 70% / 2순위 50%</td>
+    <td>-</td>
+    <td>수도권 1.3억 / 수도권도시 0.9억 / 기타 0.7억</td>
+    <td>최장 30년(14회)</td>
+    <td>입주자 부담: 2~5% / 65세이상·중증장애인·1순위: 재계약 횟수 무제한 / 입주자가 원하는 주택 물색</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_JEONSE_YOUTH</span></td>
+    <td><span class="badge lh">LH</span>청년전세임대</td>
+    <td>만19~39세 대학생·취준생·청년 무주택</td>
+    <td>도시근로자 100%</td>
+    <td>총 2.73억 / 차량 4,563만</td>
+    <td>수도권 1.2억 / 광역도시 0.95억 / 기타 0.85억 / 쉐어 2억</td>
+    <td>최장 20년(4회) / 혼인시 5회 추가</td>
+    <td>1순위: 수급자·한부모·차상위 / 보증금: 1순위 100만·2·3순위 200만 / 아동복지퇴소22세이하 무이자</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_JEONSE_NEWLYWED_1</span></td>
+    <td><span class="badge lh">LH</span>신혼·신생아 전세임대 Ⅰ형</td>
+    <td>혼인7년이내·신생아 (소득 70% 이하)</td>
+    <td>외벌이 70% / 맞벌이 90%</td>
+    <td>총 2.37억 / 차량 4,563만</td>
+    <td>수도권 1.45억 / 광역도시 1.1억 / 기타 0.95억</td>
+    <td>최장 20년(9회)</td>
+    <td>입주자 부담: 5%</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_JEONSE_NEWLYWED_2</span></td>
+    <td><span class="badge lh">LH</span>신혼·신생아 전세임대 Ⅱ형</td>
+    <td>혼인7년이내·신생아 (소득 100% 이하)</td>
+    <td>도시근로자 100% (기혼 130%)</td>
+    <td>총 3.45억 / 차량 4,563만</td>
+    <td>수도권 2.4억 / 광역도시 1.6억 / 기타 1.3억</td>
+    <td>최장 10년(4회) / 자녀있으면 14년</td>
+    <td>입주자 부담: 20%</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_JEONSE_CHILDREN</span></td>
+    <td><span class="badge lh">LH</span>다자녀 전세임대</td>
+    <td>미성년 직계비속 2명이상 무주택 가구</td>
+    <td>-</td>
+    <td>-</td>
+    <td>수도권 1.55억 / 광역도시 1.2억 / 기타 1.05억</td>
+    <td>최장 20년(9회)</td>
+    <td>입주자 부담: 2% / 태아 포함 / 2자녀 초과시 자녀 1인당 2천만 추가</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_DNDNT_JEONSE</span></td>
+    <td><span class="badge lh">LH</span>전세임대형 든든주택</td>
+    <td>무주택 (소득·자산 기준 없음, 중산층까지)</td>
+    <td>없음</td>
+    <td>없음</td>
+    <td>시세 90% 이하 전세</td>
+    <td>최장 8년(3회)</td>
+    <td>대상주택: 빌라·다세대·연립(非아파트) / 순위: 신생아·다자녀→신혼→기타 / 1인 가구 신청 가능</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_HOPE_TOWN</span></td>
+    <td><span class="badge lh">LH</span>신혼희망타운 (분양형)</td>
+    <td>혼인7년이내·예비신혼·한부모 (소득 130% 이하)</td>
+    <td>외벌이 130% / 맞벌이 200%</td>
+    <td>총 3.62억</td>
+    <td>분양형: 연 1.6% 고정금리 30년 / 임대형: 버팀목 1.2%</td>
+    <td>-</td>
+    <td>청약저축 6개월+6회 / 60㎡이하 / 선정3단계: 우선30%(혼인2년이내·2세이하자녀)+일반60%+추첨10% / ★2026-03-21 확인</td>
+  </tr>
+</table>
+
+<!-- ====================================================== -->
+<h2>4. 임대주택 — SH (서울)</h2>
+<!-- ====================================================== -->
+
+<p class="section-meta">콜센터: 1600-3456 | 신청: i-sh.co.kr | 서울 거주 요건 있음 (일부 예외)</p>
+
+<h3>행복주택</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>임대료</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">SH_HAPPY_YOUTH</span></td>
+    <td><span class="badge sh">SH</span>행복주택 (청년)</td>
+    <td>만19~39세 서울거주 청년 무주택</td>
+    <td>도시근로자 100%</td>
+    <td>총 2.54억 / 차량 4,563만</td>
+    <td>시세 60~80%</td>
+    <td>6년(2회)</td>
+    <td>서울 거주 필수</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_HAPPY_STUDENT</span></td>
+    <td><span class="badge sh">SH</span>행복주택 (대학생)</td>
+    <td>서울 소재 대학 재학생 (미혼 무주택)</td>
+    <td>도시근로자 100% (1인 120%, 2인 110%)</td>
+    <td>총 1.04억 / 차량 소유불가</td>
+    <td>시세 60~80%</td>
+    <td>-</td>
+    <td class="warn">★서울 거주 요건 없음 (전국 신청 가능) / 1순위: 주택소재 자치구에 재학대학소재or본인거주지 / 선정: 2세미만자녀→순위→배점→추첨</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_HAPPY_NEWLYWED</span></td>
+    <td><span class="badge sh">SH</span>행복주택 (신혼부부)</td>
+    <td>서울거주 혼인7년이내·6세이하자녀 한부모</td>
+    <td>도시근로자 100% (기혼 130%)</td>
+    <td>총 3.37억</td>
+    <td>시세 60~80%</td>
+    <td>최장 14년</td>
+    <td>청약저축 필요 / 2세미만자녀→순위→배점→추첨 / 자녀1명이상 최장14년</td>
+  </tr>
+</table>
+
+<h3>청년안심주택·희망하우징</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>임대료</th><th>신청처</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">SH_SAFETY_PUBLIC</span></td>
+    <td><span class="badge sh">SH</span>청년안심주택 (공공임대)</td>
+    <td>만19~39세 청년·신혼부부, 역세권 무주택</td>
+    <td>청년: 100% / 신혼: 120%</td>
+    <td>총 2.54억 / 차량 4,563만</td>
+    <td>시세 30~70%</td>
+    <td>soco.seoul.go.kr</td>
+    <td class="warn">★서울 거주 요건 없음 (역세권 민관협력 사업) / 1순위: 수급자·한부모·차상위 / 2순위: 본인+부모 100%(청년)/120%(신혼)</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_SAFETY_PRIVATE</span></td>
+    <td><span class="badge sh">SH</span>청년안심주택 (민간임대)</td>
+    <td>만19~39세 청년·신혼부부, 역세권 무주택</td>
+    <td>청년: 100% / 신혼: 120%</td>
+    <td>총 2.54억 / 차량 4,563만</td>
+    <td>특별공급: 시세 75% / 일반공급: 85%</td>
+    <td>soco.seoul.go.kr</td>
+    <td class="warn">★서울 거주 요건 없음 / 공급비율: 특별20% / 일반80%</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_HOPE_HOUSING</span></td>
+    <td><span class="badge sh">SH</span>희망하우징</td>
+    <td>서울 소재 대학 재학생 (미혼 무주택)</td>
+    <td>2·3순위: 본인(+부모) 100%</td>
+    <td>2순위: 3.37억·차4,563만 / 3순위: 1.04억·차0</td>
+    <td>보증금 109만·월세 7~14만</td>
+    <td>i-sh.co.kr</td>
+    <td class="warn">★거주지 조건 없음 — 서울소재 대학 재학이 핵심 / 시설: 연남·공릉원룸텔, 기숙사 여럿 / 내발산기숙사: 수도권대학원생 포함 / 최장 6년(2회)</td>
+  </tr>
+</table>
+
+<h3>건설임대 (장기전세·국민임대·장기안심)</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>임대료</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">SH_JANGKI_JEONSE</span></td>
+    <td><span class="badge sh">SH</span>장기전세주택</td>
+    <td>서울거주 무주택, 청약저축 가입자</td>
+    <td>60㎡이하: 105%(맞벌이140%) / 60㎡초과: 150%(맞벌이200%)</td>
+    <td>총 6.4억 / 차량 4,563만</td>
+    <td>전세보증금 시세 80%</td>
+    <td>가점제</td>
+    <td>청약저축 1순위: 2년+24회 / 2순위: 6개월+6회 / 신생아가산 +20%p</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_MIRINAE_JIP</span></td>
+    <td><span class="badge sh">SH</span>장기전세주택2 미리내집 (신혼)</td>
+    <td>혼인7년이내 신혼·예비신혼, 서울거주 무주택</td>
+    <td>60㎡이하: 120%(맞벌이180%) / 60㎡초과: 150%(맞벌이200%)</td>
+    <td>총 6.4억 / 차량 4,563만</td>
+    <td>전세보증금 시세 80%</td>
+    <td>가점제</td>
+    <td>공고 전 5년 무주택 이력 필요 / 저소득자 40% 우선배정</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_NATIONAL_RENT</span></td>
+    <td><span class="badge sh">SH</span>국민임대주택</td>
+    <td>서울거주 무주택 저소득 세대</td>
+    <td>도시근로자 70%</td>
+    <td>총 3.37억 / 차량 4,563만</td>
+    <td>시세 60~80%</td>
+    <td>30년</td>
+    <td>유형: 국민임대·공공임대·재개발임대·도시형생활주택</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_ANSIM_JEONSE</span></td>
+    <td><span class="badge sh">SH</span>장기안심주택 (보증금 지원형)</td>
+    <td>서울거주 무주택, 전세보증금 4.9억이하 주택 희망자</td>
+    <td>도시근로자 100% (신혼 120%/맞벌이180%, 다자녀 120%)</td>
+    <td>총자산(실물) 0.2155억 / 차량 4,563만</td>
+    <td>보증금의 30~50% 지원</td>
+    <td>최장 10년(4회)</td>
+    <td>1.5억이하: 50%지원(최대4,500만) / 1.5억초과: 30%지원(최대6,000만) / 연간 1만호 공고</td>
+  </tr>
+</table>
+
+<h3>매입임대</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>임대료</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">SH_PURCHASE_RENT_YOUTH</span></td>
+    <td><span class="badge sh">SH</span>청년 매입임대</td>
+    <td>서울거주 대학생·취준생·만19~39세 무주택</td>
+    <td>1순위 70% / 2순위 50%</td>
+    <td>2순위: 3.37억 / 3순위: 2.54억 / 차량 4,563만</td>
+    <td>1순위: 시세30% / 2순위: 50%</td>
+    <td>최장 10년(4회)</td>
+    <td>1순위: 수급자/한부모/시급가구/고령자/장애인70% / 2순위: 소득50%이하/장애인100%</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_BUY_GENERAL</span></td>
+    <td><span class="badge sh">SH</span>일반 매입임대</td>
+    <td>서울거주 무주택 가구 (취약계층 우선)</td>
+    <td>1순위 50% / 일반 70%</td>
+    <td>총 2.37억 / 차량 4,563만</td>
+    <td>1순위 30% / 2순위 50%</td>
+    <td>최장 10년</td>
+    <td class="warn">⚠️자산수치 공고문 확인 필요 / 자녀1명: 자산+2,400만·차+380만</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_BUY_NEWLYWED_1</span></td>
+    <td><span class="badge sh">SH</span>신혼·신생아 매입임대 Ⅰ형</td>
+    <td>서울거주 신혼(7년이내)·신생아·한부모 (70% 이하)</td>
+    <td>외벌이 70% / 맞벌이 90%</td>
+    <td>총 3.37억 / 차량 4,563만</td>
+    <td>시세 30~50%</td>
+    <td>최장 20년</td>
+    <td>1순위: 신생아·보호대상한부모 / 소득50%이하: 시세30%</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_BUY_NEWLYWED_2</span></td>
+    <td><span class="badge sh">SH</span>신혼·신생아 매입임대 Ⅱ형</td>
+    <td>서울거주 혼인가구·신생아·한부모 (130% 이하)</td>
+    <td>외벌이 130% / 맞벌이 200%</td>
+    <td>총 3.54억</td>
+    <td>시세 60~70% (소득80%이하: 60%)</td>
+    <td>최장 14년</td>
+    <td class="warn">⚠️자녀2명이상 자산+84,000만 — 공고문 확인 필요</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_LONG_UNOCCUPIED</span></td>
+    <td><span class="badge sh">SH</span>장기미임대</td>
+    <td>서울거주 만19세이상 무주택 (소득130% 이하 1순위)</td>
+    <td>없음 (소득130%이하 1순위)</td>
+    <td>없음</td>
+    <td>-</td>
+    <td>최장 4년</td>
+    <td>6개월이상 미임대 국민임대·행복주택 물량 / 우편접수 가능 / 수시</td>
+  </tr>
+</table>
+
+<h3>전세임대</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>지원조건</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">SH_JEONSE_RENT</span></td>
+    <td><span class="badge sh">SH</span>전세임대주택</td>
+    <td>서울거주 무주택 취약계층</td>
+    <td>1순위 70% / 2순위 50%</td>
+    <td>총 2.73억 / 차량 4,563만</td>
+    <td>입주자가 원하는 주택 선택</td>
+    <td>-</td>
+    <td>1순위: 수급자/한부모/시급가구/장애인70%/65세이상 / 신생아가산 10~20%p</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_JEONSE_NEWLYWED_1</span></td>
+    <td><span class="badge sh">SH</span>신혼·신생아 전세임대 Ⅰ형</td>
+    <td>서울거주 신혼(7년이내)·신생아 (70% 이하)</td>
+    <td>외벌이 70% / 맞벌이 90%</td>
+    <td>총 3.37억 / 차량 4,563만</td>
+    <td>SH 최대 1.38억 지원 / 입주자 5% 부담</td>
+    <td>최장 20년(9회)</td>
+    <td>1순위: 신생아가구</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_JEONSE_NEWLYWED_2</span></td>
+    <td><span class="badge sh">SH</span>신혼·신생아 전세임대 Ⅱ형</td>
+    <td>서울거주 혼인가구·신생아·한부모 (130% 이하)</td>
+    <td>외벌이 130% / 맞벌이 200%</td>
+    <td>총 3.54억</td>
+    <td>SH 최대 6억 지원 / 입주자 20% 부담</td>
+    <td>최장 14년(6회)</td>
+    <td>1순위: 신생아가구</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_DNDNT_JEONSE</span></td>
+    <td><span class="badge sh">SH</span>전세임대형 든든주택</td>
+    <td>서울거주 무주택 (소득·자산 기준 없음)</td>
+    <td>없음</td>
+    <td>없음</td>
+    <td>SH 최대 2억 지원 / 입주자 20% 부담</td>
+    <td>최장 8년(3회)</td>
+    <td>1순위: 신생아·다자녀 / 2순위: 신혼·예비신혼 / 3순위: 일반</td>
+  </tr>
+</table>
+
+<!-- ====================================================== -->
+<h2>5. 임대주택 — GH (경기) · iH (인천)</h2>
+<!-- ====================================================== -->
+
+<p class="section-meta">GH: apply.gh.or.kr / 1588-7013 | iH: ih.co.kr / 1522-0072</p>
+<p class="section-meta"><span class="warn">★GH 자동차 기준: 3,708만원 (LH 4,542만보다 엄격)</span></p>
+
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>임대료</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">GH_HAPPY_YOUTH</span></td>
+    <td><span class="badge gh">GH</span>경기 행복주택 (청년)</td>
+    <td>만19~39세 미혼 무주택 청년</td>
+    <td>도시근로자 100%</td>
+    <td>총 2.73억 / 차량 3,708만</td>
+    <td>시세 60~80%</td>
+    <td>6년(2회)</td>
+    <td>경기 거주 우선 (전국 신청 3순위)</td>
+  </tr>
+  <tr>
+    <td><span class="code">GH_HAPPY_NEWLYWED</span></td>
+    <td><span class="badge gh">GH</span>경기 행복주택 (신혼·신생아)</td>
+    <td>혼인7년이내·신생아·한부모 무주택</td>
+    <td>도시근로자 100% (기혼 120%)</td>
+    <td>총 3.45억 / 차량 3,708만</td>
+    <td>시세 60~80%</td>
+    <td>최장 14년</td>
+    <td>자녀1명 소득+10%p / 2명이상 +20%p / 경기 거주 우선</td>
+  </tr>
+  <tr>
+    <td><span class="code">GH_NATIONAL_RENT</span></td>
+    <td><span class="badge gh">GH</span>경기 국민임대</td>
+    <td>무주택 저소득 가구</td>
+    <td>도시근로자 70%</td>
+    <td>총 3.45억 / 차량 3,708만</td>
+    <td>시세 60~80%</td>
+    <td>30년</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><span class="code">GH_BUY_YOUTH</span></td>
+    <td><span class="badge gh">GH</span>경기 청년 매입임대</td>
+    <td>대학생·취준생·만19~39세 청년 무주택</td>
+    <td>2순위: 100% / 3순위: 100%</td>
+    <td>2순위: 3.45억 / 3순위: 2.73억 / 차량 3,708만</td>
+    <td>시세 30~50%</td>
+    <td>최장 10년</td>
+    <td>1순위: 수급자·차상위·한부모 / 경기 거주 우선</td>
+  </tr>
+  <tr>
+    <td><span class="code">IH_NATIONAL_RENT</span></td>
+    <td><span class="badge ih">iH</span>인천 국민임대</td>
+    <td>무주택 저소득 가구 (인천 거주 우선)</td>
+    <td>도시근로자 70% (1인 90%, 2인 80%)</td>
+    <td>총 3.45억 / 차량 4,563만</td>
+    <td>시세 60~80%</td>
+    <td>30년</td>
+    <td>인천 거주자 우선 (비인천도 신청 가능)</td>
+  </tr>
+  <tr>
+    <td><span class="code">IH_HAPPY_YOUTH</span></td>
+    <td><span class="badge ih">iH</span>인천 행복주택 (청년)</td>
+    <td>만19~39세 미혼 무주택 청년 (인천 거주 우선)</td>
+    <td>도시근로자 100% (1인 120%)</td>
+    <td>총 2.73억 / 차량 4,563만</td>
+    <td>시세 60~80%</td>
+    <td>최장 6년</td>
+    <td>★2026-03-24 전기관 통일: 청년 자산2.73억·차4,563만</td>
+  </tr>
+  <tr>
+    <td><span class="code">IH_HAPPY_NEWLYWED</span></td>
+    <td><span class="badge ih">iH</span>인천 행복주택 (신혼부부)</td>
+    <td>혼인7년이내·신생아·예비신혼 (인천 거주 우선)</td>
+    <td>도시근로자 100% (기혼 120%, 2인 110%)</td>
+    <td>총 3.45억 / 차량 4,563만</td>
+    <td>시세 60~80%</td>
+    <td>최장 10년</td>
+    <td>★2026-03-24 전기관 통일</td>
+  </tr>
+  <tr>
+    <td><span class="code">IH_1000WON_BUY</span></td>
+    <td><span class="badge ih">iH</span>천원주택 (매입임대)</td>
+    <td>신혼부부·신생아·한부모, 인천 거주</td>
+    <td>도시근로자 130% (기혼 200%)</td>
+    <td>-</td>
+    <td>월세 3만원 고정</td>
+    <td>6년(2회)</td>
+    <td>2026년 5월 모집 예정 / 85㎡이하</td>
+  </tr>
+  <tr>
+    <td><span class="code">IH_1000WON_JEONSE</span></td>
+    <td><span class="badge ih">iH</span>천원주택 (전세임대 신혼·신생아)</td>
+    <td>혼인7년이내 신혼·신생아, 인천 거주</td>
+    <td>도시근로자 130% (기혼 200%)</td>
+    <td>-</td>
+    <td>월세 3만원 / 전세지원 최대 2.4억 (80%)</td>
+    <td>6년</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><span class="code">IH_DUNDAN</span></td>
+    <td><span class="badge ih">iH</span>전세임대형 든든주택</td>
+    <td>신혼·신생아·한부모, 인천 거주 (소득·자산 없음)</td>
+    <td>없음</td>
+    <td>없음</td>
+    <td>월세 3만원 / 전세지원 최대 2억 (80%)</td>
+    <td>6년</td>
+    <td></td>
+  </tr>
+</table>
+
+<!-- ====================================================== -->
+<h2>6. 분양주택</h2>
+<!-- ====================================================== -->
+
+<h3>SH 분양주택 (서울)</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">SH_NAMOOM_GENERAL</span></td>
+    <td><span class="badge sh">SH</span>나눔형 분양 (일반공급)</td>
+    <td>수도권 거주 무주택세대구성원</td>
+    <td>도시근로자 100% (기혼 200%)</td>
+    <td>총 3.54억</td>
+    <td>청약저축 필수 / 토지임대부or이익공유형 / 처분시 SH환매 / 사전예약→본청약 2단계</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_NAMOOM_YOUTH</span></td>
+    <td><span class="badge sh">SH</span>나눔형 분양 (청년 특별공급)</td>
+    <td>만19~39세 미혼 수도권 무주택, 청약6개월이상</td>
+    <td>도시근로자 140%</td>
+    <td>본인 2.7억 / 부모 10.11억</td>
+    <td>생애 1회 / 소득기준 약 503만원(본인)</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_NAMOOM_NEWLYWED</span></td>
+    <td><span class="badge sh">SH</span>나눔형 분양 (신혼 특별공급)</td>
+    <td>혼인7년이내·6세이하자녀 무주택 신혼</td>
+    <td>도시근로자 130% (기혼 200%)</td>
+    <td>총 3.54억</td>
+    <td>생애 1회</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_PUBLIC_SALE_GENERAL</span></td>
+    <td><span class="badge sh">SH</span>공공분양 (일반공급)</td>
+    <td>수도권 거주 무주택세대구성원</td>
+    <td>도시근로자 100% (기혼 140%→추첨200%)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>1단계: 신생아우선 / 2단계: 우선공급 / 3단계: 추첨</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_PUBLIC_SALE_NEWLYWED</span></td>
+    <td><span class="badge sh">SH</span>공공분양 (신혼 특별공급)</td>
+    <td>혼인7년이내·6세이하자녀 무주택 신혼</td>
+    <td>도시근로자 130%(우선) / 200%(일반)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>우선30%(2년이내혼인·2세이하): 100%·맞벌이120% / 일반70%: 130%·맞벌이200% / 생애1회</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_PUBLIC_SALE_FIRST</span></td>
+    <td><span class="badge sh">SH</span>공공분양 (생애최초 특별공급)</td>
+    <td>세대원 전원 주택 미소유, 5년이상 소득세 납부</td>
+    <td>도시근로자 130% (기혼 200%)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>청약저축 600만원이상 / 생애1회</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_PUBLIC_SALE_CHILDREN</span></td>
+    <td><span class="badge sh">SH</span>공공분양 (다자녀 특별공급)</td>
+    <td>미성년 자녀 2명이상 무주택 가구</td>
+    <td>도시근로자 120% (기혼 200%)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>청약저축 6개월+6회 / 생애1회</td>
+  </tr>
+</table>
+
+<h3>LH 공공분양 (전국)</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">LH_PUBLIC_SALE_GENERAL</span></td>
+    <td><span class="badge lh">LH</span>공공분양 (일반공급)</td>
+    <td>청약저축 가입 무주택 세대구성원</td>
+    <td>없음</td>
+    <td>-</td>
+    <td>납입횟수·납입액 순위 / 1순위: 납입24회이상 / 생애1회 제한 없음 / 시세 85%</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_PUBLIC_SALE_NEWLYWED</span></td>
+    <td><span class="badge lh">LH</span>공공분양 (신혼 특별공급)</td>
+    <td>혼인7년이내·6세이하자녀 무주택 신혼</td>
+    <td>도시근로자 130%(우선) / 200%(일반)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>우선30%+일반60%+추첨10% / 청약저축6개월+6회 / 생애1회</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_PUBLIC_SALE_FIRST</span></td>
+    <td><span class="badge lh">LH</span>공공분양 (생애최초 특별공급)</td>
+    <td>세대원 전원 주택 미소유, 5년이상 소득세 납부</td>
+    <td>도시근로자 130% (기혼 200%)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>추첨공급 50% / 청약저축 600만원이상 / 생애1회</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_PUBLIC_SALE_CHILDREN</span></td>
+    <td><span class="badge lh">LH</span>공공분양 (다자녀 특별공급)</td>
+    <td>미성년 자녀 2명이상 무주택 가구</td>
+    <td>도시근로자 120% (기혼 200%)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>미성년자녀 3명이상 우선 / 청약저축6개월+6회 / 생애1회</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_PUBLIC_SALE_NEWBORN</span></td>
+    <td><span class="badge lh">LH</span>공공분양 (신생아 특별공급)</td>
+    <td>2세이하 영아 보유 무주택 가구</td>
+    <td>도시근로자 200%</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>공고일 기준 만24개월이하 자녀 / 신혼특공과 별도 쿼터 / 생애1회</td>
+  </tr>
+  <tr>
+    <td><span class="code">LH_PUBLIC_SALE_ELDERLY</span></td>
+    <td><span class="badge lh">LH</span>공공분양 (노부모부양 특별공급)</td>
+    <td>65세이상 직계존속 3년이상 부양 무주택 세대주</td>
+    <td>도시근로자 120% (기혼 200%)</td>
+    <td>총자산(실물) 2.155억 / 차량 4,563만</td>
+    <td>청약저축 24회이상 / 생애1회</td>
+  </tr>
+</table>
+
+<!-- ====================================================== -->
+<h2>7. 금융지원 (주택도시기금)</h2>
+<!-- ====================================================== -->
+
+<p class="section-meta">신청: enhuf.molit.go.kr | 1599-0001 | 취급은행: 우리·국민·신한·하나·농협 등</p>
+
+<h3>구입자금 대출</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준 (연소득)</th><th>금리 (%)</th><th>한도</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">HF_DIDIMDOL</span></td>
+    <td><span class="badge hf">기금</span>내집마련 디딤돌대출</td>
+    <td>연소득 6천(신혼 8.5천) 이하 무주택 세대주</td>
+    <td>6,000만 (신혼 8,500만)</td>
+    <td>2.85~4.15</td>
+    <td>일반 2억 / 신혼 3.2억</td>
+    <td>30년</td>
+    <td>주택가 5억이하(신혼6억) / 85㎡이하 / LTV 70%(생애최초80%) / 중도상환수수료 2026.12.31까지 면제</td>
+  </tr>
+  <tr>
+    <td><span class="code">HF_DIDIMDOL_NEWBORN</span></td>
+    <td><span class="badge hf">기금</span>신생아특례 디딤돌대출</td>
+    <td>2년내 출산가구 연소득 1.3억(맞벌이 2억) 무주택</td>
+    <td>1.3억 (맞벌이 2억)</td>
+    <td>1.80~4.50</td>
+    <td>4억</td>
+    <td>30년</td>
+    <td>출산일 2년이내 / 주택가 9억이하 / LTV 70% / 특례금리 5년(추가출산시 연장)</td>
+  </tr>
+  <tr>
+    <td><span class="code">HF_NEWLYWED_PURCHASE</span></td>
+    <td><span class="badge hf">기금</span>신혼부부 구입자금 (생애최초)</td>
+    <td>신혼부부 생애최초 주택구입자</td>
+    <td>8,500만</td>
+    <td>2.55~3.85</td>
+    <td>3.2억</td>
+    <td>30년</td>
+    <td>주택가 6억이하 / LTV 80% / 생애최초 필수</td>
+  </tr>
+  <tr>
+    <td><span class="code">HF_YOUTH_DREAM_DIDIMDOL</span></td>
+    <td><span class="badge hf">기금</span>청년 주택드림 디딤돌대출</td>
+    <td>만39세이하 청약당첨자, 청년드림통장 1년+1천만</td>
+    <td>7,000만 (기혼 1억)</td>
+    <td>2.4~4.15</td>
+    <td>미혼 3억 / 기혼 4억</td>
+    <td>40년</td>
+    <td>청년주택드림 청약통장 1년+1천만 필수 / LTV 70%(생애최초80%) / 중도상환수수료 면제(~2026.12.31)</td>
+  </tr>
+  <tr>
+    <td><span class="code">HF_HOPE_TOWN_JEONSE</span></td>
+    <td><span class="badge hf">기금</span>신혼희망타운 전용 주담대</td>
+    <td>LH 신혼희망타운 분양계약 체결자</td>
+    <td>별도 기준 없음</td>
+    <td>1.6 고정 (2023.8.30이전 사전청약: 1.3)</td>
+    <td>4억</td>
+    <td>20년/30년</td>
+    <td>세대원 전원 무주택 / 처분이익 50% 이내 공유 / 조기상환수수료 없음 / 취급: 우리·KB국민·신한</td>
+  </tr>
+</table>
+
+<h3>전세자금 대출</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준 (연소득)</th><th>금리 (%)</th><th>한도 (수도권)</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">HF_YOUTH_BUTIMOK</span></td>
+    <td><span class="badge hf">기금</span>청년전용 버팀목 전세자금</td>
+    <td>만19~34세 무주택 청년</td>
+    <td>5,000만</td>
+    <td>2.2~3.3</td>
+    <td>1.5억 (LTV 80%)</td>
+    <td>10년</td>
+    <td>보증금 수도권 3억이하 / 85㎡이하 / 예비세대주 포함</td>
+  </tr>
+  <tr>
+    <td><span class="code">HF_NEWLYWED_JEONSE</span></td>
+    <td><span class="badge hf">기금</span>신혼부부전용 버팀목 전세자금</td>
+    <td>혼인7년이내 신혼부부</td>
+    <td>7,500만</td>
+    <td>1.9~3.3</td>
+    <td>2.5억 (LTV 80%)</td>
+    <td>10년</td>
+    <td>보증금 수도권 4억이하 / 85㎡이하</td>
+  </tr>
+  <tr>
+    <td><span class="code">HF_BUTIMOK_GENERAL</span></td>
+    <td><span class="badge hf">기금</span>버팀목 전세자금 (일반)</td>
+    <td>연소득 5천(다자녀 6천·신혼 7.5천) 무주택 세대주</td>
+    <td>5,000만 (기혼 7,500만)</td>
+    <td>2.5~3.5</td>
+    <td>1.2억(신혼·2자녀 2.5억) (LTV 80%)</td>
+    <td>10년</td>
+    <td>보증금 수도권 3억이하</td>
+  </tr>
+  <tr>
+    <td><span class="code">HF_BUTIMOK_NEWBORN</span></td>
+    <td><span class="badge hf">기금</span>신생아특례 버팀목 전세자금</td>
+    <td>2년내 출산가구 연소득 1.3억(맞벌이 2억) 무주택</td>
+    <td>1.3억 (맞벌이 2억)</td>
+    <td>1.3~4.3</td>
+    <td>2.4억 (LTV 80%)</td>
+    <td>12년</td>
+    <td>특례금리 4년(추가출산시 연장) / 최장 12년</td>
+  </tr>
+</table>
+
+<h3>월세자금 대출</h3>
+<table>
+  <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준 (연소득)</th><th>금리 (%)</th><th>한도</th><th>기간</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">HF_YOUTH_MONTHLY</span></td>
+    <td><span class="badge hf">기금</span>청년전용 보증부월세대출</td>
+    <td>만19~34세 청년 월세거주자</td>
+    <td>5,000만</td>
+    <td>보증금 1.3% / 월세금 0.0~1.0%</td>
+    <td>보증금 최대 4,500만 / 월세 최대 120만</td>
+    <td>-</td>
+    <td>보증금 6,500만이하 / 월세 70만이하(지원대상 70만·실제한도 60㎡이하 50만) / 단독세대주</td>
+  </tr>
+  <tr>
+    <td><span class="code">HF_MONTHLY_STABILITY</span></td>
+    <td><span class="badge hf">기금</span>주거안정월세대출</td>
+    <td>무주택 사회초년생·취업준비생</td>
+    <td>5,000만</td>
+    <td>1.3~1.8</td>
+    <td>월 최대 60만원</td>
+    <td>10년</td>
+    <td>생애 1회 / 우대형: 만35세이하·연소득4천이하 사회초년생 / 매월 임대인 직접 지급</td>
+  </tr>
+</table>
+
+<!-- ====================================================== -->
+<h2>8. 주거비 지원 (월세·주거급여)</h2>
+<!-- ====================================================== -->
+
+<table>
+  <tr><th>코드</th><th>이름</th><th>기관</th><th>대상</th><th>소득기준</th><th>지원 내용</th><th>신청</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">GOV_YOUTH_MONTHLY_RENT</span></td>
+    <td>청년월세 지원사업 (2026년)</td>
+    <td><span class="badge gov">국토부</span></td>
+    <td>만19~34세 독립거주 무주택 청년</td>
+    <td>중위소득 60% / 원가구 100%</td>
+    <td>월 최대 20만원 × 24개월 (총 480만)</td>
+    <td>bokjiro.go.kr</td>
+    <td class="warn">★신청: 2026.03.30~05.29 / 지원: 2026.09~2028.12 / 생애1회 / 보증금 5천이하·월세 70만이하 / 공공임대거주자 제외 / 온통청년 plcyNo: 20260319005400112218</td>
+  </tr>
+  <tr>
+    <td><span class="code">SEOUL_YOUTH_MONTHLY_RENT</span></td>
+    <td>서울시 청년월세 지원</td>
+    <td><span class="badge seoul">서울시</span></td>
+    <td>만19~39세 서울거주 1인가구 무주택</td>
+    <td>중위소득 150%</td>
+    <td>월 최대 20만원 × 12개월 (총 240만)</td>
+    <td>housing.seoul.go.kr</td>
+    <td>생애1회 / 보증금 8천이하·월세 60만이하 / 중앙청년월세 수혜자 제외 / 연1회 6월 공고</td>
+  </tr>
+  <tr>
+    <td><span class="code">INCHEON_YOUTH_MONTHLY_RENT</span></td>
+    <td>인천형 청년월세 지원 (35~39세)</td>
+    <td><span class="badge ic">인천시</span></td>
+    <td>만35~39세 인천거주 무주택 청년</td>
+    <td>중위소득 60% / 원가구 100%</td>
+    <td>월 최대 20만원 × 24개월 (총 480만)</td>
+    <td>youth.incheon.go.kr</td>
+    <td>전국 지원 연령(19~34세) 초과분 별도 지원 / 2026년 3.30~5.29</td>
+  </tr>
+  <tr>
+    <td><span class="code">GOV_HOUSING_BENEFIT</span></td>
+    <td>주거급여</td>
+    <td><span class="badge gov">국토부</span></td>
+    <td>중위소득 48% 이하 저소득 가구</td>
+    <td>중위소득 48%</td>
+    <td>서울 1인 36.9만 / 경기·인천 1인 30만 (가구원수별 차등)</td>
+    <td>bokjiro.go.kr / 1600-0777</td>
+    <td>부양의무자 기준 없음 / 수시 신청</td>
+  </tr>
+  <tr>
+    <td><span class="code">GOV_SEPARATION_HOUSING_BENEFIT</span></td>
+    <td>청년가구 주거급여 분리지급</td>
+    <td><span class="badge gov">국토부</span></td>
+    <td>주거급여 수급가구 내 만19~29세 미만 미혼 자녀 (부모와 별거)</td>
+    <td>중위소득 48% (부모 가구 기준)</td>
+    <td>서울 1인 36.9만 / 경기·인천 30만 (청년 계좌 직접 지급)</td>
+    <td>부모 거주지 행정복지센터</td>
+    <td>부모와 시·군 상이하게 거주 필수 / 청년 명의 임대차계약+전입신고 필수 / 예외: 대중교통 편도 90분 초과</td>
+  </tr>
+  <tr>
+    <td><span class="code">GOV_EMERGENCY_HOUSING</span></td>
+    <td>긴급주거지원</td>
+    <td><span class="badge gov">국토부</span></td>
+    <td>위기상황 발생 중위소득 75% 이하 가구</td>
+    <td>중위소득 75%</td>
+    <td>대도시 1~2인: 39.9만/월 (위기상황 완화시까지)</td>
+    <td>129 (보건복지콜센터)</td>
+    <td>위기사유: 주소득자 사망·가출·구금·중한질병·가정폭력·화재 등 9가지</td>
+  </tr>
+  <tr>
+    <td><span class="code">GOV_VULNERABLE_HOUSING</span></td>
+    <td>주거취약계층 주거지원</td>
+    <td><span class="badge gov">국토부</span></td>
+    <td>쪽방·고시원 등 비정상거처 3개월이상 거주 저소득 (소득 50% 이하)</td>
+    <td>도시근로자 50%</td>
+    <td>보증금 50만원 / 매입임대·전세임대·국민임대 연계 / 최장 20년</td>
+    <td>주민센터 / 1600-1004</td>
+    <td>쪽방·고시원·여인숙·비닐하우스·노숙인시설 / 범죄피해자 / 최저주거기준미달 아동가구</td>
+  </tr>
+  <tr>
+    <td><span class="code">GOV_INDEPENDENCE_YOUTH</span></td>
+    <td>자립준비청년 주거지원</td>
+    <td><span class="badge gov">국토부</span></td>
+    <td>아동복지시설·가정위탁 퇴소 5년이내 청년</td>
+    <td>없음</td>
+    <td>보증금 100만 / 건설임대·매입임대·전세임대 연계</td>
+    <td>LH청약플러스 또는 행정복지센터</td>
+    <td>22세이하: 전세임대 무이자 / 5년이내: 임대료 50% 감면 / 아동권리보장원 추천 필요</td>
+  </tr>
+</table>
+
+<!-- ====================================================== -->
+<h2>9. 이자지원 (지자체 고유)</h2>
+<!-- ====================================================== -->
+
+<table>
+  <tr><th>코드</th><th>이름</th><th>기관</th><th>대상</th><th>소득기준</th><th>지원 내용</th><th>취급은행</th><th>주요 조건</th></tr>
+  <tr>
+    <td><span class="code">SEOUL_YOUTH_JEONSE_INTEREST</span></td>
+    <td>서울시 청년 임차보증금 이자지원</td>
+    <td><span class="badge seoul">서울시</span></td>
+    <td>만19~39세 서울거주 연소득 4천만 이하 무주택세대주</td>
+    <td>연소득 4천만 (기혼 5천만)</td>
+    <td>최대 2억 / LTV 90% / 연 1.0% (정부 지원)</td>
+    <td>하나은행</td>
+    <td>보증금 3억이하·월세 70만이하 / 주택도시기금대출·공공임대거주자 제외 / 생애1회 / 최장 8년 / housing.seoul.go.kr</td>
+  </tr>
+  <tr>
+    <td><span class="code">SEOUL_NEWLYWED_JEONSE_INTEREST</span></td>
+    <td>서울시 신혼부부 임차보증금 이자지원</td>
+    <td><span class="badge seoul">서울시</span></td>
+    <td>혼인7년이내 신혼부부 부부합산 1.3억 이하 무주택</td>
+    <td>부부합산 연소득 1.3억</td>
+    <td>최대 3억 / LTV 90% / 연 1.0~4.5%</td>
+    <td>국민·하나·신한</td>
+    <td>보증금 7억이하 주택·오피스텔 / 공공주택(LH·SH) 제외 / 생애1회 / 최장 10년</td>
+  </tr>
+  <tr>
+    <td><span class="code">INCHEON_YOUTH_JEONSE_INTEREST</span></td>
+    <td>인천시 청년 임차보증금 이자지원</td>
+    <td><span class="badge ic">인천시</span></td>
+    <td>만19~39세 인천거주 연소득 6천만 이하 무주택세대주</td>
+    <td>미혼 6천만 / 기혼 8천만</td>
+    <td>최대 1억 / LTV 90% / 연 3.0~3.5%</td>
+    <td>NH농협</td>
+    <td>보증금 2.5억이하·85㎡이하 / 주거급여수급자·주택소유자·기금대출자 제외 / 연1회 5월 예정</td>
+  </tr>
+  <tr>
+    <td><span class="code">INCHEON_IDREAM_INTEREST</span></td>
+    <td>i+집드림 1.0 이자지원 (신생아 주담대)</td>
+    <td><span class="badge ic">인천시</span></td>
+    <td>2025년 이후 출생 자녀, 인천 1주택 가구</td>
+    <td>부부합산 1.3억</td>
+    <td>연 최대 300만 × 5년 (총 1,500만)</td>
+    <td>-</td>
+    <td>2025.1.1이후 출생 자녀 / 주택가 6억이하·85㎡이하·주담대 3억이하 / 1자녀: 0.8% / 2자녀이상: 1.0% / 신규 2026.7.16~8.31</td>
+  </tr>
+  <tr>
+    <td><span class="code">SH_SAFETY_DEPOSIT_SUPPORT</span></td>
+    <td>SH 청년안심주택 임대보증금 무이자지원</td>
+    <td><span class="badge sh">SH</span></td>
+    <td>청년안심주택 신규 입주예정자</td>
+    <td>청년: 월359만·자산2.54억 / 신혼: 월657만·자산3.37억</td>
+    <td>최대 4,500만 무이자 (보증금 1억초과: 30% / 1억이하: 50%)</td>
+    <td>-</td>
+    <td>입주예정일 3주전까지 종합지원센터 방문 / 수시 / 02-793-0761</td>
+  </tr>
+</table>
+
+<!-- ====================================================== -->
+<h2>10. 이사비·보증료 지원</h2>
+<!-- ====================================================== -->
+
+<table>
+  <tr><th>코드</th><th>이름</th><th>기관</th><th>대상</th><th>소득기준</th><th>지원 내용</th><th>신청</th></tr>
+  <tr>
+    <td><span class="code">GG_YOUTH_MOVING</span></td>
+    <td>경기도 청년 이사비·중개보수비</td>
+    <td><span class="badge gg">경기도</span></td>
+    <td>만19~39세 경기거주 무주택 청년</td>
+    <td>중위소득 120%</td>
+    <td>이사비+중개보수비 실비 (최대 25만원)</td>
+    <td>온라인 / 070-8834-7060 / 연2회 공고</td>
+  </tr>
+  <tr>
+    <td><span class="code">GOV_VULNERABLE_RELOCATION</span></td>
+    <td>비정상거처 거주자 이사비 지원</td>
+    <td><span class="badge gov">국토부</span></td>
+    <td>쪽방·고시원 등 비정상거처 3개월이상 거주 후 이주</td>
+    <td>없음</td>
+    <td>이사비+생필품 구입비 (최대 40만원, 일회성)</td>
+    <td>새 주택 소재 주민센터 / 1600-1004</td>
+  </tr>
+  <tr>
+    <td><span class="code">GG_VULNERABLE_MOVING</span></td>
+    <td>경기도 취약계층 이사비 지원</td>
+    <td><span class="badge gg">경기도</span></td>
+    <td>경기도 내 비정상거처 3개월이상 거주 후 이주</td>
+    <td>없음</td>
+    <td>이사비+생필품 구입비 (최대 40만원, 일회성)</td>
+    <td>전입지 관할 행정복지센터 / 031-8008-4114</td>
+  </tr>
+  <tr>
+    <td><span class="code">INCHEON_GUARANTEE_FEE</span></td>
+    <td>인천 전세보증금반환보증 보증료 지원</td>
+    <td><span class="badge ic">인천시</span></td>
+    <td>인천거주 무주택자 보증금 3억이하 보증 가입자</td>
+    <td>청년 5천만 / 신혼 7.5천만 / 일반 6천만</td>
+    <td>기납부 보증료 실비 (최대 40만원)</td>
+    <td>gov.kr 또는 방문 / 032-120 / 예산 소진시 조기마감</td>
+  </tr>
+  <tr>
+    <td><span class="code">SEOUL_NEWLYWED_GUARANTEE</span></td>
+    <td>서울시 신혼부부 전세보증금반환보증 보증료 지원</td>
+    <td><span class="badge seoul">서울시</span></td>
+    <td>서울거주 혼인7년이내 신혼부부 (보증 가입자)</td>
+    <td>없음</td>
+    <td>최대 30만원 (일회성)</td>
+    <td>다산콜 02-120 / 서울시 주택정책과 02-2133-7026</td>
+  </tr>
+</table>
+
+<!-- ====================================================== -->
+<h2>11. 온통청년 API 연계 (plcyNo 매핑)</h2>
+<!-- ====================================================== -->
+
+<table>
+  <tr><th>programs.code</th><th>프로그램명</th><th>ontong_plcy_no</th><th>비고</th></tr>
+  <tr class="highlight">
+    <td><span class="code">GOV_YOUTH_MONTHLY_RENT</span></td>
+    <td>청년월세 지원사업 (2026년)</td>
+    <td>20260319005400112218</td>
+    <td>신청: 2026.03.30~05.29</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="note">API: GET https://www.youthcenter.go.kr/go/ythip/getPlcy?apiKeyNm={KEY}&rtnType=json&lclsfNm=주거&pageSize=200 (주거 정책 156개)<br>
+    aplyYmd(신청기간), bizPrdBgngYmd~bizPrdEndYmd(사업기간) 실시간 업데이트 가능</td>
+  </tr>
+</table>
+
+<!-- ====================================================== -->
+<h2>12. 프로그램 전체 요약 (카테고리별 카운트)</h2>
+<!-- ====================================================== -->
+
+<table>
+  <tr><th>카테고리</th><th>기관별 프로그램</th><th>합계</th></tr>
+  <tr><td>임대주택 — LH</td><td>행복주택4 + 건설4 + 매입9 + 전세6 = 23개</td><td>23</td></tr>
+  <tr><td>임대주택 — SH</td><td>행복주택3 + 청년안심2 + 희망하우징1 + 건설3 + 매입4 + 전세4 = 17개</td><td>17</td></tr>
+  <tr><td>임대주택 — GH</td><td>행복주택2 + 국민임대1 + 청년매입1 = 4개</td><td>4</td></tr>
+  <tr><td>임대주택 — iH</td><td>국민임대1 + 행복주택2 + 천원주택3 = 6개</td><td>6</td></tr>
+  <tr><td>분양주택 — SH</td><td>나눔형3 + 공공분양4 = 7개</td><td>7</td></tr>
+  <tr><td>분양주택 — LH</td><td>공공분양6개</td><td>6</td></tr>
+  <tr><td>금융지원 (주택도시기금)</td><td>구입자금5 + 전세자금4 + 월세자금2 = 11개</td><td>11</td></tr>
+  <tr><td>주거비지원 (월세·주거급여·긴급)</td><td>청년월세3 + 주거급여2 + 긴급1 + 취약계층1 + 자립준비1 = 8개</td><td>8</td></tr>
+  <tr><td>이자지원 (지자체)</td><td>서울2 + 인천2 + SH1 = 5개</td><td>5</td></tr>
+  <tr><td>이사비·보증료</td><td>이사비3 + 보증료2 = 5개</td><td>5</td></tr>
+  <tr style="background:#e8eef7; font-weight:bold;"><td>합계</td><td></td><td>96개</td></tr>
+</table>
+
+<p style="text-align:center; color:#999; font-size:10px; margin: 20px 0;">schema.sql 기준 2026-03-26 | 수도권 주거지원 통합 DB</p>
+
+</body>
+</html>
