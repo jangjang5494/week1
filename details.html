@@ -435,6 +435,19 @@
                 </div>
                 <p class="hint">신혼 7년 = 혼인신고일 기준. 예비신혼 = 공고일 기준 6개월 이내 결혼 예정</p>
             </div>
+
+            <div class="fg" id="marriage-years-field" style="display:none;">
+                <div class="fg-label-row">
+                    <label>혼인 기간</label>
+                </div>
+                <div class="toggle-group" id="tg-marriage-years">
+                    <button class="toggle-btn selected" data-val="1">1년 이하</button>
+                    <button class="toggle-btn" data-val="2">1~2년</button>
+                    <button class="toggle-btn" data-val="4">2~5년</button>
+                    <button class="toggle-btn" data-val="7">5~7년</button>
+                </div>
+                <p class="hint">신혼희망타운·공공분양 신혼특공 우선공급 판단에 사용 (2년 이내 우선)</p>
+            </div>
         </div>
 
         <div class="nav-btns">
@@ -550,6 +563,18 @@
                     <button class="toggle-btn" data-val="yes">중소기업 재직 중</button>
                 </div>
                 <p class="hint">버팀목 전세대출 금리 -0.3%p 우대</p>
+            </div>
+
+            <div class="fg" id="social-newcomer-field" style="display:none">
+                <div class="fg-label-row">
+                    <label>사회초년생 여부</label>
+                    <button class="info-btn" onclick="openHelp('social_newcomer')">ℹ 상세보기</button>
+                </div>
+                <div class="toggle-group" id="tg-social-newcomer">
+                    <button class="toggle-btn selected" data-val="no">아니오 (취업 5년 초과)</button>
+                    <button class="toggle-btn" data-val="yes">예 — 취업 후 5년 이내</button>
+                </div>
+                <p class="hint">행복주택 청년: 사회초년생이면 만 39세 초과도 신청 가능</p>
             </div>
 
             <!-- 기혼/신혼/예비신혼 전용 필드 -->
@@ -1106,6 +1131,7 @@ function updateWorkplaceVisibility() {
     const workplaceRegion = getToggle('tg-workplace-region') || 'other';
     document.getElementById('workplace-region-field').style.display = employed ? '' : 'none';
     document.getElementById('sme-field').style.display = employed ? '' : 'none';
+    document.getElementById('social-newcomer-field').style.display = employed ? '' : 'none';
     const showWorkplaceGu = employed && workplaceRegion === 'seoul';
     document.getElementById('workplace-gu-field').style.display = showWorkplaceGu ? '' : 'none';
     if (showWorkplaceGu) populateSeoulGuSelect('workplace-gu');
@@ -1133,6 +1159,10 @@ function updateFormVisibility() {
     // 청년 전용 필드 (STEP 5, 39세 이하)
     const youthFields5 = document.getElementById('youth-fields-step5');
     if (youthFields5) youthFields5.style.display = (age > 0 && age <= 39) ? '' : 'none';
+
+    // 혼인기간 필드 (STEP 2, 신혼 선택 시)
+    const marriageYearsField = document.getElementById('marriage-years-field');
+    if (marriageYearsField) marriageYearsField.style.display = (marital === 'newlywed') ? '' : 'none';
 
 }
 
@@ -1350,6 +1380,27 @@ const helpData = {
             <div class="help-section">
                 <h4>증빙 서류</h4>
                 <p>재학증명서 또는 입학예정증명서로 확인</p>
+            </div>`
+    },
+    social_newcomer: {
+        title: '사회초년생 자격 기준',
+        body: `
+            <div class="help-section">
+                <h4>사회초년생 정의 (SH·LH 공통)</h4>
+                <ul>
+                    <li>현재 <strong>재직 중</strong> (취업 상태)</li>
+                    <li>취업 후 <strong>5년 이내</strong> (나이 무관)</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>핵심 혜택: 나이 제한 완화</h4>
+                <p>행복주택 청년은 원칙적으로 만 19~39세만 신청 가능합니다.</p>
+                <div class="help-case">✅ 사회초년생 해당 시 → <strong>40세 이상도 신청 가능</strong> (취업 5년 이내이면)</div>
+            </div>
+            <div class="help-section">
+                <h4>40세 이상 직장인 예시</h4>
+                <div class="help-case">예) 42세에 처음 취업 → 취업 후 5년 이내이면 행복주택 청년 신청 가능</div>
+                <div class="help-case warn">⚠ 취업 6년차 이상은 해당 없음</div>
             </div>`
     },
     jobseeker: {
@@ -1648,6 +1699,10 @@ function runAnalysis() {
     const subAmountEnough = getToggle('tg-sub-amount') === 'over600';
     const lifeFirst       = getToggle('tg-life-first') === 'yes';
     const taxPaid5yr      = getToggle('tg-tax5') === 'yes';
+    const isSocialNewcomer = getToggle('tg-social-newcomer') === 'yes';
+    // 혼인기간: newlywed 선택 시 토글값(1/2/4/7), 나머지는 0 (prenuptial=0, married=99)
+    const marriageYrsVal  = marital === 'newlywed' ? (parseInt(getToggle('tg-marriage-years')) || 7)
+                          : marital === 'prenuptial' ? 0 : 99;
 
     const incWon = monthlyIncome * 10000;
     const isRecipient  = ['basic','medical','housing'].includes(priority);
@@ -1892,13 +1947,15 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk) r.push('서울 거주 무주택 필요');
-        if (!isYouth) r.push('만 19~39세 필요');
         if (isMarried&&marital!=='single') r.push('미혼 또는 한부모가족');
         const db12 = getE('SH_HAPPY_YOUTH');
         const aLim12=db12.asset||25400, cLim12=db12.car||4563;
+        // 사회초년생(취업 후 5년 이내)이면 나이 제한(39세) 없이 신청 가능
+        const ageOk12 = isYouth || isSocialNewcomer;
+        if (!ageOk12) r.push('만 19~39세 또는 사회초년생(취업 후 5년 이내) 필요');
         let eligible=false, rank='';
-        if (baseOk && isYouth && (marital==='single'||singleParent)) {
-            if (underInc(db12)&&totalAssets<=aLim12&&carVal<=cLim12) { eligible=true; rank='청약저축 필요'+(subCount>=24?' (가점 최상)':''); }
+        if (baseOk && ageOk12 && (marital==='single'||singleParent)) {
+            if (underInc(db12)&&totalAssets<=aLim12&&carVal<=cLim12) { eligible=true; rank='청약저축 필요'+(subCount>=24?' (가점 최상)':'')+(isSocialNewcomer&&!isYouth?' (사회초년생, 나이 무관)':''); }
             else { if (!underInc(db12)) r.push(`소득 ${db12.inc||100}%(1인 ${db12.inc1p||120}%) 이하 필요`); if (totalAssets>aLim12) r.push(`총자산 ${aLim12}만원 이하 필요`); if (carVal>cLim12) r.push(`자동차 ${cLim12}만원 이하 필요`); }
         }
         add('행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'SH', 'rental');
@@ -2297,14 +2354,16 @@ function runAnalysis() {
     {
         const r = [];
         if (!baseOk_lh) r.push('무주택 필요');
-        if (!isYouth) r.push('만 19~39세 필요');
         if (isMarried && !singleParent) r.push('미혼 또는 한부모가족');
         const db22 = getE('LH_HAPPY_YOUTH');
         const aLim22=db22.asset||25100, cLim22=db22.car||4542;
+        // 사회초년생(취업 후 5년 이내)이면 나이 제한(39세) 없이 신청 가능
+        const ageOk22 = isYouth || isSocialNewcomer;
+        if (!ageOk22) r.push('만 19~39세 또는 사회초년생(취업 후 5년 이내) 필요');
         let eligible = false, rank = '';
-        if (baseOk_lh && isYouth && (!isMarried || singleParent)) {
+        if (baseOk_lh && ageOk22 && (!isMarried || singleParent)) {
             if (underInc(db22) && totalAssets <= aLim22 && carVal <= cLim22) {
-                eligible = true; rank = '청약저축 필요' + (subCount >= 24 ? ' (가점 최상)' : '');
+                eligible = true; rank = '청약저축 필요' + (subCount >= 24 ? ' (가점 최상)' : '') + (isSocialNewcomer&&!isYouth?' (사회초년생, 나이 무관)':'');
             } else {
                 if (!underInc(db22)) r.push(`소득 ${db22.inc||100}%(1인 ${db22.inc1p||120}%) 이하 필요`);
                 if (totalAssets > aLim22) r.push(`총자산 ${aLim22}만원 이하 필요`);
@@ -3152,7 +3211,8 @@ function runAnalysis() {
             const incOk = dualInc ? under(dbLht.incM||200) : under(incBaseH);
             if (incOk) {
                 eligible = true;
-                rank = infant ? '우선공급 (혼인2년이내·2세이하자녀)' : '일반공급 (혼인2~7년)';
+                const isEarlyNewlywed = marriageYrsVal <= 2;
+                rank = (infant && isEarlyNewlywed) ? '우선공급 (혼인2년이내·2세이하자녀)' : '일반공급 (혼인2~7년)';
             } else r.push(`소득 ${incBaseH}%` + (dualInc?`(맞벌이 ${dbLht.incM||200}%)`:'') + ' 이하 필요');
         }
         add('LH 신혼희망타운', eligible, rank, '분양가 저렴 (연 1.6% 고정금리)', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
@@ -3668,6 +3728,8 @@ function runAnalysis() {
         ...(is1st ? [{ label: '우대 대상', highlight: true }] : []),
         ...(dualInc ? [{ label: '맞벌이', highlight: true }] : []),
         ...(isStudent ? [{ label: '대학(원)생', highlight: true }] : []),
+        ...(isSocialNewcomer ? [{ label: '사회초년생', highlight: true }] : []),
+        ...(marital === 'newlywed' ? [{ label: `혼인 ${marriageYrsVal}년이하`, highlight: false }] : []),
     ];
     document.getElementById('summary-chips').innerHTML = summaryItems
         .map(s => `<span class="summary-chip${s.highlight ? ' highlight' : ''}">${s.label}</span>`)
