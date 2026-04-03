@@ -169,7 +169,6 @@
   .inst-SH { background: #dbeafe; color: #1e40af; }
   .inst-LH { background: #fef3c7; color: #92400e; }
   .inst-GH { background: #dcfce7; color: #166534; }
-  .inst-iH { background: #e0f2fe; color: #0c4a6e; }
 
   /* ── 수동 추가 폼 ── */
   .form-card {
@@ -541,7 +540,6 @@
             <option value="">제한없음</option>
             <option value="서울">서울</option>
             <option value="경기">경기</option>
-            <option value="인천">인천</option>
             <option value="수도권">수도권</option>
           </select>
         </div>
@@ -579,7 +577,6 @@
             <option value="SH">SH (서울주택도시공사)</option>
             <option value="LH">LH (한국토지주택공사)</option>
             <option value="GH">GH (경기도시공사)</option>
-            <option value="iH">iH (인천도시공사)</option>
           </select>
         </div>
         <div class="form-group">
@@ -654,11 +651,9 @@
         <option value="SH">SH</option>
         <option value="LH">LH</option>
         <option value="GH">GH</option>
-        <option value="iH">iH</option>
         <option value="국토교통부">국토교통부</option>
         <option value="서울시">서울시</option>
         <option value="경기도">경기도</option>
-        <option value="인천시">인천시</option>
         <option value="기타">기타</option>
       </select>
       <label>
@@ -1317,7 +1312,7 @@ async function parsePdf() {
 추출 형식:
 {
   "title": "공고 제목",
-  "institution": "SH|LH|GH|iH 중 하나. 모르면 null",
+  "institution": "SH|LH|GH 중 하나. 모르면 null",
   "types": ["행복주택","청년" 등 해당 태그들],
   "apply_start": "YYYY-MM-DD 또는 null",
   "apply_end": "YYYY-MM-DD 또는 null",
@@ -1337,7 +1332,7 @@ async function parsePdf() {
     "income_abs": 연소득 상한(원) 또는 null,
     "asset_limit": 총자산 상한(원) 또는 null,
     "car_limit": 자동차가액 상한(원) 또는 null,
-    "region_required": "서울|경기|인천|수도권|null",
+    "region_required": "서울|경기|수도권|null",
     "enrollment_required": true|false,
     "notes": ["기타 중요 조건들 배열"]
   }
