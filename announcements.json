@@ -164,10 +164,10 @@
       "apply_start": "2026-03-31"
     },
     {
-      "id": "lh_rental_cfb217e6",
+      "id": "lh_rental_5793c357",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅱ(전세형) 예비입주자 모집공고(인천,부천)",
+      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅰ 예비입주자 모집공고(인천,부천)",
       "types": [
         "기타(LH)"
       ],
@@ -196,10 +196,10 @@
       "apply_start": "2026-03-26"
     },
     {
-      "id": "lh_rental_5793c357",
+      "id": "lh_rental_cfb217e6",
       "inst": "LH",
       "source_key": "lh_rental",
-      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅰ 예비입주자 모집공고(인천,부천)",
+      "title": "[인천지역본부]26년 2차 신혼·신생아Ⅱ(전세형) 예비입주자 모집공고(인천,부천)",
       "types": [
         "기타(LH)"
       ],
@@ -378,6 +378,7 @@
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6490",
       "posted_date": "2026-04-02",
       "crawled_at": "2026-04-03",
+      "district": "중랑구",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-06"
     },
@@ -394,6 +395,7 @@
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6495",
       "posted_date": "2026-04-02",
       "crawled_at": "2026-04-03",
+      "district": "영등포구",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-06"
     },
@@ -410,6 +412,7 @@
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6487",
       "posted_date": "2026-04-02",
       "crawled_at": "2026-04-03",
+      "district": "은평구",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-06"
     },
@@ -426,6 +429,7 @@
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6494",
       "posted_date": "2026-04-02",
       "crawled_at": "2026-04-03",
+      "district": "중랑구",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-06"
     },
@@ -442,6 +446,7 @@
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6491",
       "posted_date": "2026-04-02",
       "crawled_at": "2026-04-03",
+      "district": "동대문구",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-06"
     },
@@ -458,6 +463,7 @@
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6489",
       "posted_date": "2026-04-02",
       "crawled_at": "2026-04-03",
+      "district": "도봉구",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-06"
     },
@@ -474,6 +480,7 @@
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6488",
       "posted_date": "2026-04-02",
       "crawled_at": "2026-04-03",
+      "district": "중랑구",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-06"
     },
@@ -490,6 +497,7 @@
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6493",
       "posted_date": "2026-04-02",
       "crawled_at": "2026-04-03",
+      "district": "중랑구",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-06"
     },
@@ -506,6 +514,7 @@
       "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?menuNo=400008&boardId=6492",
       "posted_date": "2026-04-02",
       "crawled_at": "2026-04-03",
+      "district": "관악구",
       "apply_start": "2026-04-02",
       "apply_end": "2026-04-06"
     },
