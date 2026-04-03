@@ -2235,6 +2235,7 @@ function runAnalysis() {
             lifeFirstReq: e.life_first_required,
             hhHeadReq:    e.is_household_head,
             hhMemberReq:  e.is_household_member_required,
+            childrenMin:  e.children_min,
         };
     }
 
@@ -2997,18 +2998,20 @@ function runAnalysis() {
     // LH 공공분양 일반공급
     {
         const r = [];
+        const dbLpg = getE('LH_PUBLIC_SALE_GENERAL');
         if (!homeless) r.push('무주택 세대구성원 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
-        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
-        if (!aOk) r.push('부동산 21,550만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const aOk = realEstate <= (dbLpg.assetReal||21550), carOk = carVal <= (dbLpg.car||4563);
+        if (!aOk) r.push(`부동산 ${dbLpg.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbLpg.car||4563}만원 이하 필요`);
         let eligible = false, rank = '';
         if (homeless && subCount >= 6 && aOk && carOk) {
-            const incOk = under(100);
+            const incOk = under(dbLpg.inc||100);
             if (incOk) {
                 eligible = true;
-                rank = subCount >= 24 ? '1순위 (납입 24회 이상)' : '2순위 (납입 6회 이상)';
-            } else r.push('소득 100% 이하 필요');
+                const r1 = dbLpg.savingsRank1||12;
+                rank = subCount >= r1 ? `1순위 (납입 ${r1}회 이상)` : '2순위 (납입 6~11회)';
+            } else r.push(`소득 ${dbLpg.inc||100}% 이하 필요`);
         }
         add('LH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-general', r, 'LH', 'sale');
     }
@@ -3016,20 +3019,24 @@ function runAnalysis() {
     // LH 공공분양 신혼특공
     {
         const r = [];
+        const dbLpsn = getE('LH_PUBLIC_SALE_NEWLYWED');
         if (!homeless) r.push('무주택 세대구성원 필요');
         const grp = isNewlywedStrict || singleParent;
         if (!grp) r.push('신혼(7년이내)·예비신혼·한부모 필요');
-        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
-        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
-        if (!aOk) r.push('부동산 21,550만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const r1n = dbLpsn.savingsRank1||6;
+        if (subCount < r1n) r.push(`청약저축 ${r1n}회 이상 납입 필요`);
+        const incBonusN = infant ? (dbLpsn.newbornIncBonus||20) : 0;
+        const incBaseN = (dbLpsn.inc||130) + incBonusN;
+        const aOk = realEstate <= (dbLpsn.assetReal||21550), carOk = carVal <= (dbLpsn.car||4563);
+        if (!aOk) r.push(`부동산 ${dbLpsn.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbLpsn.car||4563}만원 이하 필요`);
         let eligible = false, rank = '';
-        if (homeless && grp && subCount >= 6 && aOk && carOk) {
-            const incOk = dualInc ? under(200) : under(130);
+        if (homeless && grp && subCount >= r1n && aOk && carOk) {
+            const incOk = dualInc ? under(dbLpsn.incM||200) : under(incBaseN);
             if (incOk) {
                 eligible = true;
-                rank = infant ? '우선공급 가능 (2세이하자녀, 소득100%/맞벌이120%)' : '일반공급';
-            } else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+                rank = infant ? `우선공급 가능 (신생아, 소득${incBaseN}% 이하)` : '일반공급';
+            } else r.push(`소득 ${incBaseN}%` + (dualInc?`(맞벌이 ${dbLpsn.incM||200}%)`:'') + ' 이하 필요');
         }
         add('LH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
@@ -3037,18 +3044,22 @@ function runAnalysis() {
     // LH 공공분양 생애최초
     {
         const r = [];
+        const dbLpsf = getE('LH_PUBLIC_SALE_FIRST');
         if (!homeless) r.push('무주택 세대구성원 필요');
         if (!lifeFirst) r.push('세대원 전원 과거 주택 미소유 필요');
         if (!taxPaid5yr) r.push('근로자/자영업자 5년 이상 소득세 납부 필요');
-        if (!subAmountEnough) r.push('청약저축 600만원 이상 납입 필요');
-        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
-        if (!aOk) r.push('부동산 21,550만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const minAmtF = dbLpsf.savingsAmt||600;
+        if (!subAmountEnough) r.push(`청약저축 ${minAmtF}만원 이상 납입 필요`);
+        const incBonusF = infant ? (dbLpsf.newbornIncBonus||20) : 0;
+        const incBaseF = (dbLpsf.inc||130) + incBonusF;
+        const aOk = realEstate <= (dbLpsf.assetReal||21550), carOk = carVal <= (dbLpsf.car||4563);
+        if (!aOk) r.push(`부동산 ${dbLpsf.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbLpsf.car||4563}만원 이하 필요`);
         let eligible = false, rank = '';
         if (homeless && lifeFirst && taxPaid5yr && subAmountEnough && aOk && carOk) {
-            const incOk = dualInc ? under(200) : under(130);
+            const incOk = dualInc ? under(dbLpsf.incM||200) : under(incBaseF);
             if (incOk) { eligible = true; rank = '생애최초특공 (추첨 50%)'; }
-            else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+            else r.push(`소득 ${incBaseF}%` + (dualInc?`(맞벌이 ${dbLpsf.incM||200}%)`:'') + ' 이하 필요');
         }
         add('LH 공공분양 (생애최초 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
@@ -3056,17 +3067,22 @@ function runAnalysis() {
     // LH 공공분양 다자녀
     {
         const r = [];
+        const dbLpsc = getE('LH_PUBLIC_SALE_CHILDREN');
+        const minChild = dbLpsc.childrenMin||2;
         if (!homeless) r.push('무주택 세대구성원 필요');
-        if (childCnt < 2) r.push('미성년 자녀 2명 이상 필요');
-        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
-        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
-        if (!aOk) r.push('부동산 21,550만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        if (childCnt < minChild) r.push(`미성년 자녀 ${minChild}명 이상 필요`);
+        const r1c = dbLpsc.savingsRank1||6;
+        if (subCount < r1c) r.push(`청약저축 ${r1c}회 이상 납입 필요`);
+        const incBonusC = infant ? (dbLpsc.newbornIncBonus||20) : 0;
+        const incBaseC = (dbLpsc.inc||120) + incBonusC;
+        const aOk = realEstate <= (dbLpsc.assetReal||21550), carOk = carVal <= (dbLpsc.car||4563);
+        if (!aOk) r.push(`부동산 ${dbLpsc.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbLpsc.car||4563}만원 이하 필요`);
         let eligible = false, rank = '';
-        if (homeless && childCnt >= 2 && subCount >= 6 && aOk && carOk) {
-            const incOk = dualInc ? under(200) : under(120);
+        if (homeless && childCnt >= minChild && subCount >= r1c && aOk && carOk) {
+            const incOk = dualInc ? under(dbLpsc.incM||200) : under(incBaseC);
             if (incOk) { eligible = true; rank = childCnt >= 3 ? '우선 (자녀 3명이상)' : '일반 (자녀 2명)'; }
-            else r.push('소득 120%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+            else r.push(`소득 ${incBaseC}%` + (dualInc?`(맞벌이 ${dbLpsc.incM||200}%)`:'') + ' 이하 필요');
         }
         add('LH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
@@ -3074,17 +3090,20 @@ function runAnalysis() {
     // LH 공공분양 신생아
     {
         const r = [];
+        const dbLpsb = getE('LH_PUBLIC_SALE_NEWBORN');
         if (!homeless) r.push('무주택 세대구성원 필요');
         if (!infant) r.push('2세 이하 자녀 보유 필요');
-        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
-        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
-        if (!aOk) r.push('부동산 21,550만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const r1b = dbLpsb.savingsRank1||6;
+        if (subCount < r1b) r.push(`청약저축 ${r1b}회 이상 납입 필요`);
+        const aOk = realEstate <= (dbLpsb.assetReal||21550), carOk = carVal <= (dbLpsb.car||4563);
+        if (!aOk) r.push(`부동산 ${dbLpsb.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbLpsb.car||4563}만원 이하 필요`);
         let eligible = false, rank = '';
-        if (homeless && infant && subCount >= 6 && aOk && carOk && under(200)) {
+        const incLimB = dualInc ? (dbLpsb.incM||200) : (dbLpsb.inc||140);
+        if (homeless && infant && subCount >= r1b && aOk && carOk && under(incLimB)) {
             eligible = true; rank = '신생아특공 (생애 1회)';
-        } else if (homeless && infant && subCount >= 6 && aOk && carOk) {
-            r.push('소득 200% 이하 필요');
+        } else if (homeless && infant && subCount >= r1b && aOk && carOk) {
+            r.push(`소득 ${incLimB}% 이하 필요`);
         }
         add('LH 공공분양 (신생아 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
@@ -3092,17 +3111,21 @@ function runAnalysis() {
     // LH 공공분양 노부모부양
     {
         const r = [];
+        const dbLpse = getE('LH_PUBLIC_SALE_ELDERLY');
         if (!homeless) r.push('무주택 세대주 필요');
         if (!isHouseholdHead) r.push('세대주 필요');
-        if (subCount < 24) r.push('청약저축 24회 이상 납입 필요');
-        const aOk = realEstate <= 21550, carOk = carVal <= 4563;
-        if (!aOk) r.push('부동산 21,550만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const r1e = dbLpse.savingsRank1||12;
+        if (subCount < r1e) r.push(`청약저축 ${r1e}회 이상 납입 필요`);
+        const incBonusE = infant ? (dbLpse.newbornIncBonus||20) : 0;
+        const incBaseE = (dbLpse.inc||120) + incBonusE;
+        const aOk = realEstate <= (dbLpse.assetReal||21550), carOk = carVal <= (dbLpse.car||4563);
+        if (!aOk) r.push(`부동산 ${dbLpse.assetReal||21550}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbLpse.car||4563}만원 이하 필요`);
         let eligible = false, rank = '';
-        if (homeless && isHouseholdHead && subCount >= 24 && aOk && carOk) {
-            const incOk = dualInc ? under(200) : under(120);
+        if (homeless && isHouseholdHead && subCount >= r1e && aOk && carOk) {
+            const incOk = dualInc ? under(dbLpse.incM||200) : under(incBaseE);
             if (incOk) { eligible = true; rank = '노부모부양특공 (65세이상 3년이상 부양)'; }
-            else r.push('소득 120%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+            else r.push(`소득 ${incBaseE}%` + (dualInc?`(맞벌이 ${dbLpse.incM||200}%)`:'') + ' 이하 필요');
         }
         add('LH 공공분양 (노부모부양 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
@@ -3110,20 +3133,27 @@ function runAnalysis() {
     // LH 신혼희망타운
     {
         const r = [];
+        const dbLht = getE('LH_HOPE_TOWN');
         if (!homeless) r.push('무주택 세대구성원 필요');
         const grp = isNewlywedStrict || infant || singleParent;
         if (!grp) r.push('신혼(7년이내)·예비신혼·신생아가구·한부모 필요');
-        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
-        const aOk = totalAssets <= 36200, carOk = carVal <= 4563;
-        if (!aOk) r.push('총자산 36,200만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const r1h = dbLht.savingsRank1||6;
+        if (subCount < r1h) r.push(`청약저축 ${r1h}회 이상 납입 필요`);
+        const assetBaseH = dbLht.asset||36200;
+        const assetBonusPct = infant ? (dbLht.newbornAssetBonus||20) : 0;
+        const assetLimH = Math.round(assetBaseH * (1 + assetBonusPct/100));
+        const aOk = totalAssets <= assetLimH, carOk = carVal <= (dbLht.car||4563);
+        if (!aOk) r.push(`총자산 ${assetLimH}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbLht.car||4563}만원 이하 필요`);
         let eligible = false, rank = '';
-        if (homeless && grp && subCount >= 6 && aOk && carOk) {
-            const incOk = dualInc ? under(200) : under(130);
+        if (homeless && grp && subCount >= r1h && aOk && carOk) {
+            const incBonusH = infant ? (dbLht.newbornIncBonus||20) : 0;
+            const incBaseH = (dbLht.inc||130) + incBonusH;
+            const incOk = dualInc ? under(dbLht.incM||200) : under(incBaseH);
             if (incOk) {
                 eligible = true;
                 rank = infant ? '우선공급 (혼인2년이내·2세이하자녀)' : '일반공급 (혼인2~7년)';
-            } else r.push('소득 130%' + (dualInc?'(맞벌이 200%)':'') + ' 이하 필요');
+            } else r.push(`소득 ${incBaseH}%` + (dualInc?`(맞벌이 ${dbLht.incM||200}%)`:'') + ' 이하 필요');
         }
         add('LH 신혼희망타운', eligible, rank, '분양가 저렴 (연 1.6% 고정금리)', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
     }
