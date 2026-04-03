@@ -65,9 +65,9 @@ CREATE TABLE IF NOT EXISTS programs (
 
   -- 기관 및 지역
   institution   TEXT NOT NULL,
-  -- 'LH' | 'SH' | 'GH' | 'iH' | '서울시' | '경기도' | '인천시' | '국토교통부' | '주택도시기금' | '성남시'
+  -- 'LH' | 'SH' | 'GH' | '서울시' | '경기도' | '국토교통부' | '주택도시기금' | '성남시'
   region        TEXT NOT NULL DEFAULT '전국',
-  -- '전국' | '서울' | '경기' | '인천' | '성남'
+  -- '전국' | '서울' | '경기' | '성남'
   region_note   TEXT,                 -- 세부 지역 (예: '역세권', '인천 강화·옹진 제외')
 
   -- 기본 정보
@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS announcements (
   program_id  INTEGER REFERENCES programs (id) ON DELETE SET NULL,
   -- 매칭된 프로그램 (null=미매칭)
 
-  institution TEXT NOT NULL,  -- 'SH' | 'LH' | 'GH' | 'iH'
+  institution TEXT NOT NULL,  -- 'SH' | 'LH' | 'GH'
   seq         TEXT,           -- 원본 공고 번호
   title       TEXT NOT NULL,
   date        DATE,
@@ -265,7 +265,7 @@ CREATE TABLE IF NOT EXISTS user_conditions (
   car_value           BIGINT,
 
   -- 주거 현황
-  region              TEXT,   -- '서울' | '경기' | '인천'
+  region              TEXT,   -- '서울' | '경기'
   is_homeless         BOOLEAN DEFAULT TRUE,
   is_household_head   BOOLEAN DEFAULT TRUE,
   current_housing     TEXT,   -- '전세' | '월세' | '자가' | '비정상거처' | '기타'
@@ -290,7 +290,7 @@ CREATE TABLE IF NOT EXISTS user_conditions (
   -- 알림 설정
   alert_email         TEXT,
   interested_categories TEXT[],  -- ['임대주택', '금융지원', '주거비지원']
-  interested_regions  TEXT[],    -- ['서울', '경기', '인천']
+  interested_regions  TEXT[],    -- ['서울', '경기']
 
   created_at  TIMESTAMPTZ DEFAULT NOW(),
   updated_at  TIMESTAMPTZ DEFAULT NOW()
@@ -441,7 +441,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 장기전세주택
 ('LH_LONG_JEONSE', '임대주택', '전세임대', '장기전세', 'LH', '전국', 'LH 장기전세주택',
  '무주택세대구성원 (소득 100% 이하, 서울·경기 공급)', TRUE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":120,"asset_limit_seoul":662000000,"asset_limit_gyeonggi":417000000,"car_limit":45420000,"notes":["60㎡이하: 소득100%이하 (50㎡이하 우선공급 50%, 50~60㎡ 우선공급 70%)","60㎡초과: 소득120%이하 (우선공급 100%)","50㎡미만: 청약저축 불필요 / 50~60㎡: 1순위 24회·2순위 6회","서울 장기전세는 SH(시프트)로 공급 — LH는 경기·인천 등 비서울 지역","배점: 무주택기간·나이·부양가족·거주기간·자녀수·납입횟수 각 최대5점","감점: 최근1년 -10점 / 최근3년 -5점"]}',
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":120,"asset_limit_seoul":662000000,"asset_limit_gyeonggi":417000000,"car_limit":45420000,"notes":["60㎡이하: 소득100%이하 (50㎡이하 우선공급 50%, 50~60㎡ 우선공급 70%)","60㎡초과: 소득120%이하 (우선공급 100%)","50㎡미만: 청약저축 불필요 / 50~60㎡: 1순위 24회·2순위 6회","서울 장기전세는 SH(시프트)로 공급 — LH는 경기 등 비서울 지역","배점: 무주택기간·나이·부양가족·거주기간·자녀수·납입횟수 각 최대5점","감점: 최근1년 -10점 / 최근3년 -5점"]}',
  '{"jeonse_pct_max":80,"period_years":20,"area_max_sqm":85}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
@@ -652,55 +652,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":70,"income_pct_1person":90,"income_pct_2person":80,"asset_limit":345000000,"car_limit":45630000,"notes":["경기 거주 우선, 전국 신청 가능"]}',
  '{"rent_pct_min":60,"rent_pct_max":80,"period_years":30}',
  '{"method":["온라인"],"url":"https://apply.gh.or.kr","contact":"1588-7013","period_type":"공고별"}',
- 'https://apply.gh.or.kr'),
-
--- iH 국민임대 ★2026-03-23 공식사이트 확인
-('IH_NATIONAL_RENT', '임대주택', '공공임대', '국민임대', 'iH', '인천', 'iH 인천 국민임대주택',
- '무주택 저소득 가구 (인천 거주 우선)', FALSE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":70,"income_pct_1person":90,"income_pct_2person":80,"asset_limit":345000000,"car_limit":45630000,"notes":["인천 거주자 우선 (비인천도 신청 가능)"]}',
- '{"rent_pct_min":60,"rent_pct_max":80,"period_years":30}',
- '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
- 'https://www.ih.co.kr/main/sale_lease/management/nation.jsp'),
-
--- iH 행복주택 (청년) ★2026-03-24 자산기준 확정 (전 기관 통일)
-('IH_HAPPY_YOUTH', '임대주택', '공공임대', '행복주택', 'iH', '인천', 'iH 인천 행복주택 (청년)',
- '만 19~39세 미혼 무주택 청년 (인천 거주 우선)', FALSE,
- '{"age_min":19,"age_max":39,"marital_status":["미혼","한부모"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":273000000,"car_limit":45630000,"notes":["인천 거주자 우선 (비인천도 신청 가능)"]}',
- '{"rent_pct_min":60,"rent_pct_max":80,"period_years_max":6}',
- '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
- 'https://www.ih.co.kr/main/sale_lease/management/happy.jsp'),
-
--- iH 행복주택 (신혼부부) ★2026-03-24 자산기준 확정 (전 기관 통일)
-('IH_HAPPY_NEWLYWED', '임대주택', '공공임대', '행복주택', 'iH', '인천', 'iH 인천 행복주택 (신혼부부)',
- '혼인 7년 이내 신혼부부·예비신혼·신생아가구 (인천 거주 우선)', FALSE,
- '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모"],"homeless_required":true,"marriage_years_max":7,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":120,"income_pct_2person":110,"asset_limit":345000000,"car_limit":45630000,"notes":["인천 거주자 우선 (비인천도 신청 가능)"]}',
- '{"rent_pct_min":60,"rent_pct_max":80,"period_years_max":10}',
- '{"method":["방문"],"url":"https://www.ih.co.kr","contact":"1522-0072","period_type":"공고별"}',
- 'https://www.ih.co.kr/main/sale_lease/management/happy.jsp'),
-
--- iH 천원주택 매입임대
-('IH_1000WON_BUY', '임대주택', '매입임대', '천원주택', 'iH', '인천', 'iH 천원주택 (매입임대)',
- '신혼부부·신생아·한부모가족 인천 거주', FALSE,
- '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모"],"homeless_required":true,"region_required":"인천","income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"marriage_years_max":7}',
- '{"rent_fixed":30000,"deposit_limit":null,"period_years":6,"renewal_count":2,"area_max_sqm":85}',
- '{"method":["방문"],"contact":"1522-0072","period_type":"공고별","period_note":"2026년 5월 모집 예정"}',
- 'https://www.ih.co.kr'),
-
--- iH 천원주택 전세임대 신혼신생아
-('IH_1000WON_JEONSE', '임대주택', '전세임대', '천원주택', 'iH', '인천', 'iH 천원주택 (전세임대 신혼·신생아)',
- '혼인7년이내 신혼부부·신생아 인천 거주', FALSE,
- '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구"],"homeless_required":true,"region_required":"인천","income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"marriage_years_max":7}',
- '{"rent_fixed":30000,"loan_limit":240000000,"loan_pct":80,"period_years":6}',
- '{"method":["방문"],"url":"https://www.incheon.go.kr/housing","contact":"1522-0072","period_type":"공고별"}',
- 'https://www.incheon.go.kr/housing'),
-
--- iH 천원주택 든든주택 (소득기준 없음)
-('IH_DUNDAN', '임대주택', '전세임대', '천원주택', 'iH', '인천', 'iH 전세임대형 든든주택',
- '신혼부부·신생아 인천 거주 (소득기준 없음)', FALSE,
- '{"marital_status":["신혼(7년이내)","신생아가구","한부모"],"homeless_required":true,"region_required":"인천","notes":["소득·자산 기준 없음"]}',
- '{"rent_fixed":30000,"loan_limit":200000000,"loan_pct":80,"period_years":6}',
- '{"method":["방문"],"contact":"1522-0072","period_type":"공고별"}',
- 'https://www.incheon.go.kr/housing')
+ 'https://apply.gh.or.kr')
 ON CONFLICT (code) DO UPDATE SET
   category = EXCLUDED.category, subcategory = EXCLUDED.subcategory,
   program_type = EXCLUDED.program_type, institution = EXCLUDED.institution,
@@ -1218,13 +1170,6 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"method":["온라인"],"url":"https://housing.seoul.go.kr","contact":"1833-2030","period_type":"정기","period_note":"연1회 6월 공고"}',
  'https://housing.seoul.go.kr'),
 
--- 인천시 청년월세 (35~39세 인천형)
-('INCHEON_YOUTH_MONTHLY_RENT', '주거비지원', '월세지원', '청년월세', '인천시', '인천', '인천형 청년월세 지원 (35~39세)',
- '만35~39세 인천거주 무주택 청년 (전국 지원 연령 초과분)', FALSE,
- '{"age_min":35,"age_max":39,"homeless_required":true,"region_required":"인천","income_type":"중위소득","income_pct":60,"asset_limit":12200000,"notes":["원가구(부모) 중위소득 100% 이하 조건","원가구 자산 4,700만원 이하 조건","공공임대거주자·주택소유자·2촌이내혈족임차 제외"]}',
- '{"monthly_support":200000,"max_months":24,"total_max":4800000,"once_per_life":true}',
- '{"method":["온라인","방문"],"url":"https://youth.incheon.go.kr","contact":"032-120","period_type":"정기","period_note":"2026년 3.30~5.29"}',
- 'https://youth.incheon.go.kr'),
 
 -- 주거급여
 ('GOV_HOUSING_BENEFIT', '주거비지원', '주거급여', '주거급여', '국토교통부', '전국', '주거급여',
@@ -1262,23 +1207,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"marital_status":["신혼(7년이내)","예비신혼"],"homeless_required":true,"region_required":"서울","income_type":"절대금액(연소득)","income_abs_married":130000000,"marriage_years_max":7,"notes":["보증금 7억이하 주택·오피스텔","공공주택(LH·SH) 입주자·불법건축물 제외"]}',
  '{"loan_limit":300000000,"loan_pct":90,"interest_min":1.0,"interest_max":4.5,"period_years":10,"once_per_life":true,"deposit_limit":700000000}',
  '{"method":["온라인","방문"],"url":"https://housing.seoul.go.kr","contact":"02-120","period_type":"수시","bank":["국민","하나","신한"]}',
- 'https://housing.seoul.go.kr'),
-
--- 인천시 청년 임차보증금 이자지원
-('INCHEON_YOUTH_JEONSE_INTEREST', '이자지원', '이자지원', '임차보증금이자', '인천시', '인천', '인천시 청년 임차보증금 이자지원',
- '만19~39세 인천거주 연소득 6천만원(미혼) 이하 무주택세대주', FALSE,
- '{"age_min":19,"age_max":39,"homeless_required":true,"is_household_head":true,"region_required":"인천","income_type":"절대금액(연소득)","income_abs":60000000,"income_abs_married":80000000,"notes":["보증금 2.5억이하·전용85㎡이하","주거급여수급자·주택소유자·주택도시기금대출이용자·부모소유주택임차 제외"]}',
- '{"loan_limit":100000000,"loan_pct":90,"interest_min":3.0,"interest_max":3.5,"period_years":4,"deposit_limit":250000000,"area_max_sqm":85}',
- '{"method":["온라인"],"url":"https://youth.incheon.go.kr","contact":"032-120","period_type":"정기","period_note":"연1회 5월 예정","bank":["NH농협"]}',
- 'https://youth.incheon.go.kr'),
-
--- 인천 i+집드림 1.0 이자지원
-('INCHEON_IDREAM_INTEREST', '이자지원', '이자지원', 'i+집드림', '인천시', '인천', 'i+집드림 1.0 이자지원 (신생아 주택담보)',
- '2025년 이후 출생 자녀 있는 인천 1주택 가구', FALSE,
- '{"newborn_required":true,"region_required":"인천","income_type":"절대금액(연소득)","income_abs_married":130000000,"notes":["2025.1.1이후 출생 자녀","주택가액 6억이하","전용85㎡이하","주담대 3억이하","1가구1주택"]}',
- '{"annual_max":3000000,"period_years":5,"total_max":15000000,"notes":["1자녀: 시중 0.8%/정부 0.4~0.8%","2자녀이상: 시중 1.0%/정부 0.6~1.0%"]}',
- '{"method":["온라인"],"url":"https://www.incheon.go.kr/housing","contact":"032-440-4759","period_type":"정기","period_note":"신규 2026.7.16~8.31"}',
- 'https://www.incheon.go.kr/housing')
+ 'https://housing.seoul.go.kr')
 ON CONFLICT (code) DO UPDATE SET
   category = EXCLUDED.category, subcategory = EXCLUDED.subcategory,
   program_type = EXCLUDED.program_type, institution = EXCLUDED.institution,
@@ -1308,15 +1237,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"age_min":19,"age_max":39,"homeless_required":true,"is_household_head":true,"region_required":"경기","income_type":"중위소득","income_pct":120,"notes":["2억이하 전월세","경기 전입 또는 경기내 이사"],"excluded":["부모소유주택임차","기초생활수급자"]}',
  '{"total_max":250000,"once_per_life":true,"notes":["이사비+중개보수비 실비 지원","최대 25만원"]}',
  '{"method":["온라인"],"contact":"070-8834-7060","period_type":"공고별","period_note":"연2회 공고"}',
- NULL),
-
--- 인천 전세반환보증료 지원
-('INCHEON_GUARANTEE_FEE', '보증료지원', '보증료지원', '보증료지원', '인천시', '인천', '인천 전세보증금반환보증 보증료 지원',
- '인천거주 무주택자 보증금 3억이하 보증 가입자', FALSE,
- '{"homeless_required":true,"region_required":"인천","income_type":"절대금액(연소득)","income_abs":50000000,"income_abs_married":75000000,"notes":["청년 만18~39세 5천만","신혼부부 7.5천만","일반 6천만","보증금 3억이하"]}',
- '{"total_max":400000,"notes":["2025.3.31이후 가입: 최대40만","이전가입: 최대30만","기납부 보증료 실비"]}',
- '{"method":["온라인","방문"],"url":"https://www.gov.kr","contact":"032-120","period_type":"수시","period_note":"예산 소진 시 조기 마감"}',
- 'https://youth.incheon.go.kr')
+ NULL)
 ON CONFLICT (code) DO UPDATE SET
   category = EXCLUDED.category, subcategory = EXCLUDED.subcategory,
   program_type = EXCLUDED.program_type, institution = EXCLUDED.institution,

@@ -170,11 +170,6 @@ LH_TYPES = [
     ("LH 신혼희망타운",               ["신혼희망타운"]),
 ]
 
-IH_TYPES = [
-    ("iH 인천 행복주택 (청년)",    ["행복주택"]),
-    ("iH 인천 행복주택 (신혼)",    []),
-    ("iH 인천 국민임대",           ["국민임대"]),
-]
 
 RECRUIT_INCLUDE = ["모집공고", "입주자모집", "모집 공고", "공급공고",
                    "청약공고", "추가모집", "추가 모집", "예비입주자 모집",
@@ -259,13 +254,6 @@ def detect_types_lh(title, type_col=""):
         return ["LH 공공분양 (일반공급)"]
     return ["기타(LH)"]
 
-def detect_types_ih(title):
-    tl = title.replace(" ", "").lower()
-    if "행복주택" in title:
-        if "신혼" in title: return ["iH 인천 행복주택 (신혼)"]
-        return ["iH 인천 행복주택 (청년)"]
-    if "국민임대" in tl: return ["iH 인천 국민임대"]
-    return ["기타(iH)"]
 
 def detect_types_applyhome(title, house_type=""):
     """청약홈 공고 유형 감지 (APT분양 / 오피스텔 / 민간임대 등)"""
@@ -540,187 +528,6 @@ def crawl_lh(mi, source_key, initial=False):
     return results
 
 
-# ════════════════════════════════════════════════════════════════════════
-# ③ iH (인천도시공사) 크롤러
-# ════════════════════════════════════════════════════════════════════════
-IH_SOURCES = {
-    "ih_sale":   "https://www.ih.co.kr/main/sale_lease/board/house_notice.jsp",
-    "ih_rental": "https://www.ih.co.kr/main/sale_lease/notice.jsp",
-}
-IH_BASE = "https://www.ih.co.kr"
-
-def crawl_ih(source_key, initial=False):
-    list_url = IH_SOURCES[source_key]
-    today    = date.today()
-    since    = INITIAL_SINCE if initial else today - timedelta(days=2)
-    results  = []
-    max_pages = 10 if initial else 1
-
-    for page in range(1, max_pages + 1):
-        print(f"  [iH {source_key}] 목록 p{page}...")
-        url = list_url + (f"?page={page}" if page > 1 else "")
-        html = fetch(url)
-        if not html:
-            break
-
-        # iH 목록: <a href="detail?..."> 또는 bbsMsgDetail.do?msg_seq=XXX
-        rows = re.findall(
-            r"msg_seq=(\d+)[^\"]*\"[^>]*>(.*?)</a>"
-            r".*?(\d{4}\.\d{2}\.\d{2})",
-            html, re.DOTALL
-        )
-        if not rows:
-            rows_alt = re.findall(
-                r"href=\"([^\"]*detail[^\"]*)\">([^<]+)</a>"
-                r".*?(\d{4}\.\d{1,2}\.\d{1,2})",
-                html, re.DOTALL
-            )
-            if not rows_alt:
-                break
-            rows = [(r[0], r[1], r[2]) for r in rows_alt]
-
-        stop = False
-        for seq_or_href, title_raw, posted_raw in rows:
-            title = re.sub(r"\s+", " ", title_raw).strip()
-            if not title or not is_recruitment(title):
-                continue
-
-            pm = re.match(r"(\d{4})\.(\d{1,2})\.(\d{1,2})", posted_raw)
-            posted = parse_ymd(pm.group(1), pm.group(2), pm.group(3)) if pm else today
-
-            if initial and posted < since:
-                stop = True
-                break
-
-            # 상세 페이지에서 날짜 추출
-            if seq_or_href.isdigit():
-                detail_url = f"{IH_BASE}/main/bbs/bbsMsgDetail.do?msg_seq={seq_or_href}"
-            else:
-                detail_url = seq_or_href if seq_or_href.startswith("http") else IH_BASE + seq_or_href
-
-            detail_html = fetch(detail_url)
-            time.sleep(DETAIL_SLEEP)
-            apply_start, apply_end = extract_dates_from_html(detail_html) if detail_html else (None, None)
-            status = compute_status(apply_start, apply_end, today)
-
-            if status == "expired":
-                continue
-            if apply_start and apply_start > today + timedelta(days=FUTURE_LIMIT_DAYS):
-                continue
-            if status == "needs_review":
-                if (today - posted).days > 30:
-                    continue
-
-            types = detect_types_ih(title)
-            ann = {
-                "id":          make_id(source_key, seq_or_href),
-                "inst":        "iH",
-                "source_key":  source_key,
-                "title":       title,
-                "types":       types,
-                "location":    "인천",
-                "status":      status,
-                "url":         detail_url,
-                "posted_date": posted.isoformat(),
-                "crawled_at":  today.isoformat(),
-            }
-            if apply_start:
-                ann["apply_start"] = apply_start.isoformat()
-                ann["apply_end"]   = apply_end.isoformat()
-            else:
-                ann["needs_pdf"] = True
-            results.append(ann)
-            flag = f"{apply_start}~{apply_end}" if apply_start else "날짜미파싱"
-            print(f"    [{status}] {title[:45]} ({flag})")
-
-        if stop:
-            break
-        time.sleep(0.3)
-
-    return results
-
-
-# ════════════════════════════════════════════════════════════════════════
-# ④ ihwc.or.kr (인천주거복지센터 — LH + iH 공공임대 통합)
-# ════════════════════════════════════════════════════════════════════════
-IHWC_BASE = "https://www.ihwc.or.kr"
-IHWC_LIST = IHWC_BASE + "/rent/recruit.jsp"
-
-def crawl_ihwc(initial=False):
-    today    = date.today()
-    since    = INITIAL_SINCE if initial else today - timedelta(days=2)
-    results  = []
-    max_pages = 9 if initial else 1  # 총 9페이지
-
-    for page in range(1, max_pages + 1):
-        print(f"  [ihwc] 목록 p{page}...")
-        url = IHWC_LIST + (f"?pgno={page}" if page > 1 else "")
-        html = fetch(url)
-        if not html:
-            break
-
-        # 실제 HTML 구조:
-        # <a href="https://..."><p class="tag">
-        #   <span class="tag_ih">IH도시공사</span>
-        #   <span class="tag_ing"></span>
-        # </p><dl><dt>공고명</dt></dl></a>
-        entries = re.findall(
-            r'href="(https?://[^"]+)"[^>]*>\s*'
-            r'<p class="tag">\s*'
-            r'<span class="(tag_lh|tag_ih)[^"]*">[^<]+</span>\s*'
-            r'<span class="(tag_\w+)"></span>\s*'
-            r'</p>\s*<dl>\s*<dt>(.*?)</dt>',
-            html, re.DOTALL
-        )
-
-        if not entries:
-            break
-
-        IHWC_STATUS = {"tag_ing": "진행중", "tag_end": "expired"}
-
-        for href, op_cls, st_cls, title_raw in entries:
-            title = re.sub(r"\s+", " ", title_raw).strip()
-            if not title or not is_recruitment(title):
-                continue
-
-            ihwc_status = IHWC_STATUS.get(st_cls, "needs_review")
-            lh_status = ihwc_status
-            if lh_status == "expired":
-                continue
-
-            inst = "iH" if "tag_ih" in op_cls else "LH"
-            href_full = href if href.startswith("http") else IHWC_BASE + href
-            detail_html = fetch(href_full)
-            time.sleep(DETAIL_SLEEP)
-            apply_start, apply_end = extract_dates_from_html(detail_html) if detail_html else (None, None)
-            status = compute_status(apply_start, apply_end, today)
-
-            if status == "expired":
-                continue
-
-            types = detect_types_lh(title) if inst == "LH" else detect_types_ih(title)
-            ann = {
-                "id":          make_id("ihwc", href),
-                "inst":        inst,
-                "source_key":  "ihwc",
-                "title":       title,
-                "types":       types,
-                "location":    "인천",
-                "status":      status,
-                "url":         href_full,
-                "posted_date": today.isoformat(),
-                "crawled_at":  today.isoformat(),
-            }
-            if apply_start:
-                ann["apply_start"] = apply_start.isoformat()
-                ann["apply_end"]   = apply_end.isoformat()
-            else:
-                ann["needs_pdf"] = True
-            results.append(ann)
-            flag = f"{apply_start}~{apply_end}" if apply_start else "날짜미파싱"
-            print(f"    [{status}] {title[:45]} ({flag})")
-
-    return results
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -866,10 +673,10 @@ _NON_METRO = {
 }
 
 def _is_metro_or_national(region_text):
-    """수도권(서울/경기/인천) 또는 전국/불명확이면 True, 명확히 타 지역이면 False"""
+    """서울/경기 또는 전국/불명확이면 True, 명확히 타 지역이면 False"""
     if not region_text:
         return True
-    if any(m in region_text for m in ("서울", "경기", "인천")):
+    if any(m in region_text for m in ("서울", "경기")):
         return True
     if any(n in region_text for n in _NON_METRO):
         return False
@@ -1171,14 +978,14 @@ def dedup(announcements):
     """
     1차: 같은 기관 내 중복 제거 (inst + norm_title + apply_end)
     2차: 기관 간 중복 제거 (norm_title + apply_end) — apply_end 있는 경우만
-          우선순위: lh/sh/ih/youth > applyhome
+          우선순위: lh/sh/youth > applyhome
     """
     PRIORITY = {
         # LH 최우선 (기관 간 동일 공고 시 LH 버전 유지)
         "lh_rental": 1, "lh_sale": 1,
-        # SH / iH / 청년안심주택
+        # SH / 청년안심주택
         "sh_rental": 2, "sh_sale": 2, "sh_notice": 2,
-        "ih_sale": 2, "ih_rental": 2, "ihwc": 2,
+
         "youth_housing": 2,
         # 청약홈은 집계 사이트이므로 기관 직접 공고보다 후순위
         "applyhome_apt": 3, "applyhome_remndr": 3, "applyhome_other": 3,
@@ -1341,13 +1148,6 @@ def main():
     # ── LH ──────────────────────────────────────────────────────────────
     all_announcements += crawl_lh(mi="1026", source_key="lh_rental", initial=initial)
     all_announcements += crawl_lh(mi="1027", source_key="lh_sale",   initial=initial)
-
-    # ── iH ──────────────────────────────────────────────────────────────
-    all_announcements += crawl_ih("ih_sale",   initial)
-    all_announcements += crawl_ih("ih_rental", initial)
-
-    # ── ihwc ────────────────────────────────────────────────────────────
-    all_announcements += crawl_ihwc(initial)
 
     # ── 청년안심주택 ────────────────────────────────────────────────────
     all_announcements += crawl_youth_housing(initial)

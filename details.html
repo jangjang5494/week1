@@ -203,7 +203,6 @@
         .inst-sh { background: #dbeafe; color: #1e40af; }
         .inst-lh { background: #fef3c7; color: #92400e; }
         .inst-gh { background: #dcfce7; color: #166534; }
-        .inst-ih { background: #cffafe; color: #155e75; }
         .inst-hf { background: #ede9fe; color: #5b21b6; }  /* 주택도시기금 */
         .inst-gov { background: #f1f5f9; color: #374151; } /* 국토부·지자체 */
         .inst-private { background: #fef3c7; color: #92400e; } /* 청약홈·민간 */
@@ -235,7 +234,6 @@
         .filter-tab[data-inst="SH"].active { background: #1e40af; border-color: #1e40af; }
         .filter-tab[data-inst="LH"].active { background: #92400e; border-color: #92400e; }
         .filter-tab[data-inst="GH"].active { background: #166534; border-color: #166534; }
-        .filter-tab[data-inst="iH"].active { background: #155e75; border-color: #155e75; }
 
         /* ===== 조건 요약 카드 ===== */
         .summary-card {
@@ -346,7 +344,6 @@
                 <div class="toggle-group" id="tg-region">
                     <button class="toggle-btn selected" data-val="seoul">서울</button>
                     <button class="toggle-btn" data-val="gyeonggi">경기</button>
-                    <button class="toggle-btn" data-val="incheon">인천</button>
                 </div>
                 <div class="region-district-wrap" id="district-wrapper">
                     <select id="district-city"><option value="">-- 구·시 선택 --</option></select>
@@ -481,7 +478,7 @@
                     </div>
                     <div class="toggle-group" id="tg-school-region">
                         <button class="toggle-btn selected" data-val="seoul">서울</button>
-                        <button class="toggle-btn" data-val="gyeonggi">경기·인천</button>
+                        <button class="toggle-btn" data-val="gyeonggi">경기</button>
                         <button class="toggle-btn" data-val="other">기타 지역</button>
                     </div>
                     <p class="hint">희망하우징은 서울 소재 대학만 신청 가능</p>
@@ -538,7 +535,7 @@
                 </div>
                 <div class="toggle-group" id="tg-workplace-region">
                     <button class="toggle-btn selected" data-val="seoul">서울</button>
-                    <button class="toggle-btn" data-val="gyeonggi">경기·인천</button>
+                    <button class="toggle-btn" data-val="gyeonggi">경기</button>
                     <button class="toggle-btn" data-val="other">기타 지역</button>
                 </div>
                 <p class="hint">청년안심주택: 서울 거주·재학·재직 중 하나 충족 시 신청 가능</p>
@@ -843,7 +840,6 @@
             <button class="filter-tab" data-inst="SH" onclick="filterResults('SH')"><span class="inst-badge inst-sh" style="margin-right:0.2rem;">SH</span>서울</button>
             <button class="filter-tab" data-inst="LH" onclick="filterResults('LH')"><span class="inst-badge inst-lh" style="margin-right:0.2rem;">LH</span>전국</button>
             <button class="filter-tab" data-inst="GH" onclick="filterResults('GH')"><span class="inst-badge inst-gh" style="margin-right:0.2rem;">GH</span>경기</button>
-            <button class="filter-tab" data-inst="iH" onclick="filterResults('iH')"><span class="inst-badge inst-ih" style="margin-right:0.2rem;">iH</span>인천</button>
         </div>
 
         <!-- 결과 3단계 탭 -->
@@ -884,7 +880,7 @@
 
         <div class="notice-box">
             ⚠ 본 분석은 2026년 기준 참고용이며 실제 신청 전 공고문 원문을 반드시 확인하세요.<br>
-            SH <strong>1600-3456</strong> · LH <strong>1600-1004</strong> · GH <strong>031-250-7100</strong> · iH <strong>032-120</strong> · 주택도시기금 <strong>1599-0001</strong>
+            SH <strong>1600-3456</strong> · LH <strong>1600-1004</strong> · GH <strong>031-250-7100</strong> · 주택도시기금 <strong>1599-0001</strong>
         </div>
         <button class="restart-btn" onclick="restart()">↩ 다시 분석하기</button>
     </div>
@@ -1375,7 +1371,7 @@ const helpData = {
                     <li>복학 예정자 (휴학 중이어도 복학 예정이면 해당)</li>
                     <li>입학 예정자</li>
                 </ul>
-                <div class="help-case warn">⚠ 희망하우징은 서울 소재 대학만 해당. 단, 내발산동 단지는 수도권(서울·경기·인천) 대학도 가능</div>
+                <div class="help-case warn">⚠ 희망하우징은 서울 소재 대학만 해당. 단, 내발산동 단지는 수도권(서울·경기) 대학도 가능</div>
             </div>
             <div class="help-section">
                 <h4>증빙 서류</h4>
@@ -1656,7 +1652,6 @@ function runAnalysis() {
     const guDistrict   = document.getElementById('district-gu').value;
     const seoulRes     = region === 'seoul';
     const gyeonggiRes  = region === 'gyeonggi';
-    const incheonRes   = region === 'incheon';
     const homeless     = getToggle('tg-homeless') === 'yes';
     const homelessYrs  = parseInt(document.getElementById('homeless-years').value) || 0;
     const seoulYrs     = parseInt(document.getElementById('seoul-years').value) || 0;
@@ -1731,12 +1726,10 @@ function runAnalysis() {
     }
 
     const baseOk = seoulRes && homeless;
-    const baseOk_sale = homeless;                  // SH 공공분양·나눔형: 수도권(서울·경기·인천) 거주 가능
+    const baseOk_sale = homeless;                  // SH 공공분양·나눔형: 서울·경기 거주 가능
     const baseOk_lh = homeless;                   // LH 전국 대상
     const baseOk_gh = homeless;                   // GH 전국 신청 가능 (경기 거주 우선)
-    const baseOk_ih = homeless;                   // iH 전국 신청 가능 (인천 거주 우선)
     const ghPriority = gyeonggiRes;               // 경기 거주 시 GH 우선순위 가점
-    const ihPriority = incheonRes;                // 인천 거주 시 iH 우선순위 가점
 
     // 1. 장기전세주택 (시프트)
     {
@@ -2769,79 +2762,12 @@ function runAnalysis() {
         add('GH 경기 매입임대', eligible, rank, '시세 30~50%', '최장 20년', 'national', r, 'GH', 'rental');
     }
 
-    // === iH (인천도시공사) ===
-
-    // iH 33. 인천 행복주택 (청년) — iH
-    {
-        const r = [];
-        if (!baseOk_ih) r.push('무주택 필요');
-        if (!ihPriority) r.push('※ 인천 거주자 우선 (비인천 거주도 신청 가능, 가점 불이익)');
-        const isYouthElig = isYouth && (!isMarried || singleParent);
-        if (!isYouthElig) r.push('만 19~39세 미혼(또는 한부모) 필요');
-        const db33 = getE('IH_HAPPY_YOUTH');
-        const aLim33=db33.asset||27300, cLim33=db33.car||4563;
-        const aOk = totalAssets <= aLim33, carOk = carVal <= cLim33;
-        if (!aOk) r.push(`총자산 ${aLim33}만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 ${cLim33}만원 이하`);
-        let eligible = false, rank = '';
-        if (baseOk_ih && isYouthElig && aOk && carOk) {
-            const i1=db33.incRank1||80, i2=db33.inc||100;
-            if (under(i1)) { eligible = true; rank = ihPriority ? `1순위 (소득 ${i1}% 이하, 인천거주)` : `1순위 (소득 ${i1}% 이하)`; }
-            else if (under(i2)) { eligible = true; rank = `2순위 (소득 ${i2}% 이하)`; }
-            else r.push(`소득 ${i2}% 이하 필요`);
-        }
-        add('iH 인천 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 6년', 'youth', r, 'iH', 'rental');
-    }
-
-    // iH 34. 인천 행복주택 (신혼) — iH
-    {
-        const r = [];
-        if (!baseOk_ih) r.push('무주택 세대구성원 필요');
-        if (!ihPriority) r.push('※ 인천 거주자 우선 (비인천 거주도 신청 가능, 가점 불이익)');
-        const grp = isNewlywedStrict || infant || (youngChild && isMarried);
-        if (!grp) r.push('혼인 7년 이내 신혼(또는 예비신혼) 또는 신생아 가구 필요');
-        const db34 = getE('IH_HAPPY_NEWLYWED');
-        const aLim34=db34.asset||34500, cLim34=db34.car||4563;
-        const aOk = totalAssets <= aLim34, carOk = carVal <= cLim34;
-        if (!aOk) r.push(`총자산 ${aLim34}만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 ${cLim34}만원 이하`);
-        let eligible = false, rank = '';
-        if (baseOk_ih && grp && aOk && carOk) {
-            const i1=db34.incRank1||80, i2=db34.inc||100;
-            if (under(i1)) { eligible = true; rank = `1순위 (소득 ${i1}% 이하)`; }
-            else if (under(i2)) { eligible = true; rank = `2순위 (소득 ${i2}% 이하)`; }
-            else r.push(`소득 ${i2}% 이하 필요`);
-        }
-        add('iH 인천 행복주택 (신혼)', eligible, rank, '시세 60~80%', '최장 10년', 'newlywed', r, 'iH', 'rental');
-    }
-
-    // iH 35. 인천 국민임대 — iH
-    {
-        const r = [];
-        if (!baseOk_ih) r.push('무주택 세대구성원 필요');
-        const db35 = getE('IH_NATIONAL_RENT');
-        const aLim35=db35.asset||34500, cLim35=db35.car||4563;
-        const aOk = totalAssets <= aLim35, carOk = carVal <= cLim35;
-        if (!aOk) r.push(`총자산 ${aLim35}만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 ${cLim35}만원 이하`);
-        let eligible = false, rank = '';
-        if (baseOk_ih && aOk && carOk) {
-            const r2=db35.incRank2||50, r3=db35.incRank3||70;
-            if (is1st) { eligible = true; rank = '1순위 (우대 대상)'; }
-            else if (under(r2)) { eligible = true; rank = `2순위 (소득 ${r2}% 이하)`; }
-            else if (under(r3)) { eligible = true; rank = `3순위 (소득 ${r3}% 이하)`; }
-            else r.push(`소득 ${r3}% 이하 필요`);
-        }
-        if (!ihPriority) r.push('※ 인천 거주자 우선 (비인천 거주도 신청 가능, 가점 불이익)');
-        add('iH 인천 국민임대', eligible, rank, '시세 60~80%', '제한 없음', 'national', r, 'iH', 'rental');
-    }
-
     // === 공공분양 ===
 
     // SH 공공분양 일반공급 (수도권 거주 무주택, 소득 100%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         const dbSpg = getE('SH_PUBLIC_SALE_GENERAL');
         const minSub = dbSpg.savingsRank1 || 12;
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
@@ -2862,7 +2788,7 @@ function runAnalysis() {
     // SH 나눔형 일반공급 (수도권 거주, 소득 100%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
         const aOk = totalAssets <= 35400, carOk = carVal <= 4563;
         if (!aOk) r.push('총자산 35,400만원 이하 필요');
@@ -2881,7 +2807,7 @@ function runAnalysis() {
     // SH 나눔형 청년특공 (수도권 거주, 소득 140%, 본인자산)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         if (!isYouth) r.push('만 19~39세 필요');
         if (isMarried && !singleParent) r.push('미혼 또는 한부모 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
@@ -2901,7 +2827,7 @@ function runAnalysis() {
     // SH 나눔형 신혼특공 (수도권 거주, 소득 130%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         const grp = isNewlywedStrict || infant || singleParent;
         if (!grp) r.push('신혼(7년이내)·예비신혼·한부모·신생아 가구 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
@@ -2920,7 +2846,7 @@ function runAnalysis() {
     // SH 공공분양 신혼특공 (수도권 거주, 소득 120%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         const grp = isNewlywedStrict || singleParent;
         if (!grp) r.push('신혼(7년이내)·예비신혼·한부모 필요');
         const dbSpN = getE('SH_PUBLIC_SALE_NEWLYWED');
@@ -2942,7 +2868,7 @@ function runAnalysis() {
     // SH 공공분양 생애최초 (수도권 거주, 소득 130%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         if (!lifeFirst) r.push('세대원 전원 과거 주택 미소유 필요');
         if (!taxPaid5yr) r.push('근로자/자영업자 5년 이상 소득세 납부 필요');
         if (!subAmountEnough) r.push('청약저축 600만원 이상 납입 필요');
@@ -2961,7 +2887,7 @@ function runAnalysis() {
     // SH 공공분양 다자녀 (수도권 거주, 소득 120%/맞벌이 200%)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         if (childCnt < 2) r.push('미성년 자녀 2명 이상 필요');
         if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
         const aOk = realEstate <= 21550, carOk = carVal <= 4563;
@@ -2979,7 +2905,7 @@ function runAnalysis() {
     // SH 공공분양 신생아특공 (SH_PUBLIC_SALE_NEWBORN)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         if (!infant) r.push('입주자모집공고일 기준 2세 미만(출생 후 2년 이내) 자녀 필요');
         const dbSpNb = getE('SH_PUBLIC_SALE_NEWBORN');
         if (subCount < (dbSpNb.savingsRank1||6)) r.push(`청약저축 ${dbSpNb.savingsRank1||6}회 이상 납입 필요`);
@@ -2998,7 +2924,7 @@ function runAnalysis() {
     // SH 공공분양 노부모부양특공 (SH_PUBLIC_SALE_ELDERLY)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         r.push('만 65세이상 직계존속(배우자 직계존속 포함) 3년이상 부양 필요 — 현재 폼에서 자동 판단 불가, 공고문 직접 확인 필요');
         const dbSpEl = getE('SH_PUBLIC_SALE_ELDERLY');
         if (subCount < (dbSpEl.savingsRank1||12)) r.push(`청약저축 ${dbSpEl.savingsRank1||12}회 이상 납입 필요`);
@@ -3017,7 +2943,7 @@ function runAnalysis() {
     // SH 나눔형 신생아특공 (SH_NAMOOM_NEWBORN)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         if (!infant) r.push('입주자모집공고일 기준 2세 미만 자녀 필요');
         const dbNnb = getE('SH_NAMOOM_NEWBORN');
         if (subCount < (dbNnb.savingsRank1||6)) r.push(`청약저축 ${dbNnb.savingsRank1||6}회 이상 납입 필요`);
@@ -3036,7 +2962,7 @@ function runAnalysis() {
     // SH 나눔형 생애최초특공 (SH_NAMOOM_FIRST)
     {
         const r = [];
-        if (!baseOk_sale) r.push('수도권(서울·경기·인천) 거주 무주택 세대구성원 필요');
+        if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
         if (!lifeFirst) r.push('세대원 전원 과거 주택 미소유 필요');
         if (!taxPaid5yr) r.push('근로자/자영업자 5년 이상 소득세 납부 필요');
         const dbNf = getE('SH_NAMOOM_FIRST');
@@ -3072,7 +2998,7 @@ function runAnalysis() {
                 rank = subCount >= r1 ? `1순위 (납입 ${r1}회 이상)` : '2순위 (납입 6~11회)';
             } else r.push(`소득 ${dbLpg.inc||100}% 이하 필요`);
         }
-        add('LH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-general', r, 'LH', 'sale');
+        add('LH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-general', r, 'LH', 'sale');
     }
 
     // LH 공공분양 신혼특공
@@ -3097,7 +3023,7 @@ function runAnalysis() {
                 rank = infant ? `우선공급 가능 (신생아, 소득${incBaseN}% 이하)` : '일반공급';
             } else r.push(`소득 ${incBaseN}%` + (dualInc?`(맞벌이 ${dbLpsn.incM||200}%)`:'') + ' 이하 필요');
         }
-        add('LH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 공공분양 생애최초
@@ -3120,7 +3046,7 @@ function runAnalysis() {
             if (incOk) { eligible = true; rank = '생애최초특공 (추첨 50%)'; }
             else r.push(`소득 ${incBaseF}%` + (dualInc?`(맞벌이 ${dbLpsf.incM||200}%)`:'') + ' 이하 필요');
         }
-        add('LH 공공분양 (생애최초 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (생애최초 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 공공분양 다자녀
@@ -3143,7 +3069,7 @@ function runAnalysis() {
             if (incOk) { eligible = true; rank = childCnt >= 3 ? '우선 (자녀 3명이상)' : '일반 (자녀 2명)'; }
             else r.push(`소득 ${incBaseC}%` + (dualInc?`(맞벌이 ${dbLpsc.incM||200}%)`:'') + ' 이하 필요');
         }
-        add('LH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 공공분양 신생아
@@ -3164,7 +3090,7 @@ function runAnalysis() {
         } else if (homeless && infant && subCount >= r1b && aOk && carOk) {
             r.push(`소득 ${incLimB}% 이하 필요`);
         }
-        add('LH 공공분양 (신생아 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (신생아 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 공공분양 노부모부양
@@ -3186,7 +3112,7 @@ function runAnalysis() {
             if (incOk) { eligible = true; rank = '노부모부양특공 (65세이상 3년이상 부양)'; }
             else r.push(`소득 ${incBaseE}%` + (dualInc?`(맞벌이 ${dbLpse.incM||200}%)`:'') + ' 이하 필요');
         }
-        add('LH 공공분양 (노부모부양 특별공급)', eligible, rank, '시세 80~85% 분양', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
+        add('LH 공공분양 (노부모부양 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
     }
 
     // LH 신혼희망타운
@@ -3215,7 +3141,7 @@ function runAnalysis() {
                 rank = (infant && isEarlyNewlywed) ? '우선공급 (혼인2년이내·2세이하자녀)' : '일반공급 (혼인2~7년)';
             } else r.push(`소득 ${incBaseH}%` + (dualInc?`(맞벌이 ${dbLht.incM||200}%)`:'') + ' 이하 필요');
         }
-        add('LH 신혼희망타운', eligible, rank, '분양가 저렴 (연 1.6% 고정금리)', '분양 (GH·iH 동일 기준)', 'sale-special', r, 'LH', 'sale');
+        add('LH 신혼희망타운', eligible, rank, '분양가 저렴 (연 1.6% 고정금리)', '분양', 'sale-special', r, 'LH', 'sale');
     }
 
     // === 민간분양 / 청약홈 ===
@@ -3571,8 +3497,7 @@ function runAnalysis() {
                 const req = e.region_required;
                 if (req === '서울' && !seoulRes) r.push('서울 거주 필요');
                 else if (req === '경기' && !gyeonggiRes) r.push('경기 거주 필요');
-                else if (req === '인천' && !incheonRes) r.push('인천 거주 필요');
-                else if (req === '수도권' && !(seoulRes||gyeonggiRes||incheonRes)) r.push('수도권 거주 필요');
+                else if (req === '수도권' && !(seoulRes||gyeonggiRes)) r.push('수도권(서울·경기) 거주 필요');
             }
             if (e.marital_status) {
                 const userOk = e.marital_status.some(ms => {
@@ -3669,8 +3594,7 @@ function runAnalysis() {
                 const req = e.region_required;
                 if (req === '서울' && !seoulRes) r.push('서울 거주 필요');
                 else if (req === '경기' && !gyeonggiRes) r.push('경기 거주 필요');
-                else if (req === '인천' && !incheonRes) r.push('인천 거주 필요');
-                else if (req === '수도권' && !(seoulRes||gyeonggiRes||incheonRes)) r.push('수도권 거주 필요');
+                else if (req === '수도권' && !(seoulRes||gyeonggiRes)) r.push('수도권(서울·경기) 거주 필요');
             }
             if (e.marital_status) {
                 const userOk = e.marital_status.some(ms => {
@@ -3717,7 +3641,7 @@ function runAnalysis() {
     const maritalLabel = { single:'미혼', prenuptial:'예비신혼', newlywed:'신혼(7년이내)', married:'기혼(7년초과)', divorced:'이혼/사별' };
     const summaryItems = [
         { label: `만 ${age}세`, highlight: false },
-        { label: seoulRes ? `서울 ${district||''}`.trim() : gyeonggiRes ? `경기 ${district||''}${guDistrict?' '+guDistrict:''}`.trim() : `인천 ${district||''}`.trim(), highlight: true },
+        { label: seoulRes ? `서울 ${district||''}`.trim() : `경기 ${district||''}${guDistrict?' '+guDistrict:''}`.trim(), highlight: true },
         { label: homeless ? '무주택' : '유주택', highlight: homeless },
         { label: maritalLabel[marital] || marital, highlight: false },
         { label: `${hhSize}인 가구`, highlight: false },
@@ -3756,7 +3680,6 @@ function runAnalysis() {
         const instBadgeMap = {
             'LH': '<span class="inst-badge inst-lh">LH</span>',
             'GH': '<span class="inst-badge inst-gh">GH</span>',
-            'iH': '<span class="inst-badge inst-ih">iH</span>',
             'SH': '<span class="inst-badge inst-sh">SH</span>',
             '주택도시기금': '<span class="inst-badge inst-hf">기금</span>',
             '주택도시보증공사': '<span class="inst-badge inst-hf">HUG</span>',
@@ -3764,7 +3687,6 @@ function runAnalysis() {
             '국토교통부': '<span class="inst-badge inst-gov">국토부</span>',
             '서울시': '<span class="inst-badge inst-sh">서울</span>',
             '경기도': '<span class="inst-badge inst-gh">경기</span>',
-            '인천시': '<span class="inst-badge inst-ih">인천</span>',
         };
         const instBadge = instBadgeMap[r.inst] || `<span class="inst-badge inst-gov">${r.inst}</span>`;
 
@@ -3843,7 +3765,6 @@ function runAnalysis() {
             const etcInstMap = {
                 'SH': '<span class="inst-badge inst-sh">SH</span>',
                 'LH': '<span class="inst-badge inst-lh">LH</span>',
-                'iH': '<span class="inst-badge inst-ih">iH</span>',
                 'GH': '<span class="inst-badge inst-gh">GH</span>',
                 '청약홈': '<span class="inst-badge inst-private">청약홈</span>',
             };
@@ -4647,7 +4568,7 @@ const typeDetailData = {
         </div>
         <div class="help-section">
             <h4>이런 분께 적합</h4>
-            <div class="help-case">서울 외 지역(경기·인천·지방)에서 장기 안정적으로 거주하고 싶은 중저소득 가구.</div>
+            <div class="help-case">서울 외 지역(경기 등)에서 장기 안정적으로 거주하고 싶은 중저소득 가구.</div>
         </div>
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
@@ -5226,94 +5147,6 @@ const typeDetailData = {
         <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>`
     },
 
-    // ===== iH (인천도시공사) =====
-    'iH 인천 행복주택 (청년)': {
-        title: 'iH 인천 행복주택 (청년)',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>인천도시공사(iH)가 공급하는 행복주택으로, <strong>만 19~39세 청년</strong>을 대상으로 인천 내 역세권·직주근접 지역에 공급합니다.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>임대료: 주변 시세 60~80%</li>
-                <li>거주 기간: 최초 2년, 재계약 최장 <strong>6년</strong></li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>만 19~39세 미혼 (또는 한부모)</li>
-                <li>무주택자</li>
-                <li>총자산 27,300만원 이하 / 자동차 4,563만원 이하</li>
-                <li>소득 80% 이하 (1순위) / 100% 이하 (2순위)</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>이런 분께 적합</h4>
-            <div class="help-case">인천 직장·학교 근처에 저렴하게 살고 싶은 청년.</div>
-        </div>
-        <a class="help-link" href="https://www.ih.co.kr" target="_blank">🔗 인천도시공사(iH)</a>`
-    },
-    'iH 인천 행복주택 (신혼)': {
-        title: 'iH 인천 행복주택 (신혼)',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>인천도시공사(iH)의 행복주택 중 <strong>신혼부부·예비신혼·신생아 가구</strong>를 대상으로 공급하는 유형입니다.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>임대료: 주변 시세 60~80%</li>
-                <li>거주 기간: 최초 2년, 재계약 최장 <strong>10년</strong></li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>혼인 7년 이내 신혼부부·예비신혼 또는 신생아 있는 가구</li>
-                <li>무주택 세대구성원</li>
-                <li>총자산 34,500만원 이하 / 자동차 4,563만원 이하</li>
-                <li>소득 80% 이하 (1순위) / 100% 이하 (2순위)</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>이런 분께 적합</h4>
-            <div class="help-case">인천에서 신혼 생활을 시작하거나 아이를 키우고 싶은 신혼가구.</div>
-        </div>
-        <a class="help-link" href="https://www.ih.co.kr" target="_blank">🔗 인천도시공사(iH)</a>`
-    },
-    'iH 인천 국민임대': {
-        title: 'iH 인천 국민임대',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>인천도시공사(iH)가 공급하는 국민임대주택으로, 무주택 저소득 가구에 시세보다 저렴하게 장기 공급합니다.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>임대료: 주변 시세 60~80%</li>
-                <li>거주 기간: 기간 제한 없음 (계속 재계약 가능)</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>무주택 세대구성원</li>
-                <li>총자산 34,500만원 이하 / <strong>자동차 4,563만원 이하</strong> (타 기관보다 엄격)</li>
-                <li>1순위: 수급자·차상위·한부모·장애인</li>
-                <li>2순위: 소득 50% 이하 / 3순위: 소득 70% 이하</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>이런 분께 적합</h4>
-            <div class="help-case">인천에서 장기 안정적으로 거주하고 싶은 저소득 무주택 가구.</div>
-        </div>
-        <a class="help-link" href="https://www.ih.co.kr" target="_blank">🔗 인천도시공사(iH)</a>`
-    },
     'SH 공공분양 (신생아 특별공급)': {
         title: 'SH 공공분양 신생아 특별공급',
         body: `
@@ -5324,7 +5157,7 @@ const typeDetailData = {
         <div class="help-section">
             <h4>핵심 자격 요건</h4>
             <ul>
-                <li>수도권(서울·경기·인천) 거주 무주택 세대구성원</li>
+                <li>수도권(서울·경기) 거주 무주택 세대구성원</li>
                 <li>입주자모집공고일 기준 2세 미만(출생 후 2년 이내) 자녀 보유</li>
                 <li>소득 140% 이하 (맞벌이 200% 이하)</li>
                 <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
@@ -5343,7 +5176,7 @@ const typeDetailData = {
         <div class="help-section">
             <h4>핵심 자격 요건</h4>
             <ul>
-                <li>수도권(서울·경기·인천) 거주 무주택 세대구성원</li>
+                <li>수도권(서울·경기) 거주 무주택 세대구성원</li>
                 <li>만 65세 이상 직계존속(배우자의 직계존속 포함)을 입주자모집공고일 기준 3년 이상 계속 부양</li>
                 <li>소득 120% 이하 (맞벌이 200% 이하)</li>
                 <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
@@ -5363,7 +5196,7 @@ const typeDetailData = {
         <div class="help-section">
             <h4>핵심 자격 요건</h4>
             <ul>
-                <li>수도권(서울·경기·인천) 거주 무주택 세대구성원</li>
+                <li>수도권(서울·경기) 거주 무주택 세대구성원</li>
                 <li>입주자모집공고일 기준 2세 미만 자녀 보유</li>
                 <li>소득 140% 이하 (맞벌이 200% 이하)</li>
                 <li>총자산 35,400만원 이하 / 자동차 4,563만원 이하</li>
@@ -5386,7 +5219,7 @@ const typeDetailData = {
         <div class="help-section">
             <h4>핵심 자격 요건</h4>
             <ul>
-                <li>수도권(서울·경기·인천) 거주 무주택 세대구성원</li>
+                <li>수도권(서울·경기) 거주 무주택 세대구성원</li>
                 <li>세대원 전원 과거 주택 미소유 (생애최초)</li>
                 <li>근로자/자영업자 5년 이상 소득세 납부</li>
                 <li>소득 130% 이하 (맞벌이 200% 이하)</li>
@@ -6836,63 +6669,6 @@ const applyGuideData = {
         <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>`
     },
 
-    // ===== iH (인천도시공사) =====
-    'iH 인천 행복주택 (청년)': {
-        title: 'iH 인천 행복주택 (청년) 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>인천도시공사(iH) 홈페이지(ih.co.kr) 또는 마이홈포털에서 행복주택(청년) 공고 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>iH 홈페이지 청약 시스템에서 신청. 공인인증서 필요.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본</div>
-                    <div class="guide-doc-item">건강보험료 납부확인서 (소득 증빙)</div>
-                    <div class="guide-doc-item">무주택 서약서</div>
-                    <div class="guide-doc-item">재산세 과세증명서</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 심사 후 당첨자 선정. 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://www.ih.co.kr" target="_blank">🔗 인천도시공사(iH)</a>`
-    },
-    'iH 인천 행복주택 (신혼)': {
-        title: 'iH 인천 행복주택 (신혼) 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>인천도시공사(iH) 홈페이지 또는 마이홈포털에서 행복주택(신혼) 공고 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>iH 홈페이지 청약 시스템에서 신청. 혼인 관련 서류 준비 필수.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
-                    <div class="guide-doc-item">혼인관계증명서</div>
-                    <div class="guide-doc-item">가족관계증명서</div>
-                    <div class="guide-doc-item">소득·자산 확인 서류</div>
-                    <div class="guide-doc-item">출생증명서 (신생아 있는 경우)</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 심사 후 당첨자 발표 → 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://www.ih.co.kr" target="_blank">🔗 인천도시공사(iH)</a>`
-    },
-    'iH 인천 국민임대': {
-        title: 'iH 인천 국민임대 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>인천도시공사(iH) 홈페이지(ih.co.kr) 또는 마이홈포털에서 국민임대 공고 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>iH 청약 시스템에서 신청. 청약통장 가입 여부 확인 필요.</p><p class="hint warn">자동차 기준: 4,563만원 이하 (모든 기관 공통).</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본</div>
-                    <div class="guide-doc-item">소득 확인 서류</div>
-                    <div class="guide-doc-item">무주택 서약서</div>
-                    <div class="guide-doc-item">청약통장 증명서</div>
-                    <div class="guide-doc-item">우대 사유 증명서 (해당 시)</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 심사 → 당첨자 발표 → 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://www.ih.co.kr" target="_blank">🔗 인천도시공사(iH)</a>`
-    },
     'SH 공공분양 (신생아 특별공급)': {
         title: 'SH 공공분양 신생아 특별공급 신청 가이드',
         body: `
