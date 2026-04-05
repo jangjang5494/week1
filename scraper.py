@@ -874,17 +874,16 @@ def crawl_applyhome_remndr(initial=False):
     if not tbody_m:
         return results
 
-    for tr in re.split(r"<tr[^>]*>", tbody_m.group(1))[1:]:
-        tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
+    for tr_block in re.findall(r'<tr\s+data-pbno="(\d+)"\s+data-hmno="(\d+)"\s+data-hsecd="(\w+)"\s+data-honm="([^"]+)"[^>]*>(.*?)</tr>', tbody_m.group(1), re.DOTALL):
+        pbno, hmno, hsecd, honm, tr_inner = tr_block
+        tds = re.findall(r"<td[^>]*>(.*?)</td>", tr_inner, re.DOTALL)
         if len(tds) < 5:
             continue
         region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
         house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
-        link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[3], re.DOTALL)
-        name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
-                   else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
+        name_raw   = honm  # data-honm이 실제 주택명
         period_raw = ""
-        for col_i in range(4, len(tds)):
+        for col_i in range(3, len(tds)):
             c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
             if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
                 period_raw = c
@@ -900,9 +899,8 @@ def crawl_applyhome_remndr(initial=False):
         if apply_end and apply_end > today + timedelta(days=30):
             continue
 
-        link_m = re.search(r'href="([^"]+)"', tds[3])
-        url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
-              APPLYHOME_BASE + "/ai/aia/selectAPTRemndrLttotPblancListView.do"
+        url = (f"{APPLYHOME_BASE}/ai/aia/selectAPTRemndrLttotPblancDetail.do"
+               f"?pblancNo={pbno}&houseManageNo={hmno}")
 
         uid = name_raw + "remndr" + (apply_end.isoformat() if apply_end else "")
         ann = {
@@ -948,22 +946,23 @@ def crawl_applyhome_other(initial=False):
         if not tbody_m:
             break
 
-        rows = re.split(r"<tr[^>]*>", tbody_m.group(1))[1:]
-        if not rows:
+        tr_blocks = re.findall(
+            r'<tr\s+data-pbno="(\d+)"\s+data-hmno="(\d+)"\s+data-hsecd="(\w+)"\s+data-honm="([^"]+)"[^>]*>(.*?)</tr>',
+            tbody_m.group(1), re.DOTALL
+        )
+        if not tr_blocks:
             break
 
         found_any = False
-        for tr in rows:
-            tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
+        for pbno, hmno, hsecd, honm, tr_inner in tr_blocks:
+            tds = re.findall(r"<td[^>]*>(.*?)</td>", tr_inner, re.DOTALL)
             if len(tds) < 5:
                 continue
             region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
             house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
-            link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[3], re.DOTALL)
-            name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
-                       else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
+            name_raw   = honm  # data-honm이 실제 주택명
             period_raw = ""
-            for col_i in range(4, len(tds)):
+            for col_i in range(3, len(tds)):
                 c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
                 if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
                     period_raw = c
@@ -979,9 +978,8 @@ def crawl_applyhome_other(initial=False):
             if apply_end and apply_end > future_limit:
                 continue
 
-            link_m = re.search(r'href="([^"]+)"', tds[3])
-            url = (APPLYHOME_BASE + link_m.group(1)) if link_m else \
-                  APPLYHOME_BASE + "/ai/aia/selectOtherLttotPblancListView.do"
+            url = (f"{APPLYHOME_BASE}/ai/aia/selectOtherLttotPblancDetail.do"
+                   f"?pblancNo={pbno}&houseManageNo={hmno}&houseSecd={hsecd}")
 
             uid = name_raw + (apply_end.isoformat() if apply_end else "")
             ann = {
