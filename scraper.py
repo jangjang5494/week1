@@ -676,6 +676,8 @@ def crawl_youth_housing(initial=False):
 # ════════════════════════════════════════════════════════════════════════
 APPLYHOME_BASE = "https://www.applyhome.co.kr"
 _NON_METRO = {
+    # 경기도 (서울 집중 서비스)
+    "경기",
     # 광역시·도 (약칭 + 행정명)
     "부산", "대구", "광주", "대전", "울산", "세종",
     "강원", "강원특별자치도",
@@ -696,10 +698,10 @@ _NON_METRO = {
 }
 
 def _is_metro_or_national(region_text):
-    """서울/경기 또는 전국/불명확이면 True, 명확히 타 지역이면 False"""
+    """서울 또는 전국/불명확이면 True, 명확히 타 지역이면 False"""
     if not region_text:
         return True
-    if any(m in region_text for m in ("서울", "경기")):
+    if "서울" in region_text:
         return True
     if any(n in region_text for n in _NON_METRO):
         return False
@@ -1187,7 +1189,7 @@ def main():
     # ── 만료 공고 제거 ────────────────────────────────────────────────────
     all_announcements = [a for a in all_announcements if should_keep(a, today)]
 
-    # ── 인천 공고 제거 (서울·경기 집중 서비스) ──────────────────────────────
+    # ── 인천·경기 공고 제거 (서울 집중 서비스) ──────────────────────────────
     INCHEON_KEYWORDS = ["인천"]
     def is_incheon(ann):
         title = ann.get("title", "")
