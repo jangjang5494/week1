@@ -630,6 +630,14 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"method":["온라인"],"url":"https://soco.seoul.go.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://soco.seoul.go.kr'),
 
+-- SH 사회주택 (토지임대부·리모델링형·사회주택리츠·토지지원리츠 통합)
+('SH_SOCIAL_HOUSE', '임대주택', '민간임대', '사회주택', 'SH', '서울', 'SH 사회주택',
+ '무주택 서울 거주·재직·재학 청년·일반가구 (소득 120% 이하)', FALSE,
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":120,"asset_limit":254000000,"asset_limit_newlywed":337000000,"car_limit":45630000,"notes":["서울 거주 또는 서울 소재 직장·대학 중 하나 충족","청년(만39세이하) 총자산 25,400만원 이하","신혼부부·예비신혼부부 총자산 33,700만원 이하","자동차 4,563만원 이하","4가지 유형: 토지임대부(=토지지원사회주택)·리모델링형·사회주택리츠·토지지원리츠"]}',
+ '{"rent_pct_max":80,"period_max_years":10,"notes":["시세 80% 이하","최장 10년 거주"]}',
+ '{"method":["온라인"],"url":"https://soco.seoul.go.kr","contact":"02-2133-7300","period_type":"공고별"}',
+ 'https://soco.seoul.go.kr/soHouse/main/contents.do?menuNo=300037'),
+
 -- SH 희망하우징
 ('SH_HOPE_HOUSING', '임대주택', '매입임대', '희망하우징', 'SH', '서울', 'SH 희망하우징',
  '서울 소재 대학 재학생 (미혼 무주택)', FALSE,

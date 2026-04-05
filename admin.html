@@ -452,7 +452,7 @@
       <button class="btn btn-outline btn-sm" onclick="loadTab2()">🔄 새로고침</button>
     </div>
     <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
-      신청기간을 파악할 수 없는 공고입니다. 날짜를 직접 입력하고 승인/반려하세요.
+      신청기간을 파악할 수 없는 공고입니다. 날짜와 유형을 입력하고 승인/반려하세요.
     </p>
     <div class="table-wrap">
       <table>
@@ -461,13 +461,14 @@
             <th>기관</th>
             <th>제목</th>
             <th>등록일</th>
+            <th>유형 태그</th>
             <th>신청 시작</th>
             <th>신청 마감</th>
             <th>액션</th>
           </tr>
         </thead>
         <tbody id="tbody-2">
-          <tr class="empty-row"><td colspan="6">로딩 중...</td></tr>
+          <tr class="empty-row"><td colspan="7">로딩 중...</td></tr>
         </tbody>
       </table>
     </div>
@@ -984,6 +985,7 @@ function renderTab1(data) {
     const isParsed  = rd.source === 'pdf_parsed';
     // 유형 키워드 — 이 중 하나라도 매칭되면 기존 유형으로 커버됨
     const KNOWN_KEYWORDS = [
+      '사회주택','토지임대부','리모델링형','사회주택리츠','토지지원리츠',
       '청년안심주택','역세권청년','천원주택','희망하우징','장기전세',
       '행복주택','국민임대','영구임대','통합공공임대','매입임대','전세임대',
       '신혼','신생아','다자녀','고령자','장애인','기숙사','든든전세',
@@ -1185,8 +1187,17 @@ function renderTab2(data) {
     tbody.innerHTML = '<tr class="empty-row"><td colspan="6">확인 필요 공고가 없습니다. 👍</td></tr>';
     return;
   }
+  const TYPE_CHIPS = {
+    'SH': ['청년안심주택','행복주택 (청년)','행복주택 (신혼부부)','장기전세주택','미리내집','국민임대','매입임대','전세임대','희망하우징','장기안심주택','토지임대부 사회주택','리모델링형 사회주택','사회주택리츠','토지지원리츠','토지임대부 분양주택'],
+    'LH': ['LH 행복주택 (청년)','LH 행복주택 (신혼부부)','LH 청년 매입임대','LH 신혼·신생아 매입임대 Ⅰ형','LH 신혼·신생아 매입임대 Ⅱ형','LH 기숙사형 청년주택','LH 공공분양 (일반공급)','LH 신혼희망타운','전세임대','신혼·신생아'],
+    'GH': ['GH 행복주택 (청년)','GH 행복주택 (신혼)','GH 국민임대','GH 매입임대'],
+  };
   tbody.innerHTML = data.map(r => {
     const date = r.date ? r.date.slice(0,10) : (r.created_at ? r.created_at.slice(0,10) : '-');
+    const existingTypes = Array.isArray(r.types) ? r.types.join(', ') : (r.types || '');
+    const chips = (TYPE_CHIPS[r.institution] || []).map(t =>
+      `<button type="button" onclick="addTypeChip('rt-${r.id}','${t}')" style="font-size:11px;padding:2px 7px;border:1px solid var(--border);border-radius:10px;background:#f8fafc;cursor:pointer;white-space:nowrap">${t}</button>`
+    ).join('');
     return `
       <tr id="review-row-${r.id}">
         <td><span class="inst inst-${r.institution}">${r.institution}</span></td>
@@ -1197,15 +1208,27 @@ function renderTab2(data) {
           </div>
         </td>
         <td style="font-size:12px">${date}</td>
+        <td style="min-width:220px">
+          <input type="text" id="rt-${r.id}" value="${escHtml(existingTypes)}" placeholder="예: 청년안심주택" style="width:100%;padding:4px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;margin-bottom:4px">
+          <div style="display:flex;flex-wrap:wrap;gap:3px">${chips}</div>
+        </td>
         <td><input type="date" id="rs-${r.id}" style="width:130px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px"></td>
         <td><input type="date" id="re-${r.id}" style="width:130px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px"></td>
         <td style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-success btn-sm" onclick="approveReview(${r.id})">✓ 승인</button>
-          <button class="btn btn-warning btn-sm" onclick="sendToExceptionFromTab2(${r.id})" title="35개 유형에 없는 공고라면 클릭">📌 예외</button>
+          <button class="btn btn-warning btn-sm" onclick="sendToExceptionFromTab2(${r.id})" title="유형에 없는 공고라면 클릭">📌 예외</button>
           <button class="btn btn-danger btn-sm" onclick="rejectReview(${r.id})">✕ 반려</button>
         </td>
       </tr>`;
   }).join('');
+}
+
+function addTypeChip(inputId, typeVal) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  const current = el.value.split(',').map(s => s.trim()).filter(Boolean);
+  if (!current.includes(typeVal)) current.push(typeVal);
+  el.value = current.join(', ');
 }
 
 async function approveReview(id) {
@@ -1217,10 +1240,13 @@ async function approveReview(id) {
   const endDate = new Date(end + 'T23:59:59');
   const status = endDate < now ? '마감' : (new Date(start) > now ? '예정' : '진행중');
 
+  const typesRaw = document.getElementById(`rt-${id}`)?.value || '';
+  const types = typesRaw.split(',').map(s => s.trim()).filter(Boolean);
+
   try {
     await sbFetch(`announcements?id=eq.${id}`, {
       method: 'PATCH',
-      body: JSON.stringify({ apply_start: start, apply_end: end, status })
+      body: JSON.stringify({ apply_start: start, apply_end: end, status, ...(types.length ? { types } : {}) })
     });
     toast('승인 완료 ✓ 탭1으로 이동합니다.', 'success');
     document.getElementById(`review-row-${id}`).remove();
