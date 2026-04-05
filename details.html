@@ -202,7 +202,6 @@
         .inst-badge { display: inline-block; border-radius: 4px; padding: 0.1rem 0.45rem; font-size: 0.7rem; font-weight: 700; margin-right: 0.25rem; vertical-align: middle; }
         .inst-sh { background: #dbeafe; color: #1e40af; }
         .inst-lh { background: #fef3c7; color: #92400e; }
-        .inst-gh { background: #dcfce7; color: #166534; }
         .inst-hf { background: #ede9fe; color: #5b21b6; }  /* 주택도시기금 */
         .inst-gov { background: #f1f5f9; color: #374151; } /* 국토부·지자체 */
         .inst-private { background: #fef3c7; color: #92400e; } /* 청약홈·민간 */
@@ -233,7 +232,6 @@
         .filter-tab.active { background: var(--primary-color, #4f46e5); border-color: var(--primary-color, #4f46e5); color: #fff; }
         .filter-tab[data-inst="SH"].active { background: #1e40af; border-color: #1e40af; }
         .filter-tab[data-inst="LH"].active { background: #92400e; border-color: #92400e; }
-        .filter-tab[data-inst="GH"].active { background: #166534; border-color: #166534; }
 
         /* ===== 조건 요약 카드 ===== */
         .summary-card {
@@ -343,7 +341,6 @@
                 </div>
                 <div class="toggle-group" id="tg-region">
                     <button class="toggle-btn selected" data-val="seoul">서울</button>
-                    <button class="toggle-btn" data-val="gyeonggi">경기</button>
                 </div>
                 <div class="region-district-wrap" id="district-wrapper">
                     <select id="district-city"><option value="">-- 구·시 선택 --</option></select>
@@ -478,7 +475,6 @@
                     </div>
                     <div class="toggle-group" id="tg-school-region">
                         <button class="toggle-btn selected" data-val="seoul">서울</button>
-                        <button class="toggle-btn" data-val="gyeonggi">경기</button>
                         <button class="toggle-btn" data-val="other">기타 지역</button>
                     </div>
                     <p class="hint">희망하우징은 서울 소재 대학만 신청 가능</p>
@@ -535,7 +531,6 @@
                 </div>
                 <div class="toggle-group" id="tg-workplace-region">
                     <button class="toggle-btn selected" data-val="seoul">서울</button>
-                    <button class="toggle-btn" data-val="gyeonggi">경기</button>
                     <button class="toggle-btn" data-val="other">기타 지역</button>
                 </div>
                 <p class="hint">청년안심주택: 서울 거주·재학·재직 중 하나 충족 시 신청 가능</p>
@@ -839,7 +834,6 @@
             <button class="filter-tab active" data-inst="ALL" onclick="filterResults('ALL')">전체</button>
             <button class="filter-tab" data-inst="SH" onclick="filterResults('SH')"><span class="inst-badge inst-sh" style="margin-right:0.2rem;">SH</span>서울</button>
             <button class="filter-tab" data-inst="LH" onclick="filterResults('LH')"><span class="inst-badge inst-lh" style="margin-right:0.2rem;">LH</span>전국</button>
-            <button class="filter-tab" data-inst="GH" onclick="filterResults('GH')"><span class="inst-badge inst-gh" style="margin-right:0.2rem;">GH</span>경기</button>
         </div>
 
         <!-- 결과 3단계 탭 -->
@@ -880,7 +874,7 @@
 
         <div class="notice-box">
             ⚠ 본 분석은 2026년 기준 참고용이며 실제 신청 전 공고문 원문을 반드시 확인하세요.<br>
-            SH <strong>1600-3456</strong> · LH <strong>1600-1004</strong> · GH <strong>031-250-7100</strong> · 주택도시기금 <strong>1599-0001</strong>
+            SH <strong>1600-3456</strong> · LH <strong>1600-1004</strong> · 주택도시기금 <strong>1599-0001</strong>
         </div>
         <button class="restart-btn" onclick="restart()">↩ 다시 분석하기</button>
     </div>
@@ -1728,8 +1722,6 @@ function runAnalysis() {
     const baseOk = seoulRes && homeless;
     const baseOk_sale = homeless;                  // SH 공공분양·나눔형: 서울·경기 거주 가능
     const baseOk_lh = homeless;                   // LH 전국 대상
-    const baseOk_gh = homeless;                   // GH 전국 신청 가능 (경기 거주 우선)
-    const ghPriority = gyeonggiRes;               // 경기 거주 시 GH 우선순위 가점
 
     // 1. 장기전세주택 (시프트)
     {
@@ -2696,92 +2688,6 @@ function runAnalysis() {
         add('LH 다자녀 매입임대', eligible, rank, '시세 30~50%', '자녀 성장 시까지 (최장 20년)', 'national', r, 'LH', 'rental');
     }
 
-    // === GH (경기도시공사) ===
-
-    // GH 29. 경기 행복주택 (청년) — GH
-    {
-        const r = [];
-        if (!baseOk_gh) r.push('무주택 필요');
-        if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
-        const isYouthElig = isYouth && (!isMarried || singleParent);
-        if (!isYouthElig) r.push('만 19~39세 미혼(또는 한부모) 필요');
-        const db29 = getE('GH_HAPPY_YOUTH');
-        const aLim29=db29.asset||27300, cLim29=db29.car||4563;
-        const aOk = totalAssets <= aLim29, carOk = carVal <= cLim29;
-        if (!aOk) r.push(`총자산 ${aLim29}만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 ${cLim29}만원 이하`);
-        let eligible = false, rank = '';
-        if (baseOk_gh && isYouthElig && aOk && carOk) {
-            const i1=db29.incRank1||80, i2=db29.inc||100;
-            if (under(i1)) { eligible = true; rank = ghPriority ? `1순위 (소득 ${i1}% 이하, 경기거주)` : `1순위 (소득 ${i1}% 이하)`; }
-            else if (under(i2)) { eligible = true; rank = `2순위 (소득 ${i2}% 이하)`; }
-            else r.push(`소득 ${i2}% 이하 필요`);
-        }
-        add('GH 경기 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 6년', 'youth', r, 'GH', 'rental');
-    }
-
-    // GH 30. 경기 행복주택 (신혼·신생아) — GH
-    {
-        const r = [];
-        if (!baseOk_gh) r.push('무주택 세대구성원 필요');
-        if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
-        const grp = isNewlywedStrict || infant || (youngChild && isMarried) || (singleParent && youngChild);
-        if (!grp) r.push('혼인 7년 이내 신혼(또는 예비신혼) 또는 신생아 가구 필요');
-        const db30 = getE('GH_HAPPY_NEWLYWED');
-        const aLim30=db30.asset||34500, cLim30=db30.car||4563;
-        const aOk = totalAssets <= aLim30, carOk = carVal <= cLim30;
-        if (!aOk) r.push(`총자산 ${aLim30}만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 ${cLim30}만원 이하`);
-        let eligible = false, rank = '';
-        if (baseOk_gh && grp && aOk && carOk) {
-            const i1=db30.incRank1||80, i2=db30.inc||100;
-            if (under(i1)) { eligible = true; rank = `1순위 (소득 ${i1}% 이하)`; }
-            else if (under(i2)) { eligible = true; rank = `2순위 (소득 ${i2}% 이하)`; }
-            else r.push(`소득 ${i2}% 이하 필요`);
-        }
-        add('GH 경기 행복주택 (신혼·신생아)', eligible, rank, '시세 60~80%', '최장 10년', 'newlywed', r, 'GH', 'rental');
-    }
-
-    // GH 31. 경기 국민임대 — GH
-    {
-        const r = [];
-        if (!baseOk_gh) r.push('무주택 세대구성원 필요');
-        if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
-        const db31 = getE('GH_NATIONAL_RENT');
-        const aLim31=db31.asset||34500, cLim31=db31.car||4563;
-        const aOk = totalAssets <= aLim31, carOk = carVal <= cLim31;
-        if (!aOk) r.push(`총자산 ${aLim31}만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 ${cLim31}만원 이하`);
-        let eligible = false, rank = '';
-        if (baseOk_gh && aOk && carOk) {
-            const r2=db31.incRank2||50, r3=db31.incRank3||70;
-            if (is1st) { eligible = true; rank = '1순위 (우대 대상)'; }
-            else if (under(r2)) { eligible = true; rank = `2순위 (소득 ${r2}% 이하)`; }
-            else if (under(r3)) { eligible = true; rank = `3순위 (소득 ${r3}% 이하)`; }
-            else r.push(`소득 ${r3}% 이하 필요`);
-        }
-        add('GH 경기 국민임대', eligible, rank, '시세 60~80%', '제한 없음', 'national', r, 'GH', 'rental');
-    }
-
-    // GH 32. 경기 매입임대 — GH
-    {
-        const r = [];
-        if (!baseOk_gh) r.push('무주택 세대구성원 필요');
-        if (!ghPriority) r.push('※ 경기 거주자 우선 (비경기 거주도 신청 가능, 가점 불이익)');
-        const db32 = getE('GH_BUY_YOUTH');
-        const aLim32=db32.assetRank2||34500, cLim32=db32.car||4563;
-        const aOk = totalAssets <= aLim32, carOk = carVal <= cLim32;
-        if (!aOk) r.push(`총자산 ${aLim32}만원 이하 (현재 ${totalAssets}만원)`);
-        if (!carOk) r.push(`자동차 ${cLim32}만원 이하`);
-        let eligible = false, rank = '';
-        if (baseOk_gh && aOk && carOk) {
-            if (isRecipient) { eligible = true; rank = '1순위 (수급자·차상위)'; }
-            else if (under(50)) { eligible = true; rank = '2순위 (소득 50% 이하)'; }
-            else r.push('소득 50% 이하 또는 수급자·차상위 필요');
-        }
-        add('GH 경기 매입임대', eligible, rank, '시세 30~50%', '최장 20년', 'national', r, 'GH', 'rental');
-    }
-
     // === 공공분양 ===
 
     // SH 공공분양 일반공급 (수도권 거주 무주택, 소득 100%/맞벌이 200%)
@@ -3699,14 +3605,12 @@ function runAnalysis() {
         const safeName = r.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
         const instBadgeMap = {
             'LH': '<span class="inst-badge inst-lh">LH</span>',
-            'GH': '<span class="inst-badge inst-gh">GH</span>',
             'SH': '<span class="inst-badge inst-sh">SH</span>',
             '주택도시기금': '<span class="inst-badge inst-hf">기금</span>',
             '주택도시보증공사': '<span class="inst-badge inst-hf">HUG</span>',
             '청약홈': '<span class="inst-badge inst-private">청약홈</span>',
             '국토교통부': '<span class="inst-badge inst-gov">국토부</span>',
             '서울시': '<span class="inst-badge inst-sh">서울</span>',
-            '경기도': '<span class="inst-badge inst-gh">경기</span>',
         };
         const instBadge = instBadgeMap[r.inst] || `<span class="inst-badge inst-gov">${r.inst}</span>`;
 
@@ -3785,7 +3689,6 @@ function runAnalysis() {
             const etcInstMap = {
                 'SH': '<span class="inst-badge inst-sh">SH</span>',
                 'LH': '<span class="inst-badge inst-lh">LH</span>',
-                'GH': '<span class="inst-badge inst-gh">GH</span>',
                 '청약홈': '<span class="inst-badge inst-private">청약홈</span>',
             };
             document.getElementById('grid-etc').innerHTML = etcList.map(a => {
@@ -5078,123 +4981,6 @@ const typeDetailData = {
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
 
-    // ===== GH (경기도시공사) =====
-    'GH 경기 행복주택 (청년)': {
-        title: 'GH 경기 행복주택 (청년)',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>경기도시공사(GH)가 공급하는 행복주택으로, <strong>만 19~39세 청년</strong>을 대상으로 경기도 내 직주근접 지역에 시세보다 저렴하게 공급합니다.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>임대료: 주변 시세 60~80%</li>
-                <li>거주 기간: 최초 2년, 재계약 최장 <strong>6년</strong></li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>만 19~39세 미혼 (또는 한부모)</li>
-                <li>무주택자</li>
-                <li>총자산 27,300만원 이하 / 자동차 4,563만원 이하</li>
-                <li>소득 80% 이하 (1순위) / 100% 이하 (2순위)</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>이런 분께 적합</h4>
-            <div class="help-case">경기도 직장·학교 근처에 저렴하게 살고 싶은 청년.</div>
-        </div>
-        <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>`
-    },
-    'GH 경기 행복주택 (신혼·신생아)': {
-        title: 'GH 경기 행복주택 (신혼·신생아)',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>경기도시공사(GH)의 행복주택 중 <strong>신혼부부·예비신혼·신생아 가구</strong>를 대상으로 공급하는 유형입니다.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>임대료: 주변 시세 60~80%</li>
-                <li>거주 기간: 최초 2년, 재계약 최장 <strong>10년</strong></li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>혼인 7년 이내 신혼부부·예비신혼 또는 신생아(2세 이하) 있는 가구</li>
-                <li>무주택 세대구성원</li>
-                <li>총자산 34,500만원 이하 / 자동차 4,563만원 이하</li>
-                <li>소득 80% 이하 (1순위) / 100% 이하 (2순위)</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>이런 분께 적합</h4>
-            <div class="help-case">경기도에서 신혼 생활을 시작하거나 아이를 키우고 싶은 신혼가구.</div>
-        </div>
-        <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>`
-    },
-    'GH 경기 국민임대': {
-        title: 'GH 경기 국민임대',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>경기도시공사(GH)가 공급하는 국민임대주택으로, 저소득 무주택 가구에 시세보다 저렴한 임대료로 <strong>장기 거주</strong>를 지원합니다.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>임대료: 주변 시세 60~80%</li>
-                <li>거주 기간: 기간 제한 없음 (계속 재계약 가능)</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>무주택 세대구성원</li>
-                <li>총자산 33,700만원 이하 / 자동차 4,563만원 이하</li>
-                <li>1순위: 수급자·차상위·한부모·장애인</li>
-                <li>2순위: 소득 50% 이하 / 3순위: 소득 70% 이하</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>이런 분께 적합</h4>
-            <div class="help-case">경기도에서 장기적으로 안정적인 임대주택에 거주하고 싶은 중저소득 가구.</div>
-        </div>
-        <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>`
-    },
-    'GH 경기 매입임대': {
-        title: 'GH 경기 매입임대',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>경기도시공사(GH)가 기존 주택을 매입하여 취약계층에 <strong>시세의 30~50%</strong>로 공급하는 임대주택입니다.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>임대료: 시세 30~50%</li>
-                <li>거주 기간: 최장 20년</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>무주택 세대구성원</li>
-                <li>총자산 34,500만원 이하 / 자동차 4,563만원 이하</li>
-                <li>1순위: 수급자·차상위</li>
-                <li>2순위: 소득 50% 이하</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>이런 분께 적합</h4>
-            <div class="help-case">경기도 저소득층으로 매우 저렴하게 주거를 마련하고 싶은 분.</div>
-        </div>
-        <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>`
-    },
 
     'SH 공공분양 (신생아 특별공급)': {
         title: 'SH 공공분양 신생아 특별공급',
@@ -6659,83 +6445,6 @@ const applyGuideData = {
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
 
-    // ===== GH (경기도시공사) =====
-    'GH 경기 행복주택 (청년)': {
-        title: 'GH 경기 행복주택 (청년) 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>GH 경기도시공사 청약 사이트(apply.gh.or.kr) 또는 마이홈포털에서 행복주택(청년) 공고 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>GH 청약 사이트 회원가입 후 공고 기간 내 청약 신청. 공인인증서 필요.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본</div>
-                    <div class="guide-doc-item">가족관계증명서</div>
-                    <div class="guide-doc-item">건강보험료 납부확인서 (소득 증빙)</div>
-                    <div class="guide-doc-item">무주택 서약서</div>
-                    <div class="guide-doc-item">재산세 과세증명서 (자산 확인)</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 심사 후 당첨자 선정. 지정 기간 내 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>
-        <a class="help-link" href="https://www.gh.or.kr" target="_blank">🔗 경기도시공사</a>`
-    },
-    'GH 경기 행복주택 (신혼·신생아)': {
-        title: 'GH 경기 행복주택 (신혼·신생아) 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>GH 청약 사이트(apply.gh.or.kr)에서 행복주택(신혼·신생아) 공고 확인. 공고마다 자격·단지가 다릅니다.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>GH 청약 사이트에서 신청. 예비신혼부부는 혼인 사실 입증 서류 추가 필요.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (세대원 전체)</div>
-                    <div class="guide-doc-item">혼인관계증명서 (또는 혼인예정 확인서)</div>
-                    <div class="guide-doc-item">가족관계증명서</div>
-                    <div class="guide-doc-item">소득·자산 확인 서류</div>
-                    <div class="guide-doc-item">출생증명서 (신생아 해당 시)</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>심사 후 당첨자 발표. 계약 기간 내 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>`
-    },
-    'GH 경기 국민임대': {
-        title: 'GH 경기 국민임대 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>GH 청약 사이트(apply.gh.or.kr) 또는 마이홈포털에서 국민임대 공고 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>GH 청약 사이트에서 청약 신청. 청약통장 가입 여부 확인 (국민임대는 통장 필요).</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본</div>
-                    <div class="guide-doc-item">소득 확인 서류</div>
-                    <div class="guide-doc-item">무주택 서약서</div>
-                    <div class="guide-doc-item">청약통장 증명서</div>
-                    <div class="guide-doc-item">우대 사유 증명서 (수급자·장애인 등 해당 시)</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 심사 → 당첨자 발표 → 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>`
-    },
-    'GH 경기 매입임대': {
-        title: 'GH 경기 매입임대 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>GH 홈페이지 또는 관할 시·군 공고 확인. 매입임대는 지자체 연계 신청도 있습니다.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청 방법</h4><p>GH 청약 사이트 또는 해당 시·군 주민센터 방문 신청. 공고에 명시된 방법 따를 것.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본</div>
-                    <div class="guide-doc-item">수급자·차상위 증명서 (1순위 해당 시)</div>
-                    <div class="guide-doc-item">소득 확인 서류 (2순위)</div>
-                    <div class="guide-doc-item">무주택 서약서</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>자격 심사 후 배정. 대기 기간이 있을 수 있습니다.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.gh.or.kr" target="_blank">🔗 GH 경기도시공사 청약</a>`
-    },
 
     'SH 공공분양 (신생아 특별공급)': {
         title: 'SH 공공분양 신생아 특별공급 신청 가이드',
