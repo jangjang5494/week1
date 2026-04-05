@@ -65,9 +65,9 @@ CREATE TABLE IF NOT EXISTS programs (
 
   -- 기관 및 지역
   institution   TEXT NOT NULL,
-  -- 'LH' | 'SH' | 'GH' | '서울시' | '경기도' | '국토교통부' | '주택도시기금' | '성남시'
+  -- 'LH' | 'SH' | '서울시' | '국토교통부' | '주택도시기금' | '성남시'
   region        TEXT NOT NULL DEFAULT '전국',
-  -- '전국' | '서울' | '경기' | '성남'
+  -- '전국' | '서울' | '성남'
   region_note   TEXT,                 -- 세부 지역 (예: '역세권', '인천 강화·옹진 제외')
 
   -- 기본 정보
@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS announcements (
   program_id  INTEGER REFERENCES programs (id) ON DELETE SET NULL,
   -- 매칭된 프로그램 (null=미매칭)
 
-  institution TEXT NOT NULL,  -- 'SH' | 'LH' | 'GH'
+  institution TEXT NOT NULL,  -- 'SH' | 'LH'
   seq         TEXT,           -- 원본 공고 번호
   title       TEXT NOT NULL,
   date        DATE,
@@ -265,7 +265,7 @@ CREATE TABLE IF NOT EXISTS user_conditions (
   car_value           BIGINT,
 
   -- 주거 현황
-  region              TEXT,   -- '서울' | '경기'
+  region              TEXT,   -- '서울'
   is_homeless         BOOLEAN DEFAULT TRUE,
   is_household_head   BOOLEAN DEFAULT TRUE,
   current_housing     TEXT,   -- '전세' | '월세' | '자가' | '비정상거처' | '기타'
@@ -290,7 +290,7 @@ CREATE TABLE IF NOT EXISTS user_conditions (
   -- 알림 설정
   alert_email         TEXT,
   interested_categories TEXT[],  -- ['임대주택', '금융지원', '주거비지원']
-  interested_regions  TEXT[],    -- ['서울', '경기']
+  interested_regions  TEXT[],    -- ['서울']
 
   created_at  TIMESTAMPTZ DEFAULT NOW(),
   updated_at  TIMESTAMPTZ DEFAULT NOW()
@@ -644,23 +644,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"marital_status":["미혼"],"homeless_required":true,"school_region_required":"서울","enrollment_required":true,"income_type":"도시근로자월평균","income_pct_rank2":100,"income_pct_rank3":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit_rank2":337000000,"asset_limit_rank3":104000000,"car_limit_rank2":45630000,"car_limit_rank3":0,"notes":["거주지 조건 없음 - 서울 소재 대학 재학이 핵심 조건","복학·입학 예정자(다음 학기) 포함","1순위: 수급자·한부모·차상위 (소득·자산 무관)","2순위: 본인+부모 합산 100%이하·자산33,700만·차량4,563만","3순위: 본인 소득 100%이하·자산10,400만·차량무소유","가점: 생계의료급여3점·부모무주택2점·장애인(본인)2점·소득50%이하3점·청약저축24회이상3점","시설: 연남·공릉원룸텔, 공릉·갈현·정릉기숙사"]}',
  '{"deposit_fixed":1090000,"rent_fixed_min":70000,"rent_fixed_max":140000,"period_years":2,"renewal_count":2,"period_max_years":6}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
- 'https://www.i-sh.co.kr/app/lay2/S48T1591C592/contents.do'),
-
--- GH 행복주택 청년
-('GH_HAPPY_YOUTH', '임대주택', '공공임대', '행복주택', 'GH', '경기', 'GH 경기 행복주택 (청년)',
- '만19~39세 경기 무주택 청년', TRUE,
- '{"age_min":19,"age_max":39,"marital_status":["미혼"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":273000000,"car_limit":45630000,"notes":["경기 거주 우선, 전국 신청 가능"]}',
- '{"rent_pct_min":60,"rent_pct_max":80,"period_years":6,"renewal_count":2}',
- '{"method":["온라인"],"url":"https://apply.gh.or.kr","contact":"1588-7013","period_type":"공고별"}',
- 'https://apply.gh.or.kr'),
-
--- GH 국민임대
-('GH_NATIONAL_RENT', '임대주택', '공공임대', '국민임대', 'GH', '경기', 'GH 경기 국민임대주택',
- '무주택 저소득 가구', TRUE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":70,"income_pct_1person":90,"income_pct_2person":80,"asset_limit":345000000,"car_limit":45630000,"notes":["경기 거주 우선, 전국 신청 가능"]}',
- '{"rent_pct_min":60,"rent_pct_max":80,"period_years":30}',
- '{"method":["온라인"],"url":"https://apply.gh.or.kr","contact":"1588-7013","period_type":"공고별"}',
- 'https://apply.gh.or.kr')
+ 'https://www.i-sh.co.kr/app/lay2/S48T1591C592/contents.do')
 ON CONFLICT (code) DO UPDATE SET
   category = EXCLUDED.category, subcategory = EXCLUDED.subcategory,
   program_type = EXCLUDED.program_type, institution = EXCLUDED.institution,
@@ -853,41 +837,8 @@ ON CONFLICT (code) DO UPDATE SET
 
 
 -- ============================================================
--- GH 임대주택 추가 ★2026-03-26 신혼·매입 유형 DB 연동
--- ============================================================
-INSERT INTO programs (code, category, subcategory, program_type, institution, region, name, target_summary, is_central,
-  eligibility, support_content, application_info, source_url) VALUES
-
--- GH 경기 행복주택 (신혼·신생아)
-('GH_HAPPY_NEWLYWED', '임대주택', '공공임대', '행복주택', 'GH', '경기', 'GH 경기 행복주택 (신혼·신생아)',
- '혼인7년이내·신생아가구·한부모 무주택 (경기 거주 우선)', TRUE,
- '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":120,"income_pct_2person":110,"asset_limit":345000000,"car_limit":45630000,"marriage_years_max":7,"newborn_income_bonus_pct":20,"notes":["경기 거주 우선, 전국 신청 가능","자녀1명 소득+10%p / 2명이상 +20%p 완화"]}',
- '{"rent_pct_min":60,"rent_pct_max":80,"period_max_years":14}',
- '{"method":["온라인"],"url":"https://apply.gh.or.kr","contact":"1588-7013","period_type":"공고별"}',
- 'https://apply.gh.or.kr'),
-
--- GH 경기 청년 매입임대
-('GH_BUY_YOUTH', '임대주택', '매입임대', '청년매입임대', 'GH', '경기', 'GH 경기 청년 매입임대',
- '대학생·취준생·만19~39세 청년 무주택 (경기 거주 우선)', TRUE,
- '{"age_min":19,"age_max":39,"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"asset_limit_rank2":345000000,"asset_limit_rank3":273000000,"car_limit":45630000,"notes":["1순위: 수급자·차상위·한부모 (소득·자산 없음)","2순위: 본인+부모 100%이하 / 자산34,500만원이하","3순위: 본인만 100%이하 / 자산27,300만원이하","경기 거주 우선, 전국 신청 가능"]}',
- '{"rent_pct_min":30,"rent_pct_max":50,"period_max_years":10}',
- '{"method":["온라인"],"url":"https://apply.gh.or.kr","contact":"1588-7013","period_type":"공고별"}',
- 'https://apply.gh.or.kr/sb/sr/sr7155/selectPbancRentHouseList.do')
-ON CONFLICT (code) DO UPDATE SET
-  category = EXCLUDED.category, subcategory = EXCLUDED.subcategory,
-  program_type = EXCLUDED.program_type, institution = EXCLUDED.institution,
-  region = EXCLUDED.region, name = EXCLUDED.name,
-  target_summary = EXCLUDED.target_summary, is_central = EXCLUDED.is_central,
-  eligibility = EXCLUDED.eligibility, support_content = EXCLUDED.support_content,
-  application_info = EXCLUDED.application_info, source_url = EXCLUDED.source_url,
-  updated_at = NOW();
-
-
--- ============================================================
 -- ★2026-03-26 기존 데이터 수정
 -- ============================================================
-
--- GH 자동차 기준: 전 기관 통일 4,563만원 (45,630,000) 적용
 
 -- SH 청년매입임대 자산기준 rank2/rank3 구조 추가
 -- 코드 로직: rank2(본인+부모소득)=33,700만원 / rank3(본인소득)=25,400만원
@@ -1237,15 +1188,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"region_required":"서울","income_type":"도시근로자월평균","income_pct":120,"notes":["청년안심주택 신규 입주예정자 전용","청년: 도시근로자 100%·자산2.54억 이하","신혼: 도시근로자 120%·자산3.37억 이하"]}',
  '{"loan_limit":45000000,"interest_min":0,"interest_max":0,"notes":["보증금 1억초과: 30%지원","보증금 1억이하: 50%지원","최대 4,500만원 무이자"]}',
  '{"method":["방문"],"contact":"02-793-0761","period_type":"수시","period_note":"입주예정일 3주전까지 종합지원센터 방문"}',
- 'https://soco.seoul.go.kr'),
-
--- 경기도 청년 이사비·중개보수비
-('GG_YOUTH_MOVING', '주거비지원', '이사비', '이사비지원', '경기도', '경기', '경기도 청년 이사비 및 중개보수비 지원',
- '만19~39세 경기 거주 무주택 청년 중위소득 120% 이하', FALSE,
- '{"age_min":19,"age_max":39,"homeless_required":true,"is_household_head":true,"region_required":"경기","income_type":"중위소득","income_pct":120,"notes":["2억이하 전월세","경기 전입 또는 경기내 이사"],"excluded":["부모소유주택임차","기초생활수급자"]}',
- '{"total_max":250000,"once_per_life":true,"notes":["이사비+중개보수비 실비 지원","최대 25만원"]}',
- '{"method":["온라인"],"contact":"070-8834-7060","period_type":"공고별","period_note":"연2회 공고"}',
- NULL)
+ 'https://soco.seoul.go.kr')
 ON CONFLICT (code) DO UPDATE SET
   category = EXCLUDED.category, subcategory = EXCLUDED.subcategory,
   program_type = EXCLUDED.program_type, institution = EXCLUDED.institution,
@@ -1310,14 +1253,6 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"deposit":1000000,"notes":["보증금 100만원","건설임대: 영구50년·국민30년·행복6년","매입임대: 최장 20년","전세임대: 수도권 최대 1.2~1.3억","22세이하 전세임대 무이자·5년내 50% 감면"]}',
  '{"method":["방문","온라인"],"contact":"1600-1004","period_type":"수시","period_note":"LH청약플러스 또는 행정복지센터"}',
  'https://www.myhome.go.kr'),
-
--- 경기도 취약계층 이사비 지원
-('GG_VULNERABLE_MOVING', '주거비지원', '이사비', '이사비지원', '경기도', '경기', '경기도 주거취약계층 이사비 지원',
- '경기도 내 비정상거처 3개월이상 거주 후 이주한 자', FALSE,
- '{"region_required":"경기","notes":["비정상거처(쪽방·고시원·여인숙·비닐하우스·컨테이너·반지하(침수위험)·옥탑방 등) 3개월 이상 거주 후 이주 필수","소득·자산 기준 없음","전입일 기준 3개월 이내 신청"]}',
- '{"total_max":400000,"once_per_life":true,"notes":["이사비+생필품 구입비","일회성 지원"]}',
- '{"method":["방문"],"contact":"031-8008-4114","period_type":"수시","period_note":"전입지 관할 읍·면·동 행정복지센터"}',
- 'https://housing.gg.go.kr'),
 
 -- 서울시 신혼부부 전세보증금반환보증 보증료 지원
 ('SEOUL_NEWLYWED_GUARANTEE', '보증료지원', '보증료지원', '보증료지원', '서울시', '서울', '서울시 신혼부부 전세보증금반환보증 보증료 지원',
