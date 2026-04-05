@@ -56,13 +56,32 @@ def parse_ymd(y, m, d):
         return None
 
 DATE_PAT  = r"(\d{4})\s*[.\-/]\s*(\d{1,2})\s*[.\-/]\s*(\d{1,2})"
+DATE_PAT_KO = r"(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일"
 RANGE_PAT = DATE_PAT + r"[^0-9]{0,30}?" + r"~" + r"[^0-9]{0,15}?" + DATE_PAT
+RANGE_PAT_KO = DATE_PAT_KO + r"[^0-9]{0,40}?" + r"~" + r"[^0-9]{0,20}?" + DATE_PAT_KO
 
 def extract_range(text):
+    # 숫자 구분자 방식 (YYYY.MM.DD ~ YYYY.MM.DD)
     m = re.search(RANGE_PAT, text)
     if m:
         s = parse_ymd(m.group(1), m.group(2), m.group(3))
         e = parse_ymd(m.group(4), m.group(5), m.group(6))
+        if s and e and e >= s:
+            return s, e
+    # 한글 방식 (2026년 4월 3일 ~ 2026년 4월 10일)
+    m = re.search(RANGE_PAT_KO, text)
+    if m:
+        s = parse_ymd(m.group(1), m.group(2), m.group(3))
+        e = parse_ymd(m.group(4), m.group(5), m.group(6))
+        if s and e and e >= s:
+            return s, e
+    # 한글 방식 — 연도 없이 월일만 쓰는 범위 (4월 3일 ~ 4월 10일), 올해 기준
+    PAT_KO_SHORT = r"(\d{1,2})\s*월\s*(\d{1,2})\s*일[^0-9~]{0,20}?~[^0-9]{0,10}?(\d{1,2})\s*월\s*(\d{1,2})\s*일"
+    m = re.search(PAT_KO_SHORT, text)
+    if m:
+        yr = date.today().year
+        s = parse_ymd(yr, m.group(1), m.group(2))
+        e = parse_ymd(yr, m.group(3), m.group(4))
         if s and e and e >= s:
             return s, e
     return None, None
