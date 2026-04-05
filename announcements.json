@@ -1,6 +1,6 @@
 {
   "updated": "2026-04-05",
-  "count": 45,
+  "count": 44,
   "needs_review_count": 4,
   "announcements": [
     {
@@ -252,11 +252,13 @@
         "토지임대부 사회주택"
       ],
       "location": "서울",
-      "status": "needs_review",
+      "status": "진행중",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302564&multi_itm_seq=2",
       "posted_date": "2026-04-03",
       "crawled_at": "2026-04-05",
-      "needs_pdf": true
+      "needs_pdf": true,
+      "apply_start": "2026-04-03",
+      "apply_end": "2026-04-10"
     },
     {
       "id": "sh_rental_92771773",
@@ -270,21 +272,6 @@
       "status": "needs_review",
       "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302563&multi_itm_seq=2",
       "posted_date": "2026-04-03",
-      "crawled_at": "2026-04-05",
-      "needs_pdf": true
-    },
-    {
-      "id": "sh_sale_300579d8",
-      "inst": "SH",
-      "source_key": "sh_sale",
-      "title": "[정정] 마곡지구 17단지 토지임대부 분양주택 입주자모집공고",
-      "types": [
-        "토지임대부 분양주택"
-      ],
-      "location": "서울",
-      "status": "needs_review",
-      "url": "https://www.i-sh.co.kr/main/lay2/program/S1T294C296/www/brd/m_244/view.do?seq=301479&multi_itm_seq=1",
-      "posted_date": "2026-03-10",
       "crawled_at": "2026-04-05",
       "needs_pdf": true
     },
