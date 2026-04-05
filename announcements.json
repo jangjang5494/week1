@@ -1,6 +1,6 @@
 {
   "updated": "2026-04-05",
-  "count": 46,
+  "count": 45,
   "needs_review_count": 4,
   "announcements": [
     {
@@ -242,21 +242,6 @@
       "crawled_at": "2026-04-05",
       "apply_end": "2026-04-10",
       "apply_start": "2026-03-27"
-    },
-    {
-      "id": "sh_rental_84d80581",
-      "inst": "SH",
-      "source_key": "sh_rental",
-      "title": "2026년 상반기 신혼·신생아 매입임대주택Ⅰ 입주대기자 모집공고(2026. 3. 18.) 최종 청약 경쟁률 게시",
-      "types": [
-        "신혼·신생아 매입임대 Ⅰ형"
-      ],
-      "location": "서울",
-      "status": "needs_review",
-      "url": "https://www.i-sh.co.kr/app/lay2/program/S48T561C563/www/brd/m_247/view.do?seq=302570&multi_itm_seq=2",
-      "posted_date": "2026-04-03",
-      "crawled_at": "2026-04-05",
-      "needs_pdf": true
     },
     {
       "id": "sh_rental_60e5236b",
