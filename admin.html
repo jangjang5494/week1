@@ -1005,6 +1005,7 @@ function renderTab1(data) {
         <td>
           <div class="ellipsis" title="${escHtml(r.title)}">
             ${r.url ? `<a class="link" href="${escHtml(r.url)}" target="_blank">↗</a> ` : ''}
+            ${r.district ? `<span style="font-size:11px;background:#f1f5f9;color:#475569;border-radius:3px;padding:1px 5px;margin-right:3px">${escHtml(r.district)}</span>` : ''}
             ${escHtml(r.title)} ${extraBadge}
           </div>
         </td>
@@ -1198,6 +1199,7 @@ function renderTab2(data) {
         <td>
           <div class="ellipsis" title="${escHtml(r.title)}">
             ${r.url ? `<a class="link" href="${escHtml(r.url)}" target="_blank">↗</a> ` : ''}
+            ${r.district ? `<span style="font-size:11px;background:#f1f5f9;color:#475569;border-radius:3px;padding:1px 5px;margin-right:3px">${escHtml(r.district)}</span>` : ''}
             ${escHtml(r.title)}
           </div>
         </td>

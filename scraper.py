@@ -734,6 +734,18 @@ def _parse_applyhome_supply_types(detail_html, base_type):
             types.append(key)
     return types
 
+def _parse_applyhome_district(detail_html):
+    """청약홈 상세페이지 공급위치에서 구/군 추출 → '강남구' 형태"""
+    if not detail_html:
+        return ""
+    m = re.search(r'공급위치\s*(?:<[^>]+>\s*){0,5}([가-힣\s\d\-\.]+(?:구|군))', detail_html, re.DOTALL)
+    if m:
+        addr = m.group(1).strip()
+        # 구/군 단위만 추출
+        gu = re.search(r'(\S+(?:구|군))', addr)
+        return gu.group(1) if gu else ""
+    return ""
+
 def _parse_applyhome_period(text):
     """'2026-04-03 ~ 2026-04-06' 또는 '2026.04.03 ~ 2026.04.06' 형식 파싱"""
     m = re.search(r"(\d{4})[-.](\d{2})[-.](\d{2})\s*~\s*(\d{4})[-.](\d{2})[-.](\d{2})", text)
@@ -810,6 +822,7 @@ def crawl_applyhome_apt(initial=False):
             time.sleep(DETAIL_SLEEP)
             base_type = detect_types_applyhome(name_raw, house_type)[0]
             types = _parse_applyhome_supply_types(detail_html, base_type) if detail_html else [base_type]
+            district = _parse_applyhome_district(detail_html)
 
             uid = name_raw + (apply_end.isoformat() if apply_end else "")
             ann = {
@@ -819,6 +832,7 @@ def crawl_applyhome_apt(initial=False):
                 "title":       name_raw,
                 "types":       types,
                 "location":    region,
+                "district":    district,
                 "status":      status,
                 "url":         detail_url,
                 "posted_date": today.isoformat(),
