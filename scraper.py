@@ -1189,6 +1189,18 @@ def main():
     # ── 만료 공고 제거 ────────────────────────────────────────────────────
     all_announcements = [a for a in all_announcements if should_keep(a, today)]
 
+    # ── 인천 공고 제거 (서울·경기 집중 서비스) ──────────────────────────────
+    INCHEON_KEYWORDS = ["인천"]
+    def is_incheon(ann):
+        title = ann.get("title", "")
+        district = ann.get("district", "") or ""
+        return any(kw in title or kw in district for kw in INCHEON_KEYWORDS)
+    before = len(all_announcements)
+    all_announcements = [a for a in all_announcements if not is_incheon(a)]
+    removed = before - len(all_announcements)
+    if removed:
+        print(f"  [인천 필터] {removed}건 제거")
+
     # ── 수동 오버라이드 병합 ──────────────────────────────────────────────
     overrides = load_manual_overrides()
     if overrides:
