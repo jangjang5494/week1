@@ -108,8 +108,8 @@
   <tr><td>category</td><td class="col-type">TEXT NOT NULL</td><td>'임대주택' | '금융지원' | '주거비지원' | '이자지원' | '보증료지원' | '기타복지' | '분양주택'</td></tr>
   <tr><td>subcategory</td><td class="col-type">TEXT</td><td>임대: '공공임대'|'매입임대'|'전세임대'|'민간임대' / 금융: '구입자금'|'전세자금'|'월세자금' 등</td></tr>
   <tr><td>program_type</td><td class="col-type">TEXT</td><td>'행복주택'|'국민임대'|'영구임대'|'통합공공임대'|'장기전세'|'매입임대'|'전세임대'|'디딤돌'|'버팀목' 등</td></tr>
-  <tr><td>institution</td><td class="col-type">TEXT NOT NULL</td><td>'LH'|'SH'|'GH'|'iH'|'서울시'|'경기도'|'인천시'|'국토교통부'|'주택도시기금'</td></tr>
-  <tr><td>region</td><td class="col-type">TEXT NOT NULL DEFAULT '전국'</td><td>'전국'|'서울'|'경기'|'인천'|'성남'</td></tr>
+  <tr><td>institution</td><td class="col-type">TEXT NOT NULL</td><td>'LH'|'SH'|'iH'|'서울시'|'인천시'|'국토교통부'|'주택도시기금'</td></tr>
+  <tr><td>region</td><td class="col-type">TEXT NOT NULL DEFAULT '전국'</td><td>'전국'|'서울'|'인천'|'성남'</td></tr>
   <tr><td>name</td><td class="col-type">TEXT NOT NULL</td><td>프로그램 공식 명칭</td></tr>
   <tr><td>target_summary</td><td class="col-type">TEXT</td><td>대상 한줄 요약</td></tr>
   <tr><td>eligibility</td><td class="col-type">JSONB</td><td>자격조건 (age, income, asset, car, region 등)</td></tr>
@@ -130,7 +130,7 @@
   <tr><th>컬럼</th><th>타입</th><th>설명</th></tr>
   <tr><td>id</td><td class="col-type">SERIAL PK</td><td></td></tr>
   <tr><td>program_id</td><td class="col-type">INTEGER → programs(id)</td><td>매칭된 프로그램 (null=미매칭)</td></tr>
-  <tr><td>institution</td><td class="col-type">TEXT NOT NULL</td><td>'SH'|'LH'|'GH'|'iH'</td></tr>
+  <tr><td>institution</td><td class="col-type">TEXT NOT NULL</td><td>'SH'|'LH'|'iH'</td></tr>
   <tr><td>seq</td><td class="col-type">TEXT</td><td>원본 공고 번호</td></tr>
   <tr><td>title</td><td class="col-type">TEXT NOT NULL</td><td></td></tr>
   <tr><td>date</td><td class="col-type">DATE</td><td></td></tr>
@@ -657,54 +657,13 @@
 </table>
 
 <!-- ====================================================== -->
-<h2>5. 임대주택 — GH (경기) · iH (인천)</h2>
+<h2>5. 임대주택 — iH (인천)</h2>
 <!-- ====================================================== -->
 
-<p class="section-meta">GH: apply.gh.or.kr / 1588-7013 | iH: ih.co.kr / 1522-0072</p>
-<p class="section-meta"><span class="warn">★GH 자동차 기준: 3,708만원 (LH 4,542만보다 엄격)</span></p>
+<p class="section-meta">iH: ih.co.kr / 1522-0072</p>
 
 <table>
   <tr><th>코드</th><th>이름</th><th>대상</th><th>소득기준</th><th>자산기준</th><th>임대료</th><th>기간</th><th>주요 조건</th></tr>
-  <tr>
-    <td><span class="code">GH_HAPPY_YOUTH</span></td>
-    <td><span class="badge gh">GH</span>경기 행복주택 (청년)</td>
-    <td>만19~39세 미혼 무주택 청년</td>
-    <td>도시근로자 100%</td>
-    <td>총 2.73억 / 차량 3,708만</td>
-    <td>시세 60~80%</td>
-    <td>6년(2회)</td>
-    <td>경기 거주 우선 (전국 신청 3순위)</td>
-  </tr>
-  <tr>
-    <td><span class="code">GH_HAPPY_NEWLYWED</span></td>
-    <td><span class="badge gh">GH</span>경기 행복주택 (신혼·신생아)</td>
-    <td>혼인7년이내·신생아·한부모 무주택</td>
-    <td>도시근로자 100% (기혼 120%)</td>
-    <td>총 3.45억 / 차량 3,708만</td>
-    <td>시세 60~80%</td>
-    <td>최장 14년</td>
-    <td>자녀1명 소득+10%p / 2명이상 +20%p / 경기 거주 우선</td>
-  </tr>
-  <tr>
-    <td><span class="code">GH_NATIONAL_RENT</span></td>
-    <td><span class="badge gh">GH</span>경기 국민임대</td>
-    <td>무주택 저소득 가구</td>
-    <td>도시근로자 70%</td>
-    <td>총 3.45억 / 차량 3,708만</td>
-    <td>시세 60~80%</td>
-    <td>30년</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td><span class="code">GH_BUY_YOUTH</span></td>
-    <td><span class="badge gh">GH</span>경기 청년 매입임대</td>
-    <td>대학생·취준생·만19~39세 청년 무주택</td>
-    <td>2순위: 100% / 3순위: 100%</td>
-    <td>2순위: 3.45억 / 3순위: 2.73억 / 차량 3,708만</td>
-    <td>시세 30~50%</td>
-    <td>최장 10년</td>
-    <td>1순위: 수급자·차상위·한부모 / 경기 거주 우선</td>
-  </tr>
   <tr>
     <td><span class="code">IH_NATIONAL_RENT</span></td>
     <td><span class="badge ih">iH</span>인천 국민임대</td>
@@ -1169,15 +1128,6 @@
 <table>
   <tr><th>코드</th><th>이름</th><th>기관</th><th>대상</th><th>소득기준</th><th>지원 내용</th><th>신청</th></tr>
   <tr>
-    <td><span class="code">GG_YOUTH_MOVING</span></td>
-    <td>경기도 청년 이사비·중개보수비</td>
-    <td><span class="badge gg">경기도</span></td>
-    <td>만19~39세 경기거주 무주택 청년</td>
-    <td>중위소득 120%</td>
-    <td>이사비+중개보수비 실비 (최대 25만원)</td>
-    <td>온라인 / 070-8834-7060 / 연2회 공고</td>
-  </tr>
-  <tr>
     <td><span class="code">GOV_VULNERABLE_RELOCATION</span></td>
     <td>비정상거처 거주자 이사비 지원</td>
     <td><span class="badge gov">국토부</span></td>
@@ -1185,15 +1135,6 @@
     <td>없음</td>
     <td>이사비+생필품 구입비 (최대 40만원, 일회성)</td>
     <td>새 주택 소재 주민센터 / 1600-1004</td>
-  </tr>
-  <tr>
-    <td><span class="code">GG_VULNERABLE_MOVING</span></td>
-    <td>경기도 취약계층 이사비 지원</td>
-    <td><span class="badge gg">경기도</span></td>
-    <td>경기도 내 비정상거처 3개월이상 거주 후 이주</td>
-    <td>없음</td>
-    <td>이사비+생필품 구입비 (최대 40만원, 일회성)</td>
-    <td>전입지 관할 행정복지센터 / 031-8008-4114</td>
   </tr>
   <tr>
     <td><span class="code">INCHEON_GUARANTEE_FEE</span></td>
@@ -1241,7 +1182,6 @@
   <tr><th>카테고리</th><th>기관별 프로그램</th><th>합계</th></tr>
   <tr><td>임대주택 — LH</td><td>행복주택4 + 건설4 + 매입9 + 전세6 = 23개</td><td>23</td></tr>
   <tr><td>임대주택 — SH</td><td>행복주택3 + 청년안심2 + 희망하우징1 + 건설3 + 매입4 + 전세4 = 17개</td><td>17</td></tr>
-  <tr><td>임대주택 — GH</td><td>행복주택2 + 국민임대1 + 청년매입1 = 4개</td><td>4</td></tr>
   <tr><td>임대주택 — iH</td><td>국민임대1 + 행복주택2 + 천원주택3 = 6개</td><td>6</td></tr>
   <tr><td>분양주택 — SH</td><td>나눔형3 + 공공분양4 = 7개</td><td>7</td></tr>
   <tr><td>분양주택 — LH</td><td>공공분양6개</td><td>6</td></tr>

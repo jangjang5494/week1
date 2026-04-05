@@ -1054,7 +1054,7 @@ def apply_overrides(announcements, overrides):
         if ann_id in ann_map:
             ann_map[ann_id].update(patch)
         else:
-            # 수동 전용 공고 (크롤러에 없음 — GH 등)
+            # 수동 전용 공고 (크롤러가 수집 못하는 공고)
             ann_map[ann_id] = patch
     result = list(ann_map.values())
     # 수동 공고 만료 여부는 manual_overrides에서 직접 관리
@@ -1179,8 +1179,6 @@ def main():
     all_announcements += crawl_applyhome_apt(initial)
     all_announcements += crawl_applyhome_remndr(initial)
     all_announcements += crawl_applyhome_other(initial)
-
-    # ── GH는 manual_overrides.json 에서만 관리 ──────────────────────────
 
     # ── 중복 제거 ────────────────────────────────────────────────────────
     print("\n중복 제거 중...")

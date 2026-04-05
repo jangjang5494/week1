@@ -168,7 +168,6 @@
   .inst { display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; }
   .inst-SH { background: #dbeafe; color: #1e40af; }
   .inst-LH { background: #fef3c7; color: #92400e; }
-  .inst-GH { background: #dcfce7; color: #166534; }
 
   /* ── 수동 추가 폼 ── */
   .form-card {
@@ -540,7 +539,6 @@
           <select id="e-region">
             <option value="">제한없음</option>
             <option value="서울">서울</option>
-            <option value="경기">경기</option>
             <option value="수도권">수도권</option>
           </select>
         </div>
@@ -577,7 +575,6 @@
           <select id="m-inst">
             <option value="SH">SH (서울주택도시공사)</option>
             <option value="LH">LH (한국토지주택공사)</option>
-            <option value="GH">GH (경기도시공사)</option>
           </select>
         </div>
         <div class="form-group">
@@ -651,10 +648,8 @@
         <option value="">전체 기관</option>
         <option value="SH">SH</option>
         <option value="LH">LH</option>
-        <option value="GH">GH</option>
         <option value="국토교통부">국토교통부</option>
         <option value="서울시">서울시</option>
-        <option value="경기도">경기도</option>
         <option value="기타">기타</option>
       </select>
       <label>
@@ -1190,7 +1185,6 @@ function renderTab2(data) {
   const TYPE_CHIPS = {
     'SH': ['청년안심주택','행복주택 (청년)','행복주택 (신혼부부)','장기전세주택','미리내집','국민임대','청년 매입임대','신혼 매입임대','신혼·신생아 매입임대 Ⅰ형','매입임대','전세임대','신혼·신생아','지원주택','희망하우징','장기안심주택','토지임대부 사회주택','리모델링형 사회주택','사회주택리츠','토지지원리츠','토지임대부 분양주택'],
     'LH': ['LH 행복주택 (청년)','LH 행복주택 (신혼부부)','LH 청년 매입임대','LH 신혼·신생아 매입임대 Ⅰ형','LH 신혼·신생아 매입임대 Ⅱ형','LH 기숙사형 청년주택','LH 공공분양 (일반공급)','LH 신혼희망타운','전세임대','신혼·신생아'],
-    'GH': ['GH 행복주택 (청년)','GH 행복주택 (신혼)','GH 국민임대','GH 매입임대'],
   };
   tbody.innerHTML = data.map(r => {
     const date = r.date ? r.date.slice(0,10) : (r.created_at ? r.created_at.slice(0,10) : '-');
@@ -1338,7 +1332,7 @@ async function parsePdf() {
 추출 형식:
 {
   "title": "공고 제목",
-  "institution": "SH|LH|GH 중 하나. 모르면 null",
+  "institution": "SH|LH 중 하나. 모르면 null",
   "types": ["행복주택","청년" 등 해당 태그들],
   "apply_start": "YYYY-MM-DD 또는 null",
   "apply_end": "YYYY-MM-DD 또는 null",
