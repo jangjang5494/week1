@@ -1220,14 +1220,6 @@ def main():
 
     # ── 저장 ─────────────────────────────────────────────────────────────
     needs_review = [a for a in all_announcements if a.get("status") == "needs_review"]
-    output = {
-        "updated":       today.isoformat(),
-        "count":         len(all_announcements),
-        "needs_review_count": len(needs_review),
-        "announcements": all_announcements,
-    }
-    with open("announcements.json", "w", encoding="utf-8") as f:
-        json.dump(output, f, ensure_ascii=False, indent=2)
 
     # ── Supabase 저장 ────────────────────────────────────────────────
     save_to_supabase(all_announcements)
