@@ -736,10 +736,30 @@
             <input type="text" id="pe-region" placeholder="예: 서울, 경기, 전국">
           </div>
           <div class="form-group">
+            <label>세부 지역</label>
+            <input type="text" id="pe-region-note" placeholder="예: 역세권, 강화·옹진 제외">
+          </div>
+          <div class="form-group">
+            <label>subcategory</label>
+            <input type="text" id="pe-subcategory" placeholder="예: 공공임대, 전세자금">
+          </div>
+          <div class="form-group">
+            <label>program_type</label>
+            <input type="text" id="pe-program-type" placeholder="예: 행복주택, 버팀목">
+          </div>
+          <div class="form-group">
             <label>활성 여부</label>
             <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin-top:6px;">
               <input type="checkbox" id="pe-is-active"> 활성
             </label>
+          </div>
+          <div class="form-group full">
+            <label>대상 요약</label>
+            <input type="text" id="pe-target-summary" placeholder="예: 만19~39세 청년 무주택자">
+          </div>
+          <div class="form-group full">
+            <label>상세 설명</label>
+            <textarea id="pe-description" style="height:60px;"></textarea>
           </div>
           <div class="form-group full">
             <label>출처 URL</label>
@@ -1741,12 +1761,17 @@ function openProgEdit(code) {
   document.getElementById('prog-edit-title').textContent = row.name || '프로그램 편집';
 
   // 기본정보
-  document.getElementById('pe-name').value        = row.name || '';
-  document.getElementById('pe-category').value    = row.category || '임대주택';
-  document.getElementById('pe-institution').value = row.institution || '';
-  document.getElementById('pe-region').value      = row.region || '';
-  document.getElementById('pe-is-active').checked = !!row.is_active;
-  document.getElementById('pe-source-url').value  = row.source_url || '';
+  document.getElementById('pe-name').value          = row.name || '';
+  document.getElementById('pe-category').value      = row.category || '임대주택';
+  document.getElementById('pe-institution').value   = row.institution || '';
+  document.getElementById('pe-region').value        = row.region || '';
+  document.getElementById('pe-region-note').value   = row.region_note || '';
+  document.getElementById('pe-subcategory').value   = row.subcategory || '';
+  document.getElementById('pe-program-type').value  = row.program_type || '';
+  document.getElementById('pe-is-active').checked   = !!row.is_active;
+  document.getElementById('pe-target-summary').value = row.target_summary || '';
+  document.getElementById('pe-description').value   = row.description || '';
+  document.getElementById('pe-source-url').value    = row.source_url || '';
 
   // eligibility JSON
   const elig = row.eligibility || {};
@@ -1817,7 +1842,12 @@ async function saveProgEdit() {
     category:         document.getElementById('pe-category').value,
     institution:      document.getElementById('pe-institution').value.trim(),
     region:           document.getElementById('pe-region').value.trim(),
+    region_note:      document.getElementById('pe-region-note').value.trim() || null,
+    subcategory:      document.getElementById('pe-subcategory').value.trim() || null,
+    program_type:     document.getElementById('pe-program-type').value.trim() || null,
     is_active:        document.getElementById('pe-is-active').checked,
+    target_summary:   document.getElementById('pe-target-summary').value.trim() || null,
+    description:      document.getElementById('pe-description').value.trim() || null,
     source_url:       document.getElementById('pe-source-url').value.trim() || null,
     eligibility,
     support_content:  supportContent,
