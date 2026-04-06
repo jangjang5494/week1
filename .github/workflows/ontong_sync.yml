@@ -1,8 +1,8 @@
 name: 온통청년 정책 동기화
 
 on:
-  schedule:
-    - cron: '0 0 * * 1'   # 매주 월요일 오전 9시 KST (UTC 00:00)
+  # schedule:
+  #   - cron: '0 0 * * 1'   # 매주 월요일 오전 9시 KST (UTC 00:00) — 비활성화
   workflow_dispatch:
     inputs:
       force_update:
