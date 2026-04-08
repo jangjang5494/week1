@@ -893,6 +893,48 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T5554C7336/contents.do'),
 
+-- ── SH 토지임대부 분양주택 ────────────────────────────────────
+
+-- 토지임대부 일반공급
+('SH_LAND_LEASE_GENERAL', '분양주택', '공공분양', '토지임대부', 'SH', '서울', 'SH 토지임대부 분양주택 (일반공급)',
+ '수도권 거주 무주택세대구성원, 청약저축 가입자', FALSE,
+ '{"homeless_required":true,"region_required":"수도권","income_type":"도시근로자월평균","income_pct":100,"income_pct_married":200,"asset_limit":354000000,"newborn_income_bonus_pct":20,"notes":["토지는 SH 소유, 건물만 분양 (토지 임대료 월 납부)","SH 환매 조건 (처분 시 SH에 우선 매각)","청약저축 또는 주택청약종합저축 가입 필수"]}',
+ '{"notes":["분양가 저렴(토지비 제외)","토지 임대료 월 납부 조건"]}',
+ '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별","source_page":"/main/lay2/S1T5832C5893/contents.do"}',
+ 'https://www.i-sh.co.kr/main/lay2/S1T5832C5893/contents.do'),
+
+-- 토지임대부 청년 특별공급
+('SH_LAND_LEASE_YOUTH', '분양주택', '공공분양', '토지임대부', 'SH', '서울', 'SH 토지임대부 분양주택 (청년 특별공급)',
+ '만19~39세 미혼 무주택 청년, 청약6개월이상', FALSE,
+ '{"age_min":19,"age_max":39,"marital_status":["미혼"],"homeless_required":true,"region_required":"수도권","income_type":"도시근로자월평균","income_pct":140,"asset_limit_self":270000000,"asset_limit_parents":1011000000,"savings_min_rank1":6,"notes":["본인자산 27,000만원 이하 / 부모자산 101,100만원 이하","토지는 SH 소유, 건물만 분양","생애 1회 제한"]}',
+ '{"once_per_life":true}',
+ '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
+ 'https://www.i-sh.co.kr/main/lay2/S1T5832C5893/contents.do'),
+
+-- 토지임대부 신혼부부 특별공급
+('SH_LAND_LEASE_NEWLYWED', '분양주택', '공공분양', '토지임대부', 'SH', '서울', 'SH 토지임대부 분양주택 (신혼부부 특별공급)',
+ '혼인7년이내·예비신혼·6세이하자녀 한부모 무주택, 청약6개월이상', FALSE,
+ '{"marital_status":["신혼(7년이내)","예비신혼","한부모"],"homeless_required":true,"region_required":"수도권","income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"asset_limit":354000000,"marriage_years_max":7,"savings_min_rank1":6,"notes":["자녀 있으면 1순위 / 없으면 2순위","토지는 SH 소유, 건물만 분양","생애 1회 제한"]}',
+ '{"once_per_life":true}',
+ '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
+ 'https://www.i-sh.co.kr/main/lay2/S1T5832C5893/contents.do'),
+
+-- 토지임대부 신생아 특별공급
+('SH_LAND_LEASE_NEWBORN', '분양주택', '공공분양', '토지임대부', 'SH', '서울', 'SH 토지임대부 분양주택 (신생아 특별공급)',
+ '2세 미만 자녀(태아·입양아 포함) 보유 무주택가구', FALSE,
+ '{"homeless_required":true,"region_required":"수도권","income_type":"도시근로자월평균","income_pct":140,"income_pct_married":200,"asset_limit":354000000,"newborn_required":true,"newborn_income_bonus_pct":20,"savings_min_rank1":6,"notes":["2세 미만 자녀(태아·입양아 포함) 보유 필수","토지는 SH 소유, 건물만 분양","생애 1회 제한"]}',
+ '{"once_per_life":true}',
+ '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
+ 'https://www.i-sh.co.kr/main/lay2/S1T5832C5893/contents.do'),
+
+-- 토지임대부 생애최초 특별공급
+('SH_LAND_LEASE_FIRST', '분양주택', '공공분양', '토지임대부', 'SH', '서울', 'SH 토지임대부 분양주택 (생애최초 특별공급)',
+ '세대원 전원 주택 미소유, 혼인 중이거나 자녀 보유, 소득세 5년 납부', FALSE,
+ '{"homeless_required":true,"life_first_required":true,"region_required":"수도권","income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"asset_limit":354000000,"savings_amount_min":6000000,"notes":["세대원 전원 과거·현재 주택 미소유 필수 (생애최초)","혼인 중이거나 자녀 보유 조건","근로자·자영업자 5년이상 소득세 납부","청약저축 600만원 이상","토지는 SH 소유, 건물만 분양","생애 1회 제한"]}',
+ '{"once_per_life":true}',
+ '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
+ 'https://www.i-sh.co.kr/main/lay2/S1T5832C5893/contents.do'),
+
 -- 공공분양 일반공급
 ('SH_PUBLIC_SALE_GENERAL', '분양주택', '공공분양', '공공분양', 'SH', '서울', 'SH 공공분양주택 (일반공급)',
  '수도권 거주 무주택세대구성원, 청약저축 가입자', TRUE,
