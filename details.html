@@ -2364,52 +2364,50 @@ function runAnalysis() {
         add('LH 영구임대', eligible, rank, '시세 약 30%', '제한 없음', 'national', r, 'LH', 'rental');
     }
 
-    // LH 22. 행복주택 (청년) — LH
+    // LH 22+23. 행복주택 (대학생 + 청년 + 신혼부부 통합) — 하나의 공고에 여러 유형 포함
     {
+        const eligibleTypes = [];
         const r = [];
         if (!baseOk_lh) r.push('무주택 필요');
-        if (isMarried && !singleParent) r.push('미혼 또는 한부모가족');
-        const db22 = getE('LH_HAPPY_YOUTH');
-        const aLim22=db22.asset||25100, cLim22=db22.car||4542;
-        // 사회초년생(취업 후 5년 이내)이면 나이 제한(39세) 없이 신청 가능
-        const ageOk22 = isYouth || isSocialNewcomer;
-        if (!ageOk22) r.push('만 19~39세 또는 사회초년생(취업 후 5년 이내) 필요');
-        let eligible = false, rank = '';
-        if (baseOk_lh && ageOk22 && (!isMarried || singleParent)) {
-            if (underInc(db22) && totalAssets <= aLim22 && carVal <= cLim22) {
-                eligible = true; rank = '청약저축 필요' + (subCount >= 24 ? ' (가점 최상)' : '') + (isSocialNewcomer&&!isYouth?' (사회초년생, 나이 무관)':'');
-            } else {
-                if (!underInc(db22)) r.push(`소득 ${db22.inc||100}%(1인 ${db22.inc1p||120}%) 이하 필요`);
-                if (totalAssets > aLim22) r.push(`총자산 ${aLim22}만원 이하 필요`);
-                if (carVal > cLim22) r.push(`자동차 ${cLim22}만원 이하 필요`);
+        // 대학생·취업준비생
+        const dbs = getE('LH_HAPPY_STUDENT');
+        const aLimS=dbs.asset||10800;
+        if (baseOk_lh && (isStudent||isJobSeeker) && !isMarried) {
+            const incOkS = underInc(dbs);
+            if (incOkS && totalAssets <= aLimS && carVal === 0) {
+                eligibleTypes.push(isStudent ? '대학생' : '취업준비생');
+            } else if (incOkS && totalAssets <= aLimS && carVal > 0) {
+                r.push('대학생·취업준비생: 자동차 소유 불가');
             }
         }
-        add('LH 행복주택 (청년)', eligible, rank, '시세 60~80%', '최장 10년', 'youth', r, 'LH', 'rental');
-    }
-
-    // LH 23. 행복주택 (신혼부부) — LH
-    {
-        const r = [];
-        if (!baseOk_lh) r.push('무주택 세대구성원 필요');
-        const grp = isNewlywedStrict || (singleParent && youngChild);
-        if (!grp) r.push('혼인 7년 이내 신혼부부·예비신혼·6세이하 자녀 한부모 해당');
+        // 청년·사회초년생
+        const db22 = getE('LH_HAPPY_YOUTH');
+        const aLim22=db22.asset||25100, cLim22=db22.car||4542;
+        const ageOk22 = isYouth || isSocialNewcomer;
+        if (baseOk_lh && ageOk22 && (!isMarried || singleParent)) {
+            if (underInc(db22) && totalAssets <= aLim22 && carVal <= cLim22) {
+                eligibleTypes.push('청년' + (isSocialNewcomer&&!isYouth?' (사회초년생)':'') + (subCount>=24?' [가점최상]':''));
+            }
+        }
+        // 신혼부부·한부모
         const db23 = getE('LH_HAPPY_NEWLYWED');
         const aLim23=db23.asset||34500, cLim23=db23.car||4542;
-        let eligible = false, rank = '';
-        if (baseOk_lh && grp) {
+        const grp23 = isNewlywedStrict || (singleParent && youngChild);
+        if (baseOk_lh && grp23) {
             const incLim23 = dualInc
                 ? (hhSize===2 && db23.incM2p ? db23.incM2p : db23.incM||120)
                 : (hhSize===1 ? db23.inc1p||120 : hhSize===2 ? db23.inc2p||110 : db23.inc||100);
-            const incOk = under(incLim23);
-            if (incOk && totalAssets <= aLim23 && carVal <= cLim23) {
-                eligible = true; rank = `청약저축 필요 (${dualInc?'맞벌이 ':''}${incLim23}%)`;
-            } else {
-                if (!incOk) r.push(`소득 ${incLim23}% 이하 필요`);
-                if (totalAssets > aLim23) r.push(`총자산 ${aLim23}만원 이하 필요`);
-                if (carVal > cLim23) r.push(`자동차 ${cLim23}만원 이하 필요`);
+            if (under(incLim23) && totalAssets <= aLim23 && carVal <= cLim23) {
+                eligibleTypes.push(`신혼부부 (${dualInc?'맞벌이 ':''}소득 ${incLim23}%)`);
             }
         }
-        add('LH 행복주택 (신혼부부)', eligible, rank, '시세 60~80%', '최장 14년 (자녀 1명+)', 'newlywed', r, 'LH', 'rental');
+        const eligible = eligibleTypes.length > 0;
+        const rank = eligible ? eligibleTypes.join(' · ') : '';
+        if (!eligible && baseOk_lh) {
+            if (!ageOk22 && !grp23 && !isStudent && !isJobSeeker)
+                r.push('만 19~39세 청년·사회초년생, 대학생·취업준비생, 또는 신혼부부 해당 필요');
+        }
+        add('LH 행복주택', eligible, rank, '시세 60~80%', '대학생 최장 6년 / 청년 최장 10년 / 신혼 최장 14년', 'youth', r, 'LH', 'rental');
     }
 
     // LH 24. 청년 매입임대 — LH
@@ -4405,56 +4403,28 @@ const typeDetailData = {
         </div>
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
-    'LH 행복주택 (청년)': {
-        title: 'LH 행복주택 (청년)',
+    'LH 행복주택': {
+        title: 'LH 행복주택',
         body: `
         <div class="help-section">
             <h4>어떤 주택인가요?</h4>
-            <p>LH가 전국에 공급하는 청년용 소형 공공주택. 역세권·직주근접 위치에 시세 60~80%로 공급. SH 행복주택과 자격 기준이 유사하지만 전국 단지가 있습니다.</p>
+            <p>LH가 전국에 공급하는 공공주택. 역세권·직주근접 위치에 시세 60~80%로 공급. 대학생·청년·신혼부부 등 다양한 유형이 하나의 공고로 모집됩니다.</p>
         </div>
         <div class="help-section">
             <h4>임대 조건</h4>
             <ul>
                 <li>임대료: 시세 60~80%</li>
-                <li>최장 거주 기간: 청년 10년 / 사회초년생 10년</li>
+                <li>거주 기간: 대학생 최장 6년 / 청년·사회초년생 최장 10년 / 신혼부부 기본 6년 (자녀 1명 8년, 2명 이상 14년)</li>
             </ul>
         </div>
         <div class="help-section">
-            <h4>자격 요건</h4>
+            <h4>유형별 자격 요건</h4>
             <ul>
-                <li>만 19~39세 미혼 무주택 청년</li>
-                <li>소득 100% 이하 (1인 120%)</li>
-                <li>총자산 27,300만원 이하 / 자동차 4,563만원 이하</li>
-                <li>주택청약저축 가입 필수</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>이런 분께 적합</h4>
-            <div class="help-case">서울 외 수도권·지방 취업 청년. LH 공급 단지는 전국에 분포하여 선택 폭이 넓음.</div>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 행복주택 (신혼부부)': {
-        title: 'LH 행복주택 (신혼부부)',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>LH가 전국에 공급하는 신혼부부용 공공주택. 시세 60~80%로 자녀 있으면 최장 14년까지 거주 가능.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>임대료: 시세 60~80%</li>
-                <li>거주 기간: 기본 6년, 자녀 1명 8년, 2명 이상 14년</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>자격 요건</h4>
-            <ul>
-                <li>혼인 7년 이내 신혼부부, 예비신혼, 6세이하 자녀 한부모</li>
-                <li>소득: 외벌이 100% 이하 / 맞벌이 120% 이하</li>
-                <li>총자산 33,700만원 이하 / 자동차 4,563만원 이하</li>
-                <li>주택청약저축 가입 필수</li>
+                <li><b>대학생</b>: 재학·입학예정자 또는 취업준비생(졸업 후 2년이내) / 미혼 무주택 / 소득 100% 이하 (1인 120%) / 자산 10,800만원 이하 / <span style="color:#e74c3c">자동차 소유 불가</span></li>
+                <li><b>청년</b>: 만 19~39세 미혼 무주택 / 소득 100% 이하 (1인 120%) / 자산 25,100만원 이하 / 자동차 4,542만원 이하</li>
+                <li><b>사회초년생</b>: 소득활동 5년 이내, 나이 무관 / 동일 소득·자산 기준</li>
+                <li><b>신혼부부·한부모</b>: 혼인 7년 이내 또는 예비신혼 / 외벌이 100% / 맞벌이 120% / 자산 34,500만원 이하</li>
+                <li>주택청약저축 가입 필수 (공통)</li>
             </ul>
         </div>
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
@@ -6308,43 +6278,28 @@ const applyGuideData = {
         </div>
         <a class="help-link" href="https://www.lh.or.kr" target="_blank">🔗 LH 한국토지주택공사</a>`
     },
-    'LH 행복주택 (청년)': {
-        title: 'LH 행복주택 (청년) 신청 가이드',
+    'LH 행복주택': {
+        title: 'LH 행복주택 신청 가이드',
         body: `
         <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스(apply.lh.or.kr) 또는 마이홈포털(myhome.go.kr)에서 행복주택(청년) 공고 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스(apply.lh.or.kr) 또는 마이홈포털(myhome.go.kr)에서 「행복주택」 공고 확인. 대학생·청년·신혼부부 유형이 함께 모집됩니다.</p></div></div>
             <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>LH청약플러스에서 회원가입 후 청약 신청. 공인인증서 필요.</p></div></div>
             <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                <div class="guide-docs"><div class="guide-docs-title">공통 서류</div>
                     <div class="guide-doc-item">주민등록등본</div>
-                    <div class="guide-doc-item">재직증명서 또는 재학증명서</div>
                     <div class="guide-doc-item">소득 확인 서류 (건강보험료 납부확인서)</div>
                     <div class="guide-doc-item">무주택 서약서</div>
                     <div class="guide-doc-item">청약저축 납입확인서</div>
                 </div>
-                <p class="hint warn">취업 1년 미만이면 재직증명서 + 급여명세서로 대체 가능.</p>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 내 추첨 또는 배점 선정 → 서류 심사 → 계약.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 행복주택 (신혼부부)': {
-        title: 'LH 행복주택 (신혼부부) 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스 또는 마이홈포털에서 행복주택(신혼부부) 공고 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>LH청약플러스에서 청약 신청.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (부부 모두)</div>
-                    <div class="guide-doc-item">혼인관계증명서 (7년 이내 증빙)</div>
-                    <div class="guide-doc-item">소득 확인 서류 (건강보험료 납부확인서)</div>
-                    <div class="guide-doc-item">무주택 서약서 (부부 모두)</div>
-                    <div class="guide-doc-item">출생증명서 (자녀 있는 경우)</div>
-                    <div class="guide-doc-item">청약저축 납입확인서</div>
+                <div class="guide-docs"><div class="guide-docs-title">유형별 추가 서류</div>
+                    <div class="guide-doc-item">대학생: 재학증명서 (입학예정자는 합격통지서)</div>
+                    <div class="guide-doc-item">취업준비생: 졸업증명서 + 졸업 후 2년 이내 증빙</div>
+                    <div class="guide-doc-item">청년·사회초년생: 재직증명서 (취업 1년 미만 시 급여명세서 대체 가능)</div>
+                    <div class="guide-doc-item">신혼부부: 혼인관계증명서 (부부 모두 주민등록등본)</div>
+                    <div class="guide-doc-item">자녀 있는 경우: 출생증명서</div>
                 </div>
             </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>추첨 → 서류 심사 → 임대차 계약.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>순위 내 추첨 또는 배점 선정 → 서류 심사 → 임대차 계약.</p></div></div>
         </div>
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
