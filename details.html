@@ -2806,139 +2806,56 @@ function runAnalysis() {
         add('SH 토지임대부 분양주택', eligible, rank, '토지비 제외 저렴 분양 + 토지 임대료', '분양', 'sale-general', r, 'SH', 'sale');
     }
 
-    // LH 공공분양 일반공급
+    // LH 공공분양 (통합 — 신생아·신혼·생애최초·다자녀·노부모·일반 하나의 공고)
     {
+        const eligibleTypes = [];
         const r = [];
         const dbLpg = getE('LH_PUBLIC_SALE_GENERAL');
         if (!homeless) r.push('무주택 세대구성원 필요');
-        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
         const aOk = realEstate <= (dbLpg.assetReal||21550), carOk = carVal <= (dbLpg.car||4563);
         if (!aOk) r.push(`부동산 ${dbLpg.assetReal||21550}만원 이하 필요`);
         if (!carOk) r.push(`자동차 ${dbLpg.car||4563}만원 이하 필요`);
-        let eligible = false, rank = '';
-        if (homeless && subCount >= 6 && aOk && carOk) {
-            const incOk = under(dbLpg.inc||100);
-            if (incOk) {
-                eligible = true;
+
+        if (homeless && aOk && carOk) {
+            // 신생아 특공 (소득 140%, 청약 6회+)
+            const dbLpsb = getE('LH_PUBLIC_SALE_NEWBORN');
+            if (infant && subCount >= (dbLpsb.savingsRank1||6)
+                && (dualInc ? under(dbLpsb.incM||200) : under(dbLpsb.inc||140)))
+                eligibleTypes.push('신생아 특공');
+            // 신혼부부 특공 (소득 130%, 청약 6회+)
+            const dbLpsn = getE('LH_PUBLIC_SALE_NEWLYWED');
+            const incBonusN = infant ? (dbLpsn.newbornIncBonus||20) : 0;
+            if ((isNewlywedStrict || singleParent) && subCount >= (dbLpsn.savingsRank1||6)
+                && (dualInc ? under(dbLpsn.incM||200) : under((dbLpsn.inc||130) + incBonusN)))
+                eligibleTypes.push('신혼부부 특공' + (infant ? ' (신생아우선)' : ''));
+            // 생애최초 특공 (소득 130%, 청약 600만+)
+            const dbLpsf = getE('LH_PUBLIC_SALE_FIRST');
+            const incBonusF = infant ? (dbLpsf.newbornIncBonus||20) : 0;
+            if (lifeFirst && taxPaid5yr && subAmountEnough
+                && (dualInc ? under(dbLpsf.incM||200) : under((dbLpsf.inc||130) + incBonusF)))
+                eligibleTypes.push('생애최초 특공');
+            // 다자녀 특공 (소득 120%, 미성년 자녀 2명+, 청약 6회+)
+            const dbLpsc = getE('LH_PUBLIC_SALE_CHILDREN');
+            const incBonusC = infant ? (dbLpsc.newbornIncBonus||20) : 0;
+            if (childCnt >= (dbLpsc.childrenMin||2) && subCount >= (dbLpsc.savingsRank1||6)
+                && (dualInc ? under(dbLpsc.incM||200) : under((dbLpsc.inc||120) + incBonusC)))
+                eligibleTypes.push('다자녀 특공' + (childCnt >= 3 ? ' (3명이상 우선)' : ''));
+            // 노부모부양 특공 (소득 120%, 세대주, 청약 12회+)
+            const dbLpse = getE('LH_PUBLIC_SALE_ELDERLY');
+            const incBonusE = infant ? (dbLpse.newbornIncBonus||20) : 0;
+            if (isHouseholdHead && subCount >= (dbLpse.savingsRank1||12)
+                && (dualInc ? under(dbLpse.incM||200) : under((dbLpse.inc||120) + incBonusE)))
+                eligibleTypes.push('노부모부양 특공');
+            // 일반공급 (소득 100%, 청약 6회+)
+            if (subCount >= 6 && under(dbLpg.inc||100)) {
                 const r1 = dbLpg.savingsRank1||12;
-                rank = subCount >= r1 ? `1순위 (납입 ${r1}회 이상)` : '2순위 (납입 6~11회)';
-            } else r.push(`소득 ${dbLpg.inc||100}% 이하 필요`);
+                eligibleTypes.push(subCount >= r1 ? '일반 1순위' : '일반 2순위');
+            }
         }
-        add('LH 공공분양 (일반공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-general', r, 'LH', 'sale');
-    }
 
-    // LH 공공분양 신혼특공
-    {
-        const r = [];
-        const dbLpsn = getE('LH_PUBLIC_SALE_NEWLYWED');
-        if (!homeless) r.push('무주택 세대구성원 필요');
-        const grp = isNewlywedStrict || singleParent;
-        if (!grp) r.push('신혼(7년이내)·예비신혼·한부모 필요');
-        const r1n = dbLpsn.savingsRank1||6;
-        if (subCount < r1n) r.push(`청약저축 ${r1n}회 이상 납입 필요`);
-        const incBonusN = infant ? (dbLpsn.newbornIncBonus||20) : 0;
-        const incBaseN = (dbLpsn.inc||130) + incBonusN;
-        const aOk = realEstate <= (dbLpsn.assetReal||21550), carOk = carVal <= (dbLpsn.car||4563);
-        if (!aOk) r.push(`부동산 ${dbLpsn.assetReal||21550}만원 이하 필요`);
-        if (!carOk) r.push(`자동차 ${dbLpsn.car||4563}만원 이하 필요`);
-        let eligible = false, rank = '';
-        if (homeless && grp && subCount >= r1n && aOk && carOk) {
-            const incOk = dualInc ? under(dbLpsn.incM||200) : under(incBaseN);
-            if (incOk) {
-                eligible = true;
-                rank = infant ? `우선공급 가능 (신생아, 소득${incBaseN}% 이하)` : '일반공급';
-            } else r.push(`소득 ${incBaseN}%` + (dualInc?`(맞벌이 ${dbLpsn.incM||200}%)`:'') + ' 이하 필요');
-        }
-        add('LH 공공분양 (신혼부부 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
-    }
-
-    // LH 공공분양 생애최초
-    {
-        const r = [];
-        const dbLpsf = getE('LH_PUBLIC_SALE_FIRST');
-        if (!homeless) r.push('무주택 세대구성원 필요');
-        if (!lifeFirst) r.push('세대원 전원 과거 주택 미소유 필요');
-        if (!taxPaid5yr) r.push('근로자/자영업자 5년 이상 소득세 납부 필요');
-        const minAmtF = dbLpsf.savingsAmt||600;
-        if (!subAmountEnough) r.push(`청약저축 ${minAmtF}만원 이상 납입 필요`);
-        const incBonusF = infant ? (dbLpsf.newbornIncBonus||20) : 0;
-        const incBaseF = (dbLpsf.inc||130) + incBonusF;
-        const aOk = realEstate <= (dbLpsf.assetReal||21550), carOk = carVal <= (dbLpsf.car||4563);
-        if (!aOk) r.push(`부동산 ${dbLpsf.assetReal||21550}만원 이하 필요`);
-        if (!carOk) r.push(`자동차 ${dbLpsf.car||4563}만원 이하 필요`);
-        let eligible = false, rank = '';
-        if (homeless && lifeFirst && taxPaid5yr && subAmountEnough && aOk && carOk) {
-            const incOk = dualInc ? under(dbLpsf.incM||200) : under(incBaseF);
-            if (incOk) { eligible = true; rank = '생애최초특공 (추첨 50%)'; }
-            else r.push(`소득 ${incBaseF}%` + (dualInc?`(맞벌이 ${dbLpsf.incM||200}%)`:'') + ' 이하 필요');
-        }
-        add('LH 공공분양 (생애최초 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
-    }
-
-    // LH 공공분양 다자녀
-    {
-        const r = [];
-        const dbLpsc = getE('LH_PUBLIC_SALE_CHILDREN');
-        const minChild = dbLpsc.childrenMin||2;
-        if (!homeless) r.push('무주택 세대구성원 필요');
-        if (childCnt < minChild) r.push(`미성년 자녀 ${minChild}명 이상 필요`);
-        const r1c = dbLpsc.savingsRank1||6;
-        if (subCount < r1c) r.push(`청약저축 ${r1c}회 이상 납입 필요`);
-        const incBonusC = infant ? (dbLpsc.newbornIncBonus||20) : 0;
-        const incBaseC = (dbLpsc.inc||120) + incBonusC;
-        const aOk = realEstate <= (dbLpsc.assetReal||21550), carOk = carVal <= (dbLpsc.car||4563);
-        if (!aOk) r.push(`부동산 ${dbLpsc.assetReal||21550}만원 이하 필요`);
-        if (!carOk) r.push(`자동차 ${dbLpsc.car||4563}만원 이하 필요`);
-        let eligible = false, rank = '';
-        if (homeless && childCnt >= minChild && subCount >= r1c && aOk && carOk) {
-            const incOk = dualInc ? under(dbLpsc.incM||200) : under(incBaseC);
-            if (incOk) { eligible = true; rank = childCnt >= 3 ? '우선 (자녀 3명이상)' : '일반 (자녀 2명)'; }
-            else r.push(`소득 ${incBaseC}%` + (dualInc?`(맞벌이 ${dbLpsc.incM||200}%)`:'') + ' 이하 필요');
-        }
-        add('LH 공공분양 (다자녀 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
-    }
-
-    // LH 공공분양 신생아
-    {
-        const r = [];
-        const dbLpsb = getE('LH_PUBLIC_SALE_NEWBORN');
-        if (!homeless) r.push('무주택 세대구성원 필요');
-        if (!infant) r.push('2세 이하 자녀 보유 필요');
-        const r1b = dbLpsb.savingsRank1||6;
-        if (subCount < r1b) r.push(`청약저축 ${r1b}회 이상 납입 필요`);
-        const aOk = realEstate <= (dbLpsb.assetReal||21550), carOk = carVal <= (dbLpsb.car||4563);
-        if (!aOk) r.push(`부동산 ${dbLpsb.assetReal||21550}만원 이하 필요`);
-        if (!carOk) r.push(`자동차 ${dbLpsb.car||4563}만원 이하 필요`);
-        let eligible = false, rank = '';
-        const incLimB = dualInc ? (dbLpsb.incM||200) : (dbLpsb.inc||140);
-        if (homeless && infant && subCount >= r1b && aOk && carOk && under(incLimB)) {
-            eligible = true; rank = '신생아특공 (생애 1회)';
-        } else if (homeless && infant && subCount >= r1b && aOk && carOk) {
-            r.push(`소득 ${incLimB}% 이하 필요`);
-        }
-        add('LH 공공분양 (신생아 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
-    }
-
-    // LH 공공분양 노부모부양
-    {
-        const r = [];
-        const dbLpse = getE('LH_PUBLIC_SALE_ELDERLY');
-        if (!homeless) r.push('무주택 세대주 필요');
-        if (!isHouseholdHead) r.push('세대주 필요');
-        const r1e = dbLpse.savingsRank1||12;
-        if (subCount < r1e) r.push(`청약저축 ${r1e}회 이상 납입 필요`);
-        const incBonusE = infant ? (dbLpse.newbornIncBonus||20) : 0;
-        const incBaseE = (dbLpse.inc||120) + incBonusE;
-        const aOk = realEstate <= (dbLpse.assetReal||21550), carOk = carVal <= (dbLpse.car||4563);
-        if (!aOk) r.push(`부동산 ${dbLpse.assetReal||21550}만원 이하 필요`);
-        if (!carOk) r.push(`자동차 ${dbLpse.car||4563}만원 이하 필요`);
-        let eligible = false, rank = '';
-        if (homeless && isHouseholdHead && subCount >= r1e && aOk && carOk) {
-            const incOk = dualInc ? under(dbLpse.incM||200) : under(incBaseE);
-            if (incOk) { eligible = true; rank = '노부모부양특공 (65세이상 3년이상 부양)'; }
-            else r.push(`소득 ${incBaseE}%` + (dualInc?`(맞벌이 ${dbLpse.incM||200}%)`:'') + ' 이하 필요');
-        }
-        add('LH 공공분양 (노부모부양 특별공급)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-special', r, 'LH', 'sale');
+        const eligible = eligibleTypes.length > 0;
+        const rank = eligible ? eligibleTypes.join(' · ') : '';
+        add('LH 공공분양', eligible, rank, '시세 80~85% 분양', '분양', 'sale-general', r, 'LH', 'sale');
     }
 
     // LH 신혼희망타운
@@ -5049,157 +4966,31 @@ const typeDetailData = {
     },
 
     // ===== LH 공공분양 =====
-    'LH 공공분양 (일반공급)': {
-        title: 'LH 공공분양주택 — 일반공급',
+    'LH 공공분양': {
+        title: 'LH 공공분양',
         body: `
         <div class="help-section">
             <h4>어떤 주택인가요?</h4>
-            <p>LH가 공급하는 <strong>공공분양주택</strong>으로, 시세 80~85% 수준에 분양받습니다. 전용면적 85㎡ 이하(60㎡ 초과는 소득기준 없음).</p>
+            <p>LH가 시세 80~85% 수준으로 공급하는 <strong>공공분양주택</strong>. 특별공급과 일반공급이 하나의 공고로 함께 공급됩니다. 신생아 가구는 소득·자산 기준이 +20%p 완화됩니다.</p>
         </div>
         <div class="help-section">
-            <h4>핵심 자격 요건</h4>
+            <h4>공급 유형 (하나의 공고에 함께 공급)</h4>
+            <ul>
+                <li><strong>신생아 특공</strong>: 2세 미만 자녀, 소득 140%, 청약 6회+</li>
+                <li><strong>신혼부부 특공</strong>: 신혼(7년)·예비·한부모, 소득 130%, 청약 6회+</li>
+                <li><strong>생애최초 특공</strong>: 세대 전원 미소유, 소득세 5년+, 소득 130%, 청약 600만원+</li>
+                <li><strong>다자녀 특공</strong>: 미성년 자녀 2명+, 소득 120%, 청약 6회+</li>
+                <li><strong>노부모부양 특공</strong>: 세대주, 65세이상 직계존속 3년+ 부양, 소득 120%, 청약 12회+</li>
+                <li><strong>일반공급</strong>: 소득 100%, 청약 1순위 12회 이상 / 2순위 6회 이상</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>공통 자격 요건</h4>
             <ul>
                 <li>무주택 세대구성원</li>
-                <li>소득 100% 이하 (전용 60㎡ 이하 기준 / 85㎡ 이하는 소득 무관)</li>
                 <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
-                <li>청약저축 1순위: 수도권 12회 이상 / 2순위: 6회 이상</li>
+                <li>특별공급: 생애 1회 제한 / 신생아 가구 소득·자산 +20%p 완화</li>
             </ul>
-        </div>
-        <div class="help-section">
-            <h4>당첨자 선정 방식</h4>
-            <ul>
-                <li>무주택 3년 이상 → 저축총액(40㎡ 초과) / 납입횟수(40㎡ 이하) 순</li>
-                <li>신생아(2023.3.28이후 출생) 보유 시 소득기준 +10~20%p 완화</li>
-            </ul>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (신혼부부 특별공급)': {
-        title: 'LH 공공분양주택 — 신혼부부 특별공급',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>혼인 7년 이내 신혼부부·예비신혼부부에게 우선 공급하는 <strong>공공분양 특별공급</strong>. 생애 1회 제한.</p>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>혼인 7년 이내 또는 예비신혼(6개월 내 결혼 예정), 한부모가족</li>
-                <li>무주택 세대구성원</li>
-                <li>소득 130% 이하 (맞벌이 200% 이하)</li>
-                <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
-                <li>청약저축 6회 이상 납입</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>공급 비율</h4>
-            <ul>
-                <li>우선공급 70%: 단독 100% / 맞벌이 120% (배점제)</li>
-                <li>일반공급 20%: 단독 130% / 맞벌이 140%</li>
-                <li>추첨 10%: 단독 130% / 맞벌이 200%</li>
-                <li>신생아 가구: 소득·자산 +20%p 완화</li>
-            </ul>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (생애최초 특별공급)': {
-        title: 'LH 공공분양주택 — 생애최초 특별공급',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>세대원 전원이 과거 한 번도 주택을 소유한 적 없는 가구를 위한 <strong>공공분양 특별공급</strong>. 생애 1회 제한.</p>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>세대원 전원 과거·현재 주택 미소유 (생애최초)</li>
-                <li>혼인 중이거나 자녀 보유</li>
-                <li>근로자·자영업자 5년 이상 소득세 납부</li>
-                <li>소득 130% 이하 (맞벌이 200% 이하)</li>
-                <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
-                <li>청약저축 600만원 이상 납입</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>공급 비율</h4>
-            <ul>
-                <li>우선 70%: 단독 100% / 일반 20%: 단독 130% / 추첨 10%: 맞벌이 200%</li>
-                <li>신생아 가구: 소득·자산 +20%p 완화</li>
-            </ul>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (다자녀 특별공급)': {
-        title: 'LH 공공분양주택 — 다자녀 특별공급',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>미성년 자녀 2명 이상 무주택 가구를 위한 <strong>공공분양 특별공급</strong>. 생애 1회 제한.</p>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>미성년 자녀 2명 이상 (태아·입양 포함)</li>
-                <li>무주택 세대구성원</li>
-                <li>소득 120% 이하 (맞벌이 200% 이하)</li>
-                <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
-                <li>청약저축 6회 이상 납입</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>공급 비율 및 가점</h4>
-            <ul>
-                <li>자녀 3명 이상: 우선공급 90% (배점제)</li>
-                <li>자녀 2명: 일반공급 / 추첨 10%: 단독 120% / 맞벌이 200%</li>
-                <li>신생아 가구: 소득·자산 +20%p 완화</li>
-            </ul>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (신생아 특별공급)': {
-        title: 'LH 공공분양주택 — 신생아 특별공급',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>2세 미만(만 24개월 이하) 자녀를 보유한 무주택 가구를 위한 <strong>공공분양 특별공급</strong>. 생애 1회 제한.</p>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>입주자모집공고일 기준 2세 미만 자녀 보유 (태아·입양 포함)</li>
-                <li>무주택 세대구성원</li>
-                <li>소득 140% 이하 (맞벌이 200% 이하)</li>
-                <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
-                <li>청약저축 6회 이상 납입</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>공급 비율</h4>
-            <ul>
-                <li>우선 70%: 단독 100% / 맞벌이 120%</li>
-                <li>일반 20%: 단독 140% / 맞벌이 150%</li>
-                <li>추첨 10%: 단독 140% / 맞벌이 200%</li>
-            </ul>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (노부모부양 특별공급)': {
-        title: 'LH 공공분양주택 — 노부모부양 특별공급',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>만 65세 이상 직계존속을 3년 이상 부양 중인 무주택 세대주를 위한 <strong>공공분양 특별공급</strong>. 생애 1회 제한.</p>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>무주택 세대주</li>
-                <li>만 65세 이상 직계존속(배우자의 직계존속 포함) 3년 이상 계속 부양 · 동일 주민등록 등재</li>
-                <li>소득 120% 이하 (맞벌이 200% 이하)</li>
-                <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
-                <li>청약저축 12회 이상 납입</li>
-            </ul>
-            <div class="help-case warn">⚠ 부양 여부·동일 등재 여부는 공고문과 서류로 직접 확인 필요</div>
         </div>
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
@@ -6926,118 +6717,30 @@ const applyGuideData = {
     },
 
     // ===== LH 공공분양 신청 가이드 =====
-    'LH 공공분양 (일반공급)': {
-        title: 'LH 공공분양 일반공급 신청 가이드',
+    'LH 공공분양': {
+        title: 'LH 공공분양 신청 가이드',
         body: `
         <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스(apply.lh.or.kr) 또는 청약홈(applyhome.co.kr)에서 공공분양 일반공급 공고 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈에서 온라인 신청. 청약저축 납입 횟수 확인 필수 (수도권 1순위: 12회 이상).</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스(apply.lh.or.kr) 또는 청약홈(applyhome.co.kr)에서 공고 확인. 특별공급·일반공급 물량 및 신생아 우선공급 세대수 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>공급 유형 확인 후 청약홈 신청</h4><p>결과 카드에 표시된 해당 공급 유형(신생아·신혼·생애최초·다자녀·노부모부양·일반공급)으로 청약홈에서 신청. 특공과 일반공급 중복 신청 불가.</p></div></div>
             <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                <div class="guide-docs"><div class="guide-docs-title">공통 서류</div>
                     <div class="guide-doc-item">주민등록등본 (세대 전원)</div>
                     <div class="guide-doc-item">소득 확인 서류 (근로소득원천징수영수증 등)</div>
                     <div class="guide-doc-item">청약저축 납입 확인서</div>
-                    <div class="guide-doc-item">무주택 서약서</div>
+                    <div class="guide-doc-item">자산 확인 서류</div>
+                </div>
+                <div class="guide-docs"><div class="guide-docs-title">유형별 추가 서류</div>
+                    <div class="guide-doc-item">신혼·신생아: 혼인관계증명서, 가족관계증명서, 출생증명서</div>
+                    <div class="guide-doc-item">생애최초: 소득세 납부확인서 (5년분), 청약저축 잔액 600만원 이상</div>
+                    <div class="guide-doc-item">다자녀: 가족관계증명서 (자녀 수), 태아: 임신확인서</div>
+                    <div class="guide-doc-item">노부모부양: 가족관계증명서 + 3년 이상 동거 증빙 서류</div>
                 </div>
             </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>저축총액·납입횟수 순으로 당첨자 선정. 자격 검증 후 분양 계약 체결.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>서류 심사 후 자격 검증. 특별공급은 생애 1회 제한. 자격 통과 시 분양 계약 체결.</p></div></div>
         </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (신혼부부 특별공급)': {
-        title: 'LH 공공분양 신혼부부 특별공급 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스 또는 청약홈에서 신혼부부 특별공급 공고 확인. 혼인 기간 제한(7년) 확인 필수.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈에서 신혼부부 특별공급으로 신청. 생애 1회 제한 — 기존 특별공급 당첨 이력 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (세대 전원)</div>
-                    <div class="guide-doc-item">혼인관계증명서</div>
-                    <div class="guide-doc-item">가족관계증명서</div>
-                    <div class="guide-doc-item">소득·자산 확인 서류</div>
-                    <div class="guide-doc-item">출생증명서 (신생아 있는 경우)</div>
-                    <div class="guide-doc-item">청약저축 확인서</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>배점제 심사 후 당첨자 발표. 자격 검증 통과 시 분양 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (생애최초 특별공급)': {
-        title: 'LH 공공분양 생애최초 특별공급 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스 또는 청약홈에서 생애최초 특별공급 공고 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈에서 생애최초 특별공급으로 신청. 세대원 전원 주택 미소유 요건·5년 소득세 납부 요건 사전 확인 필수.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (세대 전원)</div>
-                    <div class="guide-doc-item">소득세 납부 확인서 (5년분)</div>
-                    <div class="guide-doc-item">소득·자산 확인 서류</div>
-                    <div class="guide-doc-item">청약저축 잔액 확인서 (600만원 이상)</div>
-                    <div class="guide-doc-item">가족관계증명서</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>자격 검증 후 분양 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (다자녀 특별공급)': {
-        title: 'LH 공공분양 다자녀 특별공급 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스 또는 청약홈에서 다자녀 특별공급 공고 확인. 자녀 수에 따라 우선·일반 공급 구분.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈에서 다자녀 특별공급으로 신청. 미성년 자녀 2명 이상(태아·입양 포함) 요건 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (세대 전원)</div>
-                    <div class="guide-doc-item">가족관계증명서 (자녀 수 확인)</div>
-                    <div class="guide-doc-item">소득·자산 확인 서류</div>
-                    <div class="guide-doc-item">청약저축 확인서</div>
-                    <div class="guide-doc-item">태아: 임신확인서 / 입양: 입양관계증명서</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>배점제(자녀 수·나이 등) 심사 후 당첨자 발표 → 분양 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (신생아 특별공급)': {
-        title: 'LH 공공분양 신생아 특별공급 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스 또는 청약홈에서 신생아 특별공급 공고 확인. 입주자모집공고일 기준 2세 미만 자녀 요건 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈에서 신생아 특별공급으로 신청. 생애 1회 제한 — 기존 특별공급 당첨 이력 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (세대 전원)</div>
-                    <div class="guide-doc-item">가족관계증명서 (자녀 출생 확인)</div>
-                    <div class="guide-doc-item">소득·자산 확인 서류</div>
-                    <div class="guide-doc-item">청약저축 확인서</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>자격 검증 후 분양 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
-    },
-    'LH 공공분양 (노부모부양 특별공급)': {
-        title: 'LH 공공분양 노부모부양 특별공급 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스 또는 청약홈에서 노부모부양 특별공급 공고 확인. 세대주 요건·부양 요건 사전 확인 필수.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약홈 신청</h4><p>청약홈에서 노부모부양 특별공급으로 신청. 청약저축 12회 이상 납입 여부 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (세대 전원 — 피부양자 포함)</div>
-                    <div class="guide-doc-item">가족관계증명서 (직계존속 관계 확인)</div>
-                    <div class="guide-doc-item">소득·자산 확인 서류</div>
-                    <div class="guide-doc-item">청약저축 확인서</div>
-                    <div class="guide-doc-item">부양 사실 확인 서류 (3년 이상 동거 증빙)</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 → 계약</h4><p>배점제 심사 후 당첨자 발표 → 분양 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
+        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>
+        <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈</a>`
     },
     'LH 신혼희망타운': {
         title: 'LH 신혼희망타운 신청 가이드',
