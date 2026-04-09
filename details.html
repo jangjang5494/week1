@@ -3259,45 +3259,6 @@ function runAnalysis() {
         }
     }
 
-    // 공공분양 (아파트) — 청약홈 국민주택 공고 매칭용
-    {
-        const r = [];
-        if (!homeless) r.push('무주택 세대구성원 필요');
-        if (subCount < 6) r.push('청약저축 6회 이상 납입 필요');
-        if (!under(100)) r.push(`소득 도시근로자 100% 이하 필요`);
-        const eligible = homeless && subCount >= 6 && under(100);
-        const rank = eligible ? (subCount >= 24 ? '가점 최상 (24회↑)' : `청약저축 ${subCount}회`) : '';
-        add('공공분양 (아파트)', eligible, rank, '시세 80~85% 분양', '분양', 'sale-private', r, '청약홈', 'sale');
-    }
-
-    // 오피스텔 청약 — 청약통장 불필요, 만 19세 이상 누구나
-    {
-        const r = [];
-        if (age < 19) r.push('만 19세 이상 필요');
-        const eligible = age >= 19;
-        const rank = eligible ? (homeless ? '무주택자' : '신청 가능') : '';
-        add('오피스텔 청약', eligible, rank, '시세 100% (분양·임대)', '분양/임대', 'sale-private', r, '청약홈', 'sale');
-    }
-
-    // 민간임대 (공공지원) — 역세권청년주택 등, 무주택 청년 우선
-    {
-        const r = [];
-        if (!homeless) r.push('무주택 필요');
-        if (age < 19) r.push('만 19세 이상 필요');
-        const eligible = homeless && age >= 19;
-        const rank = eligible ? (age <= 39 ? '청년 (우선공급 대상)' : '신청 가능') : '';
-        add('민간임대 (공공지원)', eligible, rank, '시세 85~95% 임대', '임대 (최장 10년)', 'sale-private', r, '청약홈', 'sale');
-    }
-
-    // 도시형생활주택 청약 — 청약통장 불필요, 만 19세 이상
-    {
-        const r = [];
-        if (age < 19) r.push('만 19세 이상 필요');
-        const eligible = age >= 19;
-        const rank = eligible ? (homeless ? '무주택자' : '신청 가능') : '';
-        add('도시형생활주택 청약', eligible, rank, '시세 100% (소형주택 분양)', '분양', 'sale-private', r, '청약홈', 'sale');
-    }
-
     // === 금융지원 ===
 
     // 디딤돌 대출
