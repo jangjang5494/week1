@@ -3259,6 +3259,45 @@ function runAnalysis() {
         }
     }
 
+    // 오피스텔 청약 (민간분양) — 추첨제
+    {
+        const eligible = age >= 19;
+        const r = [];
+        if (!eligible) r.push('만 19세 이상 필요');
+        add('오피스텔 청약', eligible, eligible ? '100% 추첨 (청약통장 불필요)' : '', '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+    }
+
+    // 도시형생활주택 청약 (민간분양) — 추첨제
+    {
+        const eligible = age >= 19;
+        const r = [];
+        if (!eligible) r.push('만 19세 이상 필요');
+        add('도시형생활주택 청약', eligible, eligible ? '100% 추첨 (청약통장 불필요)' : '', '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+    }
+
+    // 민간임대 청약 — 추첨제
+    {
+        const eligible = age >= 19;
+        const r = [];
+        if (!eligible) r.push('만 19세 이상 필요');
+        add('민간임대 청약', eligible, eligible ? '100% 추첨 (청약통장 불필요)' : '', '공고별 임대료', '임대 (공고별)', 'sale-private', r, '청약홈', 'sale');
+    }
+
+    // 공공지원민간임대 청약 — 특별공급(소득순위) + 일반공급(추첨)
+    {
+        const eligible = age >= 19;
+        const r = [];
+        if (!eligible) r.push('만 19세 이상 필요');
+        let rank = '';
+        if (eligible) {
+            if (under(100))       rank = '특별공급 1순위 (소득 100% 이하) — 추첨';
+            else if (under(110))  rank = '특별공급 2순위 (소득 110% 이하) — 추첨';
+            else if (under(120))  rank = '특별공급 3순위 (소득 120% 이하) — 추첨';
+            else                  rank = '일반공급 — 100% 추첨 (소득 무관)';
+        }
+        add('공공지원민간임대 청약', eligible, rank, '시세 이하 임대 (10년 이상)', '임대 (10년+)', 'sale-private', r, '청약홈', 'sale');
+    }
+
     // === 금융지원 ===
 
     // 디딤돌 대출
@@ -6221,6 +6260,98 @@ typeDetailData['SH 청년안심주택 임대보증금 무이자지원'] = {
     <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 — 청년안심주택 안내</a>`
 };
 
+// ===== 청약홈 기타 유형 typeDetailData =====
+typeDetailData['오피스텔 청약'] = {
+    title: '오피스텔 청약 (민간분양)',
+    body: `
+    <div class="help-section">
+        <h4>핵심 특징</h4>
+        <ul>
+            <li><strong>청약통장 불필요</strong> — 일반 계좌에서 청약금 납부</li>
+            <li><strong>100% 무작위 추첨</strong> — 가점, 소득, 자산, 무주택 기준 없음</li>
+            <li>APT 재당첨 제한 미적용, 복수 당첨 가능</li>
+            <li>APT 청약 시 오피스텔 소유는 주택 미소유로 간주</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>서울(투기과열지구) 주의사항</h4>
+        <p>해당지역(서울) 2년 이상 거주자에게 <strong>우선 분양</strong>이 적용될 수 있습니다. 공고마다 다르므로 공고문 확인 필수.</p>
+    </div>
+    <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 — 오피스텔 공고 확인</a>`
+};
+
+typeDetailData['도시형생활주택 청약'] = {
+    title: '도시형생활주택 청약 (민간분양)',
+    body: `
+    <div class="help-section">
+        <h4>핵심 특징</h4>
+        <ul>
+            <li><strong>청약통장 불필요</strong> — 일반 계좌에서 청약금 납부</li>
+            <li><strong>100% 무작위 추첨</strong> — 가점, 소득, 자산, 무주택 기준 없음</li>
+            <li>APT 재당첨 제한 미적용, 복수 당첨 가능</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>도시형생활주택이란?</h4>
+        <ul>
+            <li>300세대 미만 소형주택: 원룸형·단지형 연립·단지형 다세대</li>
+            <li>1인 가구에 적합한 소형 위주</li>
+            <li>분양가는 시세 100%</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 — 도시형생활주택 공고 확인</a>`
+};
+
+typeDetailData['민간임대 청약'] = {
+    title: '민간임대주택 청약',
+    body: `
+    <div class="help-section">
+        <h4>핵심 특징</h4>
+        <ul>
+            <li><strong>청약통장 불필요</strong></li>
+            <li><strong>100% 무작위 추첨</strong></li>
+            <li>소득·자산·무주택 기준 없음 (공고마다 상이할 수 있음)</li>
+            <li>APT 재당첨 제한 미적용, 복수 당첨 가능</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>유의사항</h4>
+        <p>임대료·임대기간·자격 요건은 <strong>공고마다 다릅니다.</strong> 반드시 해당 공고문을 확인하세요.</p>
+    </div>
+    <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 — 민간임대 공고 확인</a>`
+};
+
+typeDetailData['공공지원민간임대 청약'] = {
+    title: '공공지원민간임대주택 청약',
+    body: `
+    <div class="help-section">
+        <h4>핵심 특징</h4>
+        <ul>
+            <li><strong>청약통장 불필요</strong></li>
+            <li>임대료 시세 이하 (임대료 상한 규제), 10년 이상 임대 의무</li>
+            <li><strong>중복 청약 불가</strong> — 같은 단지에 1인 1건만, 위반 시 전부 무효</li>
+        </ul>
+    </div>
+    <div class="help-section">
+        <h4>당첨자 선정 방식</h4>
+        <table style="width:100%;font-size:0.82rem;border-collapse:collapse;">
+            <thead><tr style="background:var(--card-bg,#f9fafb);">
+                <th style="padding:6px 8px;text-align:left;border-bottom:1px solid #e5e7eb;">구분</th>
+                <th style="padding:6px 8px;text-align:left;border-bottom:1px solid #e5e7eb;">소득 기준</th>
+                <th style="padding:6px 8px;text-align:left;border-bottom:1px solid #e5e7eb;">선정</th>
+            </tr></thead>
+            <tbody>
+                <tr><td style="padding:5px 8px;">특별공급 1순위</td><td style="padding:5px 8px;">도시근로자 100% 이하</td><td style="padding:5px 8px;">추첨</td></tr>
+                <tr><td style="padding:5px 8px;">특별공급 2순위</td><td style="padding:5px 8px;">110% 이하</td><td style="padding:5px 8px;">추첨</td></tr>
+                <tr><td style="padding:5px 8px;">특별공급 3순위</td><td style="padding:5px 8px;">120% 이하</td><td style="padding:5px 8px;">추첨</td></tr>
+                <tr><td style="padding:5px 8px;">일반공급</td><td style="padding:5px 8px;">제한 없음</td><td style="padding:5px 8px;">100% 추첨</td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top:0.5rem;font-size:0.82rem;color:#6b7280;">특별공급 미달 시 잔여분은 일반공급으로 전환됩니다.</p>
+    </div>
+    <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 — 공공지원민간임대 공고 확인</a>`
+};
+
 // ===== 민간분양 (아파트) typeDetailData =====
 typeDetailData['민간분양 (아파트) — 특별공급'] = {
     title: '민간분양 (아파트) — 특별공급',
@@ -7921,6 +8052,47 @@ const applyGuideData = {
             <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>무이자 대출 실행</h4><p>심사 후 임대보증금 전액 무이자 대출 실행. 거주 기간 중 이자 없음.</p></div></div>
         </div>
         <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 청년안심주택</a>`
+    },
+    '오피스텔 청약': {
+        title: '오피스텔 청약 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>청약홈에서 공고 확인</h4><p>청약홈(applyhome.co.kr) → 청약신청 → 오피스텔/생활숙박시설/도시형/민간임대 → 공고 목록 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약금 준비</h4><p>청약통장 불필요. 공고에 명시된 청약금(계약금 일부)을 일반 계좌에서 납부합니다.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>온라인 신청 → 추첨 발표</h4><p>청약홈에서 온라인 신청. 당첨자 발표일 오후 4시 이후 결과 확인.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 바로가기</a>`
+    },
+    '도시형생활주택 청약': {
+        title: '도시형생활주택 청약 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>청약홈에서 공고 확인</h4><p>청약홈(applyhome.co.kr) → 청약신청 → 오피스텔/생활숙박시설/도시형/민간임대 → 도시형생활주택 공고 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약금 준비 후 신청</h4><p>청약통장 불필요. 청약금을 일반 계좌에서 납부 후 청약홈에서 온라인 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>추첨 발표</h4><p>당첨자 발표일 오후 4시 이후 청약홈에서 결과 확인. 당첨 후 계약 기간 내 건설사 방문.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 바로가기</a>`
+    },
+    '민간임대 청약': {
+        title: '민간임대주택 청약 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>청약홈에서 공고 확인</h4><p>청약홈(applyhome.co.kr) → 청약신청 → 오피스텔/생활숙박시설/도시형/민간임대 → 공고 확인. 임대료·기간·자격 요건은 공고마다 다릅니다.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약금 납부 후 신청</h4><p>청약통장 불필요. 공고에 명시된 청약금을 일반 계좌에서 납부 후 온라인 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>추첨 발표</h4><p>당첨자 발표일 오후 4시 이후 결과 확인.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 바로가기</a>`
+    },
+    '공공지원민간임대 청약': {
+        title: '공공지원민간임대주택 청약 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>청약홈에서 공고 확인</h4><p>청약홈(applyhome.co.kr) → 청약신청 → 공공지원민간임대 → 공고 확인. 특별공급/일반공급 일정이 함께 안내됩니다.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>⚠️ 중복 청약 절대 금지</h4><p>같은 단지에 <strong>1인 1건만 신청 가능</strong>. 2건 이상 신청 시 모두 무효 처리됩니다.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>특별공급 or 일반공급 선택</h4><p>소득 120% 이하라면 특별공급 신청 (소득순위 내 추첨). 소득 120% 초과라면 일반공급 신청 (100% 추첨). 둘 중 하나만 신청 가능.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>추첨 발표</h4><p>당첨자 발표일 오후 4시 이후 결과 확인. 특별공급 미당첨자는 일반공급 추첨에서 재추첨될 수 있습니다 (공고 확인).</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 바로가기</a>`
     },
     '민간분양 (아파트) — 특별공급': {
         title: '민간분양 (아파트) 특별공급 신청 가이드',

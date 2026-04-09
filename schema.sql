@@ -1056,6 +1056,54 @@ ON CONFLICT (code) DO UPDATE SET
 --   청년 특별공급은 SH 나눔형(SH_NAMOOM_YOUTH)에만 존재
 
 
+-- ── 청약홈 기타 유형 (오피스텔·도시형·민간임대·공공지원민간임대) ──────
+-- 기준: 2026-04-09 | 청약통장 불필요, 재당첨 제한 없음
+
+INSERT INTO programs (code, category, subcategory, program_type, institution, region, name, target_summary, is_central,
+  eligibility, support_content, application_info, source_url) VALUES
+
+-- 오피스텔 (민간분양)
+('CHEONGYAK_OFFICETEL', '분양주택', '민간분양', '오피스텔', '청약홈', '전국', '오피스텔 청약 (민간분양)',
+ '만 19세 이상 누구나 (청약통장 불필요)', TRUE,
+ '{"age_min":19,"notes":["청약통장 불필요 — 일반 계좌에서 청약금 납부","소득·자산·무주택 기준 없음","APT 재당첨 제한 미적용, 복수 당첨 가능","투기과열지구(서울): 해당지역 2년 이상 거주자 우선 분양","APT 청약 시 오피스텔 소유는 주택 미소유로 간주","당첨자 선정: 100% 무작위 전산 추첨"]}',
+ '{"notes":["시세 100% 분양","업무용·주거용 혼용 가능"]}',
+ '{"method":["온라인"],"contact":"1644-7445","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈 공고 확인 후 신청"}',
+ 'https://www.applyhome.co.kr'),
+
+-- 도시형생활주택 (민간분양)
+('CHEONGYAK_URBAN_LIVING', '분양주택', '민간분양', '도시형생활주택', '청약홈', '전국', '도시형생활주택 청약 (민간분양)',
+ '만 19세 이상 누구나 (청약통장 불필요)', TRUE,
+ '{"age_min":19,"notes":["청약통장 불필요 — 일반 계좌에서 청약금 납부","소득·자산·무주택 기준 없음","APT 재당첨 제한 미적용, 복수 당첨 가능","300세대 미만 소형주택: 원룸형·단지형 연립·단지형 다세대","당첨자 선정: 100% 무작위 전산 추첨"]}',
+ '{"notes":["시세 100% 분양","소형·원룸 위주 (1인 가구 적합)"]}',
+ '{"method":["온라인"],"contact":"1644-7445","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈 공고 확인 후 신청"}',
+ 'https://www.applyhome.co.kr'),
+
+-- 민간임대
+('CHEONGYAK_PRIVATE_RENTAL', '임대주택', '민간임대', '민간임대', '청약홈', '전국', '민간임대주택 청약',
+ '만 19세 이상 누구나 (청약통장 불필요)', TRUE,
+ '{"age_min":19,"notes":["청약통장 불필요","소득·자산·무주택 기준 없음 (공고마다 상이할 수 있음)","APT 재당첨 제한 미적용, 복수 당첨 가능","조건은 공고마다 다름 — 공고문 반드시 확인","당첨자 선정: 100% 무작위 전산 추첨"]}',
+ '{"notes":["임대료·기간은 공고별 상이"]}',
+ '{"method":["온라인"],"contact":"1644-7445","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈 공고 확인 후 신청"}',
+ 'https://www.applyhome.co.kr'),
+
+-- 공공지원민간임대
+('CHEONGYAK_PUBLIC_SUPPORT_RENTAL', '임대주택', '민간임대', '공공지원민간임대', '청약홈', '전국', '공공지원민간임대주택 청약',
+ '만 19세 이상 누구나 | 특별공급: 소득 120% 이하 우선', TRUE,
+ '{"age_min":19,"income_type":"도시근로자월평균","income_pct":120,"notes":["청약통장 불필요","특별공급(소득기준 순위): 1순위 소득100%이하 → 2순위 110%이하 → 3순위 120%이하, 같은 순위 내 추첨","일반공급: 소득 무관, 100% 추첨","같은 단지에 중복 청약 불가 (위반 시 전부 무효)","임대료 시세 이하 제한, 10년 이상 임대 의무","APT 재당첨 제한 미적용"]}',
+ '{"notes":["임대료 시세보다 저렴 (임대료 상한 있음)","임대기간: 10년 이상"]}',
+ '{"method":["온라인"],"contact":"1644-7445","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈 공고 확인 후 신청 — 중복 청약 전부 무효 주의"}',
+ 'https://www.applyhome.co.kr')
+
+ON CONFLICT (code) DO UPDATE SET
+  category = EXCLUDED.category, subcategory = EXCLUDED.subcategory,
+  program_type = EXCLUDED.program_type, institution = EXCLUDED.institution,
+  region = EXCLUDED.region, name = EXCLUDED.name,
+  target_summary = EXCLUDED.target_summary, is_central = EXCLUDED.is_central,
+  eligibility = EXCLUDED.eligibility, support_content = EXCLUDED.support_content,
+  application_info = EXCLUDED.application_info, source_url = EXCLUDED.source_url,
+  updated_at = NOW();
+
+
 -- ── 민간분양 (아파트) — 민영주택 청약홈 ──────────────────────────
 -- 기준: 투기과열지구(서울) 기준 | 2026-04-09
 
