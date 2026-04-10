@@ -14,656 +14,588 @@
 <title>내집구독 — 서울 청년 맞춤형 주거지원 플랫폼</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --primary:#4f46e5;--purple:#7c3aed;
-  --text:#111827;--text2:#6b7280;--text3:#9ca3af;
-  --bg:#ffffff;--bg2:#f8fafc;--bg3:#f0f2ff;
-  --border:#e5e7eb;--shadow:0 4px 24px rgba(0,0,0,.07);
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary: #4f46e5;
+  --purple: #7c3aed;
+  --text: #111827;
+  --text2: #6b7280;
+  --text3: #9ca3af;
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --border: #e5e7eb;
 }
-html,body{
-  width:100%;height:100%;overflow:hidden;
-  font-family:'Apple SD Gothic Neo',-apple-system,'Noto Sans KR',sans-serif;
-  background:var(--bg);color:var(--text);
-}
-
-/* ── STAGE ── */
-#stage{position:fixed;inset:0}
-.scene{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  padding:88px 24px 72px;
-  opacity:0;pointer-events:none;
-  transition:opacity .65s ease;
-}
-.scene.active{opacity:1;pointer-events:all}
-
-/* ── TOP NAV ── */
-#top-nav{
-  position:fixed;top:0;left:0;right:0;z-index:500;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:20px 36px;
-  background:rgba(255,255,255,.9);backdrop-filter:blur(16px);
-  border-bottom:1px solid rgba(0,0,0,.06);
-}
-.nav-logo{
-  font-size:20px;font-weight:900;color:var(--text);text-decoration:none;
-  display:flex;align-items:center;gap:2px;
-}
-.nav-logo em{
-  font-style:normal;
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-}
-.nav-cta{
-  padding:10px 22px;
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  color:#fff;border-radius:100px;font-size:13.5px;font-weight:700;
-  text-decoration:none;transition:opacity .2s,transform .2s;
-  box-shadow:0 4px 16px rgba(79,70,229,.3);
-}
-.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
-
-/* ── PROGRESS BAR ── */
-#pbar{
-  position:fixed;bottom:0;left:0;right:0;height:3px;
-  background:var(--border);z-index:500;
-}
-#pfill{
-  height:100%;
-  background:linear-gradient(90deg,var(--primary),var(--purple));
-  transform:scaleX(0);transform-origin:left;transition:none;
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Apple SD Gothic Neo', -apple-system, 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  overflow-x: hidden;
 }
 
-/* ── DOTS ── */
-#dots{
-  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
-  display:flex;gap:10px;z-index:500;
+/* ══ NAV ══ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 22px 48px;
+  transition: background .35s, box-shadow .35s;
 }
-.dot{
-  width:7px;height:7px;border-radius:50%;
-  background:var(--border);border:none;cursor:pointer;
-  transition:background .25s,transform .25s;padding:0;
+#nav.scrolled {
+  background: rgba(255,255,255,.93);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 1px 0 rgba(0,0,0,.07);
 }
-.dot.on{background:var(--primary);transform:scale(1.5)}
+.nav-logo {
+  font-size: 20px; font-weight: 900; text-decoration: none;
+  display: flex; align-items: center; gap: 2px;
+  transition: color .35s;
+}
+#nav:not(.scrolled) .nav-logo { color: #fff; }
+#nav.scrolled .nav-logo { color: var(--text); }
+.nav-logo em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.nav-cta {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  color: #fff; border-radius: 100px;
+  font-size: 13.5px; font-weight: 700; text-decoration: none;
+  transition: opacity .2s, transform .2s;
+  box-shadow: 0 4px 16px rgba(79,70,229,.35);
+}
+.nav-cta:hover { opacity: .88; transform: translateY(-1px); }
+@media(max-width:640px) { #nav { padding: 16px 20px; } }
 
-/* ── ARROWS ── */
-.arrow{
-  position:fixed;top:50%;transform:translateY(-50%);z-index:500;
-  width:42px;height:42px;border-radius:50%;
-  border:1.5px solid var(--border);background:#fff;
-  color:var(--text2);font-size:17px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;
-  box-shadow:var(--shadow);
+/* ══ S1 HERO ══ */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  overflow: hidden;
 }
-.arrow:hover{border-color:var(--primary);color:var(--primary);background:#f5f3ff}
-.arrow.hide{opacity:0;pointer-events:none}
-#aprev{left:18px}#anext{right:18px}
-
-/* ── Keyframes ── */
-@keyframes fup{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slam{
-  0%{opacity:0;transform:scale(1.2) translateY(-6px);filter:blur(4px)}
-  60%{transform:scale(.98)}
-  100%{opacity:1;transform:scale(1);filter:blur(0)}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(-45deg, #0f0c29, #302b63, #1e1b4b, #4338ca, #7c3aed, #312e81);
+  background-size: 400% 400%;
+  animation: gradMove 16s ease infinite;
 }
-@keyframes sleft{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:translateX(0)}}
-@keyframes sright{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:translateX(0)}}
-@keyframes popIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
-@keyframes lineGrow{from{width:0}to{width:100%}}
-
-/* ════════════════════════════════
-   S1 — 브랜드 히어로
-════════════════════════════════ */
-#s1{background:var(--bg);text-align:center}
-#s1::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(79,70,229,.07) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 30% at 80% 100%, rgba(124,58,237,.05) 0%, transparent 60%);
-}
-.s1-inner{position:relative;z-index:2;max-width:820px;width:100%}
-
-/* 브랜드 pill */
-.s1-pill{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:7px 18px;margin-bottom:36px;
-  background:#f0f0ff;border:1.5px solid #c7d2fe;
-  border-radius:100px;font-size:12.5px;font-weight:700;
-  color:var(--primary);letter-spacing:.4px;
-  opacity:0;
-}
-.s1-pill.go{animation:fup .55s ease both}
-.s1-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--primary);animation:pdot 1.6s infinite}
-@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
-
-/* 메인 타이틀 */
-.s1-brand{
-  font-size:clamp(64px,13vw,136px);font-weight:900;
-  letter-spacing:-5px;line-height:.95;display:block;
-  background:linear-gradient(135deg,#111827 40%,var(--primary) 70%,var(--purple) 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  opacity:0;
-}
-.s1-brand.go{animation:slam .7s cubic-bezier(.2,1.1,.4,1) both}
-
-/* 부제목 */
-.s1-sub-wrap{
-  display:flex;align-items:center;justify-content:center;gap:0;
-  margin-top:24px;opacity:0;
-}
-.s1-sub-wrap.go{animation:fup .6s ease .15s both}
-.s1-sub-line{
-  height:2px;flex:1;max-width:80px;
-  background:linear-gradient(90deg,transparent,var(--primary));
-}
-.s1-sub-line.r{background:linear-gradient(90deg,var(--primary),transparent)}
-.s1-sub{
-  font-size:clamp(16px,2.4vw,22px);font-weight:700;
-  color:var(--text2);padding:0 20px;text-align:center;
-  line-height:1.55;white-space:nowrap;
-}
-@media(max-width:600px){.s1-sub{white-space:normal;font-size:15px}}
-
-/* 키 스탯 */
-.s1-stats{
-  display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
-  margin-top:52px;opacity:0;
-}
-.s1-stats.go{animation:fup .6s ease both}
-.s1-stat{
-  display:flex;flex-direction:column;align-items:center;
-  background:#fff;border:1.5px solid var(--border);border-radius:18px;
-  padding:20px 28px;min-width:140px;
-  box-shadow:0 2px 12px rgba(0,0,0,.05);
-  transition:border-color .2s,transform .2s,box-shadow .2s;
-}
-.s1-stat:hover{border-color:#a5b4fc;transform:translateY(-3px);box-shadow:0 8px 28px rgba(79,70,229,.12)}
-.s1-stat-n{
-  font-size:32px;font-weight:900;letter-spacing:-1.5px;
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-}
-.s1-stat-l{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5;text-align:center;font-weight:500}
-
-/* 하단 CTA 힌트 */
-.s1-hint{
-  margin-top:44px;font-size:13px;color:var(--text3);
-  opacity:0;display:flex;align-items:center;justify-content:center;gap:6px;
-}
-.s1-hint.go{animation:fup .5s ease both}
-.s1-hint-arrow{
-  width:28px;height:28px;border-radius:50%;
-  border:1.5px solid var(--border);
-  display:inline-flex;align-items:center;justify-content:center;
-  font-size:12px;animation:bounce 1.8s ease infinite;
-}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
-
-/* ════════════════════════════════
-   S2 — 서비스 소개
-════════════════════════════════ */
-#s2{background:var(--bg2)}
-#s2::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 60% 50% at 50% 100%,rgba(79,70,229,.06) 0%,transparent 65%);
-}
-.s2-inner{
-  position:relative;z-index:2;
-  max-width:880px;width:100%;
-  display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;
-}
-@media(max-width:700px){.s2-inner{grid-template-columns:1fr;gap:32px}}
-
-/* 왼쪽: 텍스트 */
-.s2-eyebrow{
-  font-size:11.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
-  color:var(--primary);margin-bottom:18px;opacity:0;
-}
-.s2-eyebrow.go{animation:fup .5s ease both}
-.s2-title{
-  font-size:clamp(22px,3.2vw,32px);font-weight:900;
-  letter-spacing:-1px;line-height:1.25;margin-bottom:24px;
-  color:var(--text);opacity:0;
-}
-.s2-title.go{animation:fup .6s ease .1s both}
-.s2-desc{
-  font-size:15px;color:var(--text2);line-height:1.85;
-  word-break:keep-all;opacity:0;
-}
-.s2-desc.go{animation:fup .6s ease .2s both}
-.s2-desc strong{color:var(--text);font-weight:700}
-.s2-desc .hl{
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  font-weight:800;
+@keyframes gradMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* 오른쪽: 기관·수치 */
-.s2-nums{
-  display:grid;grid-template-columns:1fr 1fr;gap:12px;
-  margin-bottom:24px;
+/* 비디오 배경 — URL 준비 시 주석 해제 후 opacity: 0.4 로 조정 */
+/*
+.hero-video {
+  position: absolute; inset: 0; z-index: 1;
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0.4;
 }
-.s2-num{
-  background:#fff;border:1.5px solid var(--border);border-radius:14px;
-  padding:16px 18px;text-align:center;
-  box-shadow:0 2px 10px rgba(0,0,0,.04);
-  opacity:0;transition:border-color .2s;
-}
-.s2-num.go{animation:popIn .45s cubic-bezier(.2,1.5,.4,1) both}
-.s2-num:hover{border-color:#a5b4fc}
-.s2-num-n{
-  font-size:26px;font-weight:900;letter-spacing:-1px;
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-}
-.s2-num-l{font-size:11.5px;color:var(--text3);margin-top:4px;font-weight:500;line-height:1.4}
+*/
 
-/* 기관 배지 그리드 */
-.s2-insts-label{
-  font-size:11px;font-weight:700;color:var(--text3);
-  letter-spacing:1.5px;text-transform:uppercase;
-  margin-bottom:10px;opacity:0;
+.hero-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(to bottom,
+    rgba(10,8,40,.25) 0%,
+    rgba(10,8,40,.1) 50%,
+    rgba(10,8,40,.55) 100%);
 }
-.s2-insts-label.go{animation:fup .4s ease both}
-.s2-insts{
-  display:flex;flex-wrap:wrap;gap:8px;
+.hero-particle {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,.055);
+  animation: floatUp linear infinite;
+  pointer-events: none; z-index: 1;
 }
-.s2-inst{
-  padding:6px 14px;border-radius:100px;font-size:12px;font-weight:700;
-  border:1.5px solid;opacity:0;
-  transition:transform .15s;cursor:default;
+@keyframes floatUp {
+  0%   { transform: translateY(0) scale(1);   opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: .4; }
+  100% { transform: translateY(-110vh) scale(1.3); opacity: 0; }
 }
-.s2-inst:hover{transform:scale(1.06)}
-.s2-inst.go{animation:popIn .35s cubic-bezier(.2,1.5,.4,1) both}
-.inst-lh{background:#fef9ee;border-color:#fcd34d;color:#92400e}
-.inst-sh{background:#eff6ff;border-color:#93c5fd;color:#1e40af}
-.inst-hf{background:#f5f3ff;border-color:#c4b5fd;color:#5b21b6}
-.inst-gov{background:#f8fafc;border-color:#cbd5e1;color:#475569}
+.hero-content {
+  position: relative; z-index: 3;
+  max-width: 880px; width: 100%; padding: 0 24px;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 20px; margin-bottom: 36px;
+  background: rgba(255,255,255,.11);
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 100px;
+  font-size: 12.5px; font-weight: 700;
+  color: rgba(255,255,255,.88); letter-spacing: .4px;
+  animation: fadeUp .65s ease .2s both;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #67e8f9;
+  animation: dotPulse 2s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.55)}
+}
+.hero-title {
+  font-size: clamp(38px, 6.5vw, 74px);
+  font-weight: 900; letter-spacing: -2.5px; line-height: 1.12;
+  color: #fff; margin-bottom: 24px;
+  animation: fadeUp .75s ease .4s both;
+  word-break: keep-all;
+}
+.hero-title .hl {
+  background: linear-gradient(135deg, #93c5fd, #a5b4fc, #c4b5fd);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-sub {
+  font-size: clamp(15px, 2vw, 19px);
+  color: rgba(255,255,255,.65); line-height: 1.8;
+  margin-bottom: 52px; word-break: keep-all;
+  animation: fadeUp .75s ease .55s both;
+}
+.hero-btns {
+  display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
+  animation: fadeUp .75s ease .7s both;
+}
+.hero-btn-main {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 18px 46px;
+  background: #fff; color: var(--primary);
+  font-size: 16px; font-weight: 800;
+  border-radius: 100px; text-decoration: none;
+  box-shadow: 0 8px 36px rgba(0,0,0,.28);
+  transition: transform .22s, box-shadow .22s;
+}
+.hero-btn-main:hover { transform: translateY(-3px); box-shadow: 0 18px 52px rgba(0,0,0,.32); }
+.hero-btn-main svg { transition: transform .22s; }
+.hero-btn-main:hover svg { transform: translateX(4px); }
+.hero-scroll-hint {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  z-index: 3; color: rgba(255,255,255,.4);
+  font-size: 10.5px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  animation: fadeUp .6s ease 1.3s both;
+}
+.scroll-bar {
+  width: 1.5px; height: 44px;
+  background: linear-gradient(to bottom, rgba(255,255,255,.5), transparent);
+  animation: scrollAnim 2.2s ease-in-out infinite;
+}
+@keyframes scrollAnim {
+  0%,100%{transform:scaleY(0);transform-origin:top;opacity:0}
+  30%{opacity:1}
+  70%{transform:scaleY(1);transform-origin:top}
+  100%{transform:scaleY(0);transform-origin:bottom}
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-/* ════════════════════════════════
-   S3 — 정밀분석 CTA
-════════════════════════════════ */
-#s3{background:#fff;text-align:center}
-#s3::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 80% 55% at 50% 50%,rgba(79,70,229,.05) 0%,transparent 65%);
+/* ══ S2 STATS ══ */
+#stats {
+  padding: 110px 24px;
+  background: var(--bg);
+  text-align: center;
 }
-.s3-inner{
-  position:relative;z-index:2;max-width:700px;width:100%;
+.sec-eyebrow {
+  font-size: 11.5px; font-weight: 800; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--primary); margin-bottom: 16px;
+}
+.sec-title {
+  font-size: clamp(24px, 3.5vw, 38px);
+  font-weight: 900; letter-spacing: -1.2px;
+  color: var(--text); line-height: 1.3;
+  margin-bottom: 64px; word-break: keep-all;
+}
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 20px; max-width: 960px; margin: 0 auto;
+}
+@media(max-width:760px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:400px) { .stats-grid { grid-template-columns: 1fr; } }
+.stat-card {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: 22px; padding: 36px 20px;
+  transition: transform .22s, box-shadow .22s, border-color .22s;
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 44px rgba(79,70,229,.12);
+  border-color: #a5b4fc;
+}
+.stat-num {
+  display: flex; align-items: baseline; justify-content: center; gap: 2px;
+  margin-bottom: 10px;
+}
+.count-val {
+  font-size: 52px; font-weight: 900; letter-spacing: -2px; line-height: 1;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.count-unit {
+  font-size: 20px; font-weight: 900;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.stat-label { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.stat-sub { font-size: 11.5px; color: var(--text3); }
+
+/* ══ S3 FEATURES ══ */
+#features {
+  padding: 110px 24px;
+  background: #fafbff;
+}
+.sec-inner { max-width: 1040px; margin: 0 auto; }
+.sec-header { text-align: center; margin-bottom: 64px; }
+.feat-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 24px;
+}
+@media(max-width:720px) { .feat-grid { grid-template-columns: 1fr; } }
+.feat-card {
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: 24px; padding: 40px 32px;
+  transition: transform .22s, box-shadow .22s, border-color .22s;
+}
+.feat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 52px rgba(79,70,229,.1);
+  border-color: #c7d2fe;
+}
+.feat-icon {
+  width: 58px; height: 58px; border-radius: 17px;
+  background: linear-gradient(135deg, rgba(79,70,229,.1), rgba(124,58,237,.1));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 27px; margin-bottom: 24px;
+}
+.feat-title {
+  font-size: 19px; font-weight: 800; letter-spacing: -.4px;
+  color: var(--text); margin-bottom: 12px;
+}
+.feat-desc {
+  font-size: 14px; color: var(--text2); line-height: 1.85; word-break: keep-all;
+}
+.feat-tags {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px;
+}
+.feat-tag {
+  font-size: 11.5px; font-weight: 700; color: var(--primary);
+  background: rgba(79,70,229,.08); border-radius: 100px; padding: 4px 12px;
 }
 
-/* 배지 */
-.s3-badge{
-  display:inline-flex;align-items:center;gap:8px;margin-bottom:28px;
-  padding:8px 20px;
-  background:linear-gradient(135deg,rgba(79,70,229,.08),rgba(124,58,237,.08));
-  border:1.5px solid #c7d2fe;border-radius:100px;
-  font-size:13px;font-weight:700;color:var(--primary);
-  opacity:0;
+/* ══ S4 HOW ══ */
+#how { padding: 110px 24px; background: var(--bg); }
+.how-steps {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 0; max-width: 820px; margin: 0 auto;
 }
-.s3-badge.go{animation:fup .5s ease both}
+@media(max-width:600px) { .how-steps { grid-template-columns: 1fr; gap: 36px; } }
+.how-step { text-align: center; padding: 0 28px; position: relative; }
+.how-step:not(:last-child)::after {
+  content: '→'; position: absolute; right: -8px; top: 16px;
+  font-size: 22px; color: #d1d5db;
+}
+@media(max-width:600px) { .how-step::after { display: none; } }
+.how-num {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  color: #fff; font-size: 19px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 6px 20px rgba(79,70,229,.3);
+}
+.how-title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+.how-desc { font-size: 13.5px; color: var(--text2); line-height: 1.8; word-break: keep-all; }
 
-/* 타이틀 */
-.s3-title{
-  font-size:clamp(32px,5.5vw,58px);font-weight:900;
-  letter-spacing:-2px;line-height:1.18;margin-bottom:20px;
-  color:var(--text);opacity:0;
+/* ══ S5 CTA ══ */
+#cta {
+  padding: 130px 24px;
+  background: linear-gradient(-45deg, #0f0c29, #302b63, #4338ca, #7c3aed);
+  background-size: 300% 300%;
+  animation: gradMove 12s ease infinite;
+  text-align: center;
 }
-.s3-title.go{animation:fup .65s ease .1s both}
-.s3-title .hl{
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+.cta-title {
+  font-size: clamp(28px, 5vw, 54px);
+  font-weight: 900; letter-spacing: -2px; line-height: 1.2;
+  color: #fff; margin-bottom: 18px; word-break: keep-all;
 }
+.cta-sub {
+  font-size: 16px; color: rgba(255,255,255,.55);
+  margin-bottom: 52px; line-height: 1.7;
+}
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 20px 58px;
+  background: #fff; color: var(--primary);
+  font-size: 18px; font-weight: 800;
+  border-radius: 100px; text-decoration: none;
+  box-shadow: 0 12px 52px rgba(0,0,0,.28);
+  transition: transform .22s, box-shadow .22s;
+}
+.cta-btn:hover { transform: translateY(-4px); box-shadow: 0 22px 68px rgba(0,0,0,.32); }
+.cta-btn svg { transition: transform .22s; }
+.cta-btn:hover svg { transform: translateX(4px); }
+.cta-note { margin-top: 22px; font-size: 12.5px; color: rgba(255,255,255,.3); }
 
-/* 설명 */
-.s3-desc{
-  font-size:16.5px;color:var(--text2);line-height:1.75;
-  margin-bottom:40px;word-break:keep-all;opacity:0;
+/* ══ FOOTER ══ */
+#footer {
+  padding: 28px 48px;
+  background: #080617;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 10px;
 }
-.s3-desc.go{animation:fup .6s ease .2s both}
+@media(max-width:640px) { #footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; } }
+.footer-logo { font-size: 15px; font-weight: 900; color: rgba(255,255,255,.35); }
+.footer-logo em { font-style: normal; color: rgba(255,255,255,.6); }
+.footer-note { font-size: 11.5px; color: rgba(255,255,255,.2); }
 
-/* 기능 칩들 */
-.s3-chips{
-  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
-  margin-bottom:44px;opacity:0;
+/* ══ SCROLL ANIMATION ══ */
+.anim {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity .75s ease, transform .75s ease;
 }
-.s3-chips.go{animation:fup .55s ease .3s both}
-.s3-chip{
-  display:flex;align-items:center;gap:7px;
-  padding:9px 18px;background:#f8fafc;
-  border:1.5px solid var(--border);border-radius:100px;
-  font-size:13.5px;font-weight:600;color:var(--text);
-}
-.s3-chip-icon{font-size:15px}
-
-/* CTA 버튼 */
-.s3-btn-wrap{opacity:0}
-.s3-btn-wrap.go{animation:fup .6s ease .4s both}
-.s3-btn{
-  display:inline-flex;align-items:center;gap:14px;
-  padding:22px 64px;
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  color:#fff;text-decoration:none;
-  font-size:19px;font-weight:800;letter-spacing:-.3px;
-  border-radius:100px;
-  box-shadow:0 12px 48px rgba(79,70,229,.35);
-  transition:transform .2s,box-shadow .2s;
-}
-.s3-btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 20px 64px rgba(124,58,237,.45)}
-.s3-btn svg{transition:transform .2s}
-.s3-btn:hover svg{transform:translateX(4px)}
-
-.s3-note{
-  margin-top:20px;font-size:13px;color:var(--text3);
-  opacity:0;
-}
-.s3-note.go{animation:fup .5s ease .6s both}
-
-/* ── Responsive ── */
-@media(max-width:600px){
-  #aprev,#anext{display:none}
-  #top-nav{padding:16px 20px}
-  .s1-stats{gap:10px}
-  .s1-stat{padding:16px 20px;min-width:110px}
-  .s2-inner{gap:24px}
-  .s3-btn{font-size:16px;padding:18px 42px}
-  .s3-chips{gap:8px}
-}
+.anim.d1 { transition-delay: .08s; }
+.anim.d2 { transition-delay: .18s; }
+.anim.d3 { transition-delay: .28s; }
+.anim.d4 { transition-delay: .38s; }
+.anim.show { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- ── TOP NAV ── -->
-<nav id="top-nav">
+<!-- NAV -->
+<nav id="nav">
   <a href="#" class="nav-logo">내집<em>구독</em></a>
   <a href="./details.html" class="nav-cta">정밀분석 시작 →</a>
 </nav>
 
-<!-- ── PROGRESS BAR ── -->
-<div id="pbar"><div id="pfill"></div></div>
+<!-- ══ S1 HERO ══ -->
+<section id="hero">
+  <div class="hero-bg"></div>
 
-<!-- ── DOTS ── -->
-<div id="dots">
-  <button class="dot on"></button>
-  <button class="dot"></button>
-  <button class="dot"></button>
-</div>
+  <!-- 영상 배경: pexels URL 준비 시 아래 주석 해제 -->
+  <!--
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="YOUR_PEXELS_VIDEO_URL.mp4" type="video/mp4">
+  </video>
+  -->
 
-<!-- ── ARROWS ── -->
-<button class="arrow hide" id="aprev">←</button>
-<button class="arrow" id="anext">→</button>
+  <div class="hero-overlay"></div>
 
-<!-- ══════════════════════════════════
-     STAGE
-══════════════════════════════════ -->
-<div id="stage">
-
-<!-- ── S1 · 브랜드 히어로 ── -->
-<section class="scene" id="s1">
-  <div class="s1-inner">
-    <div class="s1-pill">
-      <span class="s1-pill-dot"></span>
-      서울 2030 청년 맞춤형 주거지원 플랫폼
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      LH · SH · 청약홈 · 주택도시기금
     </div>
 
-    <span class="s1-brand">내집구독</span>
+    <h1 class="hero-title">
+      서울시 청년을 위한<br>
+      <span class="hl">맞춤형 주거 솔루션</span>
+    </h1>
 
-    <div class="s1-sub-wrap">
-      <div class="s1-sub-line"></div>
-      <p class="s1-sub">임대 · 분양 · 대출 · 주거복지, 내 자격에 맞는 것만 정확히</p>
-      <div class="s1-sub-line r"></div>
-    </div>
-
-    <div class="s1-stats">
-      <div class="s1-stat">
-        <span class="s1-stat-n">69가지</span>
-        <span class="s1-stat-l">분석 지원 유형<br>(임대·분양·금융·복지)</span>
-      </div>
-      <div class="s1-stat">
-        <span class="s1-stat-n">50개+</span>
-        <span class="s1-stat-l">데이터 수집 기관<br>(LH·SH 등)</span>
-      </div>
-      <div class="s1-stat">
-        <span class="s1-stat-n">20개+</span>
-        <span class="s1-stat-l">공공 Open API<br>실시간 연동</span>
-      </div>
-    </div>
-
-    <div class="s1-hint">
-      <span>아래로 스크롤하거나 클릭하세요</span>
-      <span class="s1-hint-arrow">↓</span>
-    </div>
-  </div>
-</section>
-
-<!-- ── S2 · 서비스 소개 ── -->
-<section class="scene" id="s2">
-  <div class="s2-inner">
-
-    <!-- 왼쪽: 설명 텍스트 -->
-    <div class="s2-left">
-      <div class="s2-eyebrow">About 내집구독</div>
-      <h2 class="s2-title">50개 기관·20개 API로<br>나에게 맞는 것만 찾아드립니다</h2>
-      <p class="s2-desc">
-        <strong>내집구독</strong>은 <span class="hl">LH · SH · 청약홈</span> 및 각 지자체
-        웹사이트 등 <strong>50개 이상의 기관</strong>, <strong>20개 이상의 공공 Open API</strong>를
-        기반으로 사용자의 정보를 받아 신청 가능한 모든
-        <strong>임대주택 · 분양주택 · 대출 및 주거복지 서비스</strong>를
-        정확하고 신속하게 알려드립니다.<br><br>
-        맞춤형 전략을 세워 <span class="hl">서울 2030 청년들의 거주 문제</span>를
-        해결하고자 하는 서비스입니다.
-      </p>
-    </div>
-
-    <!-- 오른쪽: 수치 + 기관 배지 -->
-    <div class="s2-right">
-      <div class="s2-nums">
-        <div class="s2-num" id="n1">
-          <div class="s2-num-n">임대주택</div>
-          <div class="s2-num-l">38가지 유형<br>SH·LH</div>
-        </div>
-        <div class="s2-num" id="n2">
-          <div class="s2-num-n">분양·청약</div>
-          <div class="s2-num-l">13가지 유형<br>SH·LH·청약홈</div>
-        </div>
-        <div class="s2-num" id="n3">
-          <div class="s2-num-n">금융지원</div>
-          <div class="s2-num-l">10가지 대출<br>주택도시기금</div>
-        </div>
-        <div class="s2-num" id="n4">
-          <div class="s2-num-n">주거복지</div>
-          <div class="s2-num-l">8가지<br>월세·이자·보증료 지원</div>
-        </div>
-      </div>
-
-      <div class="s2-insts-label" id="insts-label">연동 기관</div>
-      <div class="s2-insts" id="s2-insts">
-        <span class="s2-inst inst-lh">LH 한국토지주택공사</span>
-        <span class="s2-inst inst-sh">SH 서울주택도시공사</span>
-        <span class="s2-inst inst-hf">주택도시기금</span>
-        <span class="s2-inst inst-gov">청약홈</span>
-        <span class="s2-inst inst-gov">온통청년</span>
-        <span class="s2-inst inst-gov">마이홈포털</span>
-        <span class="s2-inst inst-gov">각 지자체</span>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ── S3 · 정밀분석 CTA ── -->
-<section class="scene" id="s3">
-  <div class="s3-inner">
-    <div class="s3-badge">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-      무료 · 3분 · 로그인 불필요
-    </div>
-
-    <h2 class="s3-title">
-      지금, 내가 받을 수 있는<br>
-      <span class="hl">모든 혜택을 확인하세요</span>
-    </h2>
-
-    <p class="s3-desc">
-      나이·소득·자산·지역·혼인 여부 몇 가지만 입력하면<br>
-      69가지 유형 중 신청 가능한 것만 즉시 분석해드립니다.
+    <p class="hero-sub">
+      임대·분양·대출·주거복지 69가지 유형 중<br>
+      내 자격에 맞는 것만 3분 안에 찾아드립니다
     </p>
 
-    <div class="s3-chips">
-      <div class="s3-chip"><span class="s3-chip-icon">🏠</span> 임대주택 38가지</div>
-      <div class="s3-chip"><span class="s3-chip-icon">🏢</span> 분양·청약 13가지</div>
-      <div class="s3-chip"><span class="s3-chip-icon">💰</span> 금융·대출 10가지</div>
-      <div class="s3-chip"><span class="s3-chip-icon">🎁</span> 주거복지 8가지</div>
-    </div>
-
-    <div class="s3-btn-wrap">
-      <a href="./details.html" class="s3-btn">
+    <div class="hero-btns">
+      <a href="./details.html" class="hero-btn-main">
         정밀분석 시작하기
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
+  </div>
 
-    <p class="s3-note">2026년 4월 기준 · LH·SH 공식 자격요건 기반</p>
+  <div class="hero-scroll-hint">
+    <div class="scroll-bar"></div>
+    <span>scroll</span>
   </div>
 </section>
 
-</div><!-- /stage -->
+<!-- ══ S2 STATS ══ -->
+<section id="stats">
+  <div class="sec-eyebrow anim">숫자로 보는 내집구독</div>
+  <h2 class="sec-title anim d1">서울시 청년이 받을 수 있는<br>모든 주거 혜택을 담았습니다</h2>
+  <div class="stats-grid">
+    <div class="stat-card anim d1" data-target="69">
+      <div class="stat-num">
+        <span class="count-val">0</span><span class="count-unit">가지</span>
+      </div>
+      <div class="stat-label">분석 지원 유형</div>
+      <div class="stat-sub">임대·분양·금융·복지 전체</div>
+    </div>
+    <div class="stat-card anim d2" data-target="38">
+      <div class="stat-num">
+        <span class="count-val">0</span><span class="count-unit">가지</span>
+      </div>
+      <div class="stat-label">임대주택 유형</div>
+      <div class="stat-sub">SH + LH 전체</div>
+    </div>
+    <div class="stat-card anim d3" data-target="13">
+      <div class="stat-num">
+        <span class="count-val">0</span><span class="count-unit">가지</span>
+      </div>
+      <div class="stat-label">분양·청약 유형</div>
+      <div class="stat-sub">SH·LH·청약홈</div>
+    </div>
+    <div class="stat-card anim d4" data-target="18">
+      <div class="stat-num">
+        <span class="count-val">0</span><span class="count-unit">가지</span>
+      </div>
+      <div class="stat-label">금융·복지 지원</div>
+      <div class="stat-sub">대출·이자·월세 지원</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S3 FEATURES ══ -->
+<section id="features">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <div class="sec-eyebrow anim">왜 내집구독인가</div>
+      <h2 class="sec-title anim d1">복잡한 주거지원 제도,<br>내 것만 골라드립니다</h2>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card anim">
+        <div class="feat-icon">🏠</div>
+        <div class="feat-title">전 기관 통합</div>
+        <div class="feat-desc">LH·SH·청약홈·주택도시기금까지 흩어진 정보를 한 곳에서. 기관마다 다른 기준을 통일해 비교합니다.</div>
+        <div class="feat-tags">
+          <span class="feat-tag">LH</span>
+          <span class="feat-tag">SH</span>
+          <span class="feat-tag">청약홈</span>
+          <span class="feat-tag">주택도시기금</span>
+        </div>
+      </div>
+      <div class="feat-card anim d1">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">3분 정밀분석</div>
+        <div class="feat-desc">나이·소득·자산·혼인 여부 몇 가지만 입력하면 신청 가능한 유형과 순위를 즉시 알려드립니다.</div>
+        <div class="feat-tags">
+          <span class="feat-tag">소득 자동 계산</span>
+          <span class="feat-tag">순위 판단</span>
+          <span class="feat-tag">자격 체크</span>
+        </div>
+      </div>
+      <div class="feat-card anim d2">
+        <div class="feat-icon">📢</div>
+        <div class="feat-title">실시간 공고 연동</div>
+        <div class="feat-desc">현재 접수 중인 공고를 자동으로 매칭해 보여드립니다. 매일 2회 자동 업데이트됩니다.</div>
+        <div class="feat-tags">
+          <span class="feat-tag">매일 자동 업데이트</span>
+          <span class="feat-tag">구별 공고</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S4 HOW ══ -->
+<section id="how">
+  <div class="sec-inner">
+    <div class="sec-header">
+      <div class="sec-eyebrow anim">이용 방법</div>
+      <h2 class="sec-title anim d1">단 3단계, 3분이면 충분합니다</h2>
+    </div>
+    <div class="how-steps">
+      <div class="how-step anim">
+        <div class="how-num">1</div>
+        <div class="how-title">정보 입력</div>
+        <div class="how-desc">나이·소득·자산·혼인 여부·지역 등 기본 정보를 입력합니다</div>
+      </div>
+      <div class="how-step anim d1">
+        <div class="how-num">2</div>
+        <div class="how-title">즉시 분석</div>
+        <div class="how-desc">LH·SH·청약홈·기금 69가지 유형을 동시에 비교·분석합니다</div>
+      </div>
+      <div class="how-step anim d2">
+        <div class="how-num">3</div>
+        <div class="how-title">결과 확인</div>
+        <div class="how-desc">신청 가능한 유형과 현재 접수 중인 공고를 한눈에 확인합니다</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S5 CTA ══ -->
+<section id="cta">
+  <h2 class="cta-title anim">지금 바로, 내가 받을 수 있는<br>주거 혜택을 확인하세요</h2>
+  <p class="cta-sub anim d1">무료 · 3분 · 로그인 불필요</p>
+  <div class="anim d2">
+    <a href="./details.html" class="cta-btn">
+      정밀분석 시작하기
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+  <p class="cta-note anim d3">2026년 4월 기준 · LH·SH 공식 자격요건 기반</p>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="footer-logo">내집<em>구독</em></div>
+  <div class="footer-note">© 2026 내집구독 · LH·SH 공식 데이터 기반 · 비영리 서비스</div>
+</footer>
 
 <script>
 (function(){
 'use strict';
-const $=id=>document.getElementById(id);
 
-/* ── Scene config ── */
-const IDS=['s1','s2','s3'];
-const DURS=[11000,18000,0]; // ms (0 = stays)
-let cur=0;
-const timers=[];
-let autoTimer=null;
+/* 파티클 */
+(function spawnParticles(){
+  const hero = document.getElementById('hero');
+  const sizes = [32,48,72,100,140,180];
+  for(let i=0;i<14;i++){
+    const el = document.createElement('div');
+    el.className = 'hero-particle';
+    const s = sizes[Math.floor(Math.random()*sizes.length)];
+    el.style.cssText = [
+      `width:${s}px`,`height:${s}px`,
+      `left:${Math.random()*100}%`,
+      `bottom:-${s}px`,
+      `animation-duration:${14+Math.random()*22}s`,
+      `animation-delay:${Math.random()*14}s`,
+    ].join(';');
+    hero.appendChild(el);
+  }
+})();
 
-function qt(fn,ms){const t=setTimeout(fn,ms);timers.push(t)}
-function clearAll(){timers.forEach(clearTimeout);timers.length=0;clearTimeout(autoTimer)}
+/* 네비 스크롤 */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', ()=>{
+  nav.classList.toggle('scrolled', window.scrollY > 64);
+}, {passive:true});
 
-function go(idx){
-  if(idx<0||idx>=IDS.length)return;
-  clearAll();
-  document.getElementById(IDS[cur])?.classList.remove('active');
-  cur=idx;
-  document.getElementById(IDS[cur]).classList.add('active');
-  updateUI();
-  ({s1:initS1,s2:initS2,s3:initS3})[IDS[cur]]?.();
-  const dur=DURS[cur];
-  if(dur>0){startProgress(dur);autoTimer=setTimeout(()=>go(cur+1),dur)}
-  else resetProgress();
+/* 스크롤 진입 애니메이션 */
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });
+}, {threshold:0.12});
+document.querySelectorAll('.anim').forEach(el=>io.observe(el));
+
+/* 카운트업 (easeOutExpo) */
+function countUp(el, target){
+  const dur = 1800, t0 = performance.now();
+  (function tick(now){
+    const p = Math.min((now-t0)/dur, 1);
+    const e = p===1 ? 1 : 1-Math.pow(2,-10*p);
+    el.textContent = Math.floor(e*target);
+    if(p<1) requestAnimationFrame(tick);
+    else el.textContent = target;
+  })(t0);
 }
-
-function startProgress(dur){
-  const f=$('pfill');
-  f.style.transition='none';f.style.transform='scaleX(0)';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    f.style.transition=`transform ${dur}ms linear`;
-    f.style.transform='scaleX(1)';
-  }));
-}
-function resetProgress(){const f=$('pfill');f.style.transition='none';f.style.transform='scaleX(0)'}
-
-function updateUI(){
-  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
-  $('aprev').classList.toggle('hide',cur===0);
-  $('anext').classList.toggle('hide',cur===IDS.length-1);
-}
-
-/* ════════════════════════
-   S1 — 브랜드 히어로
-════════════════════════ */
-function initS1(){
-  const els=[
-    document.querySelector('.s1-pill'),
-    document.querySelector('.s1-brand'),
-    document.querySelector('.s1-sub-wrap'),
-    document.querySelector('.s1-stats'),
-    document.querySelector('.s1-hint'),
-  ];
-  els.forEach(e=>{if(e){e.classList.remove('go');void e.offsetWidth}});
-  qt(()=>els[0]?.classList.add('go'), 150);
-  qt(()=>els[1]?.classList.add('go'), 500);
-  qt(()=>els[2]?.classList.add('go'), 1200);
-  qt(()=>els[3]?.classList.add('go'), 1900);
-  qt(()=>els[4]?.classList.add('go'), 2800);
-}
-
-/* ════════════════════════
-   S2 — 서비스 소개
-════════════════════════ */
-function initS2(){
-  // 텍스트 요소
-  const eyebrow = document.querySelector('.s2-eyebrow');
-  const title   = document.querySelector('.s2-title');
-  const desc    = document.querySelector('.s2-desc');
-  const instsLbl= $('insts-label');
-  [eyebrow,title,desc,instsLbl].forEach(e=>{if(e){e.classList.remove('go');void e.offsetWidth}});
-
-  // 수치 카드
-  ['n1','n2','n3','n4'].forEach(id=>{
-    const el=$(id);
-    if(el){el.classList.remove('go');void el.offsetWidth}
+const cio = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const target = +e.target.dataset.target;
+      const valEl  = e.target.querySelector('.count-val');
+      if(valEl) countUp(valEl, target);
+      cio.unobserve(e.target);
+    }
   });
+},{threshold:0.3});
+document.querySelectorAll('[data-target]').forEach(el=>cio.observe(el));
 
-  // 기관 배지
-  document.querySelectorAll('.s2-inst').forEach(e=>{e.classList.remove('go');void e.offsetWidth});
-
-  qt(()=>eyebrow?.classList.add('go'), 200);
-  qt(()=>title?.classList.add('go'),   450);
-  qt(()=>desc?.classList.add('go'),    700);
-
-  ['n1','n2','n3','n4'].forEach((id,i)=>
-    qt(()=>$(id)?.classList.add('go'), 600+i*150)
-  );
-
-  qt(()=>instsLbl?.classList.add('go'), 1300);
-  document.querySelectorAll('.s2-inst').forEach((e,i)=>
-    qt(()=>e.classList.add('go'), 1450+i*80)
-  );
-}
-
-/* ════════════════════════
-   S3 — CTA
-════════════════════════ */
-function initS3(){
-  const els=[
-    document.querySelector('.s3-badge'),
-    document.querySelector('.s3-title'),
-    document.querySelector('.s3-desc'),
-    document.querySelector('.s3-chips'),
-    document.querySelector('.s3-btn-wrap'),
-    document.querySelector('.s3-note'),
-  ];
-  els.forEach(e=>{if(e){e.classList.remove('go');void e.offsetWidth}});
-  els.forEach((e,i)=>qt(()=>e?.classList.add('go'), 180+i*160));
-}
-
-/* ── Controls ── */
-$('aprev').addEventListener('click',()=>go(cur-1));
-$('anext').addEventListener('click',()=>go(cur+1));
-document.querySelectorAll('.dot').forEach((d,i)=>d.addEventListener('click',()=>go(i)));
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(cur+1)}
-  if(e.key==='ArrowLeft'){e.preventDefault();go(cur-1)}
-});
-let tx=0;
-document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
-document.addEventListener('touchend',e=>{
-  const dx=tx-e.changedTouches[0].clientX;
-  if(Math.abs(dx)>55){dx>0?go(cur+1):go(cur-1)}
-});
-$('stage').addEventListener('click',e=>{
-  if(!e.target.closest('a,button')&&cur<IDS.length-1)go(cur+1);
-});
-
-go(0);
 })();
 </script>
 </body>
