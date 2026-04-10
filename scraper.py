@@ -113,6 +113,21 @@ def extract_dates_from_html(html):
 def normalize_title(title):
     return re.sub(r"\s+", "", title)[:20]
 
+_SEOUL_GUS = [
+    '종로구','중구','용산구','성동구','광진구','동대문구','중랑구','성북구',
+    '강북구','도봉구','노원구','은평구','서대문구','마포구','양천구','강서구',
+    '구로구','금천구','영등포구','동작구','관악구','서초구','강남구','송파구','강동구'
+]
+
+def extract_gu_from_text(text):
+    """제목·주소 등 텍스트에서 서울 구 이름 추출. 없으면 None."""
+    if not text:
+        return None
+    for gu in _SEOUL_GUS:
+        if gu in text:
+            return gu
+    return None
+
 def make_id(source_key, uid):
     h = hashlib.md5(str(uid).encode("utf-8")).hexdigest()[:8]
     return f"{source_key}_{h}"
@@ -411,13 +426,15 @@ class SHCrawler:
             inst = "SH"
             types = detect_types_sh(title)
             url = f"{self.view_url}?seq={seq}&multi_itm_seq={self.multi_itm}"
+            district = extract_gu_from_text(title)
             ann = {
                 "id":          make_id(self.inst_key, seq),
                 "inst":        inst,
                 "source_key":  self.inst_key,
                 "title":       title,
                 "types":       types,
-                "location":    "서울",
+                "location":    "서울특별시" + (" " + district if district else ""),
+                "district":    district,
                 "status":      status,
                 "url":         url,
                 "posted_date": posted_str,
@@ -534,6 +551,9 @@ def crawl_lh(mi, source_key, initial=False):
             gu_m = re.search(r'"sbdLgoNm"\s*:\s*"[^"]*서울([^"]+구)', detail_html)
             if gu_m:
                 district = gu_m.group(1).strip()
+        # 파싱 실패 시 제목에서 fallback
+        if not district:
+            district = extract_gu_from_text(title)
 
         # apply_end 없으면 목록 두 번째 날짜로 fallback
         if not apply_end and len(dates) >= 2:
@@ -844,7 +864,7 @@ def crawl_applyhome_apt(initial=False):
             types = base_types
         else:
             types = _parse_applyhome_supply_types(detail_html, base_types[0]) if detail_html else base_types
-        district = _parse_applyhome_district(detail_html)
+        district = _parse_applyhome_district(detail_html) or extract_gu_from_text(name_raw)
 
         uid = name_raw + (apply_end.isoformat() if apply_end else "")
         ann = {
@@ -927,7 +947,7 @@ def crawl_applyhome_remndr(initial=False):
             data={"pblancNo": pbno, "houseManageNo": hmno, "houseSecd": hsecd},
             extra_headers={"Referer": list_url}
         )
-        district = _parse_applyhome_district(detail_html)
+        district = _parse_applyhome_district(detail_html) or extract_gu_from_text(name_raw)
 
         uid = name_raw + "remndr" + (apply_end.isoformat() if apply_end else "")
         ann = {
@@ -1009,7 +1029,7 @@ def crawl_applyhome_other(initial=False):
             data={"pblancNo": pbno, "houseManageNo": hmno, "houseSecd": hsecd},
             extra_headers={"Referer": list_url}
         )
-        district = _parse_applyhome_district(detail_html)
+        district = _parse_applyhome_district(detail_html) or extract_gu_from_text(name_raw)
 
         uid = name_raw + (apply_end.isoformat() if apply_end else "")
         ann = {
