@@ -247,11 +247,7 @@ def detect_types_lh(title, type_col=""):
     if "전세임대" in tl:
         return ["LH 기존주택 전세임대"]
     if "기숙사형" in tl:
-        return ["LH 기숙사형 청년주택"]
-    if "리츠" in tl:
-        return ["LH 청년신혼부부 매입임대리츠"]
-    if "자립준비" in tl:
-        return ["LH 자립준비청년"]
+        return ["LH 기숙사형 매입임대"]
     if "신혼희망타운" in tl:
         return ["LH 신혼희망타운"]
     if "분양" in tc or "공공분양" in tl:
