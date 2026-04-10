@@ -151,7 +151,8 @@ SH_TYPES = [
     ("미리내집",                  ["미리내집", "장기전세주택2", "장기전세2"]),
     ("장기전세주택 (시프트)",      ["장기전세주택", "시프트"]),
     ("희망하우징",                ["희망하우징"]),
-    ("청년안심주택",               ["청년안심주택"]),
+    ("SH 청년안심주택 공공임대",     ["청년안심주택 공공임대", "[공공임대]"]),
+    ("SH 청년안심주택 민간임대",     ["청년안심주택 민간임대", "[민간임대]"]),
     ("토지임대부 사회주택",         ["토지임대부 사회주택", "토지지원 사회주택", "토지지원사회주택", "토지임대부사회주택"]),
     ("리모델링형 사회주택",        ["리모델링형 사회주택", "리모델링형사회주택"]),
     ("사회주택리츠",               ["사회주택리츠"]),
@@ -629,12 +630,20 @@ def crawl_youth_housing(initial=False):
                 if m:
                     district = m.group(1).strip()
 
+            # 제목에서 공공임대/민간임대 구분
+            if "공공임대" in title or "[공공]" in title:
+                youth_type = "SH 청년안심주택 공공임대"
+            elif "민간임대" in title or "[민간]" in title:
+                youth_type = "SH 청년안심주택 민간임대"
+            else:
+                youth_type = "SH 청년안심주택 공공임대"  # 기본값: 공공임대
+
             ann = {
                 "id":          make_id("youth", board_id),
                 "inst":        "SH",
                 "source_key":  "youth_housing",
                 "title":       title,
-                "types":       ["청년안심주택"],
+                "types":       [youth_type],
                 "location":    "서울",
                 "status":      status,
                 "url":         url,

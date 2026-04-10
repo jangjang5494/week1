@@ -747,6 +747,15 @@
                         <button class="toggle-btn" data-val="yes">예 (가점 +2점)</button>
                     </div>
                 </div>
+                <div class="fg">
+                    <div class="fg-label-row">
+                        <label>부모 중 장애인 여부 (청년 가점용)</label>
+                    </div>
+                    <div class="toggle-group" id="tg-parent-disabled">
+                        <button class="toggle-btn selected" data-val="no">아니오</button>
+                        <button class="toggle-btn" data-val="yes">예 (가점 +1점)</button>
+                    </div>
+                </div>
             </div>
 
             <hr style="border:none;border-top:1px solid var(--input-border,#e5e7eb);margin:1.2rem 0;">
@@ -1711,7 +1720,9 @@ function runAnalysis() {
     const totalAssets   = parseFloat(document.getElementById('total-assets').value) || 0;
     const realEstate    = parseFloat(document.getElementById('real-estate').value) || 0;
     const carVal        = parseFloat(document.getElementById('car-value').value) || 0;
-    const parentIncome  = getToggle('tg-parent-income') === 'yes';
+    const parentIncome   = getToggle('tg-parent-income') === 'yes';
+    const parentHomeless = getToggle('tg-parent-homeless') === 'yes';
+    const parentDisabled = getToggle('tg-parent-disabled') === 'yes';
     const priority      = getToggle('tg-priority') || 'none';
     const singleParent  = getToggle('tg-singleparent') === 'yes';
     const disabled      = getToggle('tg-disabled') === 'yes';
@@ -2053,105 +2064,124 @@ function runAnalysis() {
         add('전세임대형 든든주택', eligible, rank, '보증금 20% 부담 / SH 최대 2억 (소득·자산 무관)', '최장 8년', 'jeonse', r, 'SH', 'rental');
     }
 
-    // 17. 청년안심주택
-    {
-        const r = [];
-        if (!baseOk_lh) r.push('무주택 필요');
-        const seoulConnect = seoulRes || isSeoulStudent || isSeoulWorker;
-        if (!seoulConnect) r.push('서울 거주 또는 서울 소재 학교 재학 또는 서울 재직 중 하나 필요');
-        if (!isYouth&&!isNewlywedStrict) r.push('만 19~39세 또는 신혼부부·예비신혼 필요');
-        const db18 = getE('SH_SAFETY_PUBLIC_YOUTH');
-        const aLim18=db18.asset||25400, cLim18=db18.car||4563;
-        const aOk18=is1st||(totalAssets<=aLim18), carOk18=is1st||(carVal<=cLim18);
-        if (!aOk18) r.push(`총자산 ${aLim18}만원 이하 필요 (1순위 완화)`);
-        if (!carOk18) r.push(`자동차 ${cLim18}만원 이하 필요 (1순위 완화)`);
-        let eligible=false, rank='';
-        if (baseOk_lh && seoulConnect && (isYouth||isNewlywedStrict) && aOk18 && carOk18) {
-            if (is1st) { eligible=true; rank='1순위 (우대 대상, 소득·자산 완화)'; }
-            else if (isNewlywedStrict) {
-                const i1 = dualInc?underDual(70,20):under(70);
-                const i2 = dualInc?under(200)||under(130):under(130);
-                if (i1) { eligible=true; rank='신혼Ⅰ형 (소득 70~90%)'; }
-                else if (i2) { eligible=true; rank='신혼Ⅱ형 (소득 130%, 맞벌이 200%)'; }
-                else r.push('소득 130% 이하 필요');
-            } else if (under(100)) {
-                eligible=true; rank=parentIncome?'2순위 (본인+부모 100%)':'3순위 (본인 100%)';
-            } else r.push('소득 100% 이하 필요');
-        }
-        add('청년안심주택', eligible, rank, '역세권 시세 이하', '공고별 상이 (보통 10년)', 'youth', r, 'SH', 'rental');
-    }
-
-    // SH 18b. 청년안심주택 공공임대 (신혼부부) — SH_SAFETY_PUBLIC_NEWLYWED
+    // SH 17. 청년안심주택 공공임대 (청년+신혼 통합) — SH_SAFETY_PUBLIC_YOUTH / SH_SAFETY_PUBLIC_NEWLYWED
     {
         const r = [];
         if (!baseOk_lh) r.push('무주택 필요');
         const seoulConnect = seoulRes || isSeoulStudent || isSeoulWorker;
         if (!seoulConnect) r.push('서울 거주·재학·재직 중 하나 필요');
-        const grp = isNewlywedStrict || infant || (singleParent && youngChild);
-        if (!grp) r.push('신혼(7년이내)·예비신혼·신생아가구·한부모(6세이하) 필요');
-        const dbSpn = getE('SH_SAFETY_PUBLIC_NEWLYWED');
-        const aLimSpn=dbSpn.asset||33700, cLimSpn=dbSpn.car||4563;
-        const aOkSpn=totalAssets<=aLimSpn, carOkSpn=carVal<=cLimSpn;
-        if (!aOkSpn) r.push(`총자산 ${aLimSpn}만원 이하 필요`);
-        if (!carOkSpn) r.push(`자동차 ${cLimSpn}만원 이하 필요`);
-        let eligible=false, rank='';
-        if (baseOk_lh && seoulConnect && grp && aOkSpn && carOkSpn) {
-            if (infant || (singleParent && youngChild)) { eligible=true; rank='1순위 (신생아·보호대상한부모)'; }
-            else if (dualInc ? under(90) : under(70)) { eligible=true; rank='신혼Ⅰ형 (소득 70%'+(dualInc?'/맞벌이 90%':'')+')'; }
-            else if (dualInc ? under(200) : under(130)) { eligible=true; rank='신혼Ⅱ형 (소득 130%'+(dualInc?'/맞벌이 200%':'')+')'; }
-            else r.push('소득 130%'+(dualInc?'(맞벌이 200%)':'')+' 이하 필요');
+        const isYouthGrp = isYouth && !isMarried;
+        const isNewlywedGrp = isNewlywedStrict || infant || (singleParent && youngChild);
+        if (!isYouthGrp && !isNewlywedGrp) r.push('만 19~39세 미혼 청년 또는 신혼부부(7년이내)·신생아가구·한부모(6세이하) 필요');
+        // 청년안심주택 소득 가산: 1인+20%p, 2인+10%p
+        function underYH(pct) {
+            const bonus = hhSize === 1 ? 1.20 : hhSize === 2 ? 1.10 : 1.00;
+            return incWon <= Math.round(URBAN100[Math.min(hhSize,7)-1] * bonus * pct / 100);
         }
-        add('SH 청년안심주택 공공임대 (신혼)', eligible, rank, '역세권 시세 이하', '최장 20년', 'newlywed', r, 'SH', 'rental');
-    }
-
-    // SH 18c. 청년안심주택 민간임대 (신혼부부) — SH_SAFETY_PRIVATE_NEWLYWED
-    {
-        const r = [];
-        if (!baseOk_lh) r.push('무주택 필요');
-        const seoulConnect = seoulRes || isSeoulStudent || isSeoulWorker;
-        if (!seoulConnect) r.push('서울 거주·재학·재직 중 하나 필요');
-        const grp = isNewlywedStrict || infant || (singleParent && youngChild);
-        if (!grp) r.push('신혼(7년이내)·예비신혼·신생아가구·한부모(6세이하) 필요');
-        const dbSprN = getE('SH_SAFETY_PRIVATE_NEWLYWED');
-        const aLimSprN=dbSprN.asset||34500, cLimSprN=dbSprN.car||4563;
-        let eligible=false, rank='';
-        if (baseOk_lh && seoulConnect && grp) {
-            const r1=dbSprN.incRank1||100, r2=dbSprN.incRank2||110, r3=dbSprN.incRank3||120;
-            eligible=true;
-            if (totalAssets<=aLimSprN && carVal<=cLimSprN && under(r3)) {
-                if (under(r1)) rank='특별공급 1순위 (소득'+r1+'%이하·해당지역)';
-                else if (under(r2)) rank='특별공급 2순위 (소득'+r2+'%이하·서울 타지역)';
-                else rank='특별공급 3순위 (소득'+r3+'%이하·그 외 지역)';
-            } else {
-                rank='일반공급 (소득·자산 무관 추첨)';
+        const eligibleTypes = [];
+        if (baseOk_lh && seoulConnect) {
+            // 청년 공공임대 (만19~39세 미혼)
+            if (isYouthGrp) {
+                const dbY = getE('SH_SAFETY_PUBLIC_YOUTH');
+                const aLim3 = dbY.asset || 25400;  // 3순위: 행복주택 청년 기준 (본인 자산)
+                const aLim2 = 33700;               // 2순위: 국민임대 기준 (본인+부모 합산 자산)
+                const cLim = dbY.car || 4563;
+                if (is1st) {
+                    eligibleTypes.push('청년 1순위 (수급자·차상위·한부모, 소득·자산 완화)');
+                } else if (carVal > cLim) {
+                    r.push(`청년: 자동차 ${cLim}만원 이하 필요`);
+                } else {
+                    // 3순위: 본인 소득 1인기준×120%, 본인 자산 25,400이하
+                    const inc3Lim = Math.round(URBAN100[0] * 1.20);
+                    if (totalAssets <= aLim3 && incWon <= inc3Lim) {
+                        eligibleTypes.push('청년 3순위 (본인 소득 1인기준 120%이하·자산 25,400만원)');
+                    } else {
+                        if (totalAssets > aLim2) r.push('청년: 총자산 33,700만원 초과 (2·3순위 모두 불가)');
+                        else if (totalAssets > aLim3) r.push('청년 3순위: 본인 자산 25,400만원 초과');
+                        if (incWon > inc3Lim) r.push('청년 3순위: 본인 소득 1인기준 120% 초과');
+                    }
+                    // 2순위 가능성: 본인 자산 33,700이하 + 본인 소득이 2인기준110% 이하 → 부모 합산 후 확인
+                    const inc2Lim = Math.round(URBAN100[1] * 1.10);
+                    if (totalAssets <= aLim2 && incWon <= inc2Lim) {
+                        eligibleTypes.push('청년 2순위 가능성 (부모 소득·자산 합산 필요 — 직접 확인)');
+                    }
+                }
+            }
+            // 신혼 공공임대
+            if (isNewlywedGrp) {
+                const dbN = getE('SH_SAFETY_PUBLIC_NEWLYWED');
+                const aLimN1 = dbN.asset || 33700;  // 신혼Ⅰ: 국민임대 기준
+                const aLimN2 = 36200;               // 신혼Ⅱ: 임대의무기간 6년 분양전환 기준
+                const cLimN = dbN.car || 4563;
+                if (totalAssets <= aLimN2 && carVal <= cLimN) {
+                    if (infant||(singleParent&&youngChild)) {
+                        eligibleTypes.push('신혼 1순위 (신생아·보호대상한부모)');
+                    } else if (totalAssets <= aLimN1 && (dualInc?underYH(90):underYH(70))) {
+                        eligibleTypes.push('신혼Ⅰ형 (소득70%'+(dualInc?'/맞벌이90%':'')+')');
+                    } else if (dualInc?underYH(200):underYH(130)) {
+                        eligibleTypes.push('신혼Ⅱ형 (소득130%'+(dualInc?'/맞벌이200%':'')+')');
+                    } else {
+                        r.push('신혼: 소득 130%'+(dualInc?'(맞벌이200%)':'')+' 초과');
+                    }
+                } else {
+                    if (totalAssets > aLimN2) r.push('신혼: 총자산 36,200만원 초과');
+                    if (carVal > cLimN) r.push(`신혼: 자동차 ${cLimN}만원 이하 필요`);
+                }
             }
         }
-        add('SH 청년안심주택 민간임대 (신혼)', eligible, rank, '특별공급 시세75%/일반공급 시세85%', '최장 20년', 'newlywed', r, 'SH', 'rental');
+        // ── 가점 계산 ──────────────────────────────────────────────────────
+        let score = 0;
+        if (isYouthGrp) {
+            // 청년형 가점 (최대 ~14점)
+            if (isRecipient) score += 3;                          // ① 수급자
+            if (singleParent) score += 3;                         // ② 보호대상 한부모
+            if (parentHomeless) score += 2;                       // ③ 부모 무주택
+            if (disabled) score += 2;                             // ④ 장애인 본인
+            if (parentDisabled) score += 1;                       // ⑤ 장애인 가구(부모)
+            if (!is1st) {                                         // ⑥ 소득 50%이하 (2·3순위만)
+                if (incWon <= Math.round(URBAN100[0] * 0.60)) score += 3;
+            }
+            score += subCount >= 24 ? 3 : subCount >= 12 ? 2 : subCount >= 6 ? 1 : 0; // ⑦ 청약저축
+        } else if (isNewlywedGrp) {
+            // 신혼부부형 가점 (최대 12점)
+            if (['basic','medical'].includes(priority)) score += 3;       // ① 생계·의료급여
+            else if (priority === 'housing' || isNearLow) score += 2;    // ① 주거급여·차상위
+            score += childCnt >= 3 ? 4 : childCnt === 2 ? 3 : childCnt === 1 ? 2 : 0; // ② 자녀수
+            score += seoulYrs >= 5 ? 3 : seoulYrs >= 3 ? 2 : 1;         // ③ 서울거주기간
+            if (disabled) score += 2;                                     // ④ 장애인
+        }
+        const eligible = eligibleTypes.length > 0;
+        const rank = eligible ? eligibleTypes.join(' · ') + (score > 0 ? ` (예상 가점 ${score}점)` : '') : '';
+        add('SH 청년안심주택 공공임대', eligible, rank, '역세권 시세 이하', '청년 최장 10년 / 신혼 최장 20년', 'youth', r, 'SH', 'rental');
     }
 
-    // SH 18c-2. 청년안심주택 민간임대 (청년) — SH_SAFETY_PRIVATE_YOUTH
+    // SH 18. 청년안심주택 민간임대 (청년+신혼 통합) — SH_SAFETY_PRIVATE_YOUTH / SH_SAFETY_PRIVATE_NEWLYWED
     {
         const r = [];
         if (!baseOk_lh) r.push('무주택 필요');
         const seoulConnect = seoulRes || isSeoulStudent || isSeoulWorker;
         if (!seoulConnect) r.push('서울 거주·재학·재직 중 하나 필요');
-        if (!isYouth) r.push('만 19~39세 청년 필요');
-        if (isMarried) r.push('미혼 청년 대상 (기혼자는 신혼 유형 확인)');
-        const dbSprY = getE('SH_SAFETY_PRIVATE_YOUTH');
-        const aLimSprY=dbSprY.asset||34500, cLimSprY=dbSprY.car||4563;
-        let eligible=false, rank='';
-        if (baseOk_lh && seoulConnect && isYouth && !isMarried) {
-            const r1=dbSprY.incRank1||100, r2=dbSprY.incRank2||110, r3=dbSprY.incRank3||120;
-            eligible=true;
-            if (totalAssets<=aLimSprY && carVal<=cLimSprY && under(r3)) {
-                if (under(r1)) rank='특별공급 1순위 (소득'+r1+'%이하·해당지역)';
-                else if (under(r2)) rank='특별공급 2순위 (소득'+r2+'%이하·서울 타지역)';
-                else rank='특별공급 3순위 (소득'+r3+'%이하·그 외 지역)';
-            } else {
-                rank='일반공급 (소득·자산 무관 추첨)';
+        const isYouthGrp = isYouth && !isMarried;
+        const isNewlywedGrp = isNewlywedStrict || infant || (singleParent && youngChild);
+        if (!isYouthGrp && !isNewlywedGrp) r.push('만 19~39세 미혼 청년 또는 신혼부부(7년이내)·신생아가구·한부모(6세이하) 필요');
+        const eligibleTypes = [];
+        // 지역순위: 해당구 거주·재학·재직→1순위 / 서울 타구→2순위 — 공고별 달라 정확 판단 불가
+        const areaRankHint = seoulRes ? '지역1~2순위(해당 구→1, 타 구→2)' : '지역2~3순위(서울 재학·재직)';
+        if (baseOk_lh && seoulConnect && (isYouthGrp || isNewlywedGrp)) {
+            const dbPri = getE('SH_SAFETY_PRIVATE_YOUTH');
+            const aLim=dbPri.asset||34500, cLim=dbPri.car||4563;
+            // 특공: 청년+신혼 단일 풀 — 소득순위→지역순위→추첨
+            if ((isYouthGrp || isNewlywedGrp) && totalAssets<=aLim && carVal<=cLim && under(120)) {
+                const incRank = under(100) ? '소득1순위(100%이하)' : under(110) ? '소득2순위(110%이하)' : '소득3순위(120%이하)';
+                eligibleTypes.push(`특공 ${incRank} · ${areaRankHint}`);
             }
+            // 일반공급: 청년형 / 신혼형 각각 (소득·자산 무관)
+            if (isYouthGrp) eligibleTypes.push('청년 일반공급 (소득·자산 무관 추첨)');
+            if (isNewlywedGrp) eligibleTypes.push('신혼 일반공급 (소득·자산 무관 추첨)');
         }
-        add('SH 청년안심주택 민간임대 (청년)', eligible, rank, '특별공급 시세75%/일반공급 시세85%', '최장 10년', 'youth', r, 'SH', 'rental');
+        const eligible = eligibleTypes.length > 0;
+        const rank = eligible ? eligibleTypes.join(' · ') : '';
+        add('SH 청년안심주택 민간임대', eligible, rank, '특공 시세75% / 일반 시세85%', '청년 최장 10년 / 신혼 최장 20년', 'youth', r, 'SH', 'rental');
     }
 
     // SH 18e. 사회주택 — SH_SOCIAL_HOUSE
@@ -3483,7 +3513,7 @@ function runAnalysis() {
                         period = `<div class="announce-period">신청기간: ${a.apply_start} ~ ${a.apply_end}</div>`;
                     }
                     let rankBadge = '';
-                    if (r.name === '청년안심주택' && a.title.includes('[민간임대]')) {
+                    if (r.name === 'SH 청년안심주택 민간임대') {
                         const rk = youthPrivateRank(a.district);
                         rankBadge = `<div class="announce-rank">🏷 ${rk}</div>`;
                     }
@@ -4083,91 +4113,103 @@ const typeDetailData = {
         </div>
         <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
     },
-    '청년안심주택': {
-        title: '청년안심주택',
+    'SH 청년안심주택 공공임대': {
+        title: 'SH 청년안심주택 공공임대',
         body: `
         <div class="help-section">
             <h4>어떤 주택인가요?</h4>
-            <p>역세권·간선도로변에 공급되는 청년·신혼부부용 공공지원 민간임대주택입니다. SH가 민간 사업자와 협력해 시세 이하로 공급.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>임대료: 주변 시세 이하 (공고별 상이)</li>
-                <li>거주 기간: 통상 10년 (공고별 상이)</li>
-                <li>위치: 역세권(250~350m 이내) 또는 간선도로변</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>만 19~39세 청년 또는 신혼부부(7년이내)·예비신혼</li>
-                <li>서울 거주 무주택</li>
-                <li>청년 2순위: 소득 100% 이하 (부모 합산)</li>
-                <li>청년 3순위: 소득 100% 이하 (본인만)</li>
-                <li>신혼 Ⅰ형: 소득 70% 이하 (맞벌이 90%)</li>
-                <li>신혼 Ⅱ형: 소득 130% 이하 (맞벌이 200%)</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>이런 분께 적합</h4>
-            <div class="help-case">역세권 신축 또는 준신축에서 살고 싶은 청년·신혼부부. 공공임대보다 입지와 품질이 좋은 편.</div>
-        </div>
-        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>
-        <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울시 청년안심주택 안내</a>`
-    },
-    'SH 청년안심주택 공공임대 (신혼)': {
-        title: 'SH 청년안심주택 공공임대 (신혼부부)',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>역세권·간선도로변에 공급되는 신혼부부 전용 <strong>공공임대</strong> 청년안심주택. SH가 직접 운영하며 최장 20년 거주 가능합니다.</p>
+            <p>역세권·간선도로변에 SH공사가 직접 공급·운영하는 <strong>공공임대</strong> 청년안심주택. 청년(만19~39세 미혼)과 신혼부부 모두 신청 가능합니다.</p>
         </div>
         <div class="help-section">
             <h4>임대 조건</h4>
             <ul>
                 <li>임대료: 역세권 주변 시세 이하</li>
-                <li>거주 기간: 최장 20년</li>
+                <li>거주 기간: 청년 최장 10년 / 신혼부부 최장 20년</li>
+                <li>위치: 역세권(250~350m 이내) 또는 간선도로변</li>
             </ul>
         </div>
         <div class="help-section">
-            <h4>핵심 자격 요건</h4>
-            <ul>
-                <li>서울 거주·재학·재직 중 하나에 해당하는 무주택자</li>
-                <li>신혼부부(혼인 7년이내)·예비신혼·신생아가구·한부모(6세이하)</li>
-                <li>신혼Ⅰ형: 소득 70% 이하 (맞벌이 90%)</li>
-                <li>신혼Ⅱ형: 소득 130% 이하 (맞벌이 200%)</li>
-                <li>신생아·보호대상한부모: 1순위 우선 선정</li>
-            </ul>
+            <h4>청년 유형 자격 (만 19~39세 미혼)</h4>
+            <table class="help-table">
+                <tr><th>순위</th><th>소득기준</th><th>자산기준 (본인+부모 합산)</th></tr>
+                <tr><td><strong>1순위</strong></td><td>수급자·차상위·한부모 — 소득·자산 심사 없음</td><td>심사 없음</td></tr>
+                <tr><td><strong>2순위</strong></td><td>본인+부모 합산 소득 ≤ 2인기준 × 110%<br><span class="hint">※ 소득·자산 모두 부모 포함 합산</span></td><td>33,700만원 이하</td></tr>
+                <tr><td><strong>3순위</strong></td><td>본인 소득 ≤ 1인기준 × 120%<br><span class="hint">※ 본인 소득·자산만 심사</span></td><td>25,400만원 이하</td></tr>
+            </table>
+            <p class="hint warn">⚠️ 2순위는 부모와 별도 거주해도 반드시 부모 소득·자산을 합산해야 합니다. 판단 엔진에서는 3순위 기준을 자동 계산하고, 2순위는 가능성 안내만 제공합니다.</p>
         </div>
-        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+        <div class="help-section">
+            <h4>신혼부부 유형 자격 (혼인 7년이내·예비신혼·신생아·한부모)</h4>
+            <table class="help-table">
+                <tr><th>유형</th><th>소득기준 (2인기준 × 110% 가산)</th><th>자산기준</th></tr>
+                <tr><td><strong>1순위</strong></td><td>신생아가구 또는 보호대상 한부모가족</td><td>33,700만원</td></tr>
+                <tr><td><strong>신혼Ⅰ형</strong></td><td>소득 70% 이하 (맞벌이 90%)</td><td>33,700만원</td></tr>
+                <tr><td><strong>신혼Ⅱ형</strong></td><td>소득 130% 이하 (맞벌이 200%)</td><td>36,200만원</td></tr>
+            </table>
+            <p class="hint">자동차 4,563만원 이하 공통 적용. 서울 거주·재학·재직 중 하나 해당, 세대 전원 무주택.</p>
+        </div>
+        <div class="help-section">
+            <h4>청년형 가점 기준 (동점 시 추첨)</h4>
+            <table class="help-table">
+                <tr><th>항목</th><th>배점</th><th>비고</th></tr>
+                <tr><td>① 생계·의료·주거급여 수급자</td><td>3점</td><td>1순위 항목. 본인 또는 동세대 부모</td></tr>
+                <tr><td>② 보호대상 한부모가족</td><td>3점</td><td>1순위 항목. 한부모증명서 발급 가능자</td></tr>
+                <tr><td>③ 부모 모두 무주택</td><td>2점</td><td>사망 등 부재 시 인정 가능</td></tr>
+                <tr><td>④ 장애인 (본인)</td><td>2점</td><td>장애인등록증 교부자</td></tr>
+                <tr><td>⑤ 장애인 가구 (부모 중)</td><td>1점</td><td>부모 중 장애인등록증 교부자</td></tr>
+                <tr><td>⑥ 소득기준 50% 이하</td><td>3점</td><td>2·3순위에만 적용</td></tr>
+                <tr><td>⑦ 청약저축 24회 이상</td><td>3점</td><td rowspan="3">12~23회 2점 / 6~11회 1점</td></tr>
+            </table>
+        </div>
+        <div class="help-section">
+            <h4>신혼부부형 가점 기준 (동점 시 추첨)</h4>
+            <table class="help-table">
+                <tr><th>항목</th><th>배점</th><th>비고</th></tr>
+                <tr><td>① 생계·의료급여 수급자</td><td>3점</td><td rowspan="2">주거급여·차상위계층은 2점</td></tr>
+                <tr><td>② 자녀 수 (3인 이상)</td><td>4점</td><td>2인 3점 / 1인 2점 / 없음 0점</td></tr>
+                <tr><td>③ 서울 연속 거주 5년 이상</td><td>3점</td><td>3년 이상 2점 / 3년 미만 1점</td></tr>
+                <tr><td>④ 장애인 등록 (본인·배우자 중증)</td><td>2점</td><td></td></tr>
+            </table>
+        </div>
+        <div class="help-section">
+            <h4>이런 분께 적합</h4>
+            <div class="help-case">역세권 위치에서 공공임대 수준 임대료로 장기 거주를 원하는 청년·신혼부부. SH가 직접 운영해 민간임대보다 안정적.</div>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr/app/lay2/S48T3396C3532/contents.do" target="_blank">🔗 SH 청년유형 신청자격</a>
+        <a class="help-link" href="https://www.i-sh.co.kr/app/lay2/S48T3396C3533/contents.do" target="_blank">🔗 SH 신혼부부유형 신청자격</a>`
     },
-    'SH 청년안심주택 민간임대 (신혼)': {
-        title: 'SH 청년안심주택 민간임대 (신혼부부)',
+    'SH 청년안심주택 민간임대': {
+        title: 'SH 청년안심주택 민간임대',
         body: `
         <div class="help-section">
             <h4>어떤 주택인가요?</h4>
-            <p>역세권에 공급되는 신혼부부 전용 <strong>민간임대</strong> 청년안심주택. 특별공급(소득·자산 기준)과 일반공급(추첨)으로 나뉩니다.</p>
+            <p>역세권에 민간 사업자가 공급하는 <strong>민간임대</strong> 청년안심주택. 청년(만19~39세 미혼)과 신혼부부 모두 신청 가능하며, 특별공급(소득·자산 기준)과 일반공급(추첨)으로 나뉩니다.</p>
         </div>
         <div class="help-section">
             <h4>임대 조건</h4>
             <ul>
                 <li>특별공급: 시세 75% 수준</li>
                 <li>일반공급: 시세 85% 수준 (소득·자산 무관 추첨)</li>
-                <li>거주 기간: 최장 20년</li>
+                <li>거주 기간: 청년 최장 10년 / 신혼부부 최장 20년</li>
             </ul>
         </div>
         <div class="help-section">
-            <h4>특별공급 자격 요건</h4>
+            <h4>특별공급 자격 요건 (청년·신혼 공통)</h4>
             <ul>
                 <li>서울 거주·재학·재직 중 하나에 해당하는 무주택자</li>
-                <li>신혼부부(혼인 7년이내)·예비신혼·신생아가구·한부모(6세이하)</li>
+                <li>청년: 만 19~39세 미혼 / 신혼: 혼인 7년이내·예비신혼·신생아가구·한부모(6세이하)</li>
+                <li>총자산 34,500만원 이하 / 자동차 4,563만원 이하</li>
                 <li>1순위: 소득 100% 이하, 해당 자치구 거주</li>
                 <li>2순위: 소득 110% 이하, 서울 타 지역</li>
                 <li>3순위: 소득 120% 이하, 그 외</li>
             </ul>
         </div>
-        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
+        <div class="help-section">
+            <h4>일반공급</h4>
+            <p>소득·자산 기준 미충족 시에도 일반공급(추첨) 신청 가능. 단, 무주택 요건은 필수.</p>
+        </div>
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>
+        <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울시 청년안심주택 안내</a>`
     },
     'SH 사회주택': {
         title: 'SH 사회주택',
@@ -4197,33 +4239,6 @@ const typeDetailData = {
         </div>
         <a class="help-link" href="https://soco.seoul.go.kr/soHouse/main/contents.do?menuNo=300037" target="_blank">🔗 서울주거포털 사회주택 안내</a>
         <a class="help-link" href="https://www.seoulhousing.kr/html/0102007.do" target="_blank">🔗 서울주택도시공사 사회주택</a>`
-    },
-    'SH 청년안심주택 민간임대 (청년)': {
-        title: 'SH 청년안심주택 민간임대 (청년)',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>역세권에 공급되는 청년 전용 <strong>민간임대</strong> 청년안심주택. 특별공급(소득·자산 기준)과 일반공급(추첨)으로 나뉩니다.</p>
-        </div>
-        <div class="help-section">
-            <h4>임대 조건</h4>
-            <ul>
-                <li>특별공급: 시세 75% 수준</li>
-                <li>일반공급: 시세 85% 수준 (소득·자산 무관 추첨)</li>
-                <li>거주 기간: 최장 10년</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>특별공급 자격 요건</h4>
-            <ul>
-                <li>서울 거주·재학·재직 중 하나에 해당하는 무주택 미혼 청년(만 19~39세)</li>
-                <li>총자산 34,500만원 이하 / 자동차 4,563만원 이하</li>
-                <li>1순위: 소득 100% 이하, 해당 자치구 거주</li>
-                <li>2순위: 소득 110% 이하, 서울 타 지역</li>
-                <li>3순위: 소득 120% 이하, 그 외</li>
-            </ul>
-        </div>
-        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>`
     },
     'SH 공공·주거환경임대주택': {
         title: 'SH 공공·주거환경임대주택',
@@ -5822,63 +5837,52 @@ const applyGuideData = {
         </div>
         <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
     },
-    '청년안심주택': {
-        title: '청년안심주택 신청 가이드',
+    'SH 청년안심주택 공공임대': {
+        title: 'SH 청년안심주택 공공임대 신청 가이드',
         body: `
         <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 청년안심주택 공고 확인. 민간사업자가 운영하는 단지도 있어 신청처가 다를 수 있음.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 또는 방문 신청</h4><p>SH공사 직영 단지: 인터넷 청약. 민간 단지: 해당 사업자 홈페이지 또는 방문 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지(i-sh.co.kr) 또는 서울시 청년안심주택 포털(youth.seoul.go.kr)에서 공공임대 공고 확인. 청년·신혼부부 유형별 모집 구분 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>SH공사 인터넷 청약 시스템에서 신청. 청년(1~3순위) / 신혼(Ⅰ·Ⅱ형) 중 해당 유형 선택.</p></div></div>
             <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본</div>
-                    <div class="guide-doc-item">신분증 사본</div>
-                    <div class="guide-doc-item">소득 확인 서류 (건강보험료 납부확인서 또는 근로소득원천징수영수증)</div>
-                    <div class="guide-doc-item">무주택 서약서</div>
-                    <div class="guide-doc-item">재직증명서 (직장인) / 사업자등록증 사본 (사업자)</div>
-                </div>
-                <p class="hint warn">취업 1년 미만으로 원천징수 서류가 없다면 → 재직증명서 + 급여명세서 3개월치로 대체 신청 가능.</p>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>서류 심사 후 당첨자 발표. 보증금·월세 계약 체결.</p></div></div>
-        </div>
-        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
-    },
-    'SH 청년안심주택 공공임대 (신혼)': {
-        title: 'SH 청년안심주택 공공임대 (신혼) 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 「청년안심주택 공공임대 신혼부부」 공고 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 청약</h4><p>SH공사 인터넷 청약 시스템에서 신청.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (부부 모두)</div>
-                    <div class="guide-doc-item">혼인관계증명서</div>
+                <div class="guide-docs"><div class="guide-docs-title">공통 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전원)</div>
                     <div class="guide-doc-item">소득 확인 서류 (건강보험료 납부확인서 등)</div>
                     <div class="guide-doc-item">무주택 서약서</div>
+                </div>
+                <div class="guide-docs"><div class="guide-docs-title">신혼부부 추가 서류</div>
+                    <div class="guide-doc-item">혼인관계증명서</div>
                     <div class="guide-doc-item">출생증명서 (신생아 해당 시)</div>
                 </div>
+                <div class="guide-docs"><div class="guide-docs-title">1순위(수급자·차상위) 추가 서류</div>
+                    <div class="guide-doc-item">수급자 증명서 또는 차상위계층 확인서</div>
+                </div>
+                <p class="hint warn">청년 2순위: 부모 소득 합산 필요 → 부모 건강보험료 납부확인서 추가 제출.</p>
             </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>소득·자산 심사 후 당첨자 발표. 임대보증금 + 월임대료 계약.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>소득·자산 심사 후 당첨자 발표. 임대보증금 + 월임대료 계약. 청년 최장 10년 / 신혼 최장 20년 거주.</p></div></div>
         </div>
-        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 인터넷 청약</a>
+        <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울시 청년안심주택 안내</a>`
     },
-    'SH 청년안심주택 민간임대 (신혼)': {
-        title: 'SH 청년안심주택 민간임대 (신혼) 신청 가이드',
+    'SH 청년안심주택 민간임대': {
+        title: 'SH 청년안심주택 민간임대 신청 가이드',
         body: `
         <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 청년안심주택 민간임대 신혼부부 공고 확인. 특별공급과 일반공급 구분 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청 방법</h4><p>공고별 신청처 확인 (SH공사 또는 민간 사업자). 특별공급(소득·자산 기준) / 일반공급(추첨) 중 선택.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류 (특별공급)</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (부부 모두)</div>
-                    <div class="guide-doc-item">혼인관계증명서</div>
-                    <div class="guide-doc-item">소득 확인 서류</div>
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지 또는 청년안심주택 포털에서 민간임대 공고 확인. 청년·신혼부부 유형과 특별공급·일반공급 구분 확인. 신청처가 SH 또는 민간 사업자로 다를 수 있음.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>공급 유형 선택</h4><p>특별공급(소득·자산 기준, 시세75%): 1~3순위 지역별 순위 적용. 일반공급(추첨, 시세85%): 소득·자산 무관. 두 유형 중복 신청 여부는 공고 확인.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">특별공급 서류</div>
+                    <div class="guide-doc-item">주민등록등본 (세대원 전원)</div>
+                    <div class="guide-doc-item">소득 확인 서류 (근로·사업·기타소득)</div>
                     <div class="guide-doc-item">무주택 서약서</div>
+                    <div class="guide-doc-item">재직·재학·거주 증명서 (지역순위 확인용)</div>
+                    <div class="guide-doc-item">혼인관계증명서 (신혼부부 해당 시)</div>
                 </div>
                 <p class="hint">일반공급은 소득·자산 서류 불필요. 무주택 증빙만으로 추첨 신청 가능.</p>
             </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>특별공급 당첨 후 소득·자산 검증 → 계약. 일반공급은 추첨 후 계약.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>특별공급 당첨 후 소득·자산 검증 → 계약. 일반공급은 추첨 후 계약. 청년 최장 10년 / 신혼 최장 20년 거주.</p></div></div>
         </div>
-        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
+        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>
+        <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울시 청년안심주택 안내</a>`
     },
     'SH 사회주택': {
         title: 'SH 사회주택 신청 가이드',
@@ -5898,25 +5902,6 @@ const applyGuideData = {
             <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>소득·자산 서류 검토 후 입주자 선정. 계약 후 최장 10년 거주 가능.</p></div></div>
         </div>
         <a class="help-link" href="https://soco.seoul.go.kr/soHouse/main/contents.do?menuNo=300037" target="_blank">🔗 서울주거포털 사회주택 안내</a>`
-    },
-    'SH 청년안심주택 민간임대 (청년)': {
-        title: 'SH 청년안심주택 민간임대 (청년) 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>SH공사 홈페이지에서 청년안심주택 민간임대 청년 공고 확인. 특별공급과 일반공급 구분 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>신청 방법</h4><p>공고별 신청처 확인 (SH공사 또는 민간 사업자). 특별공급(소득·자산 기준, 지역 순위) / 일반공급(추첨) 중 선택.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류 (특별공급)</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본</div>
-                    <div class="guide-doc-item">소득 확인 서류 (근로·사업·기타소득)</div>
-                    <div class="guide-doc-item">무주택 서약서</div>
-                    <div class="guide-doc-item">재직·재학 증명서 (해당자)</div>
-                </div>
-                <p class="hint">일반공급은 소득·자산 서류 불필요. 무주택 증빙만으로 추첨 신청 가능.</p>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>특별공급 당첨 후 소득·자산 검증 → 계약. 일반공급은 추첨 후 계약.</p></div></div>
-        </div>
-        <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 공고 바로가기</a>`
     },
     'SH 공공·주거환경임대주택': {
         title: 'SH 공공·주거환경임대주택 신청 가이드',
