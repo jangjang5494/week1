@@ -2383,7 +2383,9 @@ function runAnalysis() {
             }
         }
         const eligible = eligibleTypes.length > 0;
-        const rank = eligible ? eligibleTypes.join(' · ') : '';
+        const specialTypes = eligibleTypes.filter(t => t.includes('특공'));
+        const generalTypes = eligibleTypes.filter(t => t.includes('일반공급'));
+        const rank = eligible ? (specialTypes.length > 0 ? specialTypes.join(' · ') : generalTypes.join(' · ')) : '';
         add('LH 5·10·50년 공공임대', eligible, rank, '5·10년: 분양전환형 / 50년: 장기임대', '5·10년 후 분양전환 가능', 'national', r, 'LH', 'rental');
     }
 

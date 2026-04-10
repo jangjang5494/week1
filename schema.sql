@@ -449,7 +449,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 5·10·50년 공공임대 (분양전환형)
 ('LH_PUBLIC_5_10', '임대주택', '공공임대', '분양전환공공임대', 'LH', '전국', 'LH 5·10·50년 공공임대 (분양전환형)',
  '무주택세대구성원 (소득 100% 이하)', TRUE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":130,"asset_real_limit":215500000,"car_limit":45630000,"notes":["특별공급: 신혼10%·생애최초15%·다자녀10%·노부모5%·기관추천20%·일반20%","선정: 2세미만자녀50%→배점30%→추첨20% (우선공급)"]}',
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":130,"asset_real_limit":215500000,"car_limit":45630000,"savings_min_rank1":24,"savings_min_rank2":1,"savings_amount_min":6000000,"notes":["특별공급: 신혼10%·생애최초15%·다자녀10%·노부모5%·기관추천20%·일반20%","일반공급 1순위: 청약저축 24회 이상 (투기과열지구 기준)","생애최초 특공: 저축액 600만원+·기혼·소득세5년납부","선정: 2세미만자녀50%→배점30%→추첨20% (우선공급)"]}',
  '{"rent_pct":90,"period_type_5":5,"period_type_10":10,"period_type_50":50,"conversion_price_5":"(건설원가+감정평가)÷2","conversion_price_10":"감정평가액","area_max_sqm":85}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
