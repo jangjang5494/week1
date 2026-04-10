@@ -2957,8 +2957,8 @@ function runAnalysis() {
                 specialType = infant ? '신혼부부 특공 (신생아우선)' : (dualInc ? '신혼부부 특공 (맞벌이)' : '신혼부부 특공');
             }
         }
-        // 생애최초: 무주택, 전원 미소유, 소득 160%, 소득세 5년, 청약 6회+
-        if (!specialType && homeless && lifeFirst && taxPaid5yr && subCount >= 6 && under(160)) {
+        // 생애최초: 무주택, 전원 미소유, 소득 160%, 소득세 5년, 청약 12회+, 저축 600만원+ (서울 투기과열지구 기준)
+        if (!specialType && homeless && lifeFirst && taxPaid5yr && subCount >= 12 && subAmountEnough && under(160)) {
             specialType = infant ? '생애최초 특공 (신생아우선)' : '생애최초 특공';
         }
         // 노부모부양: 세대주, 무주택, 65세이상 직계존속 3년+ 부양, 1순위(24회+·300만원+)
