@@ -1957,9 +1957,11 @@ function runAnalysis() {
         // 대학생·취준생 (무주택 조건만, 서울 거주 불필요)
         if (baseOk_lh && (isStudent||isJobSeeker) && !isMarried) {
             const db = getE('SH_HAPPY_STUDENT');
-            const incOk = underInc(db) || (hhSize===1?under(120):hhSize===2?under(110):under(100));
-            if (incOk && totalAssets <= (db.asset||10800))
+            const incOk = underInc(db);
+            if (incOk && totalAssets <= (db.asset||10800) && carVal === 0)
                 eligibleTypes.push(isStudent ? '대학생' : '취업준비생');
+            else if (incOk && totalAssets <= (db.asset||10800) && carVal > 0)
+                r.push('SH 행복주택 대학생·취업준비생: 자동차 소유 불가');
         }
         // 청년 (서울 거주 필요, 미혼·한부모)
         if (baseOk && (isYouth||isSocialNewcomer) && (marital==='single'||singleParent)) {
