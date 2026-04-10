@@ -2184,24 +2184,6 @@ function runAnalysis() {
         add('SH 청년안심주택 민간임대', eligible, rank, '특공 시세75% / 일반 시세85%', '청년 최장 10년 / 신혼 최장 20년', 'youth', r, 'SH', 'rental');
     }
 
-    // SH 18e. 사회주택 — SH_SOCIAL_HOUSE
-    {
-        const r = [];
-        if (!baseOk_lh) r.push('무주택 필요');
-        const seoulConnect = seoulRes || isSeoulStudent || isSeoulWorker;
-        if (!seoulConnect) r.push('서울 거주·재직·재학 중 하나 필요');
-        const dbSoc = getE('SH_SOCIAL_HOUSE');
-        const aLim = isNewlywedStrict ? 33700 : (dbSoc.asset || 25400);
-        const cLim = dbSoc.car || 4563;
-        const aOk = totalAssets <= aLim;
-        const cOk = carVal <= cLim;
-        if (!aOk) r.push(`총자산 ${aLim}만원 이하 필요 (${isNewlywedStrict ? '신혼·예비신혼 기준' : '청년 기준'})`);
-        if (!cOk) r.push(`자동차 ${cLim}만원 이하 필요`);
-        const incOk = under(dbSoc.income_pct || 120);
-        if (!incOk) r.push('소득 도시근로자 월평균 120% 이하 필요');
-        const eligible = baseOk_lh && seoulConnect && aOk && cOk && incOk;
-        add('SH 사회주택', eligible, '', '시세 80% 이하', '최장 10년', 'youth', r, 'SH', 'rental');
-    }
 
     // SH 18d. 공공·주거환경임대주택 — SH_PUBLIC_ENV_RENT
     {
@@ -4211,35 +4193,6 @@ const typeDetailData = {
         <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>
         <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울시 청년안심주택 안내</a>`
     },
-    'SH 사회주택': {
-        title: 'SH 사회주택',
-        body: `
-        <div class="help-section">
-            <h4>어떤 주택인가요?</h4>
-            <p>서울시가 토지·자금을 지원하고 민간 사업자(비영리·협동조합 등)가 공급·운영하는 <strong>민간임대주택</strong>. 시세 80% 이하 임대료로 최장 10년 거주 가능합니다.</p>
-        </div>
-        <div class="help-section">
-            <h4>4가지 유형</h4>
-            <ul>
-                <li><strong>토지임대부 사회주택 (토지지원사회주택)</strong>: 서울시가 토지를 장기·저렴하게 빌려주면 사업자가 건물 신축 후 임대. 30~40년 장기 공급.</li>
-                <li><strong>리모델링형 사회주택</strong>: 노후 주택·비주택을 리모델링해 공급. 리모델링 비용의 70~80% 서울시 보조.</li>
-                <li><strong>사회주택리츠</strong>: 사업자가 리츠에 출자 후 신축·리모델링, SH공사가 운영 지원.</li>
-                <li><strong>토지지원리츠</strong>: SH공사·주택도시기금이 1:2 비율 출자, 고밀·연접개발로 공급 확대.</li>
-            </ul>
-        </div>
-        <div class="help-section">
-            <h4>공통 자격 조건</h4>
-            <ul>
-                <li>무주택 세대구성원</li>
-                <li>서울 거주 <strong>또는</strong> 서울 소재 직장 재직 <strong>또는</strong> 서울 소재 대학 재학</li>
-                <li>소득: 도시근로자 월평균 <strong>120% 이하</strong></li>
-                <li>자산: 청년(만39세 이하) <strong>25,400만원</strong> / 신혼부부·예비신혼부부 <strong>33,700만원</strong> 이하</li>
-                <li>자동차: <strong>4,563만원</strong> 이하</li>
-            </ul>
-        </div>
-        <a class="help-link" href="https://soco.seoul.go.kr/soHouse/main/contents.do?menuNo=300037" target="_blank">🔗 서울주거포털 사회주택 안내</a>
-        <a class="help-link" href="https://www.seoulhousing.kr/html/0102007.do" target="_blank">🔗 서울주택도시공사 사회주택</a>`
-    },
     'SH 공공·주거환경임대주택': {
         title: 'SH 공공·주거환경임대주택',
         body: `
@@ -5883,25 +5836,6 @@ const applyGuideData = {
         </div>
         <a class="help-link" href="https://www.i-sh.co.kr" target="_blank">🔗 SH공사 홈페이지</a>
         <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울시 청년안심주택 안내</a>`
-    },
-    'SH 사회주택': {
-        title: 'SH 사회주택 신청 가이드',
-        body: `
-        <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>서울주거포털(soco.seoul.go.kr) 또는 서울주택도시공사 홈페이지에서 사회주택 입주자 모집 공고 확인. 유형(토지임대부·리모델링형·리츠 등)과 위치 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>사업자 홈페이지 신청</h4><p>공고별로 민간 사업자가 직접 접수를 받습니다. 공고문에 안내된 사업자 홈페이지 또는 이메일·방문 접수 방법 확인.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>필수 서류</h4>
-                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">주민등록등본 (전 세대원)</div>
-                    <div class="guide-doc-item">소득 확인 서류 (근로·사업소득 등)</div>
-                    <div class="guide-doc-item">무주택 서약서 (세대원 전원)</div>
-                    <div class="guide-doc-item">재직·재학 증명서 (서울 재직·재학자)</div>
-                    <div class="guide-doc-item">자산·차량 증빙 서류</div>
-                </div>
-            </div></div>
-            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>소득·자산 서류 검토 후 입주자 선정. 계약 후 최장 10년 거주 가능.</p></div></div>
-        </div>
-        <a class="help-link" href="https://soco.seoul.go.kr/soHouse/main/contents.do?menuNo=300037" target="_blank">🔗 서울주거포털 사회주택 안내</a>`
     },
     'SH 공공·주거환경임대주택': {
         title: 'SH 공공·주거환경임대주택 신청 가이드',

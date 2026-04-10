@@ -574,21 +574,6 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
 
--- LH 청년신혼부부 매입임대리츠(아파트) ★2026-03-24 신규 추가
-('LH_RITZ_NEWLYWED', '임대주택', '매입임대', '매입임대리츠', 'LH', '전국', 'LH 청년신혼부부 매입임대리츠(아파트)',
- '신혼부부(혼인7년이내)·청년(만19~39세)·6세이하자녀 혼인가구', TRUE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":100,"income_pct_married":120,"asset_limit":215500000,"car_limit":45420000,"notes":["1순위: 신혼부부(혼인7년이내)/예비신혼/6세이하자녀 한부모","2순위: 만19~39세 청년·대학생","3순위: 6세이하자녀 있는 혼인가구","소득: 도시근로자 100%(배우자 120%)","자산: 분양전환공공임대주택 기준"]}',
- '{"rent_pct":90,"period_max_years":10,"renewal_count":4,"notes":["시세 90% 수준 아파트","2년+재계약4회=최장10년"]}',
- '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
- 'https://apply.lh.or.kr'),
-
--- LH 자립준비청년 임대주택 ★2026-03-24 신규 추가
-('LH_INDEPENDENCE_YOUTH', '임대주택', '매입임대', '자립준비청년', 'LH', '전국', 'LH 자립준비청년 임대주택',
- '가정위탁 종료 또는 아동복지시설 퇴소 후 5년 이내 자립준비청년', TRUE,
- '{"homeless_required":true,"income_required":false,"asset_required":false,"notes":["보호조치 종료·퇴소 후 5년 이내 (보호연장·퇴소예정자 포함)","소득·자산 기준 없음","만22세 이하: 전세임대 무이자 적용","5년 이내 거주 시 임대료 50% 감면 가능"]}',
- '{"deposit":1000000,"rent_pct_build_min":30,"rent_pct_build_max":80,"rent_pct_buy":40,"period_max_years_buy":20,"renewal_count_buy":9,"notes":["건설임대: 보증금100만/시세30~80%","매입임대: 보증금100만/시세40%/최장20년","전세임대: 보증금100만/연1.0~2.0%(22세이하 무이자)","공급: 연중 수시"]}',
- '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"수시"}',
- 'https://apply.lh.or.kr'),
 
 -- SH 행복주택 청년
 ('SH_HAPPY_YOUTH', '임대주택', '공공임대', '행복주택', 'SH', '서울', 'SH 행복주택 (청년)',
@@ -630,13 +615,6 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"method":["온라인"],"url":"https://soco.seoul.go.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://soco.seoul.go.kr'),
 
--- SH 사회주택 (토지임대부·리모델링형·사회주택리츠·토지지원리츠 통합)
-('SH_SOCIAL_HOUSE', '임대주택', '민간임대', '사회주택', 'SH', '서울', 'SH 사회주택',
- '무주택 서울 거주·재직·재학 청년·일반가구 (소득 120% 이하)', FALSE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":120,"asset_limit":254000000,"asset_limit_newlywed":337000000,"car_limit":45630000,"notes":["서울 거주 또는 서울 소재 직장·대학 중 하나 충족","청년(만39세이하) 총자산 25,400만원 이하","신혼부부·예비신혼부부 총자산 33,700만원 이하","자동차 4,563만원 이하","4가지 유형: 토지임대부(=토지지원사회주택)·리모델링형·사회주택리츠·토지지원리츠"]}',
- '{"rent_pct_max":80,"period_max_years":10,"notes":["시세 80% 이하","최장 10년 거주"]}',
- '{"method":["온라인"],"url":"https://soco.seoul.go.kr","contact":"02-2133-7300","period_type":"공고별"}',
- 'https://soco.seoul.go.kr/soHouse/main/contents.do?menuNo=300037'),
 
 -- SH 희망하우징
 ('SH_HOPE_HOUSING', '임대주택', '매입임대', '희망하우징', 'SH', '서울', 'SH 희망하우징',
