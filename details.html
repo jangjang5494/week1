@@ -2352,10 +2352,12 @@ function runAnalysis() {
         if (!carOk) r.push(`자동차 ${cLim20}만원 이하 필요`);
         let eligible = false, rank = '';
         if (baseOk_lh && aOk && carOk) {
-            if (is1st) { eligible = true; rank = '1순위 (우대 대상)'; }
-            else if (under(50)) { eligible = true; rank = '2순위 (소득 50% 이하)'; }
-            else if (under(70)) { eligible = true; rank = '3순위 (소득 70% 이하)'; }
-            else r.push('소득 70% 이하 필요');
+            const incOk70 = hhSize===1 ? under(90) : hhSize===2 ? under(80) : under(70);
+            const incOk100 = underInc(db20);
+            if (is1st) { eligible = true; rank = '우선공급 (우대 대상)'; }
+            else if (incOk70) { eligible = true; rank = '일반공급 (소득 70%이하 · 모든 면적)'; }
+            else if (incOk100) { eligible = true; rank = '일반공급 (소득 100%이하 · 60㎡초과만)'; }
+            else r.push('소득 70%(1인 90%·2인 80%) 이하 필요');
         }
         add('LH 국민임대', eligible, rank, '시세 60~80%', '30년 (계속 재계약)', 'national', r, 'LH', 'rental');
     }
@@ -2433,7 +2435,7 @@ function runAnalysis() {
         // 신혼부부·한부모
         const db23 = getE('LH_HAPPY_NEWLYWED');
         const aLim23=db23.asset||34500, cLim23=db23.car||4542;
-        const grp23 = isNewlywedStrict || (singleParent && youngChild);
+        const grp23 = isNewlywedStrict || (singleParent && youngChild) || (isMarried && youngChild);
         if (baseOk_lh && grp23) {
             const incLim23 = dualInc
                 ? (hhSize===2 && db23.incM2p ? db23.incM2p : db23.incM||120)
