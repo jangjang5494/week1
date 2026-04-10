@@ -781,14 +781,14 @@
 
             <div class="fg">
                 <div class="fg-label-row">
-                    <label>청약저축 납입금액</label>
+                    <label>청약통장 납입 누계액</label>
                 </div>
-                <div class="toggle-group" id="tg-sub-amount">
-                    <button class="toggle-btn selected" data-val="none">없음</button>
-                    <button class="toggle-btn" data-val="under600">600만원 미만</button>
+                <div class="toggle-group" id="tg-deposit">
+                    <button class="toggle-btn selected" data-val="none">300만원 미만</button>
+                    <button class="toggle-btn" data-val="over300">300만원 이상</button>
                     <button class="toggle-btn" data-val="over600">600만원 이상</button>
                 </div>
-                <p class="hint">생애최초 특별공급 신청 시 600만원 이상 필요</p>
+                <p class="hint">지금까지 납입한 총합 기준 · 85㎡이하 민간분양 1순위: 300만원+ / 102㎡이하·생애최초 특공: 600만원+</p>
             </div>
 
             <div class="fg">
@@ -813,16 +813,6 @@
                 <p class="hint">생애최초 특별공급 추가 요건</p>
             </div>
 
-            <div class="fg">
-                <div class="fg-label-row">
-                    <label>청약통장 예치금 300만원 이상</label>
-                </div>
-                <div class="toggle-group" id="tg-deposit-300">
-                    <button class="toggle-btn selected" data-val="no">300만원 미만</button>
-                    <button class="toggle-btn" data-val="yes">300만원 이상</button>
-                </div>
-                <p class="hint">민간분양 아파트 1순위 신청 요건 (85㎡이하, 서울 투기과열지구 기준)</p>
-            </div>
 
             <div class="fg">
                 <div class="fg-label-row">
@@ -1733,10 +1723,11 @@ function runAnalysis() {
     const veteran       = getToggle('tg-veteran') === 'yes';
     const subCount      = parseInt(document.getElementById('subscription').value) || 0;
     const isHouseholdHead = getToggle('tg-household-head') === 'yes';
-    const subAmountEnough = getToggle('tg-sub-amount') === 'over600';
+    const depositAmount   = getToggle('tg-deposit') || 'none';
+    const subAmountEnough = depositAmount === 'over600';
+    const deposit300      = depositAmount === 'over300' || depositAmount === 'over600';
     const lifeFirst       = getToggle('tg-life-first') === 'yes';
     const taxPaid5yr      = getToggle('tg-tax5') === 'yes';
-    const deposit300      = getToggle('tg-deposit-300') === 'yes';
     const elderlyParent   = getToggle('tg-elderly-parent') === 'yes';
     const organRecommend  = getToggle('tg-organ-recommend') === 'yes';
     const isSocialNewcomer = getToggle('tg-social-newcomer') === 'yes';
