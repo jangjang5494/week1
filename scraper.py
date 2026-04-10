@@ -148,25 +148,30 @@ def should_keep(ann, today=None):
 
 # ── 공고 유형 감지 ───────────────────────────────────────────────────────
 SH_TYPES = [
-    ("미리내집",                  ["미리내집", "장기전세주택2", "장기전세2"]),
-    ("장기전세주택 (시프트)",      ["장기전세주택", "시프트"]),
-    ("희망하우징",                ["희망하우징"]),
+    ("미리내집 (장기전세2)",         ["미리내집", "장기전세주택2", "장기전세2"]),
+    ("장기전세주택 (시프트)",        ["장기전세주택", "시프트"]),
+    ("희망하우징",                   ["희망하우징"]),
     ("SH 청년안심주택 공공임대",     ["청년안심주택 공공임대", "[공공임대]"]),
     ("SH 청년안심주택 민간임대",     ["청년안심주택 민간임대", "[민간임대]"]),
-    ("전세임대형 든든주택",        ["든든주택"]),
-    ("신혼·신생아 매입임대 Ⅱ형",  ["신혼신생아 매입", "신혼·신생아 매입", "신혼 신생아 매입"]),
-    ("신혼·신생아 전세임대 Ⅱ형",  ["신혼신생아 전세", "신혼·신생아 전세"]),
-    ("청년 매입임대주택",          ["청년형 매입", "청년 매입임대", "청년형 특화"]),
-    ("장기미임대",                 ["장기미임대"]),
-    ("기존주택 전세임대",          ["기존주택 전세임대", "전세임대주택"]),
-    ("국민임대주택",               ["국민임대", "국민공공임대"]),
-    ("일반 매입임대주택",          ["매입임대주택", "일반 매입임대"]),
+    ("전세임대형 든든주택",          ["든든주택"]),
+    ("신혼·신생아 매입임대 Ⅱ형",   ["신혼신생아 매입", "신혼·신생아 매입", "신혼 신생아 매입"]),
+    ("신혼·신생아 전세임대 Ⅱ형",   ["신혼신생아 전세", "신혼·신생아 전세"]),
+    ("청년 매입임대주택",            ["청년형 매입", "청년 매입임대", "청년형 특화"]),
+    ("장기미임대",                   ["장기미임대"]),
+    ("기존주택 전세임대",            ["기존주택 전세임대", "전세임대주택"]),
+    ("국민임대주택",                 ["국민임대", "국민공공임대"]),
+    ("일반 매입임대주택",            ["매입임대주택", "일반 매입임대"]),
+    ("SH 공공·주거환경임대주택",     ["공공·주거환경", "주거환경임대", "공공주거환경"]),
+    ("SH 재개발임대주택 (일반공급)", ["재개발임대"]),
+    ("SH 도시형생활주택",            ["도시형생활주택"]),
     # 분양
-    ("SH 공공분양",    ["일반공급", "일반 공급"]),
-    ("SH 나눔형 공공분양", ["나눔형"]),
+    ("SH 공공분양",              ["일반공급", "일반 공급"]),
+    ("SH 나눔형 공공분양",       ["나눔형"]),
+    ("SH 토지임대부 분양주택",   ["토지임대부"]),
 ]
 
 LH_TYPES = [
+    ("LH 5·10·50년 공공임대",      ["5년공공임대", "10년공공임대", "50년공공임대", "분양전환공공임대"]),
     ("LH 통합공공임대",            ["통합공공임대"]),
     ("LH 국민임대",                ["국민임대"]),
     ("LH 영구임대",                ["영구임대"]),
@@ -205,6 +210,10 @@ def detect_types_sh(title):
     tl = title.replace(" ", "").lower()
     if "행복주택" in title:
         return ["SH 행복주택"]
+    if "재개발임대" in tl:
+        return ["SH 재개발임대주택 (일반공급)"]
+    if "주거환경임대" in tl or "공공주거환경" in tl or "공공·주거환경" in title:
+        return ["SH 공공·주거환경임대주택"]
     if any(k in title for k in ["신혼신생아", "신혼·신생아", "신혼 신생아"]):
         if "매입" in title:
             if any(x in title for x in ["Ⅱ", "2형", "II"]):
@@ -231,6 +240,8 @@ def detect_types_lh(title, type_col=""):
 
     if "행복주택" in title or "행복주택" in type_col:
         return ["LH 행복주택"]
+    if any(k in tl for k in ["5년공공임대", "10년공공임대", "50년공공임대", "분양전환공공임대"]):
+        return ["LH 5·10·50년 공공임대"]
     if "통합공공" in tc or "통합공공" in tl:
         return ["LH 통합공공임대"]
     if "국민임대" in tc or "국민임대" in tl:
@@ -240,10 +251,25 @@ def detect_types_lh(title, type_col=""):
     if any(k in tl for k in ["신혼신생아매입", "신혼·신생아매입"]):
         if any(x in title for x in ["Ⅱ", "2형", "II"]): return ["LH 신혼·신생아 매입임대 Ⅱ형"]
         return ["LH 신혼·신생아 매입임대 Ⅰ형"]
+    if any(k in tl for k in ["신혼신생아전세", "신혼·신생아전세"]):
+        if any(x in title for x in ["Ⅱ", "2형", "II"]): return ["LH 신혼·신생아 전세임대 Ⅱ형"]
+        return ["LH 신혼·신생아 전세임대 Ⅰ형"]
+    if "다자녀" in tl and "매입" in tl:
+        return ["LH 다자녀 매입임대"]
+    if "다자녀" in tl and "전세" in tl:
+        return ["LH 다자녀 전세임대"]
     if "청년매입" in tl or "청년형매입" in tl:
         return ["LH 청년 매입임대"]
+    if "청년전세" in tl:
+        return ["LH 청년전세임대"]
+    if "일반매입" in tl:
+        return ["LH 일반 매입임대"]
+    if "집주인" in tl:
+        return ["LH 집주인 임대주택"]
     if "전세임대" in tl and "든든" in tl:
         return ["LH 든든전세주택"]
+    if "장기전세" in tl:
+        return ["LH 장기전세주택"]
     if "전세임대" in tl:
         return ["LH 기존주택 전세임대"]
     if "기숙사형" in tl:
@@ -263,31 +289,36 @@ def detect_types_applyhome(title, house_type=""):
         return ["오피스텔 청약"]
     if "생활숙박" in tl or "생활숙박" in ht:
         return ["생활숙박시설 청약"]
-    if "민간임대" in tl or "민간임대" in ht or "공공지원" in ht:
-        return ["민간임대 (공공지원)"]
+    if "공공지원" in ht or "공공지원" in tl:
+        return ["공공지원민간임대 청약"]
+    if "민간임대" in tl or "민간임대" in ht:
+        return ["민간임대 청약"]
     if "도시형" in tl or "도시형" in ht:
         return ["도시형생활주택 청약"]
     if "국민" in ht:
         return ["공공분양 (아파트)"]
-    return ["민간분양 (아파트)"]
+    return ["민간분양 (아파트) — 특별공급", "민간분양 (아파트) — 1순위", "민간분양 (아파트) — 2순위"]
 
 
 # ════════════════════════════════════════════════════════════════════════
 # ① SH 공사 크롤러 (임대 / 분양 공통 구조)
 # ════════════════════════════════════════════════════════════════════════
 class SHCrawler:
-    def __init__(self, inst_key, base, list_path, view_path, multi_itm_seq, param_name="multi_itm_seq"):
-        self.inst_key     = inst_key        # 'sh_rental' or 'sh_sale'
-        self.base         = base
-        self.list_url     = base + list_path
-        self.view_url     = base + view_path
-        self.multi_itm    = multi_itm_seq
-        self.param_name   = param_name
+    def __init__(self, inst_key, base, list_path, view_path, multi_itm_seq,
+                 param_name="multi_itm_seq", normal_max_pages=1, normal_since_days=2):
+        self.inst_key          = inst_key
+        self.base              = base
+        self.list_url          = base + list_path
+        self.view_url          = base + view_path
+        self.multi_itm         = multi_itm_seq
+        self.param_name        = param_name
+        self.normal_max_pages  = normal_max_pages   # 일반 크롤링 시 최대 페이지 수
+        self.normal_since_days = normal_since_days  # 일반 크롤링 시 며칠 전까지 볼지
 
     def crawl(self, initial=False):
         today  = date.today()
-        since  = INITIAL_SINCE if initial else today - timedelta(days=2)
-        max_pages = 50 if initial else 1
+        since  = INITIAL_SINCE if initial else today - timedelta(days=self.normal_since_days)
+        max_pages = 50 if initial else self.normal_max_pages
         results = []
         candidates = []
 
@@ -324,7 +355,7 @@ class SHCrawler:
                         posted = date.fromisoformat(posted_str)
                     except Exception:
                         posted = today
-                    if initial and posted < since:
+                    if posted < since:
                         stop = True
                         break
                     title_html = re.search(
@@ -408,8 +439,9 @@ class SHCrawler:
 # ════════════════════════════════════════════════════════════════════════
 # ② LH청약플러스 크롤러
 # ════════════════════════════════════════════════════════════════════════
-LH_BASE     = "https://apply.lh.or.kr"
-LH_LIST_URL = LH_BASE + "/lhapply/apply/wt/wrtanc/selectWrtancList.do"
+LH_BASE       = "https://apply.lh.or.kr"
+LH_LIST_URL   = LH_BASE + "/lhapply/apply/wt/wrtanc/selectWrtancList.do"
+LH_DETAIL_URL = LH_BASE + "/lhapply/apply/wt/wrtanc/selectWrtancInfo.do"
 
 LH_STATUS_MAP = {
     "접수중":    "진행중",
@@ -420,65 +452,52 @@ LH_STATUS_MAP = {
 
 def crawl_lh(mi, source_key, initial=False):
     """
-    LH청약플러스 목록 페이지에서 현재 활성 공고 전체를 파싱.
-    활성 공고는 단일 페이지에 모두 표시되므로 pagination 불필요.
-    상세 페이지는 세션이 없으면 차단되어 목록 데이터만 활용.
+    LH청약플러스 서울 지역(cnpCd=11) 공고 크롤링.
+    상세 페이지에서 실제 청약 접수 기간(sbscAcpStDt/sbscAcpClsgDt) 및 구 정보 파싱.
     """
-    today  = date.today()
-    since  = INITIAL_SINCE if initial else today - timedelta(days=7)
-    results = []
+    today    = date.today()
+    results  = []
+    list_url = LH_LIST_URL + f"?mi={mi}&cnpCd=11"
 
-    print(f"  [LH {source_key}] 목록 로딩...")
-    html = fetch(LH_LIST_URL + f"?mi={mi}")
+    print(f"  [LH {source_key}] 서울 목록 로딩...")
+    html = fetch(list_url)
     if not html:
         return results
 
-    # <tbody> 내 <tr> 블록 분리
     tbody_m = re.search(r"<tbody>(.*?)</tbody>", html, re.DOTALL)
     if not tbody_m:
         print(f"  [LH {source_key}] tbody 없음")
         return results
 
     tbody = tbody_m.group(1)
-    tr_blocks = re.split(r"<tr[^>]*>", tbody)[1:]  # 첫 빈 항목 제거
+    tr_blocks = re.split(r"<tr[^>]*>", tbody)[1:]
 
     future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
 
     for tr in tr_blocks:
-        # data-id1 이 있는 행만 처리 (공고 행)
-        pan_m = re.search(r'data-id1="(\w+)"', tr)
+        # data-id1~4 파싱 (상세 페이지 POST 파라미터)
+        pan_m = re.search(r'data-id1="(\w+)"\s+data-id2="(\w+)"\s+data-id3="(\w+)"\s+data-id4="(\w+)"', tr)
         if not pan_m:
             continue
-        pan_id = pan_m.group(1)
+        pan_id, ccr_cd, upp_cd, ais_cd = pan_m.group(1), pan_m.group(2), pan_m.group(3), pan_m.group(4)
 
         # 제목
         title_m = re.search(r'class="wrtancInfoBtn"[^>]*>.*?<span>(.*?)</span>', tr, re.DOTALL)
         if not title_m:
             continue
         title = re.sub(r"<[^>]+>|\s+", " ", title_m.group(1)).strip()
-        # 목록 뱃지 텍스트 제거: "NEW", "N일전" 등
         title = re.sub(r"\s+(NEW|\d+일전)\s*$", "", title).strip()
         if not is_recruitment(title):
             continue
 
-        # 유형 (cate col1)
+        # 유형 컬럼 (cate col1)
         type_m = re.search(r'cate col1[^>]*>(.*?)</td>', tr, re.DOTALL)
         type_str = re.sub(r"\s+", " ", type_m.group(1)).strip() if type_m else ""
 
-        # 지역 (cate col2)
-        region_m = re.search(r'cate col2[^>]*>(.*?)</td>', tr, re.DOTALL)
-        region = re.sub(r"<[^>]+>|\s+", " ", region_m.group(1)).strip() if region_m else "전국"
-
-        # 날짜: <td>YYYY.MM.DD</td> 형식 2개 (게시일, 마감일)
+        # 공고일 (목록 첫 번째 날짜)
         dates = re.findall(r"<td>(\d{4}\.\d{2}\.\d{2})</td>", tr)
         posted = None
-        apply_end = None
-        if len(dates) >= 2:
-            pm = re.match(r"(\d{4})\.(\d{2})\.(\d{2})", dates[0])
-            em = re.match(r"(\d{4})\.(\d{2})\.(\d{2})", dates[1])
-            posted    = parse_ymd(pm.group(1), pm.group(2), pm.group(3)) if pm else today
-            apply_end = parse_ymd(em.group(1), em.group(2), em.group(3)) if em else None
-        elif len(dates) == 1:
+        if dates:
             pm = re.match(r"(\d{4})\.(\d{2})\.(\d{2})", dates[0])
             posted = parse_ymd(pm.group(1), pm.group(2), pm.group(3)) if pm else today
 
@@ -489,20 +508,45 @@ def crawl_lh(mi, source_key, initial=False):
 
         if lh_status == "expired":
             continue
-        # region 파싱 실패(전국 기본값) 시 제목에서도 타지역 체크
-        if not _is_metro_or_national(region):
-            continue
-        if region in ("전국", "") and any(n in title for n in _NON_METRO):
-            continue
+
+        # 상세 페이지 fetch → 실제 청약 접수 기간 + 구 파싱
+        apply_start = None
+        apply_end   = None
+        district    = None
+
+        time.sleep(DETAIL_SLEEP)
+        detail_html = fetch(
+            LH_DETAIL_URL,
+            data={"panId": pan_id, "ccrCnntSysDsCd": ccr_cd,
+                  "uppAisTpCd": upp_cd, "aisTpCd": ais_cd, "mi": mi},
+            extra_headers={"Referer": list_url}
+        )
+        if detail_html:
+            st_m = re.search(r"var sbscAcpStDt\s*=\s*'(\d{4}\.\d{2}\.\d{2})'", detail_html)
+            cl_m = re.search(r"var sbscAcpClsgDt\s*=\s*'(\d{4}\.\d{2}\.\d{2})'", detail_html)
+            if st_m:
+                p = re.match(r"(\d{4})\.(\d{2})\.(\d{2})", st_m.group(1))
+                apply_start = parse_ymd(p.group(1), p.group(2), p.group(3)) if p else None
+            if cl_m:
+                p = re.match(r"(\d{4})\.(\d{2})\.(\d{2})", cl_m.group(1))
+                apply_end = parse_ymd(p.group(1), p.group(2), p.group(3)) if p else None
+            # 구 파싱: sbdLgoNm JSON 필드에서 "서울XX구" 추출
+            gu_m = re.search(r'"sbdLgoNm"\s*:\s*"[^"]*서울([^"]+구)', detail_html)
+            if gu_m:
+                district = gu_m.group(1).strip()
+
+        # apply_end 없으면 목록 두 번째 날짜로 fallback
+        if not apply_end and len(dates) >= 2:
+            em = re.match(r"(\d{4})\.(\d{2})\.(\d{2})", dates[1])
+            apply_end = parse_ymd(em.group(1), em.group(2), em.group(3)) if em else None
+
         if apply_end and apply_end < today:
             continue
         if apply_end and apply_end > future_limit:
             continue
-        if posted and initial and posted < since:
-            continue
 
-        types = detect_types_lh(title, type_str)
-        list_url = LH_LIST_URL + f"?mi={mi}"
+        types    = detect_types_lh(title, type_str)
+        location = "서울특별시" + (" " + district if district else "")
 
         ann = {
             "id":          make_id(source_key, pan_id),
@@ -510,7 +554,7 @@ def crawl_lh(mi, source_key, initial=False):
             "source_key":  source_key,
             "title":       title,
             "types":       types,
-            "location":    region,
+            "location":    location,
             "status":      lh_status,
             "url":         list_url,
             "posted_date": posted.isoformat() if posted else "",
@@ -518,7 +562,7 @@ def crawl_lh(mi, source_key, initial=False):
         }
         if apply_end:
             ann["apply_end"]   = apply_end.isoformat()
-            ann["apply_start"] = posted.isoformat() if posted else ""
+            ann["apply_start"] = apply_start.isoformat() if apply_start else (posted.isoformat() if posted else "")
         else:
             ann["needs_pdf"] = True
 
@@ -545,7 +589,7 @@ def crawl_youth_housing(initial=False):
     날짜 필드: optn1=신청시작일, optn4=신청마감일.
     """
     today   = date.today()
-    since   = INITIAL_SINCE if initial else today - timedelta(days=7)
+    since   = INITIAL_SINCE if initial else today - timedelta(days=1)
     results = []
     max_pages = 5 if initial else 1
 
@@ -597,7 +641,7 @@ def crawl_youth_housing(initial=False):
             except Exception:
                 posted = today
 
-            if initial and posted < since:
+            if posted < since:
                 stop = True
                 break
 
@@ -607,25 +651,22 @@ def crawl_youth_housing(initial=False):
 
             url = f"{YOUTH_BASE}?menuNo=400008&boardId={board_id}"
 
-            # 상세 페이지에서 소재 구 파싱
-            district = None
-            detail_html = fetch(url, extra_headers={"Referer": YOUTH_REF})
-            if detail_html:
-                # ■주택위치 : 서울특별시 OO구 ... 에서 구 추출
-                m = re.search(r'주택위치\s*[:\：]\s*서울특별시\s*(\S+구)', detail_html)
-                if not m:
-                    # fallback: 카테고리 option selected value로 구 이름 추출
-                    m = re.search(r'<option[^>]+selected[^>]*>([^<]+구)</option>', detail_html)
-                if m:
-                    district = m.group(1).strip()
-
             # 제목에서 공공임대/민간임대 구분
-            if "공공임대" in title or "[공공]" in title:
-                youth_type = "SH 청년안심주택 공공임대"
-            elif "민간임대" in title or "[민간]" in title:
+            if "민간임대" in title or "[민간]" in title:
                 youth_type = "SH 청년안심주택 민간임대"
             else:
-                youth_type = "SH 청년안심주택 공공임대"  # 기본값: 공공임대
+                youth_type = "SH 청년안심주택 공공임대"  # 공공임대 or 기본값
+
+            # 민간임대만 상세 페이지에서 구 파싱 (공공임대는 상세에서 자치구 미표시)
+            district = None
+            if youth_type == "SH 청년안심주택 민간임대":
+                detail_html = fetch(url, extra_headers={"Referer": YOUTH_REF})
+                if detail_html:
+                    m = re.search(r'주택위치\s*[:\：]\s*서울특별시\s*(\S+구)', detail_html)
+                    if not m:
+                        m = re.search(r'<option[^>]+selected[^>]*>([^<]+구)</option>', detail_html)
+                    if m:
+                        district = m.group(1).strip()
 
             ann = {
                 "id":          make_id("youth", board_id),
@@ -741,115 +782,17 @@ def _parse_applyhome_period(text):
     return None, None
 
 def crawl_applyhome_apt(initial=False):
-    """청약홈 아파트 청약일정 — 수도권 필터"""
+    """청약홈 아파트 청약일정 — 서울 필터, 첫 페이지만"""
     today = date.today()
     future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
     results = []
-    print("  [청약홈 APT] 목록 로딩...")
-
-    for page in range(1, 20):
-        html = fetch(
-            APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do",
-            data={"pageIndex": str(page), "orderbySecd": "", "orderbyMth": "01",
-                  "rentSecd": "", "schTxt": ""},
-            extra_headers={"Referer": APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do",
-                           "Content-Type": "application/x-www-form-urlencoded"}
-        )
-        if not html:
-            break
-
-        tbody_m = re.search(r"<tbody>(.*?)</tbody>", html, re.DOTALL)
-        if not tbody_m:
-            break
-
-        rows = re.split(r"<tr[^>]*>", tbody_m.group(1))[1:]
-        if not rows:
-            break
-
-        found_any = False
-        # data-pbno/data-hmno 포함 tr 파싱
-        tr_blocks = re.findall(
-            r'<tr\s+data-pbno="(\d+)"\s+data-hmno="(\d+)"[^>]*>(.*?)</tr>',
-            tbody_m.group(1), re.DOTALL
-        )
-        for pbno, hmno, tr_inner in tr_blocks:
-            tds = re.findall(r"<td[^>]*>(.*?)</td>", tr_inner, re.DOTALL)
-            if len(tds) < 5:
-                continue
-            region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
-            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
-            link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[3], re.DOTALL)
-            name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
-                       else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
-            period_raw = ""
-            for col_i in range(4, len(tds)):
-                c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
-                if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
-                    period_raw = c
-                    break
-
-            if not name_raw or not _is_metro_or_national(region):
-                continue
-
-            apply_start, apply_end = _parse_applyhome_period(period_raw)
-            status = compute_status(apply_start, apply_end, today)
-            if status == "expired":
-                continue
-            if apply_end and apply_end > future_limit:
-                continue
-
-            # 상세 페이지 크롤링 → 공급유형 파악
-            detail_url = (f"{APPLYHOME_BASE}/ai/aia/selectAPTLttotPblancDetail.do"
-                          f"?pblancNo={pbno}&houseManageNo={hmno}")
-            detail_html = fetch(detail_url, extra_headers={
-                "Referer": APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do"
-            })
-            time.sleep(DETAIL_SLEEP)
-            base_type = detect_types_applyhome(name_raw, house_type)[0]
-            types = _parse_applyhome_supply_types(detail_html, base_type) if detail_html else [base_type]
-            district = _parse_applyhome_district(detail_html)
-
-            uid = name_raw + (apply_end.isoformat() if apply_end else "")
-            ann = {
-                "id":          make_id("applyhome_apt", uid),
-                "inst":        "청약홈",
-                "source_key":  "applyhome_apt",
-                "title":       name_raw,
-                "types":       types,
-                "location":    region,
-                "district":    district,
-                "status":      status,
-                "url":         detail_url,
-                "posted_date": today.isoformat(),
-                "crawled_at":  today.isoformat(),
-            }
-            if apply_start and apply_end:
-                ann["apply_start"] = apply_start.isoformat()
-                ann["apply_end"]   = apply_end.isoformat()
-            results.append(ann)
-            found_any = True
-            supply_info = ", ".join(types[1:]) if len(types) > 1 else "일반공급만"
-            print(f"    [{status}] {name_raw[:35]} [{region}] → {supply_info}")
-
-        if not found_any and page > 1:
-            break
-        time.sleep(0.5)
-
-    print(f"  [청약홈 APT] 수도권 {len(results)}건")
-    return results
-
-
-def crawl_applyhome_remndr(initial=False):
-    """청약홈 아파트 잔여세대 청약일정"""
-    today = date.today()
-    future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
-    results = []
-    print("  [청약홈 잔여] 목록 로딩...")
+    print("  [청약홈 APT] 서울 목록 로딩...")
 
     html = fetch(
-        APPLYHOME_BASE + "/ai/aia/selectAPTRemndrLttotPblancListView.do",
-        data={"pageIndex": "1", "orderbySecd": "", "orderbyMth": "01"},
-        extra_headers={"Referer": APPLYHOME_BASE + "/ai/aia/selectAPTRemndrLttotPblancListView.do",
+        APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do",
+        data={"pageIndex": "1", "orderbySecd": "", "orderbyMth": "01",
+              "rentSecd": "", "schTxt": "", "suplyAreaCode": "서울"},
+        extra_headers={"Referer": APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do",
                        "Content-Type": "application/x-www-form-urlencoded"}
     )
     if not html:
@@ -859,44 +802,61 @@ def crawl_applyhome_remndr(initial=False):
     if not tbody_m:
         return results
 
-    for tr_block in re.findall(r'<tr\s+data-pbno="(\d+)"\s+data-hmno="(\d+)"\s+data-hsecd="(\w+)"\s+data-honm="([^"]+)"[^>]*>(.*?)</tr>', tbody_m.group(1), re.DOTALL):
-        pbno, hmno, hsecd, honm, tr_inner = tr_block
+    tr_blocks = re.findall(
+        r'<tr\s+data-pbno="(\d+)"\s+data-hmno="(\d+)"[^>]*>(.*?)</tr>',
+        tbody_m.group(1), re.DOTALL
+    )
+    for pbno, hmno, tr_inner in tr_blocks:
         tds = re.findall(r"<td[^>]*>(.*?)</td>", tr_inner, re.DOTALL)
         if len(tds) < 5:
             continue
-        region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
         house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
-        name_raw   = honm  # data-honm이 실제 주택명
+        link_m = re.search(r"<a[^>]*>(.*?)</a>", tds[3], re.DOTALL)
+        name_raw = re.sub(r"<[^>]+>|\s+", " ", link_m.group(1)).strip() if link_m \
+                   else re.sub(r"<[^>]+>|\s+", " ", tds[3]).strip()
+        if not name_raw:
+            continue
+
         period_raw = ""
-        for col_i in range(3, len(tds)):
+        for col_i in range(4, len(tds)):
             c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
             if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
                 period_raw = c
                 break
 
-        if not name_raw or not _is_metro_or_national(region):
-            continue
-
         apply_start, apply_end = _parse_applyhome_period(period_raw)
+        if apply_end and apply_end < today:
+            continue
+        if apply_end and apply_end > future_limit:
+            continue
+
         status = compute_status(apply_start, apply_end, today)
-        if status == "expired":
-            continue
-        if apply_end and apply_end > today + timedelta(days=30):
-            continue
 
-        url = (f"{APPLYHOME_BASE}/ai/aia/selectAPTRemndrLttotPblancDetail.do"
-               f"?pblancNo={pbno}&houseManageNo={hmno}")
+        # 상세 페이지 크롤링 → 공급유형 파악
+        detail_url = (f"{APPLYHOME_BASE}/ai/aia/selectAPTLttotPblancDetail.do"
+                      f"?pblancNo={pbno}&houseManageNo={hmno}")
+        detail_html = fetch(detail_url, extra_headers={
+            "Referer": APPLYHOME_BASE + "/ai/aia/selectAPTLttotPblancListView.do"
+        })
+        time.sleep(DETAIL_SLEEP)
+        base_types = detect_types_applyhome(name_raw, house_type)
+        if base_types[0].startswith("민간분양"):
+            types = base_types
+        else:
+            types = _parse_applyhome_supply_types(detail_html, base_types[0]) if detail_html else base_types
+        district = _parse_applyhome_district(detail_html)
 
-        uid = name_raw + "remndr" + (apply_end.isoformat() if apply_end else "")
+        uid = name_raw + (apply_end.isoformat() if apply_end else "")
         ann = {
-            "id":          make_id("applyhome_remndr", uid),
+            "id":          make_id("applyhome_apt", uid),
             "inst":        "청약홈",
-            "source_key":  "applyhome_remndr",
-            "title":       name_raw + " (잔여세대)",
-            "types":       detect_types_applyhome(name_raw, house_type),
-            "location":    region,
+            "source_key":  "applyhome_apt",
+            "title":       name_raw,
+            "types":       types,
+            "location":    "서울특별시" + (" " + district if district else ""),
+            "district":    district,
             "status":      status,
-            "url":         url,
+            "url":         detail_url,
             "posted_date": today.isoformat(),
             "crawled_at":  today.isoformat(),
         }
@@ -904,92 +864,174 @@ def crawl_applyhome_remndr(initial=False):
             ann["apply_start"] = apply_start.isoformat()
             ann["apply_end"]   = apply_end.isoformat()
         results.append(ann)
+        supply_info = ", ".join(types[1:]) if len(types) > 1 else "일반공급만"
+        print(f"    [{status}] {name_raw[:35]} → {supply_info}")
 
-    print(f"  [청약홈 잔여] 수도권 {len(results)}건")
+    print(f"  [청약홈 APT] 서울 {len(results)}건")
+    return results
+
+
+
+
+def crawl_applyhome_remndr(initial=False):
+    """청약홈 아파트 잔여세대 — 서울 필터, 첫 페이지만.
+    유형 고정: 민간분양(아파트) 잔여세대 (추첨제, 서울 무주택세대주 자격)
+    """
+    today = date.today()
+    future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
+    results = []
+    list_url = APPLYHOME_BASE + "/ai/aia/selectAPTRemndrLttotPblancListView.do"
+    print("  [청약홈 잔여] 서울 목록 로딩...")
+
+    html = fetch(
+        list_url,
+        data={"pageIndex": "1", "orderbySecd": "", "orderbyMth": "01", "suplyAreaCode": "서울"},
+        extra_headers={"Referer": list_url, "Content-Type": "application/x-www-form-urlencoded"}
+    )
+    if not html:
+        return results
+
+    tbody_m = re.search(r"<tbody>(.*?)</tbody>", html, re.DOTALL)
+    if not tbody_m:
+        return results
+
+    for tr_block in re.findall(
+        r'<tr\s+data-pbno="(\d+)"\s+data-hmno="(\d+)"\s+data-hsecd="(\w+)"\s+data-honm="([^"]+)"[^>]*>(.*?)</tr>',
+        tbody_m.group(1), re.DOTALL
+    ):
+        pbno, hmno, hsecd, honm, tr_inner = tr_block
+        name_raw = honm
+        if not name_raw:
+            continue
+
+        tds = re.findall(r"<td[^>]*>(.*?)</td>", tr_inner, re.DOTALL)
+        period_raw = ""
+        for col_i in range(3, len(tds)):
+            c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
+            if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
+                period_raw = c
+                break
+
+        apply_start, apply_end = _parse_applyhome_period(period_raw)
+        if apply_end and apply_end < today:
+            continue
+        if apply_end and apply_end > future_limit:
+            continue
+
+        status = compute_status(apply_start, apply_end, today)
+
+        # 상세 페이지 POST → 공급위치(구) 파싱
+        time.sleep(DETAIL_SLEEP)
+        detail_html = fetch(
+            APPLYHOME_BASE + "/ai/aia/selectAPTRemndrLttotPblancDetailView.do",
+            data={"pblancNo": pbno, "houseManageNo": hmno, "houseSecd": hsecd},
+            extra_headers={"Referer": list_url}
+        )
+        district = _parse_applyhome_district(detail_html)
+
+        uid = name_raw + "remndr" + (apply_end.isoformat() if apply_end else "")
+        ann = {
+            "id":          make_id("applyhome_remndr", uid),
+            "inst":        "청약홈",
+            "source_key":  "applyhome_remndr",
+            "title":       name_raw + " (잔여세대)",
+            "types":       ["민간분양(아파트) 잔여세대"],
+            "location":    "서울특별시" + (" " + district if district else ""),
+            "district":    district,
+            "status":      status,
+            "url":         list_url,
+            "posted_date": today.isoformat(),
+            "crawled_at":  today.isoformat(),
+        }
+        if apply_start and apply_end:
+            ann["apply_start"] = apply_start.isoformat()
+            ann["apply_end"]   = apply_end.isoformat()
+        results.append(ann)
+        print(f"    [{status}] {name_raw[:40]} [{district}] (~{apply_end})")
+
+    print(f"  [청약홈 잔여] 서울 {len(results)}건")
     return results
 
 
 def crawl_applyhome_other(initial=False):
-    """청약홈 오피스텔/생활숙박/도시형/민간임대 청약일정"""
+    """청약홈 오피스텔/도시형/민간임대 — 서울 필터, 첫 페이지만"""
     today = date.today()
     future_limit = today + timedelta(days=FUTURE_LIMIT_DAYS)
     results = []
-    print("  [청약홈 기타] 목록 로딩...")
+    list_url = APPLYHOME_BASE + "/ai/aia/selectOtherLttotPblancListView.do"
+    print("  [청약홈 기타] 서울 목록 로딩...")
 
-    for page in range(1, 10):
-        html = fetch(
-            APPLYHOME_BASE + "/ai/aia/selectOtherLttotPblancListView.do",
-            data={"pageIndex": str(page), "orderbySecd": "", "orderbyMth": "01",
-                  "houseNm": "", "start_year": "", "end_year": ""},
-            extra_headers={"Referer": APPLYHOME_BASE + "/ai/aia/selectOtherLttotPblancListView.do",
-                           "Content-Type": "application/x-www-form-urlencoded"}
+    html = fetch(
+        list_url,
+        data={"pageIndex": "1", "orderbySecd": "", "orderbyMth": "01",
+              "houseNm": "", "start_year": "", "end_year": "", "suplyAreaCode": "서울"},
+        extra_headers={"Referer": list_url, "Content-Type": "application/x-www-form-urlencoded"}
+    )
+    if not html:
+        return results
+
+    tbody_m = re.search(r"<tbody>(.*?)</tbody>", html, re.DOTALL)
+    if not tbody_m:
+        return results
+
+    tr_blocks = re.findall(
+        r'<tr\s+data-pbno="(\d+)"\s+data-hmno="(\d+)"\s+data-hsecd="(\w+)"\s+data-honm="([^"]+)"[^>]*>(.*?)</tr>',
+        tbody_m.group(1), re.DOTALL
+    )
+    for pbno, hmno, hsecd, honm, tr_inner in tr_blocks:
+        tds = re.findall(r"<td[^>]*>(.*?)</td>", tr_inner, re.DOTALL)
+        if len(tds) < 4:
+            continue
+        house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
+        name_raw   = honm
+        if not name_raw:
+            continue
+
+        period_raw = ""
+        for col_i in range(3, len(tds)):
+            c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
+            if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
+                period_raw = c
+                break
+
+        apply_start, apply_end = _parse_applyhome_period(period_raw)
+        if apply_end and apply_end < today:
+            continue
+        if apply_end and apply_end > future_limit:
+            continue
+
+        status = compute_status(apply_start, apply_end, today)
+
+        # 상세 페이지 POST → 공급위치(구) 파싱
+        time.sleep(DETAIL_SLEEP)
+        detail_html = fetch(
+            APPLYHOME_BASE + "/ai/aia/selectPRMOLttotPblancDetailView.do",
+            data={"pblancNo": pbno, "houseManageNo": hmno, "houseSecd": hsecd},
+            extra_headers={"Referer": list_url}
         )
-        if not html:
-            break
+        district = _parse_applyhome_district(detail_html)
 
-        tbody_m = re.search(r"<tbody>(.*?)</tbody>", html, re.DOTALL)
-        if not tbody_m:
-            break
+        uid = name_raw + (apply_end.isoformat() if apply_end else "")
+        ann = {
+            "id":          make_id("applyhome_other", uid),
+            "inst":        "청약홈",
+            "source_key":  "applyhome_other",
+            "title":       name_raw,
+            "types":       detect_types_applyhome(name_raw, house_type),
+            "location":    "서울특별시" + (" " + district if district else ""),
+            "district":    district,
+            "status":      status,
+            "url":         list_url,
+            "posted_date": today.isoformat(),
+            "crawled_at":  today.isoformat(),
+        }
+        if apply_start and apply_end:
+            ann["apply_start"] = apply_start.isoformat()
+            ann["apply_end"]   = apply_end.isoformat()
+        results.append(ann)
+        print(f"    [{status}] {name_raw[:35]} [{district}] (~{apply_end})")
 
-        tr_blocks = re.findall(
-            r'<tr\s+data-pbno="(\d+)"\s+data-hmno="(\d+)"\s+data-hsecd="(\w+)"\s+data-honm="([^"]+)"[^>]*>(.*?)</tr>',
-            tbody_m.group(1), re.DOTALL
-        )
-        if not tr_blocks:
-            break
-
-        found_any = False
-        for pbno, hmno, hsecd, honm, tr_inner in tr_blocks:
-            tds = re.findall(r"<td[^>]*>(.*?)</td>", tr_inner, re.DOTALL)
-            if len(tds) < 5:
-                continue
-            region     = re.sub(r"<[^>]+>|\s+", " ", tds[0]).strip()
-            house_type = re.sub(r"<[^>]+>|\s+", " ", tds[1]).strip()
-            name_raw   = honm  # data-honm이 실제 주택명
-            period_raw = ""
-            for col_i in range(3, len(tds)):
-                c = re.sub(r"<[^>]+>|\s+", " ", tds[col_i]).strip()
-                if "~" in c and re.search(r"\d{4}[-./]\d{2}[-./]\d{2}", c):
-                    period_raw = c
-                    break
-
-            if not name_raw or not _is_metro_or_national(region):
-                continue
-
-            apply_start, apply_end = _parse_applyhome_period(period_raw)
-            status = compute_status(apply_start, apply_end, today)
-            if status == "expired":
-                continue
-            if apply_end and apply_end > future_limit:
-                continue
-
-            url = (f"{APPLYHOME_BASE}/ai/aia/selectOtherLttotPblancDetail.do"
-                   f"?pblancNo={pbno}&houseManageNo={hmno}&houseSecd={hsecd}")
-
-            uid = name_raw + (apply_end.isoformat() if apply_end else "")
-            ann = {
-                "id":          make_id("applyhome_other", uid),
-                "inst":        "청약홈",
-                "source_key":  "applyhome_other",
-                "title":       name_raw,
-                "types":       detect_types_applyhome(name_raw, house_type),
-                "location":    region,
-                "status":      status,
-                "url":         url,
-                "posted_date": today.isoformat(),
-                "crawled_at":  today.isoformat(),
-            }
-            if apply_start and apply_end:
-                ann["apply_start"] = apply_start.isoformat()
-                ann["apply_end"]   = apply_end.isoformat()
-            results.append(ann)
-            found_any = True
-
-        if not found_any and page > 1:
-            break
-        time.sleep(0.5)
-
-    print(f"  [청약홈 기타] 수도권 {len(results)}건")
+    print(f"  [청약홈 기타] 서울 {len(results)}건")
     return results
 
 
@@ -1161,7 +1203,9 @@ def main():
         list_path="/main/lay2/program/S1T294C295/www/brd/m_241/list.do",
         view_path="/main/lay2/program/S1T294C295/www/brd/m_241/view.do",
         multi_itm_seq="1,2,4,8,16,32,64,128,256,512",
-        param_name="multi_itm_seqs"
+        param_name="multi_itm_seqs",
+        normal_max_pages=2,    # 오늘+전날 공고는 2페이지면 충분
+        normal_since_days=1    # 오늘 + 전날까지만
     )
     all_announcements += sh_rental.crawl(initial)
     all_announcements += sh_sale.crawl(initial)

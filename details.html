@@ -1918,12 +1918,14 @@ function runAnalysis() {
     // 8. 장기미임대
     {
         const r = [];
+        const db8 = getE('SH_LONG_UNOCCUPIED');
         if (!baseOk) r.push('서울 거주 무주택 세대구성원 필요');
         if (age<19) r.push('만 19세 이상 필요');
         let eligible=false, rank='';
         if (baseOk && age>=19) {
             eligible=true;
-            rank = under(130)?'1순위 (소득 130% 이하)':'2순위 (소득 130% 초과도 신청 가능)';
+            const incLim = db8.inc||130;
+            rank = under(incLim)?`1순위 (소득 ${incLim}% 이하)`:'2순위 (소득 130% 초과도 신청 가능)';
         }
         add('장기미임대', eligible, rank, '시세 30~70%', '최장 4년 (우편접수 가능)', 'national', r, 'SH', 'rental');
     }
@@ -2055,6 +2057,7 @@ function runAnalysis() {
     // 16. 전세임대형 든든주택
     {
         const r = [];
+        const db16d = getE('SH_DNDNT_JEONSE');
         if (!baseOk) r.push('서울 주민등록 + 무주택 세대구성원 필요');
         let eligible=false, rank='';
         if (baseOk) {
@@ -2169,6 +2172,7 @@ function runAnalysis() {
         const areaRankHint = seoulRes ? '지역1~2순위(해당 구→1, 타 구→2)' : '지역2~3순위(서울 재학·재직)';
         if (baseOk_lh && seoulConnect && (isYouthGrp || isNewlywedGrp)) {
             const dbPri = getE('SH_SAFETY_PRIVATE_YOUTH');
+            const dbPriN = getE('SH_SAFETY_PRIVATE_NEWLYWED');
             const aLim=dbPri.asset||34500, cLim=dbPri.car||4563;
             // 특공: 청년+신혼 단일 풀 — 소득순위→지역순위→추첨
             if ((isYouthGrp || isNewlywedGrp) && totalAssets<=aLim && carVal<=cLim && under(120)) {
@@ -2361,9 +2365,36 @@ function runAnalysis() {
         add('LH 국민임대', eligible, rank, '시세 60~80%', '30년 (계속 재계약)', 'national', r, 'LH', 'rental');
     }
 
+    // LH 20-1. 5·10·50년 공공임대 (분양전환형)
+    {
+        const r = [];
+        const db5y = getE('LH_PUBLIC_5_10');
+        const reOk = realEstate <= (db5y.assetReal||21550), carOk5 = carVal <= (db5y.car||4563);
+        if (!baseOk_lh) r.push('무주택 세대구성원 필요');
+        if (!reOk) r.push(`부동산 ${db5y.assetReal||21550}만원 이하 필요`);
+        if (!carOk5) r.push(`자동차 ${db5y.car||4563}만원 이하 필요`);
+        const eligibleTypes = [];
+        if (baseOk_lh && reOk && carOk5) {
+            const incLim = dualInc ? (db5y.incM||130) : (db5y.inc||100);
+            if (under(incLim)) {
+                if ((isNewlywedStrict || infant) && subCount >= 6) eligibleTypes.push('신혼부부 특공');
+                if (lifeFirst && taxPaid5yr && subCount >= 6) eligibleTypes.push('생애최초 특공');
+                if (childCnt >= 3 && subCount >= 6) eligibleTypes.push('다자녀 특공');
+                if (elderly && subCount >= 6) eligibleTypes.push('노부모부양 특공');
+                eligibleTypes.push('일반공급');
+            } else {
+                r.push(`소득 ${incLim}% 이하 필요`);
+            }
+        }
+        const eligible = eligibleTypes.length > 0;
+        const rank = eligible ? eligibleTypes.join(' · ') : '';
+        add('LH 5·10·50년 공공임대', eligible, rank, '분양전환 후 내 집 마련', '5·10·50년 후 분양전환', 'national', r, 'LH', 'rental');
+    }
+
     // LH 21. 영구임대
     {
         const r = [];
+        const dbPerm = getE('LH_PERMANENT');
         if (!baseOk_lh) r.push('무주택 세대구성원 필요');
         let eligible = false, rank = '';
         if (baseOk_lh && isRecipient) {
@@ -2786,28 +2817,33 @@ function runAnalysis() {
     {
         const eligibleTypes = [];
         const r = [];
+        const dbLlg  = getE('SH_LAND_LEASE_GENERAL');
+        const dbLly  = getE('SH_LAND_LEASE_YOUTH');
+        const dbLlf  = getE('SH_LAND_LEASE_FIRST');
+        const dbLln  = getE('SH_LAND_LEASE_NEWLYWED');
+        const dbLlnb = getE('SH_LAND_LEASE_NEWBORN');
         if (!baseOk_sale) r.push('서울·경기 거주 무주택 세대구성원 필요');
-        const aOk = totalAssets <= 35400, carOk = carVal <= 4563;
-        if (!aOk) r.push('총자산 35,400만원 이하 필요');
-        if (!carOk) r.push('자동차 4,563만원 이하 필요');
+        const aOk = totalAssets <= (dbLlg.asset||35400), carOk = carVal <= (dbLlg.car||4563);
+        if (!aOk) r.push(`총자산 ${dbLlg.asset||35400}만원 이하 필요`);
+        if (!carOk) r.push(`자동차 ${dbLlg.car||4563}만원 이하 필요`);
 
         if (baseOk_sale && aOk && carOk) {
             // 청년특공 (소득 140%, 미혼·한부모, 본인자산 27,000만원, 청약 6회+)
-            if (isYouth && (!isMarried || singleParent) && subCount >= 6
-                && totalAssets <= 27000 && (dualInc ? under(200) : under(140)))
+            if (isYouth && (!isMarried || singleParent) && subCount >= (dbLly.savingsRank1||6)
+                && totalAssets <= (dbLly.assetSelf||27000) && (dualInc ? under(200) : under(dbLly.inc||140)))
                 eligibleTypes.push('청년 특공');
             // 신생아특공 (소득 140%, 2세 미만 자녀, 청약 6회+)
-            if (infant && subCount >= 6 && (dualInc ? under(200) : under(140)))
+            if (infant && subCount >= (dbLlnb.savingsRank1||6) && (dualInc ? under(200) : under(dbLlnb.inc||140)))
                 eligibleTypes.push('신생아 특공');
             // 신혼부부특공 (소득 130%, 신혼·예비·한부모·신생아, 청약 6회+)
-            if ((isNewlywedStrict || infant || singleParent) && subCount >= 6
-                && (dualInc ? under(200) : under(130)))
+            if ((isNewlywedStrict || infant || singleParent) && subCount >= (dbLln.savingsRank1||6)
+                && (dualInc ? under(200) : under(dbLln.inc||130)))
                 eligibleTypes.push('신혼부부 특공');
             // 생애최초특공 (소득 130%, 세대 전원 주택 미소유, 소득세 5년+, 600만원+)
-            if (lifeFirst && taxPaid5yr && subAmountEnough && (dualInc ? under(200) : under(130)))
+            if (lifeFirst && taxPaid5yr && subAmountEnough && (dualInc ? under(200) : under(dbLlf.inc||130)))
                 eligibleTypes.push('생애최초 특공');
             // 일반공급 (소득 100%, 청약 6회+)
-            if (subCount >= 6 && (dualInc ? under(200) : under(100)))
+            if (subCount >= (dbLlg.savingsRank1||6) && (dualInc ? under(200) : under(dbLlg.inc||100)))
                 eligibleTypes.push('일반공급');
         }
 
@@ -2954,9 +2990,19 @@ function runAnalysis() {
         }
     }
 
+    // 민간분양(아파트) 잔여세대 — 추첨제, 서울 무주택세대주
+    {
+        const eligible = seoulRes && homeless;
+        const r = [];
+        if (!seoulRes) r.push('서울 거주 필요');
+        if (!homeless) r.push('무주택세대주 필요');
+        add('민간분양(아파트) 잔여세대', eligible, eligible ? '100% 추첨 (청약통장 불필요)' : '', '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+    }
+
     // 오피스텔 청약 (민간분양) — 추첨제
     {
-        const eligible = age >= 19;
+        const dbCo = getE('CHEONGYAK_OFFICETEL');
+        const eligible = age >= (dbCo.ageMin||19);
         const r = [];
         if (!eligible) r.push('만 19세 이상 필요');
         add('오피스텔 청약', eligible, eligible ? '100% 추첨 (청약통장 불필요)' : '', '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
@@ -2964,7 +3010,8 @@ function runAnalysis() {
 
     // 도시형생활주택 청약 (민간분양) — 추첨제
     {
-        const eligible = age >= 19;
+        const dbCu = getE('CHEONGYAK_URBAN_LIVING');
+        const eligible = age >= (dbCu.ageMin||19);
         const r = [];
         if (!eligible) r.push('만 19세 이상 필요');
         add('도시형생활주택 청약', eligible, eligible ? '100% 추첨 (청약통장 불필요)' : '', '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
@@ -2972,7 +3019,8 @@ function runAnalysis() {
 
     // 민간임대 청약 — 추첨제
     {
-        const eligible = age >= 19;
+        const dbCr = getE('CHEONGYAK_PRIVATE_RENTAL');
+        const eligible = age >= (dbCr.ageMin||19);
         const r = [];
         if (!eligible) r.push('만 19세 이상 필요');
         add('민간임대 청약', eligible, eligible ? '100% 추첨 (청약통장 불필요)' : '', '공고별 임대료', '임대 (공고별)', 'sale-private', r, '청약홈', 'sale');
@@ -2980,15 +3028,17 @@ function runAnalysis() {
 
     // 공공지원민간임대 청약 — 특별공급(소득순위) + 일반공급(추첨)
     {
-        const eligible = age >= 19;
+        const dbCpsr = getE('CHEONGYAK_PUBLIC_SUPPORT_RENTAL');
+        const eligible = age >= (dbCpsr.ageMin||19);
         const r = [];
         if (!eligible) r.push('만 19세 이상 필요');
+        const maxInc = dbCpsr.inc||120;
         let rank = '';
         if (eligible) {
-            if (under(100))       rank = '특별공급 1순위 (소득 100% 이하) — 추첨';
-            else if (under(110))  rank = '특별공급 2순위 (소득 110% 이하) — 추첨';
-            else if (under(120))  rank = '특별공급 3순위 (소득 120% 이하) — 추첨';
-            else                  rank = '일반공급 — 100% 추첨 (소득 무관)';
+            if (under(100))          rank = '특별공급 1순위 (소득 100% 이하) — 추첨';
+            else if (under(110))     rank = '특별공급 2순위 (소득 110% 이하) — 추첨';
+            else if (under(maxInc))  rank = `특별공급 3순위 (소득 ${maxInc}% 이하) — 추첨`;
+            else                     rank = '일반공급 — 100% 추첨 (소득 무관)';
         }
         add('공공지원민간임대 청약', eligible, rank, '시세 이하 임대 (10년 이상)', '임대 (10년+)', 'sale-private', r, '청약홈', 'sale');
     }
@@ -4301,6 +4351,39 @@ const typeDetailData = {
         </div>
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>
         <a class="help-link" href="https://www.lh.or.kr" target="_blank">🔗 LH 한국토지주택공사</a>`
+    },
+    'LH 5·10·50년 공공임대': {
+        title: 'LH 5·10·50년 공공임대 (분양전환형)',
+        body: `
+        <div class="help-section">
+            <h4>어떤 주택인가요?</h4>
+            <p>LH가 공급하는 <strong>분양전환형 공공임대</strong>. 5년·10년·50년의 임대기간 후 분양전환 기회가 주어지는 유형으로, 임대로 시작해 내 집 마련까지 이어질 수 있습니다.</p>
+        </div>
+        <div class="help-section">
+            <h4>임대 조건</h4>
+            <ul>
+                <li>임대료: 시세 이하 (보증금+월세)</li>
+                <li>기간: 5년·10년 후 분양전환 / 50년형은 장기 거주</li>
+                <li>면적: 전용 85㎡ 이하</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>자격 요건</h4>
+            <ul>
+                <li>무주택 세대구성원 (전국)</li>
+                <li>부동산 21,550만원 이하 / 자동차 4,563만원 이하</li>
+                <li>소득: 단독 100% 이하 / 기혼 130% 이하</li>
+            </ul>
+        </div>
+        <div class="help-section">
+            <h4>특별공급 배분</h4>
+            <ul>
+                <li>신혼부부 10% / 생애최초 15% / 다자녀 10% / 노부모부양 5%</li>
+                <li>기관추천 20% / 일반공급 20%</li>
+                <li>선정: 2세 미만 자녀 50% → 배점 30% → 추첨 20%</li>
+            </ul>
+        </div>
+        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
     'LH 국민임대': {
         title: 'LH 국민임대',
@@ -5672,6 +5755,25 @@ typeDetailData['민간분양 (아파트) — 1순위'] = {
     <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 — 당첨가점 미리계산</a>`
 };
 
+typeDetailData['민간분양(아파트) 잔여세대'] = {
+    title: '민간분양(아파트) 잔여세대',
+    body: `
+    <div class="help-section">
+        <h4>잔여세대란?</h4>
+        <p>1·2순위 청약 후 미분양된 세대를 <strong>선착순 또는 추첨</strong>으로 공급합니다. 청약통장 없이 신청 가능하며, 서울 거주 무주택세대주라면 누구나 지원할 수 있습니다.</p>
+    </div>
+    <div class="help-section">
+        <h4>주요 자격</h4>
+        <ul>
+            <li>서울 거주 무주택세대주</li>
+            <li>청약통장 불필요</li>
+            <li>소득·자산 제한 없음</li>
+            <li>100% 추첨제</li>
+        </ul>
+    </div>
+    <a class="help-link" href="https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do" target="_blank">🔗 청약홈 — 잔여세대 공고 목록</a>`
+};
+
 typeDetailData['민간분양 (아파트) — 2순위'] = {
     title: '민간분양 (아파트) — 일반공급 2순위',
     body: `
@@ -6158,6 +6260,26 @@ const applyGuideData = {
                 <p class="hint warn">⚠ 통합공공임대는 기준 중위소득 기준 적용 (도시근로자 소득과 다름). 건강보험료로 간이 확인 가능.</p>
             </div></div>
             <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>서류 심사 후 최종 당첨자 통보. 임대보증금·월임대료 계약 체결.</p></div></div>
+        </div>
+        <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
+    },
+    'LH 5·10·50년 공공임대': {
+        title: 'LH 5·10·50년 공공임대 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>공고 확인</h4><p>LH청약플러스(apply.lh.or.kr) → 임대주택 → 공공임대 탭에서 5·10·50년형 공고 확인. 공급 물량이 많지 않으므로 알림 설정 권장.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>특별공급 우선 확인</h4><p>신혼부부·생애최초·다자녀·노부모부양 해당 시 특별공급 우선 신청. 특공 미해당 시 일반공급 신청.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>온라인 청약</h4><p>LH청약플러스에서 온라인 신청. 청약저축 가입 필요.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>필수 서류</h4>
+                <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
+                    <div class="guide-doc-item">주민등록등본</div>
+                    <div class="guide-doc-item">소득 확인 서류 (건강보험료 납부확인서 등)</div>
+                    <div class="guide-doc-item">무주택 서약서</div>
+                    <div class="guide-doc-item">자산 확인 서류</div>
+                    <div class="guide-doc-item">해당 특공 증빙서류 (혼인관계증명서 등)</div>
+                </div>
+            </div></div>
+            <div class="guide-step"><div class="guide-step-num">5</div><div class="guide-step-body"><h4>심사 → 계약</h4><p>서류 심사 후 당첨자 선정 → 계약 체결 → 임대 개시.</p></div></div>
         </div>
         <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스</a>`
     },
@@ -7008,6 +7130,16 @@ const applyGuideData = {
             <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-body"><h4>당첨 발표 → 서류 제출</h4><p>당첨 후 지정 기간 내 건설사 분양사무소 방문하여 서류 제출. 미당첨 시 납입 횟수 차감 없이 통장 유지됩니다.</p></div></div>
         </div>
         <a class="help-link" href="https://www.applyhome.co.kr" target="_blank">🔗 청약홈 바로가기</a>`
+    },
+    '민간분양(아파트) 잔여세대': {
+        title: '민간분양(아파트) 잔여세대 신청 가이드',
+        body: `
+        <div class="help-section">
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>청약홈 잔여세대 공고 확인</h4><p>청약홈(applyhome.co.kr) → 분양정보 → 아파트 → 잔여세대에서 서울 공고를 확인합니다. 선착순 또는 추첨으로 진행되며 공고마다 일정이 다릅니다.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>청약통장 없이 신청 가능</h4><p>잔여세대는 청약통장 없이 신청할 수 있습니다. 신분증과 무주택 확인 서류만 준비하면 됩니다.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>100% 추첨제</h4><p>가점이나 순위 구분 없이 100% 추첨으로 당첨자를 선정합니다. 당첨 후 지정 기간 내 계약을 완료해야 합니다.</p></div></div>
+        </div>
+        <a class="help-link" href="https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancListView.do" target="_blank">🔗 청약홈 — 잔여세대 목록</a>`
     },
     '민간분양 (아파트) — 2순위': {
         title: '민간분양 (아파트) 일반공급 2순위 신청 가이드',
