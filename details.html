@@ -279,6 +279,42 @@
         .salary-helper input:focus { outline: none; border-color: var(--primary-color, #4f46e5); }
         .salary-helper-label { font-size: 0.8rem; color: #6b7280; white-space: nowrap; }
         .salary-helper-result { font-size: 0.82rem; font-weight: 700; color: #4f46e5; white-space: nowrap; }
+
+        /* ===== 모바일 결과 카드 최적화 ===== */
+        @media (max-width: 520px) {
+            /* 카드 패딩 축소 */
+            .result-card { padding: 0.9rem 1rem; border-radius: 12px; }
+
+            /* 헤더: 이름·배지 세로 배치로 가로 공간 확보 */
+            .result-card-header { flex-direction: column; gap: 0.3rem; align-items: flex-start; }
+            .rank-badge { font-size: 0.72rem; padding: 0.18rem 0.55rem; }
+
+            /* 유형명 폰트 약간 축소 */
+            .result-card-name { font-size: 0.92rem; }
+
+            /* 태그 줄 간격 축소 */
+            .result-tags { gap: 0.3rem; margin-top: 0.5rem; }
+            .result-tag { font-size: 0.74rem; padding: 0.15rem 0.5rem; }
+
+            /* 공고 박스 패딩 축소 */
+            .announce-box { padding: 0.55rem 0.75rem; }
+            .announce-link { font-size: 0.76rem; }
+            .announce-period { font-size: 0.68rem; }
+
+            /* 버튼 행 패딩 축소 */
+            .card-btn-row { gap: 0.4rem; margin-top: 0.6rem; }
+            .type-detail-btn, .apply-guide-btn { font-size: 0.75rem; padding: 0.4rem 0.4rem; }
+
+            /* 결과 탭 폰트 */
+            .result-tab { font-size: 0.75rem; padding: 0.55rem 0.3rem; }
+            .result-tab .tab-sub { font-size: 0.62rem; }
+
+            /* 조건 요약 칩 */
+            .summary-chip { font-size: 0.75rem; padding: 0.15rem 0.5rem; }
+
+            /* 필터 탭 */
+            .filter-tab { font-size: 0.78rem; padding: 0.35rem 0.7rem; }
+        }
     </style>
 </head>
 <body data-theme="light">
@@ -3468,12 +3504,16 @@ function runAnalysis() {
 
     // 신청가능 → 현재 모집중 vs 모집없음
     // finance/welfare: 수시 신청 가능 → 항상 모집중
-    // rental/sale: 공고 기반 → 진행중 공고 있을 때만 모집중
-    const activeEligible = [], inactiveEligible = [];
+    // rental/sale: 진행중 공고 → 모집중(상단) / 예정 공고만 → 모집중(하단) / 공고 없음 → 모집없음
+    const activeEligible = [], upcomingOnlyEligible = [], inactiveEligible = [];
     for (const r of eligible) {
         const isContinuous = r.catGroup === 'finance' || r.catGroup === 'welfare';
-        const hasActive = isContinuous || getMatchingAnnouncements(r.name).some(a => a.status === '진행중');
-        (hasActive ? activeEligible : inactiveEligible).push(r);
+        const anns = getMatchingAnnouncements(r.name);
+        const hasRealActive = isContinuous || anns.some(a => a.status === '진행중');
+        const hasUpcoming = !hasRealActive && anns.some(a => a.status === '예정');
+        if (hasRealActive) activeEligible.push(r);
+        else if (hasUpcoming) upcomingOnlyEligible.push(r);
+        else inactiveEligible.push(r);
     }
 
     // 조건 요약 카드 렌더링
@@ -3595,7 +3635,7 @@ function runAnalysis() {
     }
 
     // 카드 저장 후 필터 렌더링
-    _activeCards     = activeEligible.map(r   => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true)  }));
+    _activeCards     = [...activeEligible, ...upcomingOnlyEligible].map(r => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true) }));
     _inactiveCards   = inactiveEligible.map(r => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true)  }));
     _ineligibleCards = ineligible.map(r       => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, false) }));
     filterResults('ALL');
