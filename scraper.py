@@ -227,6 +227,10 @@ def detect_types_sh(title):
     tl = title.replace(" ", "").lower()
     if "행복주택" in title:
         return ["SH 행복주택"]
+    if "청년안심주택" in title:
+        if "민간임대" in title or "[민간]" in title:
+            return ["SH 청년안심주택 민간임대"]
+        return ["SH 청년안심주택 공공임대"]
     if "재개발임대" in tl:
         return ["SH 재개발임대주택 (일반공급)"]
     if "주거환경임대" in tl or "공공주거환경" in tl or "공공·주거환경" in title:
