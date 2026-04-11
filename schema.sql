@@ -622,7 +622,15 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '{"marital_status":["미혼"],"homeless_required":true,"school_region_required":"서울","enrollment_required":true,"income_type":"도시근로자월평균","income_pct_rank2":100,"income_pct_rank3":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit_rank2":337000000,"asset_limit_rank3":104000000,"car_limit_rank2":45630000,"car_limit_rank3":0,"notes":["거주지 조건 없음 - 서울 소재 대학 재학이 핵심 조건","복학·입학 예정자(다음 학기) 포함","1순위: 수급자·한부모·차상위 (소득·자산 무관)","2순위: 본인+부모 합산 100%이하·자산33,700만·차량4,563만","3순위: 본인 소득 100%이하·자산10,400만·차량무소유","가점: 생계의료급여3점·부모무주택2점·장애인(본인)2점·소득50%이하3점·청약저축24회이상3점","시설: 연남·공릉원룸텔, 공릉·갈현·정릉기숙사"]}',
  '{"deposit_fixed":1090000,"rent_fixed_min":70000,"rent_fixed_max":140000,"period_years":2,"renewal_count":2,"period_max_years":6}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
- 'https://www.i-sh.co.kr/app/lay2/S48T1591C592/contents.do')
+ 'https://www.i-sh.co.kr/app/lay2/S48T1591C592/contents.do'),
+
+-- SH 사회주택 (토지지원형·리모델링형 공통)
+('SH_SOCIAL_HOUSING', '임대주택', '사회주택', '사회주택', 'SH', '서울', 'SH 사회주택',
+ '서울 거주 무주택 세대구성원, 도시근로자 월평균소득 120% 이하', FALSE,
+ '{"homeless_required":true,"seoul_residence_required":true,"income_type":"도시근로자월평균","income_pct":120,"asset_limit":337000000,"asset_limit_youth":254000000,"car_limit":45630000,"notes":["서울 거주 무주택 세대구성원 전체 대상","소득: 전년도 도시근로자 월평균소득 120% 이하","총자산: 만19~39세 2억5,400만원 / 그 외 3억3,700만원 이하","자동차가액: 4,563만원 이하","유형: 토지지원형(토지임대부) / 리모델링형","임대료: 시세 80% 수준 / 최장 10년 거주"]}',
+ '{"rent_pct":80,"period_years_max":10}',
+ '{"method":["온라인"],"url":"https://soco.seoul.go.kr","contact":"02-2133-7300","period_type":"공고별"}',
+ 'https://soco.seoul.go.kr/soHouse/main/contents.do?menuNo=300007')
 ON CONFLICT (code) DO UPDATE SET
   category = EXCLUDED.category, subcategory = EXCLUDED.subcategory,
   program_type = EXCLUDED.program_type, institution = EXCLUDED.institution,
