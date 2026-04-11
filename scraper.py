@@ -689,34 +689,56 @@ def crawl_youth_housing(initial=False):
             else:
                 youth_type = "SH 청년안심주택 공공임대"  # 공공임대 or 기본값
 
-            # 민간임대만 상세 페이지에서 구 파싱 (공공임대는 상세에서 자치구 미표시)
-            district = None
-            if youth_type == "SH 청년안심주택 민간임대":
-                detail_html = fetch(url, extra_headers={"Referer": YOUTH_REF})
-                if detail_html:
-                    m = re.search(r'주택위치\s*[:\：]\s*서울특별시\s*(\S+구)', detail_html)
-                    if not m:
-                        m = re.search(r'<option[^>]+selected[^>]*>([^<]+구)</option>', detail_html)
-                    if m:
-                        district = m.group(1).strip()
+            # 상세페이지 fetch — 청약신청 날짜 + 민간임대 구 파싱
+            detail_html = fetch(url, extra_headers={"Referer": YOUTH_REF})
+            time.sleep(DETAIL_SLEEP)
 
+            # 청약신청 날짜 파싱: '26. 04. 11. ~ 04. 13. 형태
+            detail_start = detail_end = None
+            if detail_html:
+                dm = re.search(
+                    r"청약신청\s*[：:][^']*'(\d{2})\.\s*(\d{2})\.\s*(\d{2})\.[^~]*~\s*(\d{2})\.\s*(\d{2})\.",
+                    detail_html)
+                if dm:
+                    yy, s_mm, s_dd, e_mm, e_dd = dm.groups()
+                    year = 2000 + int(yy)
+                    try:
+                        detail_start = date(year, int(s_mm), int(s_dd))
+                        detail_end   = date(year, int(e_mm), int(e_dd))
+                    except Exception:
+                        pass
+
+            # 상세에서 파싱 성공하면 우선 사용, 실패 시 API optn 값 fallback
+            final_start = detail_start or apply_start
+            final_end   = detail_end   or apply_end
+
+            # 민간임대: 구 파싱
+            district = None
+            if youth_type == "SH 청년안심주택 민간임대" and detail_html:
+                m = re.search(r'주택위치\s*[:\：]\s*서울특별시\s*(\S+구)', detail_html)
+                if not m:
+                    m = re.search(r'<option[^>]+selected[^>]*>([^<]+구)</option>', detail_html)
+                if m:
+                    district = m.group(1).strip()
+
+            # 날짜 기반 ID (상세 날짜 우선)
             ann = {
-                "id":          make_id("SH", title, apply_end.isoformat() if apply_end else None),
+                "id":          make_id("SH", title, final_end.isoformat() if final_end else None),
                 "inst":        "SH",
                 "source_key":  "youth_housing",
                 "title":       title,
                 "types":       [youth_type],
                 "location":    "서울",
-                "status":      status,
+                "status":      compute_status(final_start, final_end, today),
                 "url":         url,
                 "posted_date": posted.isoformat(),
                 "crawled_at":  today.isoformat(),
             }
             if district:
                 ann["district"] = district
-            if apply_start and apply_end:
-                ann["apply_start"] = apply_start.isoformat()
-                ann["apply_end"]   = apply_end.isoformat()
+            if final_start and final_end:
+                ann["apply_start"] = final_start.isoformat()
+                ann["apply_end"]   = final_end.isoformat()
             else:
                 ann["needs_pdf"] = True
             results.append(ann)
