@@ -693,7 +693,7 @@ def crawl_youth_housing(initial=False):
             detail_start = detail_end = None
             if detail_html:
                 dm = re.search(
-                    r"청약신청\s*[：:][^']*'(\d{2})\.\s*(\d{2})\.\s*(\d{2})\.[^~]*~\s*(\d{2})\.\s*(\d{2})\.",
+                    r"청약신청\s*[：:][^'\u2019]*['\u2019](\d{2})\.\s*(\d{2})\.\s*(\d{2})\.[^~]*~\s*(\d{2})\.\s*(\d{2})\.",
                     detail_html)
                 if dm:
                     yy, s_mm, s_dd, e_mm, e_dd = dm.groups()
