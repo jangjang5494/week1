@@ -677,10 +677,6 @@ def crawl_youth_housing(initial=False):
                 else:
                     continue  # initial 모드: 날짜 오래됐어도 페이지 계속 읽기
 
-            status = compute_status(apply_start, apply_end, today)
-            if status == "expired":
-                continue
-
             url = f"{YOUTH_BASE}?menuNo=400008&boardId={board_id}"
 
             # 제목에서 공공임대/민간임대 구분
