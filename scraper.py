@@ -431,9 +431,6 @@ class SHCrawler:
 
             inst = "SH"
             types = detect_types_sh(title)
-            # 청년안심주택은 youth_housing 크롤러가 전담 — sh_rental/sh_sale에서 제외
-            if any("청년안심주택" in t for t in types):
-                continue
             url = f"{self.view_url}?seq={seq}&multi_itm_seq={self.multi_itm}"
             district = extract_gu_from_text(title)
             ann = {
@@ -693,8 +690,8 @@ def crawl_youth_housing(initial=False):
             detail_start = detail_end = None
             if detail_html:
                 dm = re.search(
-                    r"청약신청\s*[：:][^'\u2019]*['\u2019](\d{2})\.\s*(\d{2})\.\s*(\d{2})\.[^~]*~\s*(\d{2})\.\s*(\d{2})\.",
-                    detail_html)
+                    r"청약신청[^0-9]{1,80}(\d{2})[.]\s*(\d{2})[.]\s*(\d{2})[.][^~]{0,60}~[^0-9]{0,10}(\d{2})[.]\s*(\d{2})[.]",
+                    detail_html, re.DOTALL)
                 if dm:
                     yy, s_mm, s_dd, e_mm, e_dd = dm.groups()
                     year = 2000 + int(yy)
