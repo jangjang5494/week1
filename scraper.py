@@ -620,7 +620,7 @@ def crawl_youth_housing(initial=False):
     today   = date.today()
     since   = INITIAL_SINCE if initial else today - timedelta(days=1)
     results = []
-    max_pages = 20 if initial else 1
+    max_pages = 5 if initial else 1
 
     for page in range(1, max_pages + 1):
         print(f"  [청년안심주택] API p{page}...")
@@ -671,8 +671,11 @@ def crawl_youth_housing(initial=False):
                 posted = today
 
             if posted < since:
-                stop = True
-                break
+                if not initial:
+                    stop = True
+                    break
+                else:
+                    continue  # initial 모드: 날짜 오래됐어도 페이지 계속 읽기
 
             status = compute_status(apply_start, apply_end, today)
             if status == "expired":
