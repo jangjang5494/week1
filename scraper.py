@@ -128,9 +128,10 @@ def extract_gu_from_text(text):
             return gu
     return None
 
-def make_id(source_key, uid):
-    h = hashlib.md5(str(uid).encode("utf-8")).hexdigest()[:8]
-    return f"{source_key}_{h}"
+def make_id(inst, title, apply_end=None):
+    """inst + title + apply_end 기반 안정적 해시 — 크롤러 source_key 무관하게 동일 공고는 동일 ID."""
+    raw = f"{inst}|{title}|{apply_end or ''}"
+    return hashlib.md5(raw.encode("utf-8")).hexdigest()[:12]
 
 def compute_status(apply_start, apply_end, today=None):
     today = today or date.today()
@@ -428,7 +429,7 @@ class SHCrawler:
             url = f"{self.view_url}?seq={seq}&multi_itm_seq={self.multi_itm}"
             district = extract_gu_from_text(title)
             ann = {
-                "id":          make_id(self.inst_key, seq),
+                "id":          make_id("SH", title, apply_end.isoformat() if apply_end else None),
                 "inst":        inst,
                 "source_key":  self.inst_key,
                 "title":       title,
@@ -569,7 +570,7 @@ def crawl_lh(mi, source_key, initial=False):
         location = "서울특별시" + (" " + district if district else "")
 
         ann = {
-            "id":          make_id(source_key, pan_id),
+            "id":          make_id("LH", title, apply_end.isoformat() if apply_end else None),
             "inst":        "LH",
             "source_key":  source_key,
             "title":       title,
@@ -689,7 +690,7 @@ def crawl_youth_housing(initial=False):
                         district = m.group(1).strip()
 
             ann = {
-                "id":          make_id("youth", board_id),
+                "id":          make_id("SH", title, apply_end.isoformat() if apply_end else None),
                 "inst":        "SH",
                 "source_key":  "youth_housing",
                 "title":       title,
@@ -866,9 +867,8 @@ def crawl_applyhome_apt(initial=False):
             types = _parse_applyhome_supply_types(detail_html, base_types[0]) if detail_html else base_types
         district = _parse_applyhome_district(detail_html) or extract_gu_from_text(name_raw)
 
-        uid = name_raw + (apply_end.isoformat() if apply_end else "")
         ann = {
-            "id":          make_id("applyhome_apt", uid),
+            "id":          make_id("청약홈", name_raw, apply_end.isoformat() if apply_end else None),
             "inst":        "청약홈",
             "source_key":  "applyhome_apt",
             "title":       name_raw,
@@ -949,9 +949,8 @@ def crawl_applyhome_remndr(initial=False):
         )
         district = _parse_applyhome_district(detail_html) or extract_gu_from_text(name_raw)
 
-        uid = name_raw + "remndr" + (apply_end.isoformat() if apply_end else "")
         ann = {
-            "id":          make_id("applyhome_remndr", uid),
+            "id":          make_id("청약홈", name_raw + " (잔여세대)", apply_end.isoformat() if apply_end else None),
             "inst":        "청약홈",
             "source_key":  "applyhome_remndr",
             "title":       name_raw + " (잔여세대)",
@@ -1031,9 +1030,8 @@ def crawl_applyhome_other(initial=False):
         )
         district = _parse_applyhome_district(detail_html) or extract_gu_from_text(name_raw)
 
-        uid = name_raw + (apply_end.isoformat() if apply_end else "")
         ann = {
-            "id":          make_id("applyhome_other", uid),
+            "id":          make_id("청약홈", name_raw, apply_end.isoformat() if apply_end else None),
             "inst":        "청약홈",
             "source_key":  "applyhome_other",
             "title":       name_raw,
