@@ -431,6 +431,9 @@ class SHCrawler:
 
             inst = "SH"
             types = detect_types_sh(title)
+            # 청년안심주택은 youth_housing 크롤러가 전담 — sh_rental/sh_sale에서 제외
+            if any("청년안심주택" in t for t in types):
+                continue
             url = f"{self.view_url}?seq={seq}&multi_itm_seq={self.multi_itm}"
             district = extract_gu_from_text(title)
             ann = {
