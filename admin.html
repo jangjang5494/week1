@@ -897,6 +897,9 @@ function logout() {
   location.reload();
 }
 
+// raw_data 로컬 캐시 (날짜 잠금 merge용)
+let rowRawData = {};
+
 // ════════════════════════════════════════════════════════
 //  초기화
 // ════════════════════════════════════════════════════════
@@ -991,10 +994,13 @@ function renderTab1(data) {
     tbody.innerHTML = '<tr class="empty-row"><td colspan="8">공고가 없습니다.</td></tr>';
     return;
   }
+  rowRawData = {};
   tbody.innerHTML = data.map(r => {
+    rowRawData[r.id] = r.raw_data || {};
+    const isLocked = !!(r.raw_data || {}).date_locked;
     const types = Array.isArray(r.types) ? r.types.join(', ') : (r.types || '-');
-    const start = r.apply_start ? r.apply_start.slice(0,10) : '-';
-    const end   = r.apply_end   ? r.apply_end.slice(0,10)   : '-';
+    const start = r.apply_start ? r.apply_start.slice(0,10) : '';
+    const end   = r.apply_end   ? r.apply_end.slice(0,10)   : '';
     const date  = r.date ? r.date.slice(0,10) : (r.created_at ? r.created_at.slice(0,10) : '-');
     // status 클라이언트에서 재계산 (당일 23:59:59까지 진행중)
     const now = new Date();
@@ -1038,9 +1044,13 @@ function renderTab1(data) {
         <td style="font-size:12px;color:var(--text-muted)">${escHtml(types)}</td>
         <td style="font-size:12px">${date}</td>
         <td style="font-size:12px">
-          <input type="date" id="ds-${r.id}" value="${start !== '-' ? start : ''}" style="width:118px;font-size:11px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg,#f9fafb);color:var(--text-color,#111)">
-          <input type="date" id="de-${r.id}" value="${end !== '-' ? end : ''}" style="width:118px;font-size:11px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;margin-top:3px;background:var(--input-bg,#f9fafb);color:var(--text-color,#111)">
-          <button class="btn btn-primary btn-sm" style="margin-top:3px;font-size:11px" onclick="saveDateEdit(${r.id})">저장</button>
+          <input type="date" id="ds-${r.id}" value="${start}" style="width:118px;font-size:11px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg,#f9fafb);color:var(--text-color,#111)">
+          <input type="date" id="de-${r.id}" value="${end}" style="width:118px;font-size:11px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;margin-top:3px;background:var(--input-bg,#f9fafb);color:var(--text-color,#111)">
+          <div style="margin-top:3px;display:flex;gap:4px;align-items:center">
+            <button class="btn btn-primary btn-sm" style="font-size:11px" onclick="saveDateEdit(${r.id})">저장🔒</button>
+            <span id="lock-${r.id}" style="font-size:11px;color:#7c3aed;display:${isLocked?'inline':'none'}">🔒고정됨</span>
+            ${isLocked ? `<button class="btn btn-sm" style="font-size:10px;background:#f1f5f9" onclick="unlockDate(${r.id})">해제</button>` : ''}
+          </div>
         </td>
         <td><span class="status status-${liveStatus}">${liveStatus}</span></td>
         <td>
@@ -1308,12 +1318,33 @@ async function saveDateEdit(id) {
   const now = new Date();
   const status = new Date(end + 'T23:59:59') < now ? '마감'
                : new Date(start) > now ? '예정' : '진행중';
+  const newRawData = { ...(rowRawData[id] || {}), date_locked: true };
   try {
     await sbFetch(`announcements?id=eq.${id}`, {
       method: 'PATCH',
-      body: JSON.stringify({ apply_start: start, apply_end: end, status })
+      body: JSON.stringify({ apply_start: start, apply_end: end, status, raw_data: newRawData })
     });
-    toast('날짜 저장 완료 ✓', 'success');
+    rowRawData[id] = newRawData;
+    const lockEl = document.getElementById(`lock-${id}`);
+    if (lockEl) lockEl.style.display = 'inline';
+    toast('날짜 저장 완료 🔒 크롤러가 덮어쓰지 않습니다.', 'success');
+  } catch(e) {
+    toast('오류: ' + e.message, 'error');
+  }
+}
+
+async function unlockDate(id) {
+  const newRawData = { ...(rowRawData[id] || {}) };
+  delete newRawData.date_locked;
+  try {
+    await sbFetch(`announcements?id=eq.${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ raw_data: newRawData })
+    });
+    rowRawData[id] = newRawData;
+    const lockEl = document.getElementById(`lock-${id}`);
+    if (lockEl) lockEl.style.display = 'none';
+    toast('잠금 해제 완료 — 다음 크롤링 시 날짜가 업데이트됩니다.', 'success');
   } catch(e) {
     toast('오류: ' + e.message, 'error');
   }

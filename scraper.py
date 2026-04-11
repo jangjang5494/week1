@@ -1193,6 +1193,26 @@ def save_to_supabase(announcements):
     except Exception as e:
         print(f"  [Supabase] 만료 공고 삭제 오류: {e}")
 
+    # 날짜 잠금된 공고 seq 조회 — 이 공고는 apply_start/apply_end/status 덮어쓰지 않음
+    locked_seqs = set()
+    try:
+        lock_url = f"{sb_url}/rest/v1/announcements?select=seq&raw_data->>date_locked=eq.true"
+        lock_req = urllib.request.Request(lock_url, headers=cleanup_headers)
+        with urllib.request.urlopen(lock_req, timeout=30) as r:
+            locked_data = json.loads(r.read())
+            locked_seqs = {item["seq"] for item in locked_data}
+        if locked_seqs:
+            print(f"  [Supabase] 날짜 잠금 공고 {len(locked_seqs)}건 — apply_start/end 보호")
+    except Exception as e:
+        print(f"  [Supabase] 잠금 공고 조회 오류: {e}")
+
+    # 잠긴 행은 날짜 필드 제거
+    for row in rows:
+        if row["seq"] in locked_seqs:
+            row.pop("apply_start", None)
+            row.pop("apply_end", None)
+            row.pop("status", None)
+
     # 배치 upsert (100개씩) — on_conflict 명시 필요
     endpoint = f"{sb_url}/rest/v1/announcements?on_conflict=institution,seq"
     headers = {
