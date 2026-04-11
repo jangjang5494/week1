@@ -1101,7 +1101,7 @@ async function sendToExceptionFromTab2(id) {
 
   // 날짜 저장 + exception_pending 플래그 설정
   try {
-    await sbFetch(`announcements?id=eq.${id}`, {
+    await sbFetchWithServiceKey(`announcements?id=eq.${id}`, {
       method: 'PATCH',
       body: JSON.stringify({
         apply_start: start, apply_end: end, status,
@@ -1138,7 +1138,7 @@ async function sendToException(id) {
 
   // DB에 exception_pending 플래그 저장
   try {
-    await sbFetch(`announcements?id=eq.${id}`, {
+    await sbFetchWithServiceKey(`announcements?id=eq.${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ raw_data: { ...(row.raw_data || {}), exception_pending: true } })
     });
@@ -1298,7 +1298,7 @@ async function approveReview(id) {
   const types = typesRaw.split(',').map(s => s.trim()).filter(Boolean);
 
   try {
-    await sbFetch(`announcements?id=eq.${id}`, {
+    await sbFetchWithServiceKey(`announcements?id=eq.${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ apply_start: start, apply_end: end, status, ...(types.length ? { types } : {}) })
     });
@@ -1320,7 +1320,7 @@ async function saveDateEdit(id) {
                : new Date(start) > now ? '예정' : '진행중';
   const newRawData = { ...(rowRawData[id] || {}), date_locked: true };
   try {
-    await sbFetch(`announcements?id=eq.${id}`, {
+    await sbFetchWithServiceKey(`announcements?id=eq.${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ apply_start: start, apply_end: end, status, raw_data: newRawData })
     });
@@ -1337,7 +1337,7 @@ async function unlockDate(id) {
   const newRawData = { ...(rowRawData[id] || {}) };
   delete newRawData.date_locked;
   try {
-    await sbFetch(`announcements?id=eq.${id}`, {
+    await sbFetchWithServiceKey(`announcements?id=eq.${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ raw_data: newRawData })
     });
