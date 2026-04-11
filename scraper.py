@@ -431,7 +431,11 @@ class SHCrawler:
 
             inst = "SH"
             types = detect_types_sh(title)
-            url = f"{self.view_url}?seq={seq}&multi_itm_seq={self.multi_itm}"
+            # 사회주택은 별도 게시판 경로 사용
+            if types == ["SH 사회주택"]:
+                url = f"https://www.i-sh.co.kr/main/lay2/program/S1T294C297/www/brd/m_247/view.do?seq={seq}&multi_itm_seq=2"
+            else:
+                url = f"{self.view_url}?seq={seq}&multi_itm_seq={self.multi_itm}"
             district = extract_gu_from_text(title)
             ann = {
                 "id":          make_id("SH", title, apply_end.isoformat() if apply_end else None),
