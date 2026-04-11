@@ -718,6 +718,9 @@ def crawl_youth_housing(initial=False):
                     district = m.group(1).strip()
 
             # 날짜 기반 ID (상세 날짜 우선)
+            status = compute_status(final_start, final_end, today)
+            if status == "expired":
+                continue
             ann = {
                 "id":          make_id("SH", title, final_end.isoformat() if final_end else None),
                 "inst":        "SH",
@@ -725,7 +728,7 @@ def crawl_youth_housing(initial=False):
                 "title":       title,
                 "types":       [youth_type],
                 "location":    "서울",
-                "status":      compute_status(final_start, final_end, today),
+                "status":      status,
                 "url":         url,
                 "posted_date": posted.isoformat(),
                 "crawled_at":  today.isoformat(),
@@ -738,7 +741,7 @@ def crawl_youth_housing(initial=False):
             else:
                 ann["needs_pdf"] = True
             results.append(ann)
-            flag = f"{apply_start}~{apply_end}" if apply_start else "날짜미파싱"
+            flag = f"{final_start}~{final_end}" if final_start else "날짜미파싱"
             print(f"    [{status}] {title[:45]} ({flag})")
 
         if stop:
