@@ -207,6 +207,12 @@ body {
   border-radius: 22px; padding: 36px 20px;
   transition: transform .22s, box-shadow .22s, border-color .22s;
 }
+.stat-icon {
+  width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  background: linear-gradient(135deg, rgba(79,70,229,.1), rgba(124,58,237,.1));
+}
 .stat-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 14px 44px rgba(79,70,229,.12);
@@ -236,40 +242,64 @@ body {
 }
 .sec-inner { max-width: 1040px; margin: 0 auto; }
 .sec-header { text-align: center; margin-bottom: 64px; }
-.feat-grid {
-  display: grid; grid-template-columns: repeat(3,1fr); gap: 24px;
+/* ══ S3 공고매칭 ══ */
+.match-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 18px; max-width: 1040px; margin: 0 auto 52px;
 }
-@media(max-width:720px) { .feat-grid { grid-template-columns: 1fr; } }
-.feat-card {
+@media(max-width:860px) { .match-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:520px) { .match-grid { grid-template-columns: 1fr; } }
+.match-card {
   background: #fff; border: 1.5px solid var(--border);
-  border-radius: 24px; padding: 40px 32px;
-  transition: transform .22s, box-shadow .22s, border-color .22s;
+  border-radius: 20px; padding: 22px;
+  display: flex; flex-direction: column; gap: 11px;
+  transition: transform .22s, box-shadow .22s;
 }
-.feat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 18px 52px rgba(79,70,229,.1);
-  border-color: #c7d2fe;
+.match-card.eligible {
+  border-color: #a5b4fc;
+  box-shadow: 0 4px 24px rgba(79,70,229,.08);
 }
-.feat-icon {
-  width: 58px; height: 58px; border-radius: 17px;
-  background: linear-gradient(135deg, rgba(79,70,229,.1), rgba(124,58,237,.1));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 27px; margin-bottom: 24px;
+.match-card.ineligible {
+  opacity: 0.42; filter: grayscale(0.3);
 }
-.feat-title {
-  font-size: 19px; font-weight: 800; letter-spacing: -.4px;
-  color: var(--text); margin-bottom: 12px;
+.match-head {
+  display: flex; align-items: center; justify-content: space-between;
 }
-.feat-desc {
-  font-size: 14px; color: var(--text2); line-height: 1.85; word-break: keep-all;
+.match-inst {
+  font-size: 11px; font-weight: 800; padding: 3px 10px;
+  border-radius: 100px; letter-spacing: .3px;
 }
-.feat-tags {
-  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px;
+.inst-sh { background: rgba(79,70,229,.1); color: var(--primary); }
+.inst-lh { background: rgba(234,179,8,.2); color: #92400e; }
+.match-dday {
+  font-size: 11.5px; font-weight: 700; color: #ef4444;
 }
-.feat-tag {
-  font-size: 11.5px; font-weight: 700; color: var(--primary);
-  background: rgba(79,70,229,.08); border-radius: 100px; padding: 4px 12px;
+.match-title {
+  font-size: 14.5px; font-weight: 700; color: var(--text);
+  line-height: 1.5; word-break: keep-all;
 }
+.match-result {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12.5px; font-weight: 700; margin-top: 2px;
+}
+.match-result.ok  { color: #059669; }
+.match-result.no  { color: #9ca3af; }
+.match-rank {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700;
+  background: rgba(79,70,229,.08); color: var(--primary);
+  border-radius: 100px; padding: 3px 10px;
+}
+.match-date { font-size: 12px; color: var(--text3); }
+.match-caption {
+  max-width: 1040px; margin: 0 auto 48px;
+  display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+}
+.match-caption-item {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; color: var(--text2);
+}
+.cap-dot { width: 10px; height: 10px; border-radius: 50%; }
 
 /* ══ S4 HOW ══ */
 #how { padding: 110px 24px; background: var(--bg); }
@@ -404,6 +434,7 @@ body {
   <h2 class="sec-title anim d1">서울시 청년이 받을 수 있는<br>모든 주거 혜택을 담았습니다</h2>
   <div class="stats-grid">
     <div class="stat-card anim d1" data-target="69">
+      <div class="stat-icon">📋</div>
       <div class="stat-num">
         <span class="count-val">0</span><span class="count-unit">가지</span>
       </div>
@@ -411,6 +442,7 @@ body {
       <div class="stat-sub">임대·분양·금융·복지 전체</div>
     </div>
     <div class="stat-card anim d2" data-target="38">
+      <div class="stat-icon">🏢</div>
       <div class="stat-num">
         <span class="count-val">0</span><span class="count-unit">가지</span>
       </div>
@@ -418,6 +450,7 @@ body {
       <div class="stat-sub">SH + LH 전체</div>
     </div>
     <div class="stat-card anim d3" data-target="13">
+      <div class="stat-icon">🏠</div>
       <div class="stat-num">
         <span class="count-val">0</span><span class="count-unit">가지</span>
       </div>
@@ -425,6 +458,7 @@ body {
       <div class="stat-sub">SH·LH·청약홈</div>
     </div>
     <div class="stat-card anim d4" data-target="18">
+      <div class="stat-icon">💰</div>
       <div class="stat-num">
         <span class="count-val">0</span><span class="count-unit">가지</span>
       </div>
@@ -434,44 +468,65 @@ body {
   </div>
 </section>
 
-<!-- ══ S3 FEATURES ══ -->
+<!-- ══ S3 공고매칭 ══ -->
 <section id="features">
   <div class="sec-inner">
     <div class="sec-header">
-      <div class="sec-eyebrow anim">왜 내집구독인가</div>
-      <h2 class="sec-title anim d1">복잡한 주거지원 제도,<br>내 것만 골라드립니다</h2>
+      <div class="sec-eyebrow anim">실시간 공고 매칭</div>
+      <h2 class="sec-title anim d1">내 조건이 입력되면<br>맞는 공고와 순위를 바로 알려드립니다</h2>
     </div>
-    <div class="feat-grid">
-      <div class="feat-card anim">
-        <div class="feat-icon">🏠</div>
-        <div class="feat-title">전 기관 통합</div>
-        <div class="feat-desc">LH·SH·청약홈·주택도시기금까지 흩어진 정보를 한 곳에서. 기관마다 다른 기준을 통일해 비교합니다.</div>
-        <div class="feat-tags">
-          <span class="feat-tag">LH</span>
-          <span class="feat-tag">SH</span>
-          <span class="feat-tag">청약홈</span>
-          <span class="feat-tag">주택도시기금</span>
+
+    <div class="match-grid anim d1">
+      <!-- 자격 O -->
+      <div class="match-card eligible">
+        <div class="match-head">
+          <span class="match-inst inst-sh">SH</span>
+          <span class="match-dday">D-12</span>
         </div>
+        <div class="match-title">청년안심주택 3차 모집</div>
+        <div class="match-result ok">✓ 자격 충족</div>
+        <div class="match-rank">🏆 1순위 해당 · 가점 +8점</div>
+        <div class="match-date">마감 2026.04.30</div>
       </div>
-      <div class="feat-card anim d1">
-        <div class="feat-icon">⚡</div>
-        <div class="feat-title">3분 정밀분석</div>
-        <div class="feat-desc">나이·소득·자산·혼인 여부 몇 가지만 입력하면 신청 가능한 유형과 순위를 즉시 알려드립니다.</div>
-        <div class="feat-tags">
-          <span class="feat-tag">소득 자동 계산</span>
-          <span class="feat-tag">순위 판단</span>
-          <span class="feat-tag">자격 체크</span>
+
+      <!-- 자격 O -->
+      <div class="match-card eligible">
+        <div class="match-head">
+          <span class="match-inst inst-lh">LH</span>
+          <span class="match-dday" style="color:#f59e0b;">D-28</span>
         </div>
+        <div class="match-title">행복주택 청년 공급 (서울 마포)</div>
+        <div class="match-result ok">✓ 자격 충족</div>
+        <div class="match-rank">🥈 2순위 해당</div>
+        <div class="match-date">마감 2026.05.16</div>
       </div>
-      <div class="feat-card anim d2">
-        <div class="feat-icon">📢</div>
-        <div class="feat-title">실시간 공고 연동</div>
-        <div class="feat-desc">현재 접수 중인 공고를 자동으로 매칭해 보여드립니다. 매일 2회 자동 업데이트됩니다.</div>
-        <div class="feat-tags">
-          <span class="feat-tag">매일 자동 업데이트</span>
-          <span class="feat-tag">구별 공고</span>
+
+      <!-- 자격 X -->
+      <div class="match-card ineligible">
+        <div class="match-head">
+          <span class="match-inst inst-lh">LH</span>
+          <span class="match-dday" style="color:#9ca3af;">D-45</span>
         </div>
+        <div class="match-title">국민임대주택 입주자 모집</div>
+        <div class="match-result no">✗ 소득기준 초과</div>
+        <div class="match-date">마감 2026.06.02</div>
       </div>
+    </div>
+
+    <div class="match-caption anim d2">
+      <div class="match-caption-item">
+        <span class="cap-dot" style="background:#4f46e5;"></span>자격 충족 공고 — 선명하게 표시
+      </div>
+      <div class="match-caption-item">
+        <span class="cap-dot" style="background:#d1d5db;"></span>미충족 공고 — 흐리게 처리
+      </div>
+    </div>
+
+    <div style="text-align:center;">
+      <a href="./details.html" class="hero-btn-main" style="display:inline-flex;background:linear-gradient(135deg,var(--primary),var(--purple));color:#fff;">
+        내 공고 지금 확인하기
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
 </section>
