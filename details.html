@@ -127,9 +127,9 @@
         .result-grid { display: grid; gap: 1rem; }
         .result-card { border-radius: 14px; padding: 1.2rem 1.4rem; border: 1.5px solid; background: var(--card-eligible); border-color: var(--card-eligible-border); }
         .result-card.ineligible { background: var(--card-ineligible); border-color: var(--card-ineligible-border); opacity: 0.75; }
-        .result-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+        .result-card-header { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
         .result-card-name { font-weight: 700; font-size: 1rem; color: var(--text-color, #111); }
-        .rank-badge { display: inline-block; border-radius: 6px; padding: 0.2rem 0.7rem; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+        .rank-badge { display: inline-block; border-radius: 6px; padding: 0.2rem 0.7rem; font-size: 0.75rem; font-weight: 700; white-space: normal; word-break: keep-all; }
         .rank-1 { background: #fee2e2; color: #b91c1c; }
         .rank-2 { background: #ffedd5; color: #c2410c; }
         .rank-3 { background: #fef9c3; color: #92400e; }
@@ -285,8 +285,7 @@
             /* 카드 패딩 축소 */
             .result-card { padding: 0.9rem 1rem; border-radius: 12px; }
 
-            /* 헤더: 이름·배지 세로 배치로 가로 공간 확보 */
-            .result-card-header { flex-direction: column; gap: 0.3rem; align-items: flex-start; }
+            /* 헤더: 모바일 배지 폰트 조정 */
             .rank-badge { font-size: 0.72rem; padding: 0.18rem 0.55rem; }
 
             /* 유형명 폰트 약간 축소 */
