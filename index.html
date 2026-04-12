@@ -90,9 +90,6 @@ body {
   width: 100%; height: 100%; object-fit: cover;
   opacity: 0.88;
 }
-@media (max-width: 768px) {
-  .hero-video { display: none; }
-}
 .hero-overlay {
   position: absolute; inset: 0; z-index: 2;
   background: linear-gradient(to bottom,
@@ -365,7 +362,7 @@ body {
 <section id="hero">
   <div class="hero-bg"></div>
 
-  <video class="hero-video" autoplay muted loop playsinline>
+  <video class="hero-video" autoplay muted loop playsinline id="hero-video">
     <source src="assets/14058228_3840_2160_60fps.mp4" type="video/mp4">
   </video>
 
@@ -526,6 +523,14 @@ body {
 </footer>
 
 <script>
+// 모바일 영상 소스 교체
+(function(){
+  if (window.innerWidth <= 768) {
+    var v = document.getElementById('hero-video');
+    if (v) { v.src = 'assets/videos/hero_mobile.mp4'; v.load(); }
+  }
+})();
+
 (function(){
 'use strict';
 
