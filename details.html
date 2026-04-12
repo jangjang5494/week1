@@ -3650,7 +3650,10 @@ function runAnalysis() {
     }
 
     // 카드 저장 후 필터 렌더링
-    _activeCards     = [...activeEligible, ...upcomingOnlyEligible].map(r => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true) }));
+    // 순서: 주택 진행중 → 예정중 → 금융·복지(수시)
+    const activeHousing = activeEligible.filter(r => r.catGroup !== 'finance' && r.catGroup !== 'welfare');
+    const activeFinWel  = activeEligible.filter(r => r.catGroup === 'finance' || r.catGroup === 'welfare');
+    _activeCards     = [...activeHousing, ...upcomingOnlyEligible, ...activeFinWel].map(r => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true) }));
     _inactiveCards   = inactiveEligible.map(r => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, true)  }));
     _ineligibleCards = ineligible.map(r       => ({ inst: r.inst, catGroup: r.catGroup, html: card(r, false) }));
     filterResults('ALL');
