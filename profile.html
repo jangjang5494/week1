@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 프로필 — 내집구독</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://homesubscribe.org/profile.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+<!-- Supabase Auth -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth-common.js"></script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F0C83JFCH3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-F0C83JFCH3');
+</script>
+<style>
+.profile-wrapper {
+  max-width: 720px; margin: 0 auto; padding: 100px 1.5rem 5rem;
+}
+/* ── 로그인 유도 화면 ── */
+.login-required {
+  text-align: center; padding: 5rem 1.5rem;
+}
+.login-required h2 { font-size: 1.4rem; font-weight: 800; color: var(--primary-color,#4f46e5); margin-bottom: 0.5rem; }
+.login-required p  { color: #6b7280; margin-bottom: 1.75rem; }
+/* ── 프로필 헤더 ── */
+.profile-header {
+  display: flex; align-items: center; gap: 1rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-radius: 20px; padding: 1.5rem 1.75rem; margin-bottom: 1.75rem; color: #fff;
+}
+.profile-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(255,255,255,.22); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 1.4rem; font-weight: 800; flex-shrink: 0;
+}
+.profile-email { font-size: 0.9rem; opacity: .88; }
+.profile-name  { font-size: 1.1rem; font-weight: 700; }
+.logout-btn {
+  margin-left: auto; background: rgba(255,255,255,.18); border: none;
+  color: #fff; padding: 0.45rem 1rem; border-radius: 100px;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background .2s;
+}
+.logout-btn:hover { background: rgba(255,255,255,.32); }
+/* ── 탭 ── */
+.profile-tabs {
+  display: flex; border-bottom: 2px solid #e5e7eb; margin-bottom: 1.75rem; gap: 0;
+}
+.ptab {
+  padding: 0.75rem 1.25rem; font-size: 0.9rem; font-weight: 700;
+  color: #9ca3af; border: none; background: none; cursor: pointer;
+  border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s;
+}
+.ptab.active { color: #4f46e5; border-bottom-color: #4f46e5; }
+.ptab:hover:not(.active) { color: #4b5563; }
+.ptab-panel { display: none; }
+.ptab-panel.active { display: block; }
+/* ── 분석결과 탭 ── */
+.analysis-cta-card {
+  background: #f8fafc; border: 1.5px solid #e5e7eb;
+  border-radius: 16px; padding: 1.5rem; margin-bottom: 1.25rem; text-align: center;
+}
+.analysis-cta-card p { color: #6b7280; font-size: 0.9rem; margin-bottom: 1.25rem; }
+.analysis-cta-card .last-saved { font-size: 0.8rem; color: #9ca3af; margin-bottom: 1rem; }
+.btn-goto-analysis {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff; padding: 0.8rem 1.75rem; border-radius: 100px;
+  font-weight: 700; font-size: 0.95rem; text-decoration: none;
+  transition: opacity .2s; border: none; cursor: pointer;
+}
+.btn-goto-analysis:hover { opacity: .88; }
+/* ── 조건 요약 카드 ── */
+.cond-summary {
+  background: var(--card-bg, #fff); border: 1.5px solid #e5e7eb;
+  border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+}
+.cond-summary h3 { font-size: 0.9rem; font-weight: 700; color: #6b7280;
+  margin-bottom: 1rem; text-transform: uppercase; letter-spacing: .04em; }
+.cond-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem 1.5rem;
+}
+.cond-item { font-size: 0.88rem; }
+.cond-label { color: #9ca3af; font-size: 0.78rem; margin-bottom: 0.15rem; }
+.cond-value { font-weight: 600; color: var(--text-color,#111); }
+/* ── 조건 수정 탭 ── */
+.edit-section { margin-bottom: 2rem; }
+.edit-section-title {
+  font-size: 0.88rem; font-weight: 800; color: #4f46e5;
+  border-left: 3px solid #4f46e5; padding-left: 0.6rem;
+  margin-bottom: 1rem;
+}
+.edit-fg { margin-bottom: 1.1rem; }
+.edit-fg label { display: block; font-size: 0.84rem; font-weight: 600;
+  color: var(--text-color,#111); margin-bottom: 0.35rem; }
+.edit-fg input, .edit-fg select {
+  width: 100%; padding: 0.7rem 1rem;
+  border: 1.5px solid #e5e7eb; border-radius: 10px;
+  background: #f9fafb; color: var(--text-color,#111);
+  font-size: 0.93rem; box-sizing: border-box; transition: border-color .2s;
+}
+.edit-fg input:focus, .edit-fg select:focus { outline: none; border-color: #4f46e5; }
+.toggle-group-sm { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tg-btn {
+  padding: 0.4rem 0.85rem; border: 1.5px solid #e5e7eb;
+  border-radius: 100px; background: #f9fafb; color: #4b5563;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all .15s;
+}
+.tg-btn.selected { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+.edit-hint { font-size: 0.75rem; color: #9ca3af; margin-top: 0.3rem; }
+.save-btn {
+  width: 100%; padding: 0.85rem; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer;
+  transition: opacity .2s; margin-top: 0.5rem;
+}
+.save-btn:hover { opacity: .88; }
+.save-btn:disabled { opacity: .55; cursor: default; }
+.save-feedback {
+  text-align: center; font-size: 0.88rem; font-weight: 600;
+  padding: 0.6rem; border-radius: 8px; margin-top: 0.75rem; display: none;
+}
+.save-feedback.ok  { display:block; background:#f0fdf4; color:#15803d; }
+.save-feedback.err { display:block; background:#fef2f2; color:#dc2626; }
+/* ── Auth Modal (복사) ── */
+.auth-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,.45); backdrop-filter: blur(4px);
+  align-items: center; justify-content: center;
+}
+.auth-overlay.open { display: flex; }
+.auth-modal {
+  background: var(--card-bg,#fff); border-radius: 20px;
+  padding: 2rem 2rem 1.75rem; width: 100%; max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  animation: authSlideUp .25s ease;
+}
+@keyframes authSlideUp {
+  from { transform:translateY(24px);opacity:0; }
+  to   { transform:translateY(0);opacity:1; }
+}
+.auth-modal h2 { font-size:1.25rem;font-weight:800;margin-bottom:.25rem;color:var(--text-color,#111); }
+.auth-modal p.auth-sub { font-size:.85rem;color:#6b7280;margin-bottom:1.5rem; }
+.auth-modal .fg { margin-bottom:1rem; }
+.auth-modal .fg label { display:block;font-size:.83rem;font-weight:600;color:var(--text-color,#111);margin-bottom:.3rem; }
+.auth-modal .fg input {
+  width:100%;padding:.7rem 1rem;border:1.5px solid #e5e7eb;border-radius:10px;
+  background:#f9fafb;font-size:.93rem;color:var(--text-color,#111);box-sizing:border-box;transition:border-color .2s;
+}
+.auth-modal .fg input:focus { outline:none;border-color:#4f46e5; }
+.auth-btn-primary {
+  width:100%;padding:.8rem;border:none;border-radius:10px;
+  background:linear-gradient(135deg,#4f46e5,#7c3aed);
+  color:#fff;font-size:1rem;font-weight:700;cursor:pointer;
+  transition:opacity .2s;margin-top:.25rem;
+}
+.auth-btn-primary:hover { opacity:.88; }
+.auth-btn-primary:disabled { opacity:.55;cursor:default; }
+.auth-switch { text-align:center;margin-top:1rem;font-size:.83rem;color:#6b7280; }
+.auth-switch a { color:#4f46e5;font-weight:600;cursor:pointer;text-decoration:none; }
+.auth-close { float:right;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#9ca3af;line-height:1;margin-top:-.25rem; }
+.auth-error { font-size:.82rem;color:#dc2626;background:#fef2f2;border-radius:8px;padding:.5rem .75rem;margin-bottom:.75rem;display:none; }
+.auth-error.show { display:block; }
+.auth-success { font-size:.82rem;color:#15803d;background:#f0fdf4;border-radius:8px;padding:.5rem .75rem;margin-bottom:.75rem;display:none; }
+.auth-success.show { display:block; }
+/* nav 버튼 */
+.nav-auth-btn {
+  padding:.45rem 1rem;border:none;border-radius:100px;
+  font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.nav-login-btn { background:#ede9fe;color:#4f46e5; }
+.nav-login-btn:hover { background:#c7d2fe; }
+.nav-profile-btn { background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff; }
+@media(max-width:640px) {
+  .cond-grid { grid-template-columns:1fr; }
+}
+[data-theme="dark"] .cond-summary,
+[data-theme="dark"] .analysis-cta-card { background:#1f2937;border-color:#374151; }
+[data-theme="dark"] .analysis-cta-card p { color:#9ca3af; }
+[data-theme="dark"] .edit-fg input,
+[data-theme="dark"] .edit-fg select { background:#111827;border-color:#374151;color:#f9fafb; }
+[data-theme="dark"] .tg-btn { background:#1f2937;border-color:#374151;color:#9ca3af; }
+[data-theme="dark"] .auth-modal { background:#1f2937; }
+[data-theme="dark"] .auth-modal .fg input { background:#111827;border-color:#374151;color:#f9fafb; }
+</style>
+</head>
+<body data-theme="light">
+
+<!-- NAV -->
+<header>
+  <nav aria-label="주요 메뉴">
+    <a href="index.html" class="logo" aria-label="내집구독 홈으로">내집구독</a>
+    <div class="nav-controls">
+      <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환">다크 모드</button>
+      <button class="nav-auth-btn nav-login-btn" id="nav-login-btn" onclick="openAuthModal()" style="display:none;">로그인</button>
+    </div>
+  </nav>
+</header>
+
+<main class="profile-wrapper">
+
+  <!-- ① 비로그인 화면 -->
+  <div id="view-loggedout" style="display:none;">
+    <div class="login-required">
+      <h2>로그인이 필요합니다</h2>
+      <p>내 프로필을 보려면 먼저 로그인해주세요.</p>
+      <button class="btn-goto-analysis" onclick="openAuthModal()">로그인 / 회원가입</button>
+    </div>
+  </div>
+
+  <!-- ② 로그인 화면 -->
+  <div id="view-loggedin" style="display:none;">
+    <!-- 프로필 헤더 -->
+    <div class="profile-header">
+      <div class="profile-avatar" id="profile-avatar">?</div>
+      <div>
+        <div class="profile-name">내 프로필</div>
+        <div class="profile-email" id="profile-email">로딩 중...</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+    </div>
+
+    <!-- 탭 -->
+    <div class="profile-tabs">
+      <button class="ptab active" onclick="switchTab('result')">분석 결과</button>
+      <button class="ptab" onclick="switchTab('edit')">내 자격조건 수정</button>
+    </div>
+
+    <!-- 탭 1: 분석 결과 -->
+    <div class="ptab-panel active" id="panel-result">
+      <div class="analysis-cta-card">
+        <p id="result-tab-desc">저장된 조건으로 즉시 분석 결과를 볼 수 있습니다.</p>
+        <div class="last-saved" id="last-saved-text"></div>
+        <button class="btn-goto-analysis" id="btn-goto-analysis" onclick="goToAnalysis()">🔍 분석결과 바로보기</button>
+      </div>
+      <!-- 저장된 조건 요약 -->
+      <div class="cond-summary" id="cond-summary-card" style="display:none;">
+        <h3>저장된 내 조건</h3>
+        <div class="cond-grid" id="cond-summary-grid"></div>
+      </div>
+      <p style="font-size:0.82rem;color:#9ca3af;text-align:center;margin-top:1rem;">
+        분석 결과는 실시간으로 계산되며, 저장된 조건이 그대로 반영됩니다.
+      </p>
+    </div>
+
+    <!-- 탭 2: 조건 수정 -->
+    <div class="ptab-panel" id="panel-edit">
+      <form onsubmit="return false;">
+
+        <!-- 기본 정보 -->
+        <div class="edit-section">
+          <div class="edit-section-title">기본 정보</div>
+          <div class="edit-fg">
+            <label>나이</label>
+            <input type="number" id="e-age" min="19" max="80" placeholder="예: 28">
+          </div>
+          <div class="edit-fg">
+            <label>거주지</label>
+            <div class="toggle-group-sm" id="e-tg-region">
+              <button class="tg-btn selected" data-val="seoul">서울</button>
+              <button class="tg-btn" data-val="gyeonggi">경기</button>
+              <button class="tg-btn" data-val="other">기타</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>무주택 여부</label>
+            <div class="toggle-group-sm" id="e-tg-homeless">
+              <button class="tg-btn selected" data-val="yes">무주택</button>
+              <button class="tg-btn" data-val="no">유주택</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>가구원 수</label>
+            <input type="number" id="e-hhsize" min="1" max="10" placeholder="예: 1">
+          </div>
+        </div>
+
+        <!-- 혼인·가족 -->
+        <div class="edit-section">
+          <div class="edit-section-title">혼인·가족</div>
+          <div class="edit-fg">
+            <label>혼인 상태</label>
+            <div class="toggle-group-sm" id="e-tg-marital">
+              <button class="tg-btn selected" data-val="single">미혼</button>
+              <button class="tg-btn" data-val="prenuptial">예비신혼</button>
+              <button class="tg-btn" data-val="newlywed">신혼 (7년 이내)</button>
+              <button class="tg-btn" data-val="married">기혼 (7년 초과)</button>
+              <button class="tg-btn" data-val="divorced">이혼/사별</button>
+            </div>
+          </div>
+          <div class="edit-fg" id="e-marriage-years-wrap">
+            <label>혼인 기간</label>
+            <div class="toggle-group-sm" id="e-tg-marriage-years">
+              <button class="tg-btn selected" data-val="1">1년 이하</button>
+              <button class="tg-btn" data-val="2">1~2년</button>
+              <button class="tg-btn" data-val="4">2~5년</button>
+              <button class="tg-btn" data-val="7">5~7년</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>자녀 수</label>
+            <input type="number" id="e-children" min="0" max="10" placeholder="예: 0">
+          </div>
+          <div class="edit-fg">
+            <label>영유아 자녀 (6세 이하)</label>
+            <div class="toggle-group-sm" id="e-tg-youngchild">
+              <button class="tg-btn selected" data-val="no">없음</button>
+              <button class="tg-btn" data-val="yes">있음</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 직업·학업 -->
+        <div class="edit-section">
+          <div class="edit-section-title">직업·학업</div>
+          <div class="edit-fg">
+            <label>재학 여부</label>
+            <div class="toggle-group-sm" id="e-tg-student">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">재학 중</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>취업 준비생</label>
+            <div class="toggle-group-sm" id="e-tg-jobseeker">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">취업 준비 중</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>재직 여부</label>
+            <div class="toggle-group-sm" id="e-tg-employed">
+              <button class="tg-btn selected" data-val="no">미취업</button>
+              <button class="tg-btn" data-val="yes">재직 중</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>사회초년생 (취업 5년 이내)</label>
+            <div class="toggle-group-sm" id="e-tg-social-newcomer">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">해당함</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 소득·자산 -->
+        <div class="edit-section">
+          <div class="edit-section-title">소득·자산</div>
+          <div class="edit-fg">
+            <label>월 소득 (만원)</label>
+            <input type="number" id="e-income" min="0" placeholder="예: 250">
+            <p class="edit-hint">세전 월 소득. 연봉이라면 ÷ 12로 환산</p>
+          </div>
+          <div class="edit-fg">
+            <label>총 자산 (만원)</label>
+            <input type="number" id="e-assets" min="0" placeholder="예: 5000">
+            <p class="edit-hint">토지·건물·금융자산·임차보증금 포함</p>
+          </div>
+          <div class="edit-fg">
+            <label>자동차 가액 (만원)</label>
+            <input type="number" id="e-car" min="0" placeholder="예: 0">
+          </div>
+        </div>
+
+        <!-- 청약 -->
+        <div class="edit-section">
+          <div class="edit-section-title">청약</div>
+          <div class="edit-fg">
+            <label>청약통장 납입 횟수</label>
+            <input type="number" id="e-sub" min="0" placeholder="예: 24">
+          </div>
+          <div class="edit-fg">
+            <label>세대주 여부</label>
+            <div class="toggle-group-sm" id="e-tg-household-head">
+              <button class="tg-btn selected" data-val="no">세대원</button>
+              <button class="tg-btn" data-val="yes">세대주</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>생애최초 주택 구입</label>
+            <div class="toggle-group-sm" id="e-tg-life-first">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">생애최초</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="save-btn" id="edit-save-btn" onclick="saveEditedConditions()">내 조건 저장하기</button>
+        <div class="save-feedback" id="edit-save-feedback"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ③ 로딩 -->
+  <div id="view-loading" style="text-align:center;padding:4rem;color:#9ca3af;">
+    불러오는 중...
+  </div>
+
+</main>
+
+<!-- 로그인 모달 -->
+<div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuthModal()">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeAuthModal()">×</button>
+    <div id="auth-login-form">
+      <h2>로그인</h2>
+      <p class="auth-sub">로그인하면 저장된 조건으로 분석 결과를 바로 볼 수 있습니다.</p>
+      <div class="auth-error" id="login-error"></div>
+      <div class="auth-success" id="login-success"></div>
+      <div class="fg"><label>이메일</label><input type="email" id="login-email" placeholder="example@email.com" autocomplete="email"></div>
+      <div class="fg"><label>비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호" autocomplete="current-password"></div>
+      <button class="auth-btn-primary" id="login-submit-btn" onclick="doLogin()">로그인</button>
+      <p class="auth-switch">계정이 없으신가요? <a onclick="switchAuthTab('signup')">회원가입</a></p>
+    </div>
+    <div id="auth-signup-form" style="display:none;">
+      <h2>회원가입</h2>
+      <p class="auth-sub">이메일로 무료 가입하세요.</p>
+      <div class="auth-error" id="signup-error"></div>
+      <div class="auth-success" id="signup-success"></div>
+      <div class="fg"><label>이메일</label><input type="email" id="signup-email" placeholder="example@email.com" autocomplete="email"></div>
+      <div class="fg"><label>비밀번호 <span style="font-weight:400;color:#9ca3af;">(6자 이상)</span></label><input type="password" id="signup-pw" placeholder="비밀번호 6자 이상" autocomplete="new-password"></div>
+      <button class="auth-btn-primary" id="signup-submit-btn" onclick="doSignUp()">회원가입</button>
+      <p class="auth-switch">이미 계정이 있으신가요? <a onclick="switchAuthTab('login')">로그인</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 테마 ─────────────────────────────────────────────
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  document.body.dataset.theme = saved;
+  const btn = document.getElementById('theme-toggle');
+  btn.textContent = saved === 'dark' ? '라이트 모드' : '다크 모드';
+  btn.addEventListener('click', () => {
+    const next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.body.dataset.theme = next;
+    localStorage.setItem('theme', next);
+    btn.textContent = next === 'dark' ? '라이트 모드' : '다크 모드';
+  });
+})();
+
+// ── 저장된 조건 ───────────────────────────────────────
+let _savedConditions = null;
+
+// ── 탭 전환 ──────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.ptab').forEach((t,i) => {
+    const panels = ['result','edit'];
+    t.classList.toggle('active', panels[i] === name);
+  });
+  document.querySelectorAll('.ptab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// ── 조건 요약 렌더링 ──────────────────────────────────
+const LABELS = {
+  'tg-region':        { label: '거주지', map: { seoul:'서울', gyeonggi:'경기', other:'기타' } },
+  'tg-homeless':      { label: '무주택', map: { yes:'무주택', no:'유주택' } },
+  'tg-marital':       { label: '혼인', map: { single:'미혼', prenuptial:'예비신혼', newlywed:'신혼', married:'기혼', divorced:'이혼/사별' } },
+  'tg-student':       { label: '재학', map: { yes:'재학 중', no:'해당없음' } },
+  'tg-jobseeker':     { label: '취준생', map: { yes:'해당함', no:'해당없음' } },
+  'tg-employed':      { label: '재직', map: { yes:'재직 중', no:'미취업' } },
+  'tg-social-newcomer': { label: '사회초년생', map: { yes:'해당함', no:'해당없음' } },
+  'tg-youngchild':    { label: '영유아 자녀', map: { yes:'있음', no:'없음' } },
+  'age':              { label: '나이', suffix: '세' },
+  'household-size':   { label: '가구원', suffix: '명' },
+  'children-count':   { label: '자녀', suffix: '명' },
+  'income':           { label: '월소득', suffix: '만원' },
+  'total-assets':     { label: '총자산', suffix: '만원' },
+  'car-value':        { label: '자동차', suffix: '만원' },
+  'subscription':     { label: '청약 납입', suffix: '회' },
+};
+
+function renderConditionSummary(cond) {
+  if (!cond || !Object.keys(cond).length) return;
+  const grid = document.getElementById('cond-summary-grid');
+  const items = [];
+  Object.entries(LABELS).forEach(([key, meta]) => {
+    const val = cond[key];
+    if (!val) return;
+    let display = val;
+    if (meta.map) display = meta.map[val] || val;
+    if (meta.suffix) display = `${val}${meta.suffix}`;
+    items.push(`<div class="cond-item"><div class="cond-label">${meta.label}</div><div class="cond-value">${display}</div></div>`);
+  });
+  grid.innerHTML = items.join('');
+  document.getElementById('cond-summary-card').style.display = items.length ? '' : 'none';
+}
+
+// ── details.html로 이동 (조건 localStorage 전달) ──────
+function goToAnalysis() {
+  if (_savedConditions) {
+    localStorage.setItem('njg_profile_conditions', JSON.stringify(_savedConditions));
+  }
+  window.location.href = 'details.html?from=profile';
+}
+
+// ── 수정 폼 채우기 ────────────────────────────────────
+function fillEditForm(cond) {
+  if (!cond) return;
+  // 숫자 inputs
+  const numMap = {
+    'age':'e-age', 'household-size':'e-hhsize', 'children-count':'e-children',
+    'income':'e-income', 'total-assets':'e-assets', 'car-value':'e-car', 'subscription':'e-sub'
+  };
+  Object.entries(numMap).forEach(([src, tgt]) => {
+    const el = document.getElementById(tgt);
+    if (el && cond[src]) el.value = cond[src];
+  });
+  // 토글
+  const tgMap = {
+    'tg-region':'e-tg-region', 'tg-homeless':'e-tg-homeless',
+    'tg-marital':'e-tg-marital', 'tg-marriage-years':'e-tg-marriage-years',
+    'tg-youngchild':'e-tg-youngchild', 'tg-student':'e-tg-student',
+    'tg-jobseeker':'e-tg-jobseeker', 'tg-employed':'e-tg-employed',
+    'tg-social-newcomer':'e-tg-social-newcomer',
+    'tg-household-head':'e-tg-household-head',
+    'tg-life-first':'e-tg-life-first',
+  };
+  Object.entries(tgMap).forEach(([src, tgt]) => {
+    const val = cond[src];
+    if (!val) return;
+    const group = document.getElementById(tgt);
+    if (!group) return;
+    group.querySelectorAll('.tg-btn').forEach(btn => btn.classList.toggle('selected', btn.dataset.val === val));
+  });
+  // 혼인기간 wrap 표시
+  updateMarriageYearsWrap();
+}
+
+function updateMarriageYearsWrap() {
+  const marital = getEditToggle('e-tg-marital');
+  const wrap = document.getElementById('e-marriage-years-wrap');
+  if (wrap) wrap.style.display = marital === 'newlywed' ? '' : 'none';
+}
+
+function getEditToggle(id) {
+  const btn = document.querySelector(`#${id} .tg-btn.selected`);
+  return btn ? btn.dataset.val : null;
+}
+
+// 토글 클릭 이벤트 등록
+document.querySelectorAll('.toggle-group-sm').forEach(group => {
+  group.addEventListener('click', e => {
+    const btn = e.target.closest('.tg-btn');
+    if (!btn) return;
+    group.querySelectorAll('.tg-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    if (group.id === 'e-tg-marital') updateMarriageYearsWrap();
+  });
+});
+
+// ── 수정 조건 저장 ────────────────────────────────────
+async function saveEditedConditions() {
+  const btn = document.getElementById('edit-save-btn');
+  const fb  = document.getElementById('edit-save-feedback');
+  fb.className = 'save-feedback';
+
+  const tgMap = {
+    'tg-region':'e-tg-region', 'tg-homeless':'e-tg-homeless',
+    'tg-marital':'e-tg-marital', 'tg-marriage-years':'e-tg-marriage-years',
+    'tg-youngchild':'e-tg-youngchild', 'tg-student':'e-tg-student',
+    'tg-jobseeker':'e-tg-jobseeker', 'tg-employed':'e-tg-employed',
+    'tg-social-newcomer':'e-tg-social-newcomer',
+    'tg-household-head':'e-tg-household-head',
+    'tg-life-first':'e-tg-life-first',
+  };
+  const numMap = {
+    'age':'e-age', 'household-size':'e-hhsize', 'children-count':'e-children',
+    'income':'e-income', 'total-assets':'e-assets', 'car-value':'e-car', 'subscription':'e-sub'
+  };
+
+  // 기존 조건에 수정값 덮어쓰기
+  const cond = Object.assign({}, _savedConditions || {});
+  Object.entries(tgMap).forEach(([dest, src]) => {
+    const v = getEditToggle(src);
+    if (v) cond[dest] = v;
+  });
+  Object.entries(numMap).forEach(([dest, src]) => {
+    const el = document.getElementById(src);
+    if (el && el.value) cond[dest] = el.value;
+  });
+
+  btn.disabled = true; btn.textContent = '저장 중...';
+  try {
+    await NJG_AUTH.saveConditions(cond);
+    _savedConditions = cond;
+    renderConditionSummary(cond);
+    fb.textContent = '✅ 저장되었습니다!';
+    fb.className = 'save-feedback ok';
+    setTimeout(() => { fb.className = 'save-feedback'; }, 3000);
+  } catch(e) {
+    fb.textContent = '저장 실패: ' + e.message;
+    fb.className = 'save-feedback err';
+  } finally {
+    btn.disabled = false; btn.textContent = '내 조건 저장하기';
+  }
+}
+
+// ── Auth Modal ────────────────────────────────────────
+function openAuthModal(tab) {
+  switchAuthTab(tab || 'login');
+  document.getElementById('authOverlay').classList.add('open');
+}
+function closeAuthModal() {
+  document.getElementById('authOverlay').classList.remove('open');
+}
+function switchAuthTab(tab) {
+  document.getElementById('auth-login-form').style.display  = tab === 'login'  ? '' : 'none';
+  document.getElementById('auth-signup-form').style.display = tab === 'signup' ? '' : 'none';
+  ['login-error','login-success','signup-error','signup-success'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('show'); el.textContent = ''; }
+  });
+}
+function setAuthError(id, msg)   { const el=document.getElementById(id); if(el){el.textContent=msg;el.classList.add('show');} }
+function setAuthSuccess(id, msg) { const el=document.getElementById(id); if(el){el.textContent=msg;el.classList.add('show');} }
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw    = document.getElementById('login-pw').value;
+  const btn   = document.getElementById('login-submit-btn');
+  document.getElementById('login-error').classList.remove('show');
+  if (!email || !pw) { setAuthError('login-error', '이메일과 비밀번호를 입력해주세요.'); return; }
+  btn.disabled = true; btn.textContent = '로그인 중...';
+  try {
+    await NJG_AUTH.signIn(email, pw);
+    closeAuthModal();
+    location.reload();
+  } catch(e) {
+    setAuthError('login-error', e.message === 'Invalid login credentials' ? '이메일 또는 비밀번호가 올바르지 않습니다.' : e.message);
+    btn.disabled = false; btn.textContent = '로그인';
+  }
+}
+
+async function doSignUp() {
+  const email = document.getElementById('signup-email').value.trim();
+  const pw    = document.getElementById('signup-pw').value;
+  const btn   = document.getElementById('signup-submit-btn');
+  document.getElementById('signup-error').classList.remove('show');
+  if (!email || !pw) { setAuthError('signup-error', '이메일과 비밀번호를 입력해주세요.'); return; }
+  if (pw.length < 6) { setAuthError('signup-error', '비밀번호는 6자 이상이어야 합니다.'); return; }
+  btn.disabled = true; btn.textContent = '가입 중...';
+  try {
+    await NJG_AUTH.signUp(email, pw);
+    setAuthSuccess('signup-success', '가입 완료! 이메일을 확인하거나 바로 로그인해주세요.');
+    btn.textContent = '가입 완료';
+    setTimeout(() => switchAuthTab('login'), 2000);
+  } catch(e) {
+    setAuthError('signup-error', e.message);
+    btn.disabled = false; btn.textContent = '회원가입';
+  }
+}
+
+async function doLogout() {
+  await NJG_AUTH.signOut();
+  location.reload();
+}
+
+// ── 페이지 초기화 ─────────────────────────────────────
+(async function init() {
+  const user = await NJG_AUTH.getUser();
+
+  document.getElementById('view-loading').style.display = 'none';
+
+  if (!user) {
+    document.getElementById('view-loggedout').style.display = '';
+    document.getElementById('nav-login-btn').style.display  = '';
+    return;
+  }
+
+  // 로그인 상태
+  document.getElementById('view-loggedin').style.display = '';
+  const emailEl = document.getElementById('profile-email');
+  const avatarEl = document.getElementById('profile-avatar');
+  if (emailEl) emailEl.textContent = user.email;
+  if (avatarEl) avatarEl.textContent = (user.email || '?')[0].toUpperCase();
+
+  // 저장된 조건 불러오기
+  try {
+    const saved = await NJG_AUTH.loadConditions();
+    if (saved && saved.conditions && Object.keys(saved.conditions).length > 0) {
+      _savedConditions = saved.conditions;
+      renderConditionSummary(saved.conditions);
+      fillEditForm(saved.conditions);
+      if (saved.updated_at) {
+        const dt = new Date(saved.updated_at);
+        document.getElementById('last-saved-text').textContent =
+          `마지막 저장: ${dt.toLocaleDateString('ko-KR')} ${dt.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'})}`;
+      }
+    } else {
+      document.getElementById('result-tab-desc').textContent =
+        '아직 저장된 조건이 없습니다. 정밀분석에서 조건을 입력하면 자동으로 저장됩니다.';
+      document.getElementById('btn-goto-analysis').textContent = '정밀분석 시작하기';
+      document.getElementById('btn-goto-analysis').onclick = () => window.location.href = 'details.html';
+    }
+  } catch(e) {
+    console.warn('조건 불러오기 실패:', e);
+  }
+})();
+</script>
+</body>
+</html>

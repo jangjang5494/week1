@@ -410,6 +410,85 @@
   gtag('js', new Date());
   gtag('config', 'G-F0C83JFCH3');
 </script>
+<!-- ── Supabase Auth ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/auth-common.js"></script>
+<style>
+/* ── Auth Modal ── */
+.auth-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,.45); backdrop-filter: blur(4px);
+  align-items: center; justify-content: center;
+}
+.auth-overlay.open { display: flex; }
+.auth-modal {
+  background: var(--card-bg, #fff); border-radius: 20px;
+  padding: 2rem 2rem 1.75rem; width: 100%; max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  animation: authSlideUp .25s ease;
+}
+@keyframes authSlideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.auth-modal h2 { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem; color: var(--text-color,#111); }
+.auth-modal p.auth-sub { font-size: 0.85rem; color: #6b7280; margin-bottom: 1.5rem; }
+.auth-modal .fg { margin-bottom: 1rem; }
+.auth-modal .fg label { display: block; font-size: 0.83rem; font-weight: 600; color: var(--text-color,#111); margin-bottom: 0.3rem; }
+.auth-modal .fg input {
+  width: 100%; padding: 0.7rem 1rem; border: 1.5px solid #e5e7eb;
+  border-radius: 10px; background: #f9fafb; font-size: 0.93rem;
+  color: var(--text-color,#111); box-sizing: border-box; transition: border-color .2s;
+}
+.auth-modal .fg input:focus { outline: none; border-color: #4f46e5; }
+.auth-btn-primary {
+  width: 100%; padding: 0.8rem; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer;
+  transition: opacity .2s; margin-top: 0.25rem;
+}
+.auth-btn-primary:hover { opacity: .88; }
+.auth-btn-primary:disabled { opacity: .55; cursor: default; }
+.auth-switch { text-align: center; margin-top: 1rem; font-size: 0.83rem; color: #6b7280; }
+.auth-switch a { color: #4f46e5; font-weight: 600; cursor: pointer; text-decoration: none; }
+.auth-close { float: right; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #9ca3af; line-height: 1; margin-top: -0.25rem; }
+.auth-error { font-size: 0.82rem; color: #dc2626; background: #fef2f2; border-radius: 8px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; display: none; }
+.auth-error.show { display: block; }
+.auth-success { font-size: 0.82rem; color: #15803d; background: #f0fdf4; border-radius: 8px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; display: none; }
+.auth-success.show { display: block; }
+/* ── Nav 로그인/프로필 버튼 ── */
+.nav-auth-btn {
+  padding: 0.45rem 1rem; border: none; border-radius: 100px;
+  font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all .2s;
+  white-space: nowrap;
+}
+.nav-login-btn { background: #ede9fe; color: #4f46e5; }
+.nav-login-btn:hover { background: #c7d2fe; }
+.nav-profile-btn { background: linear-gradient(135deg,#4f46e5,#7c3aed); color: #fff; }
+.nav-profile-btn:hover { opacity: .88; }
+/* ── 저장 배너 ── */
+#auth-save-banner {
+  display: none; align-items: center; gap: 0.5rem;
+  background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px;
+  padding: 0.65rem 1rem; font-size: 0.85rem; color: #15803d;
+  font-weight: 600; margin-top: 0.75rem;
+}
+#auth-save-banner.show { display: flex; }
+#auth-login-prompt {
+  display: none; align-items: center; gap: 0.5rem;
+  background: #ede9fe; border: 1px solid #c4b5fd; border-radius: 10px;
+  padding: 0.65rem 1rem; font-size: 0.85rem; color: #4f46e5;
+  margin-top: 0.75rem;
+}
+#auth-login-prompt.show { display: flex; }
+#auth-login-prompt a { color: #4f46e5; font-weight: 700; cursor: pointer; }
+[data-theme="dark"] .auth-modal { background: #1f2937; }
+[data-theme="dark"] .auth-modal .fg input { background: #111827; border-color: #374151; color: #f9fafb; }
+[data-theme="dark"] .auth-modal h2 { color: #f9fafb; }
+[data-theme="dark"] #auth-save-banner { background: #052e16; border-color: #166534; color: #4ade80; }
+[data-theme="dark"] #auth-login-prompt { background: #1e1b4b; border-color: #4338ca; color: #a5b4fc; }
+[data-theme="dark"] .nav-login-btn { background: #1e1b4b; color: #a5b4fc; }
+</style>
 </head>
 <body data-theme="light">
 <header>
@@ -417,6 +496,8 @@
         <a href="index.html" class="logo" aria-label="내집구독 홈으로">내집구독</a>
         <div class="nav-controls">
             <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환">다크 모드</button>
+            <button class="nav-auth-btn nav-login-btn" id="nav-login-btn" onclick="openAuthModal()" style="display:none;">로그인</button>
+            <a href="profile.html" class="nav-auth-btn nav-profile-btn" id="nav-profile-btn" style="display:none;text-decoration:none;">내 프로필</a>
         </div>
     </nav>
 </header>
@@ -971,6 +1052,8 @@
             <button class="btn-prev" onclick="goTo(4)">← 이전</button>
             <button class="btn-analyze" onclick="runAnalysis()">🔍 분석 시작</button>
         </div>
+        <div id="auth-save-banner">✅ 조건이 내 프로필에 저장되었습니다. <a href="profile.html" style="color:#15803d;font-weight:700;">프로필 보기 →</a></div>
+        <div id="auth-login-prompt">💡 로그인하면 이 조건을 저장할 수 있어요. <a onclick="openAuthModal()">로그인하기 →</a></div>
     </div>
 
     <!-- ===================== RESULTS ===================== -->
@@ -7292,5 +7375,248 @@ function openTypeDetail(name) {
 <footer style="text-align:center;padding:20px;font-size:11.5px;color:#9ca3af;border-top:1px solid #e5e7eb;margin-top:2rem;" aria-label="사이트 정보">
     © 2026 내집구독 · LH·SH·청약홈 공식 데이터 기반 · 비영리 무료 서비스 · <a href="index.html" style="color:inherit;text-decoration:underline;">홈으로</a>
 </footer>
+
+<!-- ── 로그인/회원가입 모달 ── -->
+<div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuthModal()">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeAuthModal()">×</button>
+
+    <!-- 로그인 폼 -->
+    <div id="auth-login-form">
+      <h2>로그인</h2>
+      <p class="auth-sub">로그인하면 내 조건이 자동 저장됩니다.</p>
+      <div class="auth-error" id="login-error"></div>
+      <div class="auth-success" id="login-success"></div>
+      <div class="fg"><label>이메일</label><input type="email" id="login-email" placeholder="example@email.com" autocomplete="email"></div>
+      <div class="fg"><label>비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호" autocomplete="current-password"></div>
+      <button class="auth-btn-primary" id="login-submit-btn" onclick="doLogin()">로그인</button>
+      <p class="auth-switch">아직 계정이 없으신가요? <a onclick="switchAuthTab('signup')">회원가입</a></p>
+    </div>
+
+    <!-- 회원가입 폼 -->
+    <div id="auth-signup-form" style="display:none;">
+      <h2>회원가입</h2>
+      <p class="auth-sub">이메일로 무료 가입하세요.</p>
+      <div class="auth-error" id="signup-error"></div>
+      <div class="auth-success" id="signup-success"></div>
+      <div class="fg"><label>이메일</label><input type="email" id="signup-email" placeholder="example@email.com" autocomplete="email"></div>
+      <div class="fg"><label>비밀번호 <span style="font-weight:400;color:#9ca3af;">(6자 이상)</span></label><input type="password" id="signup-pw" placeholder="비밀번호 6자 이상" autocomplete="new-password"></div>
+      <button class="auth-btn-primary" id="signup-submit-btn" onclick="doSignUp()">회원가입</button>
+      <p class="auth-switch">이미 계정이 있으신가요? <a onclick="switchAuthTab('login')">로그인</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Auth Modal 제어 ──────────────────────────────────
+function openAuthModal(tab) {
+  switchAuthTab(tab || 'login');
+  document.getElementById('authOverlay').classList.add('open');
+}
+function closeAuthModal() {
+  document.getElementById('authOverlay').classList.remove('open');
+}
+function switchAuthTab(tab) {
+  document.getElementById('auth-login-form').style.display  = tab === 'login'  ? '' : 'none';
+  document.getElementById('auth-signup-form').style.display = tab === 'signup' ? '' : 'none';
+  ['login-error','login-success','signup-error','signup-success'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('show'); el.textContent = ''; }
+  });
+}
+function setAuthError(id, msg)   { const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
+function setAuthSuccess(id, msg) { const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw    = document.getElementById('login-pw').value;
+  const btn   = document.getElementById('login-submit-btn');
+  document.getElementById('login-error').classList.remove('show');
+  if (!email || !pw) { setAuthError('login-error', '이메일과 비밀번호를 입력해주세요.'); return; }
+  btn.disabled = true; btn.textContent = '로그인 중...';
+  try {
+    await NJG_AUTH.signIn(email, pw);
+    closeAuthModal();
+    // 현재 입력된 조건이 있으면 저장
+    if (typeof gatherConditions === 'function') {
+      const cond = gatherConditions();
+      if (cond) { await NJG_AUTH.saveConditions(cond); showSaveBanner(); }
+    }
+  } catch(e) {
+    setAuthError('login-error', e.message === 'Invalid login credentials' ? '이메일 또는 비밀번호가 올바르지 않습니다.' : e.message);
+  } finally { btn.disabled = false; btn.textContent = '로그인'; }
+}
+
+async function doSignUp() {
+  const email = document.getElementById('signup-email').value.trim();
+  const pw    = document.getElementById('signup-pw').value;
+  const btn   = document.getElementById('signup-submit-btn');
+  document.getElementById('signup-error').classList.remove('show');
+  if (!email || !pw) { setAuthError('signup-error', '이메일과 비밀번호를 입력해주세요.'); return; }
+  if (pw.length < 6) { setAuthError('signup-error', '비밀번호는 6자 이상이어야 합니다.'); return; }
+  btn.disabled = true; btn.textContent = '가입 중...';
+  try {
+    await NJG_AUTH.signUp(email, pw);
+    setAuthSuccess('signup-success', '가입 완료! 이메일을 확인하거나 바로 로그인해주세요.');
+    btn.textContent = '가입 완료';
+    setTimeout(() => switchAuthTab('login'), 2000);
+  } catch(e) {
+    setAuthError('signup-error', e.message);
+    btn.disabled = false; btn.textContent = '회원가입';
+  }
+}
+
+// ── Nav 로그인 상태 업데이트 ─────────────────────────
+function updateNavAuth(user) {
+  const loginBtn   = document.getElementById('nav-login-btn');
+  const profileBtn = document.getElementById('nav-profile-btn');
+  if (user) {
+    loginBtn.style.display   = 'none';
+    profileBtn.style.display = '';
+  } else {
+    loginBtn.style.display   = '';
+    profileBtn.style.display = 'none';
+  }
+}
+
+// ── 저장 배너 ─────────────────────────────────────────
+function showSaveBanner() {
+  document.getElementById('auth-save-banner').classList.add('show');
+  document.getElementById('auth-login-prompt').classList.remove('show');
+  setTimeout(() => document.getElementById('auth-save-banner').classList.remove('show'), 5000);
+}
+function showLoginPrompt() {
+  document.getElementById('auth-login-prompt').classList.add('show');
+  document.getElementById('auth-save-banner').classList.remove('show');
+}
+
+// ── 조건 수집 (저장용) ────────────────────────────────
+function gatherConditions() {
+  const toggleIds = [
+    'tg-homeless','tg-household-head','tg-region','tg-marital',
+    'tg-marriage-years','tg-youngchild','tg-infant','tg-dual',
+    'tg-student','tg-school-region','tg-jobseeker','tg-employed',
+    'tg-workplace-region','tg-sme','tg-social-newcomer',
+    'tg-parent-income','tg-parent-homeless','tg-parent-disabled',
+    'tg-priority','tg-singleparent','tg-disabled','tg-veteran',
+    'tg-household-head','tg-deposit','tg-life-first','tg-tax5',
+    'tg-elderly-parent','tg-organ-recommend'
+  ];
+  const numIds = ['age','household-size','children-count','homeless-years',
+                  'seoul-years','income','total-assets','real-estate',
+                  'car-value','subscription','annual-salary'];
+  const selIds = ['district-city','district-gu','workplace-gu','school-gu'];
+
+  const cond = {};
+  toggleIds.forEach(id => {
+    const v = typeof getToggle === 'function' ? getToggle(id) : null;
+    if (v !== null) cond[id] = v;
+  });
+  numIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value) cond[id] = el.value;
+  });
+  selIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value) cond[id] = el.value;
+  });
+  return cond;
+}
+
+// ── 조건 복원 (불러오기) ──────────────────────────────
+function restoreConditions(cond) {
+  if (!cond) return;
+  // 토글 복원
+  Object.keys(cond).forEach(id => {
+    if (!id.startsWith('tg-')) return;
+    const group = document.getElementById(id);
+    if (!group) return;
+    const val = cond[id];
+    group.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.classList.toggle('selected', btn.dataset.val === val);
+    });
+  });
+  // 숫자/텍스트 input 복원
+  ['age','household-size','children-count','homeless-years','seoul-years',
+   'income','total-assets','real-estate','car-value','subscription','annual-salary'
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && cond[id] !== undefined) el.value = cond[id];
+  });
+  // select 복원
+  ['district-city','district-gu','workplace-gu','school-gu'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && cond[id]) {
+      // 옵션이 동적으로 생성되는 경우를 위해 setTimeout
+      setTimeout(() => { if (el && cond[id]) el.value = cond[id]; }, 300);
+    }
+  });
+  // visibility 갱신
+  if (typeof updateSchoolRegionVisibility === 'function') updateSchoolRegionVisibility();
+  if (typeof updateWorkplaceVisibility    === 'function') updateWorkplaceVisibility();
+  if (typeof updateMaritalFields          === 'function') updateMaritalFields();
+}
+
+// ── 초기화: 인증 상태 확인 + 조건 자동 불러오기 ──────
+(async function initAuth() {
+  // 인증 상태 변경 리스너
+  NJG_AUTH.onChange((event, user) => updateNavAuth(user));
+
+  const user = await NJG_AUTH.getUser();
+  updateNavAuth(user);
+
+  // profile.html에서 넘어온 경우: localStorage 우선 처리
+  const fromProfile = new URLSearchParams(location.search).get('from') === 'profile';
+  if (fromProfile) {
+    const raw = localStorage.getItem('njg_profile_conditions');
+    if (raw) {
+      try {
+        const cond = JSON.parse(raw);
+        localStorage.removeItem('njg_profile_conditions');
+        restoreConditions(cond);
+        setTimeout(() => {
+          runAnalysis();
+          const results = document.getElementById('results');
+          if (results) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 600);
+        return; // DB에서 다시 불러올 필요 없음
+      } catch(e) { console.warn('profile 조건 복원 실패:', e); }
+    }
+  }
+
+  if (user) {
+    try {
+      const saved = await NJG_AUTH.loadConditions();
+      if (saved && saved.conditions && Object.keys(saved.conditions).length > 0) {
+        restoreConditions(saved.conditions);
+        // 조건이 있으면 자동 분석 실행
+        if (typeof runAnalysis === 'function') {
+          setTimeout(() => {
+            runAnalysis();
+            const results = document.getElementById('results');
+            if (results) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 600);
+        }
+      }
+    } catch(e) { console.warn('조건 불러오기 실패:', e); }
+  }
+})();
+
+// ── runAnalysis 후 자동 저장 (원본 함수 래핑) ─────────
+const _origRunAnalysis = runAnalysis;
+runAnalysis = async function() {
+  _origRunAnalysis();
+  const user = await NJG_AUTH.getUser();
+  if (user) {
+    try {
+      const cond = gatherConditions();
+      await NJG_AUTH.saveConditions(cond);
+      showSaveBanner();
+    } catch(e) { console.warn('조건 저장 실패:', e); }
+  } else {
+    showLoginPrompt();
+  }
+};
+</script>
 </body>
 </html>

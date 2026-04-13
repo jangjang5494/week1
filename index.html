@@ -218,6 +218,11 @@ body {
 #nav:not(.scrolled) #nav-faq:hover { color: #fff; }
 #nav.scrolled #nav-faq { color: var(--text2); }
 #nav.scrolled #nav-faq:hover { color: var(--primary); }
+#nav.scrolled #nav-auth-btn,
+#nav.scrolled #nav-profile-link {
+  background: #ede9fe !important; color: #4f46e5 !important;
+  border-color: transparent !important;
+}
 @media(max-width:640px) { #nav { padding: 16px 20px; } #nav-faq { display: none; } }
 
 /* ══ S1 HERO ══ */
@@ -542,14 +547,37 @@ body {
 </head>
 <body>
 
+<!-- Supabase Auth -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./auth-common.js"></script>
+
 <!-- NAV -->
 <nav id="nav" aria-label="주요 메뉴">
   <a href="#" class="nav-logo" aria-label="내집구독 홈">내집<em>구독</em></a>
   <div style="display:flex;align-items:center;gap:12px;">
     <a href="./faq.html" style="font-size:13.5px;font-weight:600;text-decoration:none;transition:color .35s;" id="nav-faq">FAQ</a>
+    <button id="nav-auth-btn" onclick="location.href='details.html'" style="display:none;padding:8px 18px;border:none;border-radius:100px;font-size:13.5px;font-weight:700;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);">로그인</button>
+    <a id="nav-profile-link" href="./profile.html" style="display:none;padding:8px 18px;border-radius:100px;font-size:13.5px;font-weight:700;text-decoration:none;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);transition:all .2s;">내 프로필</a>
     <a href="./details.html" class="nav-cta">정밀분석 시작 →</a>
   </div>
 </nav>
+<script>
+(async function(){
+  const user = await NJG_AUTH.getUser();
+  const loginBtn   = document.getElementById('nav-auth-btn');
+  const profileBtn = document.getElementById('nav-profile-link');
+  if (user) {
+    profileBtn.style.display = '';
+  } else {
+    loginBtn.style.display = '';
+    loginBtn.onclick = () => location.href = 'details.html';
+  }
+  NJG_AUTH.onChange((e, u) => {
+    profileBtn.style.display = u ? '' : 'none';
+    loginBtn.style.display   = u ? 'none' : '';
+  });
+})();
+</script>
 
 <main id="main-content">
 
