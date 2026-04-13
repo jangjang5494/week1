@@ -547,7 +547,7 @@ function authOnChange(callback){
 async function saveConditions(conditions){
   const user=await authGetUser();if(!user)return null;
   const session=_loadSession();
-  const res=await fetch(`${SB_URL}/rest/v1/user_conditions`,{method:'POST',headers:{..._headers(session.access_token),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({user_id:user.id,conditions})});
+  const res=await fetch(`${SB_URL}/rest/v1/user_conditions?on_conflict=user_id`,{method:'POST',headers:{..._headers(session.access_token),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({user_id:user.id,conditions})});
   if(!res.ok){const e=await res.json();throw new Error(e.message||'저장 실패');}
   return await res.json();
 }
