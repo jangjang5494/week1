@@ -79,6 +79,79 @@
       "description": "서울·경기 청년 맞춤형 주거지원 통합 분석 서비스. LH·SH·청약홈·주택도시기금 임대주택·공공분양·전세대출·주거복지 69가지 유형 자격 자동 판단.",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
       "inLanguage": "ko-KR"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://homesubscribe.org/#organization",
+      "name": "내집구독",
+      "url": "https://homesubscribe.org/",
+      "logo": "https://homesubscribe.org/favicon.svg",
+      "description": "서울·경기 2030 청년을 위한 주거지원 통합 분석 플랫폼. LH·SH공사·청약홈·주택도시기금의 임대주택·공공분양·전세대출·주거복지 69가지 유형 자격을 무료로 분석.",
+      "areaServed": [
+        { "@type": "City", "name": "서울특별시" },
+        { "@type": "AdministrativeArea", "name": "경기도" }
+      ],
+      "knowsAbout": [
+        "청년 임대주택", "행복주택", "국민임대주택", "청년안심주택",
+        "LH 청약", "SH 임대", "청년 전세대출", "주거복지", "공공분양",
+        "청약홈", "주택도시기금", "서울시 청년 주거", "2030 주거지원"
+      ],
+      "sameAs": [
+        "https://homesubscribe.org"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "내집구독은 어떤 서비스인가요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "내집구독(homesubscribe.org)은 서울·경기 2030 청년을 위한 주거지원 통합 분석 플랫폼입니다. LH·SH공사·청약홈·주택도시기금의 임대주택·공공분양·전세대출·주거복지 69가지 유형 중 나이·거주지·소득·자산을 입력하면 내가 신청 가능한 유형과 순위를 3분 안에 무료로 분석해 줍니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "서울 청년이 신청할 수 있는 임대주택 종류는?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "서울 청년이 신청할 수 있는 임대주택은 SH공사 약 15종(청년안심주택·행복주택·장기전세 등)과 LH 약 20종(행복주택·청년매입임대·국민임대·든든전세주택 등)이 있습니다. 내집구독에서 본인 조건을 입력하면 신청 가능한 유형을 자동으로 확인할 수 있습니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "행복주택 청년 자격 조건은?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "행복주택 청년 자격: 만 19~39세 무주택자, 소득 도시근로자 월평균소득 100% 이하(1인 458만원, 2026년 기준), 자산 총자산 2억 5,100만원·자동차 4,542만원 이하. LH는 전국 무주택자, SH는 서울 거주 필수. 대학생은 자산 1억 800만원 이하(자동차 소유 불가) 별도 기준 적용."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "LH와 SH공사의 차이는 무엇인가요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "LH(한국토지주택공사)는 국토교통부 산하 전국 공급 기관으로 거주지 제한이 없고, SH공사(서울주택도시공사)는 서울시 산하로 서울 거주 요건이 필수입니다. LH 콜센터 1600-1004(apply.lh.or.kr), SH 콜센터 1600-3456(i-sh.co.kr)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "청년 전세대출 종류와 조건은?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "주요 청년 전세대출: ① 청년전용 버팀목전세자금(만 19~34세, 연소득 5,000만원 이하, 최대 2억원, 연 1.5~2.1%) ② 중소기업취업청년 전월세보증금대출(중소·중견기업 재직자, 최대 1억원, 연 1.2%) ③ 청년보증부월세대출(월세 최대 70만원 지원). 신청: 주택도시기금(nhuf.molit.go.kr)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "임대주택 소득 기준은 어떻게 되나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "2026년 도시근로자 월평균소득 100% 기준: 1인 458만원, 2인 645만원, 3인 817만원, 4인 880만원. 행복주택 청년은 100% 이하, 국민임대 1순위는 70%(1인 321만원) 이하. 통합공공임대는 기준 중위소득 적용(1인 256만원, 2인 420만원)."
+          }
+        }
+      ]
     }
   ]
 }
@@ -141,7 +214,11 @@ body {
   box-shadow: 0 4px 16px rgba(79,70,229,.35);
 }
 .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
-@media(max-width:640px) { #nav { padding: 16px 20px; } }
+#nav:not(.scrolled) #nav-faq { color: rgba(255,255,255,.82); }
+#nav:not(.scrolled) #nav-faq:hover { color: #fff; }
+#nav.scrolled #nav-faq { color: var(--text2); }
+#nav.scrolled #nav-faq:hover { color: var(--primary); }
+@media(max-width:640px) { #nav { padding: 16px 20px; } #nav-faq { display: none; } }
 
 /* ══ S1 HERO ══ */
 #hero {
@@ -468,7 +545,10 @@ body {
 <!-- NAV -->
 <nav id="nav" aria-label="주요 메뉴">
   <a href="#" class="nav-logo" aria-label="내집구독 홈">내집<em>구독</em></a>
-  <a href="./details.html" class="nav-cta">정밀분석 시작 →</a>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="./faq.html" style="font-size:13.5px;font-weight:600;text-decoration:none;transition:color .35s;" id="nav-faq">FAQ</a>
+    <a href="./details.html" class="nav-cta">정밀분석 시작 →</a>
+  </div>
 </nav>
 
 <main id="main-content">
