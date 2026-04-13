@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://week1-343.pages.dev/sitemap.xml
+
+Sitemap: https://homesubscribe.org/sitemap.xml
