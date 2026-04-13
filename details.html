@@ -411,7 +411,7 @@
   gtag('config', 'G-F0C83JFCH3');
 </script>
 <!-- ── Supabase Auth ── -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="/auth-common.js"></script>
 <style>
 /* ── Auth Modal ── */
@@ -7602,21 +7602,25 @@ function restoreConditions(cond) {
   }
 })();
 
-// ── runAnalysis 후 자동 저장 (원본 함수 래핑) ─────────
-const _origRunAnalysis = runAnalysis;
-runAnalysis = async function() {
-  _origRunAnalysis();
-  const user = await NJG_AUTH.getUser();
-  if (user) {
+// ── 분석 버튼 클릭 → 조건 자동 저장 (이벤트 리스너 방식) ─────────
+// runAnalysis 자체는 건드리지 않고, 버튼 클릭 후 별도로 저장 처리
+document.querySelector('.btn-analyze').addEventListener('click', function() {
+  // 분석은 onclick="runAnalysis()" 가 실행 → 여기서는 저장만 처리
+  // runAnalysis 완료 후 DOM 렌더링 대기 (300ms)
+  setTimeout(async function() {
     try {
-      const cond = gatherConditions();
-      await NJG_AUTH.saveConditions(cond);
-      showSaveBanner();
+      if (typeof NJG_AUTH === 'undefined') return;
+      const user = await NJG_AUTH.getUser();
+      if (user) {
+        const cond = gatherConditions();
+        await NJG_AUTH.saveConditions(cond);
+        showSaveBanner();
+      } else {
+        showLoginPrompt();
+      }
     } catch(e) { console.warn('조건 저장 실패:', e); }
-  } else {
-    showLoginPrompt();
-  }
-};
+  }, 300);
+});
 </script>
 </body>
 </html>
