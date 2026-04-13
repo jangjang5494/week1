@@ -247,8 +247,9 @@
       </p>
     </div>
 
-    <!-- 탭 2: 조건 수정 -->
+    <!-- 탭 2: 조건 수정 (details.html과 동일한 ID 사용) -->
     <div class="ptab-panel" id="panel-edit">
+      <p style="font-size:.82rem;color:#9ca3af;margin-bottom:1.25rem;">저장된 조건을 수정하고 저장하면 다음 분석에 반영됩니다.</p>
       <form onsubmit="return false;">
 
         <!-- 기본 정보 -->
@@ -256,11 +257,15 @@
           <div class="edit-section-title">기본 정보</div>
           <div class="edit-fg">
             <label>나이</label>
-            <input type="number" id="e-age" min="19" max="80" placeholder="예: 28">
+            <input type="number" id="age" min="19" max="80" placeholder="예: 28">
+          </div>
+          <div class="edit-fg">
+            <label>가구원 수</label>
+            <input type="number" id="household-size" min="1" max="10" placeholder="예: 1">
           </div>
           <div class="edit-fg">
             <label>거주지</label>
-            <div class="toggle-group-sm" id="e-tg-region">
+            <div class="toggle-group-sm" id="tg-region">
               <button class="tg-btn selected" data-val="seoul">서울</button>
               <button class="tg-btn" data-val="gyeonggi">경기</button>
               <button class="tg-btn" data-val="other">기타</button>
@@ -268,14 +273,21 @@
           </div>
           <div class="edit-fg">
             <label>무주택 여부</label>
-            <div class="toggle-group-sm" id="e-tg-homeless">
+            <div class="toggle-group-sm" id="tg-homeless">
               <button class="tg-btn selected" data-val="yes">무주택</button>
               <button class="tg-btn" data-val="no">유주택</button>
             </div>
           </div>
           <div class="edit-fg">
-            <label>가구원 수</label>
-            <input type="number" id="e-hhsize" min="1" max="10" placeholder="예: 1">
+            <label>무주택 기간 (년)</label>
+            <input type="number" id="homeless-years" min="0" max="50" placeholder="예: 3">
+          </div>
+          <div class="edit-fg">
+            <label>세대주 여부</label>
+            <div class="toggle-group-sm" id="tg-household-head">
+              <button class="tg-btn selected" data-val="no">세대원</button>
+              <button class="tg-btn" data-val="yes">세대주</button>
+            </div>
           </div>
         </div>
 
@@ -284,7 +296,7 @@
           <div class="edit-section-title">혼인·가족</div>
           <div class="edit-fg">
             <label>혼인 상태</label>
-            <div class="toggle-group-sm" id="e-tg-marital">
+            <div class="toggle-group-sm" id="tg-marital">
               <button class="tg-btn selected" data-val="single">미혼</button>
               <button class="tg-btn" data-val="prenuptial">예비신혼</button>
               <button class="tg-btn" data-val="newlywed">신혼 (7년 이내)</button>
@@ -292,9 +304,9 @@
               <button class="tg-btn" data-val="divorced">이혼/사별</button>
             </div>
           </div>
-          <div class="edit-fg" id="e-marriage-years-wrap">
+          <div class="edit-fg" id="p-marriage-years-wrap" style="display:none;">
             <label>혼인 기간</label>
-            <div class="toggle-group-sm" id="e-tg-marriage-years">
+            <div class="toggle-group-sm" id="tg-marriage-years">
               <button class="tg-btn selected" data-val="1">1년 이하</button>
               <button class="tg-btn" data-val="2">1~2년</button>
               <button class="tg-btn" data-val="4">2~5년</button>
@@ -303,13 +315,34 @@
           </div>
           <div class="edit-fg">
             <label>자녀 수</label>
-            <input type="number" id="e-children" min="0" max="10" placeholder="예: 0">
+            <input type="number" id="children-count" min="0" max="10" placeholder="예: 0">
           </div>
           <div class="edit-fg">
             <label>영유아 자녀 (6세 이하)</label>
-            <div class="toggle-group-sm" id="e-tg-youngchild">
+            <div class="toggle-group-sm" id="tg-youngchild">
               <button class="tg-btn selected" data-val="no">없음</button>
               <button class="tg-btn" data-val="yes">있음</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>신생아 자녀 (2세 이하)</label>
+            <div class="toggle-group-sm" id="tg-infant">
+              <button class="tg-btn selected" data-val="no">없음</button>
+              <button class="tg-btn" data-val="yes">있음</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>맞벌이 여부</label>
+            <div class="toggle-group-sm" id="tg-dual">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">맞벌이</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>한부모 가족</label>
+            <div class="toggle-group-sm" id="tg-singleparent">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">해당함</button>
             </div>
           </div>
         </div>
@@ -319,28 +352,35 @@
           <div class="edit-section-title">직업·학업</div>
           <div class="edit-fg">
             <label>재학 여부</label>
-            <div class="toggle-group-sm" id="e-tg-student">
+            <div class="toggle-group-sm" id="tg-student">
               <button class="tg-btn selected" data-val="no">해당 없음</button>
               <button class="tg-btn" data-val="yes">재학 중</button>
             </div>
           </div>
           <div class="edit-fg">
             <label>취업 준비생</label>
-            <div class="toggle-group-sm" id="e-tg-jobseeker">
+            <div class="toggle-group-sm" id="tg-jobseeker">
               <button class="tg-btn selected" data-val="no">해당 없음</button>
               <button class="tg-btn" data-val="yes">취업 준비 중</button>
             </div>
           </div>
           <div class="edit-fg">
             <label>재직 여부</label>
-            <div class="toggle-group-sm" id="e-tg-employed">
+            <div class="toggle-group-sm" id="tg-employed">
               <button class="tg-btn selected" data-val="no">미취업</button>
               <button class="tg-btn" data-val="yes">재직 중</button>
             </div>
           </div>
           <div class="edit-fg">
+            <label>중소기업 재직</label>
+            <div class="toggle-group-sm" id="tg-sme">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">해당함</button>
+            </div>
+          </div>
+          <div class="edit-fg">
             <label>사회초년생 (취업 5년 이내)</label>
-            <div class="toggle-group-sm" id="e-tg-social-newcomer">
+            <div class="toggle-group-sm" id="tg-social-newcomer">
               <button class="tg-btn selected" data-val="no">해당 없음</button>
               <button class="tg-btn" data-val="yes">해당함</button>
             </div>
@@ -352,44 +392,66 @@
           <div class="edit-section-title">소득·자산</div>
           <div class="edit-fg">
             <label>월 소득 (만원)</label>
-            <input type="number" id="e-income" min="0" placeholder="예: 250">
+            <input type="number" id="income" min="0" placeholder="예: 250">
             <p class="edit-hint">세전 월 소득. 연봉이라면 ÷ 12로 환산</p>
           </div>
           <div class="edit-fg">
+            <label>연봉 (만원)</label>
+            <input type="number" id="annual-salary" min="0" placeholder="예: 3000">
+          </div>
+          <div class="edit-fg">
             <label>총 자산 (만원)</label>
-            <input type="number" id="e-assets" min="0" placeholder="예: 5000">
+            <input type="number" id="total-assets" min="0" placeholder="예: 5000">
             <p class="edit-hint">토지·건물·금융자산·임차보증금 포함</p>
           </div>
           <div class="edit-fg">
+            <label>부동산 가액 (만원)</label>
+            <input type="number" id="real-estate" min="0" placeholder="예: 0">
+          </div>
+          <div class="edit-fg">
             <label>자동차 가액 (만원)</label>
-            <input type="number" id="e-car" min="0" placeholder="예: 0">
+            <input type="number" id="car-value" min="0" placeholder="예: 0">
           </div>
         </div>
 
-        <!-- 청약 -->
+        <!-- 청약·특수 -->
         <div class="edit-section">
-          <div class="edit-section-title">청약</div>
+          <div class="edit-section-title">청약·특수</div>
           <div class="edit-fg">
             <label>청약통장 납입 횟수</label>
-            <input type="number" id="e-sub" min="0" placeholder="예: 24">
-          </div>
-          <div class="edit-fg">
-            <label>세대주 여부</label>
-            <div class="toggle-group-sm" id="e-tg-household-head">
-              <button class="tg-btn selected" data-val="no">세대원</button>
-              <button class="tg-btn" data-val="yes">세대주</button>
-            </div>
+            <input type="number" id="subscription" min="0" placeholder="예: 24">
           </div>
           <div class="edit-fg">
             <label>생애최초 주택 구입</label>
-            <div class="toggle-group-sm" id="e-tg-life-first">
+            <div class="toggle-group-sm" id="tg-life-first">
               <button class="tg-btn selected" data-val="no">해당 없음</button>
               <button class="tg-btn" data-val="yes">생애최초</button>
             </div>
           </div>
+          <div class="edit-fg">
+            <label>장애인</label>
+            <div class="toggle-group-sm" id="tg-disabled">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">해당함</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>국가유공자</label>
+            <div class="toggle-group-sm" id="tg-veteran">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">해당함</button>
+            </div>
+          </div>
+          <div class="edit-fg">
+            <label>노부모 부양</label>
+            <div class="toggle-group-sm" id="tg-elderly-parent">
+              <button class="tg-btn selected" data-val="no">해당 없음</button>
+              <button class="tg-btn" data-val="yes">해당함</button>
+            </div>
+          </div>
         </div>
 
-        <button class="save-btn" id="edit-save-btn" onclick="saveEditedConditions()">내 조건 저장하기</button>
+        <button class="save-btn" id="edit-save-btn" onclick="saveEditedConditions()">💾 내 조건 저장하기</button>
         <div class="save-feedback" id="edit-save-feedback"></div>
       </form>
     </div>
@@ -532,12 +594,21 @@ function switchTab(name) {
 const LABELS = {
   'tg-region':        { label: '거주지', map: { seoul:'서울', gyeonggi:'경기', other:'기타' } },
   'tg-homeless':      { label: '무주택', map: { yes:'무주택', no:'유주택' } },
+  'tg-household-head':{ label: '세대주', map: { yes:'세대주', no:'세대원' } },
   'tg-marital':       { label: '혼인', map: { single:'미혼', prenuptial:'예비신혼', newlywed:'신혼', married:'기혼', divorced:'이혼/사별' } },
+  'tg-youngchild':    { label: '영유아 자녀', map: { yes:'있음', no:'없음' } },
+  'tg-infant':        { label: '신생아 자녀', map: { yes:'있음', no:'없음' } },
+  'tg-dual':          { label: '맞벌이', map: { yes:'해당함', no:'해당없음' } },
+  'tg-singleparent':  { label: '한부모', map: { yes:'해당함', no:'해당없음' } },
   'tg-student':       { label: '재학', map: { yes:'재학 중', no:'해당없음' } },
   'tg-jobseeker':     { label: '취준생', map: { yes:'해당함', no:'해당없음' } },
   'tg-employed':      { label: '재직', map: { yes:'재직 중', no:'미취업' } },
+  'tg-sme':           { label: '중소기업', map: { yes:'해당함', no:'해당없음' } },
   'tg-social-newcomer': { label: '사회초년생', map: { yes:'해당함', no:'해당없음' } },
-  'tg-youngchild':    { label: '영유아 자녀', map: { yes:'있음', no:'없음' } },
+  'tg-life-first':    { label: '생애최초', map: { yes:'해당함', no:'해당없음' } },
+  'tg-disabled':      { label: '장애인', map: { yes:'해당함', no:'해당없음' } },
+  'tg-veteran':       { label: '국가유공자', map: { yes:'해당함', no:'해당없음' } },
+  'tg-elderly-parent':{ label: '노부모부양', map: { yes:'해당함', no:'해당없음' } },
   'age':              { label: '나이', suffix: '세' },
   'household-size':   { label: '가구원', suffix: '명' },
   'children-count':   { label: '자녀', suffix: '명' },
@@ -571,43 +642,40 @@ function goToAnalysis() {
   window.location.href = 'details.html?from=profile';
 }
 
-// ── 수정 폼 채우기 ────────────────────────────────────
+// ── 수정 폼 채우기 (details.html과 동일한 ID 사용 → 직접 매핑) ──
+const TOGGLE_IDS = [
+  'tg-region','tg-homeless','tg-household-head','tg-marital','tg-marriage-years',
+  'tg-youngchild','tg-infant','tg-dual','tg-singleparent',
+  'tg-student','tg-jobseeker','tg-employed','tg-sme','tg-social-newcomer',
+  'tg-life-first','tg-disabled','tg-veteran','tg-elderly-parent',
+];
+const NUM_IDS = [
+  'age','household-size','children-count','homeless-years',
+  'income','annual-salary','total-assets','real-estate','car-value','subscription',
+];
+
 function fillEditForm(cond) {
   if (!cond) return;
-  // 숫자 inputs
-  const numMap = {
-    'age':'e-age', 'household-size':'e-hhsize', 'children-count':'e-children',
-    'income':'e-income', 'total-assets':'e-assets', 'car-value':'e-car', 'subscription':'e-sub'
-  };
-  Object.entries(numMap).forEach(([src, tgt]) => {
-    const el = document.getElementById(tgt);
-    if (el && cond[src]) el.value = cond[src];
+  // 숫자 inputs (ID 동일)
+  NUM_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && cond[id] !== undefined) el.value = cond[id];
   });
-  // 토글
-  const tgMap = {
-    'tg-region':'e-tg-region', 'tg-homeless':'e-tg-homeless',
-    'tg-marital':'e-tg-marital', 'tg-marriage-years':'e-tg-marriage-years',
-    'tg-youngchild':'e-tg-youngchild', 'tg-student':'e-tg-student',
-    'tg-jobseeker':'e-tg-jobseeker', 'tg-employed':'e-tg-employed',
-    'tg-social-newcomer':'e-tg-social-newcomer',
-    'tg-household-head':'e-tg-household-head',
-    'tg-life-first':'e-tg-life-first',
-  };
-  Object.entries(tgMap).forEach(([src, tgt]) => {
-    const val = cond[src];
+  // 토글 (ID 동일)
+  TOGGLE_IDS.forEach(id => {
+    const val = cond[id];
     if (!val) return;
-    const group = document.getElementById(tgt);
+    const group = document.getElementById(id);
     if (!group) return;
     group.querySelectorAll('.tg-btn').forEach(btn => btn.classList.toggle('selected', btn.dataset.val === val));
   });
-  // 혼인기간 wrap 표시
   updateMarriageYearsWrap();
 }
 
 function updateMarriageYearsWrap() {
-  const marital = getEditToggle('e-tg-marital');
-  const wrap = document.getElementById('e-marriage-years-wrap');
-  if (wrap) wrap.style.display = marital === 'newlywed' ? '' : 'none';
+  const marital = getEditToggle('tg-marital');
+  const wrap = document.getElementById('p-marriage-years-wrap');
+  if (wrap) wrap.style.display = (marital === 'newlywed' || marital === 'prenuptial') ? '' : 'none';
 }
 
 function getEditToggle(id) {
@@ -622,54 +690,43 @@ document.querySelectorAll('.toggle-group-sm').forEach(group => {
     if (!btn) return;
     group.querySelectorAll('.tg-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
-    if (group.id === 'e-tg-marital') updateMarriageYearsWrap();
+    if (group.id === 'tg-marital') updateMarriageYearsWrap();
   });
 });
+
+// ── 수정 조건 수집 ────────────────────────────────────
+function gatherEditedConditions() {
+  const cond = Object.assign({}, _savedConditions || {});
+  TOGGLE_IDS.forEach(id => {
+    const v = getEditToggle(id);
+    if (v !== null) cond[id] = v;
+  });
+  NUM_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value !== '') cond[id] = el.value;
+  });
+  return cond;
+}
 
 // ── 수정 조건 저장 ────────────────────────────────────
 async function saveEditedConditions() {
   const btn = document.getElementById('edit-save-btn');
   const fb  = document.getElementById('edit-save-feedback');
   fb.className = 'save-feedback';
-
-  const tgMap = {
-    'tg-region':'e-tg-region', 'tg-homeless':'e-tg-homeless',
-    'tg-marital':'e-tg-marital', 'tg-marriage-years':'e-tg-marriage-years',
-    'tg-youngchild':'e-tg-youngchild', 'tg-student':'e-tg-student',
-    'tg-jobseeker':'e-tg-jobseeker', 'tg-employed':'e-tg-employed',
-    'tg-social-newcomer':'e-tg-social-newcomer',
-    'tg-household-head':'e-tg-household-head',
-    'tg-life-first':'e-tg-life-first',
-  };
-  const numMap = {
-    'age':'e-age', 'household-size':'e-hhsize', 'children-count':'e-children',
-    'income':'e-income', 'total-assets':'e-assets', 'car-value':'e-car', 'subscription':'e-sub'
-  };
-
-  // 기존 조건에 수정값 덮어쓰기
-  const cond = Object.assign({}, _savedConditions || {});
-  Object.entries(tgMap).forEach(([dest, src]) => {
-    const v = getEditToggle(src);
-    if (v) cond[dest] = v;
-  });
-  Object.entries(numMap).forEach(([dest, src]) => {
-    const el = document.getElementById(src);
-    if (el && el.value) cond[dest] = el.value;
-  });
-
+  const cond = gatherEditedConditions();
   btn.disabled = true; btn.textContent = '저장 중...';
   try {
     await NJG_AUTH.saveConditions(cond);
     _savedConditions = cond;
     renderConditionSummary(cond);
-    fb.textContent = '✅ 저장되었습니다!';
+    fb.textContent = '✅ 저장되었습니다! 분석 결과 탭에서 바로 확인할 수 있어요.';
     fb.className = 'save-feedback ok';
-    setTimeout(() => { fb.className = 'save-feedback'; }, 3000);
+    setTimeout(() => { fb.className = 'save-feedback'; }, 4000);
   } catch(e) {
     fb.textContent = '저장 실패: ' + e.message;
     fb.className = 'save-feedback err';
   } finally {
-    btn.disabled = false; btn.textContent = '내 조건 저장하기';
+    btn.disabled = false; btn.textContent = '💾 내 조건 저장하기';
   }
 }
 

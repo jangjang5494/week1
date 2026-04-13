@@ -1059,6 +1059,16 @@
             <h2>분석 결과</h2>
             <div class="score-badge" id="eligible-count-badge">신청 가능 유형 분석 중...</div>
         </div>
+        <!-- 결과 저장 버튼 (로그인 상태에 따라 토글) -->
+        <div id="result-save-area" style="margin-bottom:1rem;">
+          <button id="result-save-btn" onclick="saveFromResults()" style="display:none;width:100%;padding:.7rem;border:none;border-radius:10px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .2s;">💾 이 조건 저장하기 (내 프로필에 보관)</button>
+          <div id="result-login-prompt" style="display:none;text-align:center;padding:.65rem 1rem;background:#ede9fe;border:1px solid #c4b5fd;border-radius:10px;font-size:.85rem;color:#4f46e5;">
+            💡 로그인하면 이 조건을 저장하고, 다음에 바로 결과를 볼 수 있어요. <a onclick="openAuthModal()" style="color:#4f46e5;font-weight:700;cursor:pointer;">로그인하기 →</a>
+          </div>
+          <div id="result-saved-msg" style="display:none;text-align:center;padding:.65rem 1rem;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;font-size:.85rem;color:#15803d;font-weight:600;">
+            ✅ 저장 완료! <a href="profile.html" style="color:#15803d;font-weight:700;">프로필 보기 →</a>
+          </div>
+        </div>
 
         <!-- 조건 요약 카드 -->
         <div class="summary-card" id="summary-card">
@@ -3883,6 +3893,8 @@ function runAnalysis() {
     document.getElementById('step-indicator').style.display='none';
     document.getElementById('results').style.display='block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 결과 화면 저장 버튼 상태 업데이트
+    if (typeof showResultSaveArea === 'function') showResultSaveArea();
 }
 
 function restart() {
@@ -7547,7 +7559,7 @@ function updateNavAuth(user) {
   }
 }
 
-// ── 저장 배너 ─────────────────────────────────────────
+// ── 저장 배너 (분석 버튼 아래 구형) ──────────────────
 function showSaveBanner() {
   document.getElementById('auth-save-banner').classList.add('show');
   document.getElementById('auth-login-prompt').classList.remove('show');
@@ -7556,6 +7568,47 @@ function showSaveBanner() {
 function showLoginPrompt() {
   document.getElementById('auth-login-prompt').classList.add('show');
   document.getElementById('auth-save-banner').classList.remove('show');
+}
+
+// ── 결과 저장 영역 표시 ───────────────────────────────
+async function showResultSaveArea() {
+  const saveBtn   = document.getElementById('result-save-btn');
+  const loginP    = document.getElementById('result-login-prompt');
+  const savedMsg  = document.getElementById('result-saved-msg');
+  if (!saveBtn) return;
+  savedMsg.style.display = 'none';
+  try {
+    const user = await NJG_AUTH.getUser();
+    if (user) {
+      saveBtn.style.display = '';
+      loginP.style.display  = 'none';
+    } else {
+      saveBtn.style.display = 'none';
+      loginP.style.display  = '';
+    }
+  } catch(e) {
+    saveBtn.style.display = 'none';
+    loginP.style.display  = '';
+  }
+}
+
+// ── 결과 화면에서 저장 ───────────────────────────────
+async function saveFromResults() {
+  const saveBtn  = document.getElementById('result-save-btn');
+  const savedMsg = document.getElementById('result-saved-msg');
+  const loginP   = document.getElementById('result-login-prompt');
+  saveBtn.disabled = true; saveBtn.textContent = '저장 중...';
+  try {
+    const cond = gatherConditions();
+    await NJG_AUTH.saveConditions(cond);
+    saveBtn.style.display = 'none';
+    loginP.style.display  = 'none';
+    savedMsg.style.display = '';
+    showSaveBanner();
+  } catch(e) {
+    saveBtn.disabled = false; saveBtn.textContent = '💾 이 조건 저장하기 (내 프로필에 보관)';
+    alert('저장 실패: ' + e.message);
+  }
 }
 
 // ── 조건 수집 (저장용) ────────────────────────────────
