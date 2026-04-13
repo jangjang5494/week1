@@ -7517,11 +7517,19 @@ async function doLogin() {
   try {
     await NJG_AUTH.signIn(email, pw);
     closeAuthModal();
-    // 현재 입력된 조건이 있으면 저장
-    if (typeof gatherConditions === 'function') {
-      const cond = gatherConditions();
-      if (cond) { await NJG_AUTH.saveConditions(cond); showSaveBanner(); }
-    }
+    // 로그인 후 저장된 조건 불러오기 (덮어쓰지 않음 — 저장은 명시적 버튼으로만)
+    try {
+      const saved = await NJG_AUTH.loadConditions();
+      if (saved && saved.conditions && Object.keys(saved.conditions).length > 0) {
+        restoreConditions(saved.conditions);
+        const banner = document.getElementById('auth-save-banner');
+        if (banner) {
+          banner.innerHTML = '✅ 저장된 조건을 불러왔습니다. 확인 후 분석 시작 버튼을 눌러주세요.';
+          banner.classList.add('show');
+          setTimeout(() => banner.classList.remove('show'), 4000);
+        }
+      }
+    } catch(e) { console.warn('조건 불러오기 실패:', e); }
   } catch(e) {
     setAuthError('login-error', e.message === 'Invalid login credentials' ? '이메일 또는 비밀번호가 올바르지 않습니다.' : e.message);
   } finally { btn.disabled = false; btn.textContent = '로그인'; }
@@ -7732,24 +7740,16 @@ function restoreConditions(cond) {
   }
 })();
 
-// ── 분석 버튼 클릭 → 조건 자동 저장 (이벤트 리스너 방식) ─────────
-// runAnalysis 자체는 건드리지 않고, 버튼 클릭 후 별도로 저장 처리
-document.querySelector('.btn-analyze').addEventListener('click', function() {
-  // 분석은 onclick="runAnalysis()" 가 실행 → 여기서는 저장만 처리
-  // runAnalysis 완료 후 DOM 렌더링 대기 (300ms)
-  setTimeout(async function() {
-    try {
-      if (typeof NJG_AUTH === 'undefined') return;
-      const user = await NJG_AUTH.getUser();
-      if (user) {
-        const cond = gatherConditions();
-        await NJG_AUTH.saveConditions(cond);
-        showSaveBanner();
-      } else {
-        showLoginPrompt();
-      }
-    } catch(e) { console.warn('조건 저장 실패:', e); }
-  }, 300);
+// ── 분석 버튼 클릭 → 비로그인이면 저장 유도만 표시 ─────────────
+// 저장은 결과 화면의 "💾 이 조건 저장하기" 버튼으로만 수행 (데이터 덮어쓰기 방지)
+document.querySelector('.btn-analyze').addEventListener('click', async function() {
+  try {
+    if (typeof NJG_AUTH === 'undefined') return;
+    const user = await NJG_AUTH.getUser();
+    if (!user) {
+      // 비로그인 상태 → 로그인 유도 메시지는 결과 화면에서 showResultSaveArea()가 처리
+    }
+  } catch(e) {}
 });
 </script>
 </body>
