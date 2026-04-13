@@ -493,7 +493,7 @@
         <a href="index.html" class="logo" aria-label="내집구독 홈으로">내집구독</a>
         <div class="nav-controls">
             <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환">다크 모드</button>
-            <button class="nav-auth-btn nav-login-btn" id="nav-login-btn" onclick="openAuthModal()" style="display:none;">로그인</button>
+            <button class="nav-auth-btn nav-login-btn" id="nav-login-btn" onclick="openAuthModal()">로그인</button>
             <a href="profile.html" class="nav-auth-btn nav-profile-btn" id="nav-profile-btn" style="display:none;text-decoration:none;">내 프로필</a>
         </div>
     </nav>
@@ -7563,11 +7563,19 @@ function restoreConditions(cond) {
   // 인증 상태 변경 리스너
   NJG_AUTH.onChange((event, user) => updateNavAuth(user));
 
+  const params = new URLSearchParams(location.search);
+
+  // ?login=1 → 모달 자동 오픈 (index.html 로그인 버튼에서 넘어온 경우)
+  if (params.get('login') === '1') {
+    openAuthModal('login');
+    history.replaceState(null, '', location.pathname); // URL에서 ?login=1 제거
+  }
+
   const user = await NJG_AUTH.getUser();
   updateNavAuth(user);
 
   // profile.html에서 넘어온 경우: localStorage 우선 처리
-  const fromProfile = new URLSearchParams(location.search).get('from') === 'profile';
+  const fromProfile = params.get('from') === 'profile';
   if (fromProfile) {
     const raw = localStorage.getItem('njg_profile_conditions');
     if (raw) {
