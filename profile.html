@@ -8,9 +8,6 @@
 <link rel="canonical" href="https://homesubscribe.org/profile.html">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="style.css">
-<!-- Supabase Auth -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="/auth-common.js"></script>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F0C83JFCH3"></script>
 <script>
@@ -432,6 +429,10 @@
   </div>
 </div>
 
+<!-- Supabase Auth SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/auth-common.js"></script>
+
 <script>
 // ── 테마 ─────────────────────────────────────────────
 (function(){
@@ -665,7 +666,7 @@ async function doLogout() {
   location.reload();
 }
 
-// ── 페이지 초기화 ─────────────────────────────────────
+// ── 페이지 초기화 (NJG_AUTH 로드 확인 후 실행) ─────────
 (async function init() {
   const user = await NJG_AUTH.getUser();
 

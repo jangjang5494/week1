@@ -410,9 +410,6 @@
   gtag('js', new Date());
   gtag('config', 'G-F0C83JFCH3');
 </script>
-<!-- ── Supabase Auth ── -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="/auth-common.js"></script>
 <style>
 /* ── Auth Modal ── */
 .auth-overlay {
@@ -7375,6 +7372,10 @@ function openTypeDetail(name) {
 <footer style="text-align:center;padding:20px;font-size:11.5px;color:#9ca3af;border-top:1px solid #e5e7eb;margin-top:2rem;" aria-label="사이트 정보">
     © 2026 내집구독 · LH·SH·청약홈 공식 데이터 기반 · 비영리 무료 서비스 · <a href="index.html" style="color:inherit;text-decoration:underline;">홈으로</a>
 </footer>
+
+<!-- ── Supabase Auth SDK (body 끝에 로드 — head 블로킹 방지) ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/auth-common.js"></script>
 
 <!-- ── 로그인/회원가입 모달 ── -->
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuthModal()">
