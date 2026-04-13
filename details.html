@@ -7373,8 +7373,76 @@ function openTypeDetail(name) {
     © 2026 내집구독 · LH·SH·청약홈 공식 데이터 기반 · 비영리 무료 서비스 · <a href="index.html" style="color:inherit;text-decoration:underline;">홈으로</a>
 </footer>
 
-<!-- ── Supabase Auth SDK (body 끝에 로드 — head 블로킹 방지) ── -->
-<script src="/auth-common.js"></script>
+<!-- ── NJG Auth (인라인 — CDN/외부파일 의존 제거) ── -->
+<script>
+(function(){
+const SB_URL='https://ajgurlfgifvicvxsxzqh.supabase.co';
+const SB_KEY='sb_publishable_VWYME33r2PPoiBgyA5Zsxw_6bW7Hh_5';
+const SESSION_KEY='njg_auth_session';
+function _saveSession(s){if(s)localStorage.setItem(SESSION_KEY,JSON.stringify(s));else localStorage.removeItem(SESSION_KEY);}
+function _loadSession(){try{return JSON.parse(localStorage.getItem(SESSION_KEY));}catch{return null;}}
+function _headers(token){const h={'Content-Type':'application/json','apikey':SB_KEY};h['Authorization']='Bearer '+(token||SB_KEY);return h;}
+const _listeners=[];
+function _notify(user){_listeners.forEach(fn=>{try{fn('SIGNED_'+(user?'IN':'OUT'),user);}catch(e){}});}
+async function _refreshToken(refresh_token){
+  try{
+    const res=await fetch(`${SB_URL}/auth/v1/token?grant_type=refresh_token`,{method:'POST',headers:_headers(),body:JSON.stringify({refresh_token})});
+    if(!res.ok){_saveSession(null);return null;}
+    const data=await res.json();
+    const session={...data,expires_at:Math.floor(Date.now()/1000)+(data.expires_in||3600)};
+    _saveSession(session);return session;
+  }catch{_saveSession(null);return null;}
+}
+async function authGetUser(){
+  let session=_loadSession();
+  if(!session?.access_token)return null;
+  const now=Math.floor(Date.now()/1000);
+  if(session.expires_at&&session.expires_at-60<now){
+    if(session.refresh_token){session=await _refreshToken(session.refresh_token);if(!session)return null;}
+    else{_saveSession(null);return null;}
+  }
+  return session.user||null;
+}
+async function authSignUp(email,password){
+  const res=await fetch(`${SB_URL}/auth/v1/signup`,{method:'POST',headers:_headers(),body:JSON.stringify({email,password,options:{emailRedirectTo:'https://homesubscribe.org/profile.html'}})});
+  const data=await res.json();
+  if(!res.ok)throw new Error(data.msg||data.message||'회원가입 실패');
+  if(data.access_token){const session={...data,expires_at:Math.floor(Date.now()/1000)+(data.expires_in||3600)};_saveSession(session);_notify(session.user);}
+  return data;
+}
+async function authSignIn(email,password){
+  const res=await fetch(`${SB_URL}/auth/v1/token?grant_type=password`,{method:'POST',headers:_headers(),body:JSON.stringify({email,password})});
+  const data=await res.json();
+  if(!res.ok)throw new Error(data.error_description||data.msg||'로그인 실패');
+  const session={...data,expires_at:Math.floor(Date.now()/1000)+(data.expires_in||3600)};
+  _saveSession(session);_notify(session.user);return data;
+}
+async function authSignOut(){
+  const session=_loadSession();
+  if(session?.access_token){await fetch(`${SB_URL}/auth/v1/logout`,{method:'POST',headers:_headers(session.access_token)}).catch(()=>{});}
+  _saveSession(null);_notify(null);
+}
+function authOnChange(callback){
+  _listeners.push(callback);
+  authGetUser().then(user=>{try{callback('INITIAL_SESSION',user);}catch(e){}});
+}
+async function saveConditions(conditions){
+  const user=await authGetUser();if(!user)return null;
+  const session=_loadSession();
+  const res=await fetch(`${SB_URL}/rest/v1/user_conditions`,{method:'POST',headers:{..._headers(session.access_token),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({user_id:user.id,conditions})});
+  if(!res.ok){const e=await res.json();throw new Error(e.message||'저장 실패');}
+  return await res.json();
+}
+async function loadConditions(){
+  const user=await authGetUser();if(!user)return null;
+  const session=_loadSession();
+  const res=await fetch(`${SB_URL}/rest/v1/user_conditions?user_id=eq.${user.id}&select=conditions,updated_at&limit=1`,{headers:_headers(session.access_token)});
+  if(!res.ok)return null;
+  const data=await res.json();return data[0]||null;
+}
+window.NJG_AUTH={getUser:authGetUser,signUp:authSignUp,signIn:authSignIn,signOut:authSignOut,onChange:authOnChange,saveConditions,loadConditions};
+})();
+</script>
 
 <!-- ── 로그인/회원가입 모달 ── -->
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuthModal()">
