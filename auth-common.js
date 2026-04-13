@@ -23,7 +23,11 @@ async function authGetUser() {
 
 /** 이메일/비밀번호 회원가입 */
 async function authSignUp(email, password) {
-  const { data, error } = await getSB().auth.signUp({ email, password });
+  const { data, error } = await getSB().auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo: 'https://homesubscribe.org/profile.html' }
+  });
   if (error) throw error;
   return data;
 }
