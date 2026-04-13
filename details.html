@@ -7717,14 +7717,15 @@ function restoreConditions(cond) {
     try {
       const saved = await NJG_AUTH.loadConditions();
       if (saved && saved.conditions && Object.keys(saved.conditions).length > 0) {
+        // 저장된 조건을 폼에만 채움 — 자동 분석은 하지 않음
+        // (사용자가 직접 확인 후 "분석 시작" 버튼을 눌러야 함)
         restoreConditions(saved.conditions);
-        // 조건이 있으면 자동 분석 실행
-        if (typeof runAnalysis === 'function') {
-          setTimeout(() => {
-            runAnalysis();
-            const results = document.getElementById('results');
-            if (results) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 600);
+        // 불러왔음을 안내하는 토스트 메시지
+        const banner = document.getElementById('auth-save-banner');
+        if (banner) {
+          banner.innerHTML = '✅ 저장된 조건을 불러왔습니다. 확인 후 분석 시작 버튼을 눌러주세요.';
+          banner.classList.add('show');
+          setTimeout(() => banner.classList.remove('show'), 4000);
         }
       }
     } catch(e) { console.warn('조건 불러오기 실패:', e); }
