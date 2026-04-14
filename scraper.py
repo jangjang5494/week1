@@ -1095,7 +1095,7 @@ def dedup(announcements):
         # LH 최우선 (기관 간 동일 공고 시 LH 버전 유지)
         "lh_rental": 1, "lh_sale": 1,
         # SH / 청년안심주택
-        "sh_rental": 2, "sh_sale": 2, "sh_notice": 2, "sh_social": 2,
+        "sh_rental": 2, "sh_sale": 2, "sh_notice": 2,
 
         "youth_housing": 2,
         # 청약홈은 집계 사이트이므로 기관 직접 공고보다 후순위
@@ -1274,16 +1274,9 @@ def main():
         normal_max_pages=2,    # 오늘+전날 공고는 2페이지면 충분
         normal_since_days=1    # 오늘 + 전날까지만
     )
-    sh_social = SHCrawler(
-        inst_key="sh_social", base=sh_base,
-        list_path="/app/lay2/program/S48T1581C563/www/brd/m_247/list.do",
-        view_path="/app/lay2/program/S48T1581C563/www/brd/m_247/view.do",
-        multi_itm_seq="2"
-    )
     all_announcements += sh_rental.crawl(initial)
     all_announcements += sh_sale.crawl(initial)
     all_announcements += sh_notice.crawl(initial)
-    all_announcements += sh_social.crawl(initial)
 
     # ── LH ──────────────────────────────────────────────────────────────
     all_announcements += crawl_lh(mi="1026", source_key="lh_rental", initial=initial)
