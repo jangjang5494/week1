@@ -995,7 +995,17 @@ function renderTab1(data) {
     return;
   }
   rowRawData = {};
-  tbody.innerHTML = data.map(r => {
+  const now0 = new Date();
+  const nowKST0 = new Date(now0.getTime() + 9 * 3600 * 1000);
+  const todayKST0 = nowKST0.toISOString().slice(0, 10);
+  const kstHour0 = nowKST0.getUTCHours();
+  const isExpiredRow = (r) => {
+    const end = r.apply_end ? r.apply_end.slice(0, 10) : '';
+    if (!end) return false;
+    return end < todayKST0 || (end === todayKST0 && kstHour0 >= 18);
+  };
+  const visibleData = data.filter(r => !isExpiredRow(r));
+  tbody.innerHTML = visibleData.map(r => {
     rowRawData[r.id] = r.raw_data || {};
     const isLocked = !!(r.raw_data || {}).date_locked;
     const types = Array.isArray(r.types) ? r.types.join(', ') : (r.types || '-');
