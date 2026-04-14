@@ -1229,6 +1229,9 @@ def save_to_supabase(announcements):
         try:
             with urllib.request.urlopen(req, timeout=30) as r:
                 inserted += len(batch)
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", errors="replace")
+            print(f"  [Supabase] 배치 오류 (i={i}): {e} — {body}")
         except Exception as e:
             print(f"  [Supabase] 배치 오류 (i={i}): {e}")
 
