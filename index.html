@@ -482,9 +482,9 @@ body {
 .how-title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
 .how-desc { font-size: 13.5px; color: var(--text2); line-height: 1.8; word-break: keep-all; }
 
-/* ══ S5 CTA ══ */
+/* ══ S5 제휴문의 ══ */
 #cta {
-  padding: 130px 24px;
+  padding: 110px 24px;
   background: linear-gradient(-45deg, #0f0c29, #302b63, #4338ca, #7c3aed);
   background-size: 300% 300%;
   animation: gradMove 12s ease infinite;
@@ -512,6 +512,33 @@ body {
 .cta-btn svg { transition: transform .22s; }
 .cta-btn:hover svg { transform: translateX(4px); }
 .cta-note { margin-top: 22px; font-size: 12.5px; color: rgba(255,255,255,.3); }
+.contact-wrap { max-width: 560px; margin: 0 auto; }
+.contact-info { display: flex; gap: 28px; justify-content: center; margin-bottom: 40px; flex-wrap: wrap; }
+.contact-info-item { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.65); font-size: 14px; }
+.contact-info-item svg { opacity: .7; flex-shrink: 0; }
+.contact-form { display: flex; flex-direction: column; gap: 14px; }
+.contact-form input,
+.contact-form textarea {
+  width: 100%; padding: 14px 18px;
+  background: rgba(255,255,255,.1); border: 1.5px solid rgba(255,255,255,.18);
+  border-radius: 12px; color: #fff; font-size: 15px; font-family: inherit;
+  outline: none; transition: border-color .2s, background .2s;
+  box-sizing: border-box;
+}
+.contact-form input::placeholder,
+.contact-form textarea::placeholder { color: rgba(255,255,255,.35); }
+.contact-form input:focus,
+.contact-form textarea:focus { border-color: rgba(255,255,255,.5); background: rgba(255,255,255,.15); }
+.contact-form textarea { resize: vertical; min-height: 130px; }
+.contact-submit {
+  padding: 16px; border: none; border-radius: 12px;
+  background: #fff; color: #4338ca; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: transform .2s, box-shadow .2s;
+  font-family: inherit;
+}
+.contact-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,.25); }
+.contact-success { display: none; text-align: center; padding: 24px; color: rgba(255,255,255,.8); font-size: 15px; }
+@media(max-width:600px){ .contact-info { gap: 16px; } }
 
 /* ══ FOOTER ══ */
 #footer {
@@ -843,17 +870,33 @@ window.NJG_AUTH={getUser:authGetUser,signUp:authSignUp,signIn:authSignIn,signOut
   </div>
 </section>
 
-<!-- ══ S5 CTA ══ -->
-<section id="cta" aria-label="서비스 시작">
-  <h2 class="cta-title anim">지금 바로, 내가 받을 수 있는<br>주거 혜택을 확인하세요</h2>
-  <p class="cta-sub anim d1">무료 · 3분 · 로그인 불필요</p>
-  <div class="anim d2">
-    <a href="./details.html" class="cta-btn">
-      정밀분석 시작하기
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </a>
+<!-- ══ S5 제휴문의 ══ -->
+<section id="cta" aria-label="제휴문의">
+  <div class="contact-wrap">
+    <div class="sec-eyebrow anim" style="color:rgba(255,255,255,.55);">Partnership</div>
+    <h2 class="cta-title anim d1">제휴 및 문의</h2>
+    <p class="cta-sub anim d1">서비스 제휴, 광고, 협업 등 다양한 문의를 환영합니다.</p>
+    <div class="contact-info anim d2">
+      <div class="contact-info-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+        wjdgns5494@gmail.com
+      </div>
+      <div class="contact-info-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.91-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        010-8405-5238
+      </div>
+    </div>
+    <form class="contact-form anim d2" action="https://formspree.io/f/xnjbwzvq" method="POST" id="contact-form">
+      <input type="text" name="name" placeholder="이름 / 회사명" required>
+      <input type="email" name="email" placeholder="이메일 주소" required>
+      <input type="text" name="subject" placeholder="문의 유형 (제휴 / 광고 / 기타)">
+      <textarea name="message" placeholder="문의 내용을 입력해주세요." required></textarea>
+      <button type="submit" class="contact-submit">문의 보내기</button>
+    </form>
+    <div class="contact-success" id="contact-success">
+      ✅ 문의가 접수되었습니다. 빠른 시일 내에 답변드리겠습니다.
+    </div>
   </div>
-  <p class="cta-note anim d3">2026년 4월 기준 · LH·SH 공식 자격요건 기반</p>
 </section>
 
 </main><!-- /#main-content -->
@@ -922,6 +965,37 @@ const cio = new IntersectionObserver(entries=>{
 },{threshold:0.3});
 document.querySelectorAll('[data-target]').forEach(el=>cio.observe(el));
 
+})();
+</script>
+
+<script>
+// 제휴문의 폼 — AJAX 제출 (Formspree)
+(function(){
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = form.querySelector('.contact-submit');
+    btn.textContent = '전송 중...';
+    btn.disabled = true;
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        form.style.display = 'none';
+        document.getElementById('contact-success').style.display = 'block';
+      } else {
+        btn.textContent = '전송 실패 — 다시 시도해주세요';
+        btn.disabled = false;
+      }
+    } catch {
+      btn.textContent = '전송 실패 — 다시 시도해주세요';
+      btn.disabled = false;
+    }
+  });
 })();
 </script>
 
