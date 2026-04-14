@@ -1281,7 +1281,26 @@ fetch(`${SB_URL}/rest/v1/announcements?status=neq.마감&raw_data->>source_key=n
     headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
 })
     .then(r => r.ok ? r.json() : [])
-    .then(data => { announcementsData = data || []; })
+    .then(data => {
+        const now = new Date();
+        const nowKST = new Date(now.getTime() + 9 * 3600 * 1000); // UTC+9 보정
+        const todayStr = nowKST.toISOString().slice(0, 10);
+        const kstHour = nowKST.getUTCHours();
+        const isPastDeadline = (endStr) => {
+            // 마감일 당일 18:00 KST 이후면 마감 처리
+            if (endStr < todayStr) return true;
+            if (endStr === todayStr && kstHour >= 18) return true;
+            return false;
+        };
+        announcementsData = (data || []).map(a => {
+            if (a.apply_start && a.apply_end) {
+                if (isPastDeadline(a.apply_end)) return { ...a, status: '마감' };
+                if (a.apply_start <= todayStr) return { ...a, status: '진행중' };
+                return { ...a, status: '예정' };
+            }
+            return a;
+        }).filter(a => a.status !== '마감');
+    })
     .catch(() => {});
 
 function getMatchingAnnouncements(typeName) {
