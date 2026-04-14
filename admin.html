@@ -1002,11 +1002,15 @@ function renderTab1(data) {
     const start = r.apply_start ? r.apply_start.slice(0,10) : '';
     const end   = r.apply_end   ? r.apply_end.slice(0,10)   : '';
     const date  = r.date ? r.date.slice(0,10) : (r.created_at ? r.created_at.slice(0,10) : '-');
-    // status 클라이언트에서 재계산 (당일 23:59:59까지 진행중)
+    // status 클라이언트에서 재계산 (당일 KST 18:00 마감)
     const now = new Date();
+    const nowKST = new Date(now.getTime() + 9 * 3600 * 1000);
+    const todayKST = nowKST.toISOString().slice(0, 10);
+    const kstHour = nowKST.getUTCHours();
+    const isExpired = (endStr) => endStr < todayKST || (endStr === todayKST && kstHour >= 18);
     const liveStatus = r.apply_end
-      ? (new Date(r.apply_end + 'T23:59:59') < now ? '마감'
-        : (r.apply_start && new Date(r.apply_start) > now ? '예정' : '진행중'))
+      ? (isExpired(r.apply_end) ? '마감'
+        : (r.apply_start && r.apply_start > todayKST ? '예정' : '진행중'))
       : r.status;
     const rd = r.raw_data || {};
     const isParsed  = rd.source === 'pdf_parsed';
@@ -1096,8 +1100,11 @@ async function sendToExceptionFromTab2(id) {
   if (!start || !end) { toast('먼저 신청 시작·마감일을 입력하세요.', 'error'); return; }
 
   const now = new Date();
-  const endDate2 = new Date(end + 'T23:59:59');
-  const status = endDate2 < now ? '마감' : (new Date(start) > now ? '예정' : '진행중');
+  const nowKST2 = new Date(now.getTime() + 9 * 3600 * 1000);
+  const todayKST2 = nowKST2.toISOString().slice(0, 10);
+  const kstHour2 = nowKST2.getUTCHours();
+  const status = (end < todayKST2 || (end === todayKST2 && kstHour2 >= 18)) ? '마감'
+    : (start > todayKST2 ? '예정' : '진행중');
 
   // 날짜 저장 + exception_pending 플래그 설정
   try {
@@ -1291,8 +1298,11 @@ async function approveReview(id) {
   if (!start || !end) { toast('신청 시작·마감일을 모두 입력하세요.', 'error'); return; }
 
   const now = new Date();
-  const endDate = new Date(end + 'T23:59:59');
-  const status = endDate < now ? '마감' : (new Date(start) > now ? '예정' : '진행중');
+  const nowKST3 = new Date(now.getTime() + 9 * 3600 * 1000);
+  const todayKST3 = nowKST3.toISOString().slice(0, 10);
+  const kstHour3 = nowKST3.getUTCHours();
+  const status = (end < todayKST3 || (end === todayKST3 && kstHour3 >= 18)) ? '마감'
+    : (start > todayKST3 ? '예정' : '진행중');
 
   const typesRaw = document.getElementById(`rt-${id}`)?.value || '';
   const types = typesRaw.split(',').map(s => s.trim()).filter(Boolean);
