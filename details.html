@@ -7458,6 +7458,10 @@ async function loadConditions(){
   if(!res.ok)return null;
   const data=await res.json();return data[0]||null;
 }
+async function authResetPassword(email){
+  const res=await fetch(`${SB_URL}/auth/v1/recover`,{method:'POST',headers:_headers(),body:JSON.stringify({email,options:{redirectTo:'https://homesubscribe.org/reset.html'}})});
+  if(!res.ok){const d=await res.json();throw new Error(d.msg||d.message||'전송 실패');}
+}
 function authSignInWithGoogle(){
   const redirectTo=encodeURIComponent(window.location.origin+window.location.pathname);
   window.location.href=`${SB_URL}/auth/v1/authorize?provider=google&redirect_to=${redirectTo}`;
@@ -7480,7 +7484,7 @@ function authSignInWithGoogle(){
     }
   }
 })();
-window.NJG_AUTH={getUser:authGetUser,signUp:authSignUp,signIn:authSignIn,signOut:authSignOut,onChange:authOnChange,saveConditions,loadConditions,signInWithGoogle:authSignInWithGoogle};
+window.NJG_AUTH={getUser:authGetUser,signUp:authSignUp,signIn:authSignIn,signOut:authSignOut,onChange:authOnChange,saveConditions,loadConditions,signInWithGoogle:authSignInWithGoogle,resetPassword:authResetPassword};
 })();
 </script>
 
@@ -7503,7 +7507,18 @@ window.NJG_AUTH={getUser:authGetUser,signUp:authSignUp,signIn:authSignIn,signOut
       <div class="fg"><label>이메일</label><input type="email" id="login-email" placeholder="example@email.com" autocomplete="email"></div>
       <div class="fg"><label>비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호" autocomplete="current-password"></div>
       <button class="auth-btn-primary" id="login-submit-btn" onclick="doLogin()">로그인</button>
-      <p class="auth-switch">아직 계정이 없으신가요? <a onclick="switchAuthTab('signup')">회원가입</a></p>
+      <p class="auth-switch">아직 계정이 없으신가요? <a onclick="switchAuthTab('signup')">회원가입</a> · <a onclick="switchAuthTab('reset')">비밀번호 찾기</a></p>
+    </div>
+
+    <!-- 비밀번호 찾기 폼 -->
+    <div id="auth-reset-form" style="display:none;">
+      <h2>비밀번호 찾기</h2>
+      <p class="auth-sub">가입한 이메일로 재설정 링크를 보내드립니다.</p>
+      <div class="auth-error" id="reset-error"></div>
+      <div class="auth-success" id="reset-success"></div>
+      <div class="fg"><label>이메일</label><input type="email" id="reset-email" placeholder="example@email.com" autocomplete="email"></div>
+      <button class="auth-btn-primary" id="reset-submit-btn" onclick="doResetPassword()">재설정 링크 보내기</button>
+      <p class="auth-switch"><a onclick="switchAuthTab('login')">← 로그인으로 돌아가기</a></p>
     </div>
 
     <!-- 회원가입 폼 -->
@@ -7537,10 +7552,24 @@ function closeAuthModal() {
 function switchAuthTab(tab) {
   document.getElementById('auth-login-form').style.display  = tab === 'login'  ? '' : 'none';
   document.getElementById('auth-signup-form').style.display = tab === 'signup' ? '' : 'none';
-  ['login-error','login-success','signup-error','signup-success'].forEach(id => {
+  document.getElementById('auth-reset-form').style.display  = tab === 'reset'  ? '' : 'none';
+  ['login-error','login-success','signup-error','signup-success','reset-error','reset-success'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.classList.remove('show'); el.textContent = ''; }
   });
+}
+async function doResetPassword() {
+  const email = document.getElementById('reset-email').value.trim();
+  const btn   = document.getElementById('reset-submit-btn');
+  document.getElementById('reset-error').classList.remove('show');
+  if (!email) { setAuthError('reset-error', '이메일을 입력해주세요.'); return; }
+  btn.disabled = true; btn.textContent = '전송 중...';
+  try {
+    await NJG_AUTH.resetPassword(email);
+    setAuthSuccess('reset-success', '✅ 재설정 링크를 이메일로 보냈습니다. 메일함을 확인해주세요.');
+  } catch(e) {
+    setAuthError('reset-error', e.message);
+  } finally { btn.disabled = false; btn.textContent = '재설정 링크 보내기'; }
 }
 function setAuthError(id, msg)   { const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
 function setAuthSuccess(id, msg) { const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
