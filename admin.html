@@ -1008,9 +1008,9 @@ function renderTab1(data) {
     const todayKST = nowKST.toISOString().slice(0, 10);
     const kstHour = nowKST.getUTCHours();
     const isExpired = (endStr) => endStr < todayKST || (endStr === todayKST && kstHour >= 18);
-    const liveStatus = r.apply_end
-      ? (isExpired(r.apply_end) ? '마감'
-        : (r.apply_start && r.apply_start > todayKST ? '예정' : '진행중'))
+    const liveStatus = end
+      ? (isExpired(end) ? '마감'
+        : (start && start > todayKST ? '예정' : '진행중'))
       : r.status;
     const rd = r.raw_data || {};
     const isParsed  = rd.source === 'pdf_parsed';
