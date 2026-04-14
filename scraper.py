@@ -1206,14 +1206,17 @@ def save_to_supabase(announcements):
     except Exception as e:
         print(f"  [Supabase] 잠금 공고 조회 오류: {e}")
 
-    # 잠긴 행은 날짜 필드 제거
+    # 잠긴 행 / 일반 행 분리 — 키가 달라야 하므로 별도 배치로 전송
+    DATE_KEYS = ("apply_start", "apply_end", "status")
+    normal_rows = []
+    locked_rows = []
     for row in rows:
         if row["seq"] in locked_seqs:
-            row.pop("apply_start", None)
-            row.pop("apply_end", None)
-            row.pop("status", None)
+            locked_rows.append({k: v for k, v in row.items() if k not in DATE_KEYS})
+        else:
+            normal_rows.append(row)
 
-    # 배치 upsert (100개씩) — on_conflict 명시 필요
+    # 배치 upsert 헬퍼
     endpoint = f"{sb_url}/rest/v1/announcements?on_conflict=institution,seq"
     headers = {
         "apikey":          sb_key,
@@ -1221,20 +1224,25 @@ def save_to_supabase(announcements):
         "Content-Type":    "application/json",
         "Prefer":          "resolution=merge-duplicates,return=minimal",
     }
-    inserted = 0
-    for i in range(0, len(rows), 100):
-        batch = rows[i:i+100]
-        body = json.dumps(batch).encode("utf-8")
-        req = urllib.request.Request(endpoint, data=body, headers=headers, method="POST")
-        try:
-            with urllib.request.urlopen(req, timeout=30) as r:
-                inserted += len(batch)
-        except urllib.error.HTTPError as e:
-            body = e.read().decode("utf-8", errors="replace")
-            print(f"  [Supabase] 배치 오류 (i={i}): {e} — {body}")
-        except Exception as e:
-            print(f"  [Supabase] 배치 오류 (i={i}): {e}")
 
+    def upsert_batch(batch_rows, label=""):
+        inserted = 0
+        for i in range(0, len(batch_rows), 100):
+            batch = batch_rows[i:i+100]
+            body = json.dumps(batch).encode("utf-8")
+            req = urllib.request.Request(endpoint, data=body, headers=headers, method="POST")
+            try:
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    inserted += len(batch)
+            except urllib.error.HTTPError as e:
+                err_body = e.read().decode("utf-8", errors="replace")
+                print(f"  [Supabase] 배치 오류{label} (i={i}): {e} — {err_body}")
+            except Exception as e:
+                print(f"  [Supabase] 배치 오류{label} (i={i}): {e}")
+        return inserted
+
+    inserted = upsert_batch(normal_rows)
+    inserted += upsert_batch(locked_rows, " [잠금]")
     print(f"  [Supabase] {inserted}건 upsert 완료")
 
 
