@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>내집구독 아이콘 생성</title>
+<style>
+  body { font-family: sans-serif; padding: 40px; background: #f5f5f5; }
+  h2 { color: #4f46e5; }
+  .btn { margin: 8px; padding: 12px 24px; background: #4f46e5; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; }
+  .btn:hover { background: #4338ca; }
+  canvas { display: none; }
+  .done { color: green; font-weight: bold; margin-top: 16px; }
+</style>
+</head>
+<body>
+<h2>내집구독 PWA 아이콘 생성기</h2>
+<p>아래 버튼을 클릭하면 아이콘 PNG 파일이 자동으로 다운로드됩니다.<br>
+다운로드된 파일을 <code>week1/icons/</code> 폴더에 넣어주세요.</p>
+
+<button class="btn" onclick="generate(192, 'icon-192.png')">192×192 다운로드</button>
+<button class="btn" onclick="generate(512, 'icon-512.png')">512×512 다운로드</button>
+<button class="btn" onclick="generateAll()">둘 다 한번에 다운로드</button>
+
+<canvas id="c"></canvas>
+<div id="msg"></div>
+
+<script>
+function drawIcon(ctx, size) {
+  const r = size * 0.22; // 모서리 둥글기
+
+  // 배경 그라디언트
+  const grad = ctx.createLinearGradient(0, 0, size, size);
+  grad.addColorStop(0, '#4f46e5');
+  grad.addColorStop(1, '#7c3aed');
+
+  // 둥근 사각형
+  ctx.beginPath();
+  ctx.moveTo(r, 0);
+  ctx.lineTo(size - r, 0);
+  ctx.quadraticCurveTo(size, 0, size, r);
+  ctx.lineTo(size, size - r);
+  ctx.quadraticCurveTo(size, size, size - r, size);
+  ctx.lineTo(r, size);
+  ctx.quadraticCurveTo(0, size, 0, size - r);
+  ctx.lineTo(0, r);
+  ctx.quadraticCurveTo(0, 0, r, 0);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // 집 모양 (원본 SVG 비율 그대로)
+  const s = size / 32;
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.moveTo(16 * s, 8 * s);
+  ctx.lineTo(8 * s, 14.5 * s);
+  ctx.lineTo(8 * s, 23.5 * s);
+  ctx.quadraticCurveTo(8 * s, 24.5 * s, 9 * s, 24.5 * s);
+  ctx.lineTo(13 * s, 24.5 * s);
+  ctx.lineTo(13 * s, 18.5 * s);
+  ctx.lineTo(19 * s, 18.5 * s);
+  ctx.lineTo(19 * s, 24.5 * s);
+  ctx.lineTo(23 * s, 24.5 * s);
+  ctx.quadraticCurveTo(24 * s, 24.5 * s, 24 * s, 23.5 * s);
+  ctx.lineTo(24 * s, 14.5 * s);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function generate(size, filename) {
+  const canvas = document.getElementById('c');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, size, size);
+  drawIcon(ctx, size);
+  const a = document.createElement('a');
+  a.download = filename;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  document.getElementById('msg').innerHTML = `✅ ${filename} 다운로드 완료! <code>icons/</code> 폴더에 넣어주세요.`;
+}
+
+function generateAll() {
+  generate(192, 'icon-192.png');
+  setTimeout(() => generate(512, 'icon-512.png'), 500);
+  document.getElementById('msg').innerHTML = `✅ 두 파일 다운로드 완료! <code>week1/icons/</code> 폴더에 넣어주세요.`;
+}
+</script>
+</body>
+</html>

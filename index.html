@@ -158,6 +158,13 @@
 </script>
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#4f46e5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="내집구독">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <!-- ── 성능 힌트 ── -->
 <link rel="preload" as="video" href="assets/videos/hero_mobile.mp4" type="video/mp4">
 <link rel="prefetch" href="./details.html">
@@ -1139,6 +1146,13 @@ async function doSignUp() {
   } catch(e) {
     setAuthError('signup-error', e.message);
   } finally { btn.disabled = false; btn.textContent = '회원가입'; }
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
 }
 </script>
 </body>
