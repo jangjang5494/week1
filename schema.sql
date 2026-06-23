@@ -433,7 +433,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 영구임대
 ('LH_PERMANENT', '임대주택', '공공임대', '영구임대', 'LH', '전국', 'LH 영구임대주택',
  '생계·의료수급자, 국가유공자, 한부모, 장애인 등 취약계층', TRUE,
- '{"homeless_required":true,"income_type":"없음(자격요건)","notes":["신청: 행정복지센터(주민센터) — LH청약플러스 아님","대상: 생계·의료수급자/국가유공자·유족/일본군위안부피해자/한부모가족/북한이탈주민/65세이상수급자·차상위/장애인(소득70%이하)","절차: 행정복지센터신청→지자체예비명단→LH통보→퇴거시입주"]}',
+ '{"homeless_required":true,"income_type":"없음(자격요건)","asset_limit":241000000,"car_limit":37080000,"notes":["신청: 행정복지센터(주민센터) — LH청약플러스 아님","대상: 생계·의료수급자/국가유공자·유족/일본군위안부피해자/한부모가족/북한이탈주민/65세이상수급자·차상위/장애인(소득70%이하)","자산: 총24,100만원·자동차3,708만원 이하","절차: 행정복지센터신청→지자체예비명단→LH통보→퇴거시입주"]}',
  '{"rent_pct":30,"period_years":50,"area_max_sqm":40,"notes":["2년단위 갱신시 자격 재확인"]}',
  '{"method":["방문"],"contact":"읍면동 행정복지센터","period_type":"상시(퇴거 발생 시)"}',
  'https://apply.lh.or.kr'),
@@ -441,7 +441,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 장기전세주택
 ('LH_LONG_JEONSE', '임대주택', '전세임대', '장기전세', 'LH', '전국', 'LH 장기전세주택',
  '무주택세대구성원 (소득 100% 이하, 서울·경기 공급)', TRUE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":120,"asset_limit_seoul":662000000,"asset_limit_gyeonggi":417000000,"car_limit":45420000,"notes":["60㎡이하: 소득100%이하 (50㎡이하 우선공급 50%, 50~60㎡ 우선공급 70%)","60㎡초과: 소득120%이하 (우선공급 100%)","50㎡미만: 청약저축 불필요 / 50~60㎡: 1순위 24회·2순위 6회","서울 장기전세는 SH(시프트)로 공급 — LH는 경기 등 비서울 지역","배점: 무주택기간·나이·부양가족·거주기간·자녀수·납입횟수 각 최대5점","감점: 최근1년 -10점 / 최근3년 -5점"]}',
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":120,"asset_limit_seoul":640000000,"asset_limit_gyeonggi":408000000,"car_limit":45420000,"notes":["60㎡이하: 소득100%이하 (50㎡이하 우선공급 50%, 50~60㎡ 우선공급 70%)","60㎡초과: 소득120%이하 (우선공급 100%)","50㎡미만: 청약저축 불필요 / 50~60㎡: 1순위 24회·2순위 6회","서울 장기전세는 SH(시프트)로 공급 — LH는 경기 등 비서울 지역","배점: 무주택기간·나이·부양가족·거주기간·자녀수·납입횟수 각 최대5점","감점: 최근1년 -10점 / 최근3년 -5점","★2025년 기준: 서울 64,000만/경기 40,800만"]}',
  '{"jeonse_pct_max":80,"period_years":20,"area_max_sqm":85}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
@@ -529,7 +529,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 신혼희망타운 (분양형)
 ('LH_HOPE_TOWN', '분양주택', '공공분양', '신혼희망타운', 'LH', '전국', 'LH 신혼희망타운 (분양형)',
  '혼인7년이내·예비신혼·6세이하자녀·한부모 (소득 130% 이하)', TRUE,
- '{"marital_status":["신혼(7년이내)","예비신혼","한부모"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"asset_limit":362000000,"marriage_years_max":7,"savings_min_rank1":6,"newborn_income_bonus_pct":20,"newborn_asset_bonus_pct":20,"notes":["우선공급30%(혼인2년이내·2세이하자녀): 단독130%·맞벌이140%, 배점제","일반공급60%(혼인2~7년·3~6세자녀): 단독130%·맞벌이140%, 배점제","추첨공급10%: 단독130%·맞벌이200%","신생아(2023.3.28이후): 소득 +20%p / 자산 +20%p 완화 (1명 10%p / 2명이상 20%p)","예비신혼부부: 공고일로부터 1년 내 혼인증명 필요","생애 1회 제한"]}',
+ '{"marital_status":["신혼(7년이내)","예비신혼","한부모","혼인가구(6세이하자녀)"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":130,"income_pct_married":140,"asset_limit":362000000,"car_limit":45630000,"marriage_years_max":7,"savings_min_rank1":6,"newborn_income_bonus_pct":20,"newborn_asset_bonus_pct":20,"notes":["우선공급30%(혼인2년이내 OR 2세이하자녀): 단독130%·맞벌이140%, 배점제","일반공급60%(혼인2~7년·3~6세자녀): 단독130%·맞벌이140%, 배점제","추첨공급10%: 단독130%·맞벌이200%","신생아(2023.3.28이후): 소득·자산 완화 (1명 +10%p / 2명이상 +20%p)","예비신혼부부: 공고일로부터 1년 내 혼인증명 필요","6세이하 자녀 둔 혼인가구도 대상 포함","생애 1회 제한"]}',
  '{"area_max_sqm":60,"notes":["신혼희망타운 전용 주택담보대출 주택가격 30%이상 가입 필수(총자산이 공급가격 초과 시)"]}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr/lhapply/cm/cntnts/cntntsView.do?mi=1243&cntntsId=1132'),
@@ -545,7 +545,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 다자녀 매입임대 ★2026-03-21 신규 추가
 ('LH_BUY_MULTICHILDREN', '임대주택', '매입임대', '매입임대', 'LH', '전국', 'LH 다자녀 매입임대주택',
  '미성년 자녀 2인 이상 양육 무주택 가구 (소득 70% 이하)', TRUE,
- '{"homeless_required":true,"children_min":2,"income_type":"도시근로자월평균","income_pct":70,"asset_limit":337000000,"car_limit":45630000,"notes":["미성년 자녀 2인 이상 (태아 포함)","신청: 지자체(주민센터)","1순위: 신생아가구 중 수급자·한부모·차상위 다자녀가구","2순위: 신생아 아닌 수급자·한부모·차상위 다자녀가구","3순위: 소득70%이하 기타 다자녀가구","자산: 국민임대기준 33,700만원(매입형)"]}',
+ '{"homeless_required":true,"children_min":2,"income_type":"도시근로자월평균","income_pct":70,"asset_limit":337000000,"car_limit":45630000,"notes":["미성년 자녀 2인 이상 (태아 포함)","신청: 지자체(주민센터)","1순위: 신생아가구+수급자/한부모/차상위(AND조건)","2순위: 신생아가구만 or 수급자/한부모/차상위만","3순위: 소득70%이하 기타 다자녀가구","자산: 국민임대기준 33,700만원(매입형)"]}',
  '{"rent_pct_min":30,"rent_pct_max":40,"period_max_years":20,"renewal_count":9}',
  '{"method":["방문"],"contact":"지자체(행정복지센터)","period_type":"공고별","url":"https://apply.lh.or.kr"}',
  'https://apply.lh.or.kr'),
@@ -568,8 +568,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 
 -- LH 집주인 임대주택 ★2026-03-28 신규 추가
 ('LH_LANDLORD_RENT', '임대주택', '매입임대', '집주인임대', 'LH', '전국', 'LH 집주인 임대주택',
- '청년(19~39세)·신혼부부(혼인7년이내) (소득 120% 이하)', TRUE,
- '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":120,"age_min_youth":19,"age_max_youth":39,"marriage_years_max":7,"notes":["청년(만19~39세): 소득 있으면 본인 120%이하 / 소득 없으면 부모 120%이하","신혼부부(혼인7년이내): 소득 120%이하","민간 소유 주택을 LH가 위탁받아 임대하는 방식","고령자 유형 제외 (청년·신혼부부만 해당)"]}',
+ '청년(19~39세)·신혼부부(혼인7년이내)·고령자(65세이상) (소득 120% 이하)', TRUE,
+ '{"homeless_required":true,"income_type":"도시근로자월평균","income_pct":120,"age_min_youth":19,"age_max_youth":39,"marriage_years_max":7,"notes":["청년(만19~39세): 소득 있으면 본인 120%이하 / 소득 없으면 부모 120%이하","신혼부부(혼인7년이내): 소득 120%이하","고령자(만65세이상): 소득 120%이하","민간 소유 주택을 LH가 위탁받아 임대하는 방식"]}',
  '{"rent_pct":85,"notes":["시중시세 85% 수준"]}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr'),
@@ -578,15 +578,15 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 행복주택 청년
 ('SH_HAPPY_YOUTH', '임대주택', '공공임대', '행복주택', 'SH', '서울', 'SH 행복주택 (청년)',
  '만19~39세 서울 거주 청년 무주택자', TRUE,
- '{"age_min":19,"age_max":39,"marital_status":["미혼"],"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":273000000,"car_limit":45630000,"social_newcomer_eligible":true,"social_newcomer_years_max":5,"notes":["사회초년생: 나이무관·근무경력5년이내","청약종합저축 가입 필요 (미가입자 입주 전까지 가입)","1순위: 행복주택 소재 자치구 거주지 또는 소득근거지","2순위: 서울 내 타 자치구 거주지 또는 소득근거지","가점: 거주기간(최대3점)·청약통장가입기간(최대3점)"]}',
- '{"rent_pct_min":60,"rent_pct_max":80,"period_years":6,"renewal_count":2}',
+ '{"age_min":19,"age_max":39,"marital_status":["미혼"],"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":251000000,"car_limit":45420000,"social_newcomer_eligible":true,"social_newcomer_years_max":5,"notes":["사회초년생: 나이무관·근무경력5년이내","청약종합저축 가입 필요 (미가입자 입주 전까지 가입)","1순위: 행복주택 소재 자치구 거주지 또는 소득근거지","2순위: 서울 내 타 자치구 거주지 또는 소득근거지","가점: 거주기간(최대3점)·청약통장가입기간(최대3점)","★자산: 25,100만원·차량: 4,542만원 (2026 건설형 기준)"]}',
+ '{"rent_pct_min":60,"rent_pct_max":80,"period_years":10,"renewal_count":4}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr'),
 
 -- SH 청년안심주택 공공임대 (청년)
 ('SH_SAFETY_PUBLIC_YOUTH', '임대주택', '공공임대', '청년안심주택', 'SH', '서울', 'SH 청년안심주택 공공임대 (청년)',
  '만19~39세 미혼 무주택 청년, 역세권', FALSE,
- '{"age_min":19,"age_max":39,"marital_status":["미혼"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct_rank2":100,"income_pct_rank3":100,"asset_limit_rank2":345000000,"asset_limit_rank3":254000000,"car_limit":45630000,"notes":["1순위: 수급자·보호대상한부모·차상위 (소득·자산심사 없음)","2순위: 본인+부모 소득100%이하·자산 국민임대기준(34,500만)","3순위: 본인 소득100%이하·자산 행복주택청년기준(25,400만)","서울 거주 요건 없음 (역세권 민관협력 사업)"]}',
+ '{"age_min":19,"age_max":39,"marital_status":["미혼"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct_rank2":100,"income_pct_rank3":100,"asset_limit_rank2":345000000,"asset_limit_rank3":251000000,"car_limit":45630000,"notes":["1순위: 수급자·보호대상한부모·차상위 (소득·자산심사 없음)","2순위: 본인+부모 소득100%이하·자산 국민임대기준(34,500만)","3순위: 본인 소득100%이하·자산 행복주택청년기준(25,100만)","서울 거주 요건 없음 (역세권 민관협력 사업)","★3순위 자산: 25,100만원 (2026 건설형 기준)"]}',
  '{"rent_pct_1rank":30,"rent_pct_2to3rank":50,"area_max_sqm":85,"period_years":2,"renewal_count":4,"period_max_years":10}',
  '{"method":["온라인"],"url":"https://soco.seoul.go.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T3396C3532/contents.do'),
@@ -594,7 +594,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 청년안심주택 공공임대 (신혼부부)
 ('SH_SAFETY_PUBLIC_NEWLYWED', '임대주택', '공공임대', '청년안심주택', 'SH', '서울', 'SH 청년안심주택 공공임대 (신혼부부)',
  '만19~39세 무주택 신혼부부·예비신혼부부·신생아가구, 역세권', FALSE,
- '{"age_min":19,"age_max":39,"homeless_required":true,"income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"asset_limit":337000000,"car_limit":45630000,"marriage_years_max":7,"notes":["신혼I: 소득70%(맞벌이90%)·자산33,700만 / 신혼II: 소득130%(맞벌이200%)·자산 분양전환공공임대기준","신청자격: 혼인7년이내·예비신혼·신생아가구(2년이내)·한부모·6세이하자녀혼인가구","1순위: 신생아가구·보호대상한부모","2순위: 자녀있는(예비)신혼·6세이하자녀한부모","3순위: 자녀없는(예비)신혼부부","4순위: 6세이하자녀혼인가구 (신혼II는 5순위: 기타혼인가구 추가)","서울 거주 요건 없음 (역세권 민관협력 사업)"]}',
+ '{"age_min":19,"age_max":39,"homeless_required":true,"income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"asset_limit":345000000,"car_limit":45630000,"marriage_years_max":7,"notes":["신혼I: 소득70%(맞벌이90%)·자산34,500만 / 신혼II: 소득130%(맞벌이200%)·자산 분양전환공공임대기준","신청자격: 혼인7년이내·예비신혼·신생아가구(2년이내)·한부모·6세이하자녀혼인가구","1순위: 신생아가구·보호대상한부모","2순위: 자녀있는(예비)신혼·6세이하자녀한부모","3순위: 자녀없는(예비)신혼부부","4순위: 6세이하자녀혼인가구 (신혼II는 5순위: 기타혼인가구 추가)","서울 거주 요건 없음 (역세권 민관협력 사업)","★신혼Ⅰ 자산: 34,500만원 (2026년 기준 갱신)"]}',
  '{"rent_pct_under50":30,"rent_pct_under70":50,"rent_pct_under90":50,"area_max_sqm":85,"period_years":2,"renewal_count":9,"period_max_years":20}',
  '{"method":["온라인"],"url":"https://soco.seoul.go.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T3396C3533/contents.do'),
@@ -649,7 +649,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 장기전세주택
 ('SH_JANGKI_JEONSE', '임대주택', '공공임대', '장기전세', 'SH', '서울', 'SH 장기전세주택',
  '서울 거주 무주택세대구성원, 청약저축 가입자', FALSE,
- '{"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":150,"income_pct_married":200,"asset_limit":640000000,"car_limit":45630000,"newborn_income_bonus_pct":20,"notes":["60㎡이하: 소득105%이하 (맞벌이 140%) — 70%이하 우선공급","60~85㎡: 소득150%이하 (맞벌이 200%)","85㎡초과: 소득150%이하 (청약예금 2년이상)","청약저축 1순위: 2년이상+24회이상 / 2순위: 6개월이상+6회이상","신생아(2023.3.28이후) 소득기준 +20%p 완화"]}',
+ '{"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":150,"income_pct_married":200,"asset_limit":662000000,"car_limit":45630000,"newborn_income_bonus_pct":20,"notes":["60㎡이하: 소득105%이하 (맞벌이 140%) — 70%이하 우선공급","60~85㎡: 소득150%이하 (맞벌이 200%)","85㎡초과: 소득150%이하 (청약예금 2년이상)","청약저축 1순위: 2년이상+24회이상 / 2순위: 6개월이상+6회이상","신생아(2023.3.28이후) 소득기준 +20%p 완화","★총자산: 66,200만원 (SH 사이트 원문 확인 2026-06-22)"]}',
  '{"jeonse_pct":80,"notes":["전세보증금 납부 방식","월세 없음","가점제 선정"]}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T1587C589/contents.do'),
@@ -657,7 +657,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 장기전세주택2 (미리내집) - 신혼부부 특화
 ('SH_MIRINAE_JIP', '임대주택', '공공임대', '장기전세', 'SH', '서울', 'SH 장기전세주택2 미리내집 (신혼부부)',
  '혼인7년이내 신혼부부·예비신혼부부, 서울 거주 무주택', FALSE,
- '{"marital_status":["신혼(7년이내)","예비신혼"],"homeless_required":true,"region_required":"서울","marriage_years_max":7,"income_type":"도시근로자월평균","income_pct":150,"income_pct_married":200,"asset_limit":640000000,"car_limit":45630000,"newborn_income_bonus_pct":20,"notes":["60㎡이하: 소득120%이하 (맞벌이 180%)","60~85㎡: 소득150%이하 (맞벌이 200%)","공고 전 5년 무주택 이력 필요","저소득자 40% 우선배정","자녀 있을 경우 자산기준 20% 완화"]}',
+ '{"marital_status":["신혼(7년이내)","예비신혼"],"homeless_required":true,"region_required":"서울","marriage_years_max":7,"income_type":"도시근로자월평균","income_pct":150,"income_pct_married":200,"asset_limit":662000000,"car_limit":45630000,"newborn_income_bonus_pct":20,"notes":["60㎡이하: 소득120%이하 (맞벌이 180%)","60~85㎡: 소득150%이하 (맞벌이 200%)","공고 전 5년 무주택 이력 필요","저소득자 40% 우선배정","자녀 있을 경우 자산기준 20% 완화","★총자산: 66,200만원 (SH 사이트 원문 확인 2026-06-22)"]}',
  '{"jeonse_pct":80,"notes":["전세보증금 납부","저소득자 우선 40%","가점제 선정"]}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T6792C6812/contents.do'),
@@ -665,7 +665,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 국민임대주택
 ('SH_NATIONAL_RENT', '임대주택', '공공임대', '국민임대', 'SH', '서울', 'SH 국민임대주택',
  '서울 거주 무주택 저소득 세대', TRUE,
- '{"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":345000000,"car_limit":45630000,"newborn_income_bonus_pct":20,"notes":["60㎡이하: 소득70%(1인90%·2인80%) / 60㎡초과: 소득100%(1인120%·2인110%)","1순위: 소득50%이하(1인70%·2인60%) / 2순위: 소득70%이하(1인90%·2인80%)","50㎡미만: 청약저축 불필요 / 50~60㎡: 1순위 24회이상·2순위 6회이상","가점: 세대주나이·부양가족·서울거주기간·청약저축납입횟수 등","신생아(2023.3.28이후) 소득·자산 +20%p 완화 / 임대기간 30년"]}',
+ '{"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":100,"income_pct_1person":120,"income_pct_2person":110,"asset_limit":345000000,"car_limit":45420000,"newborn_income_bonus_pct":20,"notes":["60㎡이하: 소득70%(1인90%·2인80%) / 60㎡초과: 소득100%(1인120%·2인110%)","1순위: 소득50%이하(1인70%·2인60%) / 2순위: 소득70%이하(1인90%·2인80%)","50㎡미만: 청약저축 불필요 / 50~60㎡: 1순위 24회이상·2순위 6회이상","가점: 세대주나이·부양가족·서울거주기간·청약저축납입횟수 등","신생아(2023.3.28이후) 소득·자산 +20%p 완화 / 임대기간 30년"]}',
  '{"rent_pct_min":60,"rent_pct_max":80,"period_years":30}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T590C1479/contents.do'),
@@ -681,7 +681,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 전세임대주택
 ('SH_JEONSE_RENT', '임대주택', '전세임대', '전세임대', 'SH', '서울', 'SH 전세임대주택',
  '서울 거주 무주택 취약계층 (수급자·한부모·장애인)', TRUE,
- '{"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct_rank1":70,"income_pct_rank2":50,"asset_limit":273000000,"car_limit":45630000,"notes":["1순위: 수급자/한부모/시급가구/장애인70%/만65세이상","2순위: 소득50%이하/장애인100%","신생아가산: 10~20%p 상향"]}',
+ '{"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct_rank1":70,"income_pct_rank2":50,"asset_limit":245000000,"car_limit":45630000,"notes":["1순위: 생계·의료수급자/한부모/시급가구/장애인70%/만65세이상","2순위: 소득50%이하/장애인100%","신생아가산: 10~20%p 상향","★총자산: 24,500만원 (SH 사이트 원문 확인 2026-06-22)"]}',
  '{"notes":["입주자가 원하는 주택 선택","SH가 집주인과 전세계약 후 저렴 재임대"]}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T3156C3157/contents.do'),
@@ -720,7 +720,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 재개발임대주택 (일반공급)
 ('SH_REDEVELOP_RENT', '임대주택', '공공임대', '공공임대', 'SH', '서울', 'SH 재개발임대주택 (일반공급)',
  '서울 거주 무주택 저소득세대, 재개발 철거 후 잔여물량', TRUE,
- '{"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":70,"income_pct_1person":90,"income_pct_2person":80,"asset_limit":345000000,"car_limit":45630000,"newborn_income_bonus_pct":20,"notes":["재개발 철거세입자 우선공급 후 잔여 물량 일반공급","1순위: 소득50%이하(1인70%·2인60%) / 2순위: 소득70%이하(1인90%·2인80%)","가점: 세대주나이·부양가족수·서울거주기간·청약저축납입횟수","신생아(2023.3.28이후) 소득·자산 +20%p 완화","분양전환 없음 (임대전용)"]}',
+ '{"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":70,"income_pct_1person":90,"income_pct_2person":80,"asset_limit":337000000,"car_limit":45630000,"newborn_income_bonus_pct":20,"notes":["재개발 철거세입자 우선공급 후 잔여 물량 일반공급","1순위: 소득50%이하(1인70%·2인60%) / 2순위: 소득70%이하(1인90%·2인80%)","가점: 세대주나이·부양가족수·서울거주기간·청약저축납입횟수","신생아(2023.3.28이후) 소득·자산 +20%p 완화","분양전환 없음 (임대전용)","★총자산: 33,700만원 (SH 사이트 확인 2026-06-22)"]}',
  '{"rent_pct_min":50,"rent_pct_max":80,"period_years":30}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T590C1481/contents.do'),
@@ -768,7 +768,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 신혼·신생아 매입임대 Ⅱ형
 ('SH_BUY_NEWLYWED_2', '임대주택', '매입임대', '신혼매입임대', 'SH', '서울', 'SH 신혼·신생아 매입임대 Ⅱ형',
  '서울 거주 혼인가구·신생아가구·한부모 (소득 130% 이하)', TRUE,
- '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모","혼인가구"],"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"asset_limit":354000000,"car_limit":45630000,"marriage_years_max":7,"notes":["1순위: 신생아가구/보호대상한부모","2순위: 미성년자녀있는신혼·예비신혼/6세이하자녀한부모","3순위: 자녀없는신혼(예비신혼)","⚠️4순위: 6세이하자녀있는혼인가구 포함 여부 공고문 확인 필요","⚠️자산 35,400만원 공고문 재확인 필요 (LH Ⅱ형 기준 37,900만원)","시세 70% (소득80%이하: 60%)"]}',
+ '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모","혼인가구"],"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"asset_limit":354000000,"car_limit":45630000,"marriage_years_max":7,"newborn_asset_bonus":{"1child":34000000,"2plus":68000000},"notes":["1순위: 신생아가구/보호대상한부모","2순위: 미성년자녀있는신혼·예비신혼/6세이하자녀한부모","3순위: 자녀없는신혼(예비신혼)","⚠️4순위: 6세이하자녀있는혼인가구 포함 여부 공고문 확인 필요","신생아 자산완화: 1명 +3,400만 / 2명이상 +6,800만 (2023.3.28이후 출생)","시세 70% (소득80%이하: 60%)"]}',
  '{"rent_pct_min":60,"rent_pct_max":70,"period_max_years":14}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T1590C1484/contents.do'),
@@ -784,7 +784,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 행복주택 (신혼부부)
 ('SH_HAPPY_NEWLYWED', '임대주택', '공공임대', '행복주택', 'SH', '서울', 'SH 행복주택 (신혼부부)',
  '서울 거주 혼인7년이내·6세이하자녀 한부모 무주택', TRUE,
- '{"marital_status":["신혼(7년이내)","예비신혼","한부모"],"homeless_required":true,"is_household_member_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":100,"income_pct_2person":110,"income_pct_married":120,"income_pct_married_2person":130,"asset_limit":345000000,"car_limit":45630000,"marriage_years_max":7,"notes":["본인 또는 배우자 1인 청약종합저축 가입 필요","한부모: 만6세이하 자녀(태아포함) 양육","2세미만자녀→순위→배점→추첨","자녀1명이상: 최장14년"]}',
+ '{"marital_status":["신혼(7년이내)","예비신혼","한부모"],"homeless_required":true,"is_household_member_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":100,"income_pct_2person":110,"income_pct_married":120,"income_pct_married_2person":130,"asset_limit":345000000,"car_limit":45420000,"marriage_years_max":7,"notes":["본인 또는 배우자 1인 청약종합저축 가입 필요","한부모: 만6세이하 자녀(태아포함) 양육","2세미만자녀→순위→배점→추첨","자녀1명이상: 최장14년","★차량: 4,542만원 (2026 건설형 기준)"]}',
  '{"rent_pct_min":60,"rent_pct_max":80,"period_max_years":14}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T1594C1603/sublink.do'),
@@ -792,7 +792,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- SH 신혼·신생아 전세임대 Ⅰ형
 ('SH_JEONSE_NEWLYWED_1', '임대주택', '전세임대', '신혼전세임대', 'SH', '서울', 'SH 신혼·신생아 전세임대 Ⅰ형',
  '서울 거주 신혼부부(7년이내)·신생아가구 (소득 70% 이하)', TRUE,
- '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모","혼인가구"],"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":70,"income_pct_married":90,"asset_limit":337000000,"car_limit":45630000,"marriage_years_max":7,"notes":["1순위: 신생아가구/보호대상한부모","2순위: 미성년자녀있는신혼·예비신혼/6세이하자녀한부모","3순위: 자녀없는신혼(예비신혼)","⚠️4순위: 6세이하자녀있는혼인가구 포함 여부 공고문 확인 필요","SH 최대 1억3,800만원 지원 / 입주자 5% 부담"]}',
+ '{"marital_status":["신혼(7년이내)","예비신혼","신생아가구","한부모","혼인가구"],"homeless_required":true,"region_required":"서울","income_type":"도시근로자월평균","income_pct":70,"income_pct_married":90,"asset_limit":345000000,"car_limit":45630000,"marriage_years_max":7,"notes":["1순위: 신생아가구/보호대상한부모","2순위: 미성년자녀있는신혼·예비신혼/6세이하자녀한부모","3순위: 자녀없는신혼(예비신혼)","⚠️4순위: 6세이하자녀있는혼인가구 포함 여부 공고문 확인 필요","SH 최대 1억4,500만원 지원 / 입주자 5% 부담","★총자산: 34,500만원 (2026년 기준 갱신)"]}',
  '{"tenant_burden_pct":5,"loan_limit":138000000,"period_max_years":20,"renewal_count":9}',
  '{"method":["온라인"],"url":"https://www.i-sh.co.kr","contact":"1600-3456","period_type":"공고별"}',
  'https://www.i-sh.co.kr/app/lay2/S48T3156C3158/contents.do'),
@@ -994,7 +994,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- LH 공공분양 신혼부부 특별공급
 ('LH_PUBLIC_SALE_NEWLYWED', '분양주택', '공공분양', '공공분양', 'LH', '전국', 'LH 공공분양주택 (신혼부부 특별공급)',
  '혼인7년이내·6세이하자녀 무주택 신혼부부', TRUE,
- '{"marital_status":["신혼(7년이내)","예비신혼","한부모"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"asset_real_limit":215500000,"car_limit":45630000,"marriage_years_max":7,"savings_min_rank1":6,"newborn_income_bonus_pct":20,"notes":["우선공급70%: 단독100%·맞벌이120% / 일반공급20%: 단독130%·맞벌이140% / 추첨10%: 단독130%·맞벌이200%","신생아(2023.3.28이후): 소득·자산 +20%p 완화","생애 1회 제한"]}',
+ '{"marital_status":["신혼(7년이내)","예비신혼","한부모","혼인가구(6세이하자녀)"],"homeless_required":true,"income_type":"도시근로자월평균","income_pct":130,"income_pct_married":200,"asset_real_limit":215500000,"car_limit":45630000,"marriage_years_max":7,"savings_min_rank1":6,"newborn_income_bonus_pct":20,"notes":["우선공급70%: 단독100%·맞벌이120% / 일반공급20%: 단독130%·맞벌이140% / 추첨10%: 단독130%·맞벌이200%","혼인7년초과+6세이하자녀 혼인가구도 대상 포함","신생아(2023.3.28이후): 소득·자산 완화 (1명 +10%p / 2명이상 +20%p)","생애 1회 제한"]}',
  '{"once_per_life":true}',
  '{"method":["온라인"],"url":"https://apply.lh.or.kr","contact":"1600-1004","period_type":"공고별"}',
  'https://apply.lh.or.kr/lhapply/cm/cntnts/cntntsView.do?mi=1178&cntntsId=1048'),
