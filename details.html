@@ -990,7 +990,7 @@
                     <option value="12">12회 이상 ~ 24회 미만</option>
                     <option value="24" selected>24회 이상</option>
                 </select>
-                <p class="hint">행복주택·청년매입임대 가점에 영향. 청약저축 통장 앱에서 확인 가능</p>
+                <p class="hint">24회 이상 ≈ 가입 2년 (민간분양 1순위 기준). 청약저축 통장 앱에서 확인 가능</p>
             </div>
 
             <div class="fg">
@@ -3228,22 +3228,34 @@ function runAnalysis() {
             eligibleTypes.push(`다자녀 특공 (${childCnt}명)`);
 
         // 신혼부부: 무주택, 혼인 7년 이내, 청약 6회+
+        // 5단계: 신생아우선(100%/120%)→신생아일반(130%/140%)→우선(100%/130%)→일반(140%/160%)→추첨
         if (homeless && isNewlywedStrict && subCount >= 6) {
-            if (dualInc ? under(160) : under(140))
-                eligibleTypes.push(infant ? '신혼부부 특공 (신생아우선)' : (dualInc ? '신혼부부 특공 (맞벌이)' : '신혼부부 특공'));
-            else if (realEstate <= reLimit)
+            if (dualInc ? under(160) : under(140)) {
+                if (infant) {
+                    eligibleTypes.push((dualInc ? under(120) : under(100)) ? '신혼부부 특공 (신생아우선)' : '신혼부부 특공 (신생아일반)');
+                } else {
+                    eligibleTypes.push((dualInc ? under(130) : under(100)) ? '신혼부부 특공 (우선공급)' : '신혼부부 특공 (일반공급)');
+                }
+            } else if (realEstate <= reLimit)
                 eligibleTypes.push('신혼부부 특공 (추첨공급·소득무관)');
         }
 
         // 생애최초: 무주택, 전원 미소유, 소득세 5년, 청약 12회+, 저축 600만원+
+        // 5단계: 신생아우선(130%)→신생아일반(160%)→우선(130%)→일반(160%)→추첨
         if (homeless && lifeFirst && taxPaid5yr && subCount >= 12 && subAmountEnough) {
-            if (under(160))
-                eligibleTypes.push(infant ? '생애최초 특공 (신생아우선)' : (hhSize===1 ? '생애최초 특공 (1인·추첨제만)' : '생애최초 특공'));
-            else if (realEstate <= reLimit)
+            if (under(160)) {
+                if (infant) {
+                    eligibleTypes.push(under(130) ? '생애최초 특공 (신생아우선)' : '생애최초 특공 (신생아일반)');
+                } else if (hhSize === 1) {
+                    eligibleTypes.push('생애최초 특공 (1인·추첨제만)');
+                } else {
+                    eligibleTypes.push(under(130) ? '생애최초 특공 (우선공급)' : '생애최초 특공 (일반공급)');
+                }
+            } else if (realEstate <= reLimit)
                 eligibleTypes.push('생애최초 특공 (추첨공급·소득무관)');
         }
 
-        // 노부모부양: 세대주, 무주택, 65세이상 직계존속 3년+ 부양, 1순위(24회+·300만원+)
+        // 노부모부양: 세대주, 무주택, 65세이상 직계존속 3년+ 부양, 1순위자격(가입2년+·예치금충족)
         if (isHouseholdHead && homeless && elderlyParent && subCount >= 24 && deposit300)
             eligibleTypes.push('노부모부양 특공');
 
@@ -3251,19 +3263,23 @@ function runAnalysis() {
         if (organRecommend)
             eligibleTypes.push('기관추천 특공');
 
-        // 일반공급 1순위/2순위 (서울=투기과열: 세대주 필수)
+        // 일반공급 1순위/2순위 (서울=투기과열: 세대주+가입2년+예치금충족, 납입횟수 무관)
         const rank1ok = homeless && isHouseholdHead && subCount >= 24 && deposit300;
         if (rank1ok) eligibleTypes.push('일반 1순위');
         else if (subCount >= 1) eligibleTypes.push('일반 2순위');
 
-        if (eligibleTypes.some(t => t.includes('특공'))) {
-            add('민간분양 (아파트) — 특별공급', true, eligibleTypes.join(' · '), '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
+        const specialTypes = eligibleTypes.filter(t => t.includes('특공'));
+        if (specialTypes.length > 0) {
+            let rankStr = specialTypes.join(' · ');
+            if (rank1ok) rankStr += ' · ★미당첨 시 일반 1순위 가능';
+            else if (subCount >= 1) rankStr += ' · ★미당첨 시 일반 2순위 가능';
+            add('민간분양 (아파트) — 특별공급', true, rankStr, '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
         } else if (rank1ok) {
             add('민간분양 (아파트) — 1순위', true, '1순위 (가점제·추첨제)', '시세 100% (분양)', '분양', 'sale-private', [], '청약홈', 'sale');
         } else {
             if (!homeless) r.push('무주택자가 1순위 우선 (유주택은 2순위)');
             if (!isHouseholdHead) r.push('투기과열지구(서울) 1순위: 세대주 필수');
-            if (subCount < 24) r.push(`1순위까지 청약저축 ${24 - subCount}회 추가 납입 필요`);
+            if (subCount < 24) r.push('1순위: 청약저축 가입 2년 이상 필요 (민영주택은 납입횟수 무관)');
             if (!deposit300) r.push('1순위: 청약통장 예치금 300만원 이상 필요');
             const eligible = subCount >= 1;
             if (!eligible) r.push('청약저축 가입 필요');

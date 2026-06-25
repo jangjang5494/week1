@@ -1101,7 +1101,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '무주택 세대구성원 중 특별공급 자격 해당자 (유형별 소득 기준 상이)', TRUE,
  '{"homeless_required":true,"lottery_real_estate_limit":331000000,"notes":["신생아: 2세이하자녀·무주택·소득130%(일반160%,맞벌이구분없음)·청약6회이상·물량10% (2026.6.15신설)","신혼부부: 혼인7년이내·무주택·소득140%(맞벌이160%)·청약6회이상·물량15%","다자녀: 무주택·미성년2명이상·청약6회이상·소득제한없음·물량10%","생애최초: 전원무주택·소득160%·소득세5년납부·청약12회이상·저축600만원이상(투기과열지구)·물량7%","노부모부양: 세대주·무주택·65세이상직계존속3년부양·1순위자격·물량3%","기관추천: 관계기관추천대상자·소득제한없음·물량10%","★추첨공급(신생아·신혼·생애최초): 소득무관, 부동산 3.31억 이하면 자격","신혼부부 5단계선정: 신생아우선(25%)→신생아일반(10%)→우선(25%)→일반(10%)→추첨(30%)","생애최초 5단계선정: 신생아우선(15%)→신생아일반(5%)→우선(35%)→일반(15%)→추첨(30%)","생애최초 1인가구: 추첨제만 가능","투기과열지구(서울): 전매제한·재당첨제한 강화 적용"]}',
  '{"supply_types":["신생아(10%)","신혼부부(15%)","다자녀(10%)","생애최초(7%)","노부모부양(3%)","기관추천(10%)"],"notes":["시세 100% 분양","특별공급 당첨 후 일반공급 신청 불가","특별공급 미당첨 시 일반공급 신청 가능"]}',
- '{"method":["온라인"],"contact":"1588-2188","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈(applyhome.co.kr) 공고 확인 후 신청 — 공고마다 일정 상이"}',
+ '{"method":["온라인"],"contact":"1644-7445","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈(applyhome.co.kr) 공고 확인 후 신청 — 공고마다 일정 상이"}',
  'https://www.applyhome.co.kr'),
 
 -- 민간분양 1순위 일반공급
@@ -1109,7 +1109,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '무주택 세대구성원, 청약저축 2년 이상, 예치금 300만원 이상 (투기과열지구 기준)', TRUE,
  '{"homeless_required":true,"household_head_required":true,"deposit_min_won":3000000,"notes":["★투기과열지구(서울): 세대주 필수 + 2년이상 경과 + 예치금 충족 (납입횟수 무관·24회는 국민주택 기준)","예치금 기준: 85㎡이하 300만원/102㎡이하 600만원/135㎡이하 1,000만원/모든면적 1,500만원","1순위 제한자(2순위로 처리): 세대주 아닌 자·5년내 당첨이력 세대원·2주택이상소유 세대원","가점제(투기과열지구): 60㎡이하 가점40%+추첨60% / 60~85㎡ 가점70%+추첨30% (무주택기간32점+부양가족35점+가입기간17점=최대84점)","추첨제 시 무주택세대 75% 우선 배정","지역우선: 서울2년거주자 우선, 기타수도권(경기·인천) 차순위"]}',
  '{"notes":["시세 100% 분양","가점제 커트라인 매 공고별 상이 (청약홈 당첨가점 조회 가능)"]}',
- '{"method":["온라인"],"contact":"1588-2188","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈(applyhome.co.kr) 공고 확인 후 신청"}',
+ '{"method":["온라인"],"contact":"1644-7445","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈(applyhome.co.kr) 공고 확인 후 신청"}',
  'https://www.applyhome.co.kr'),
 
 -- 민간분양 2순위 일반공급
@@ -1117,7 +1117,15 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
  '1순위 미해당 청약저축 가입자 (100% 추첨)', TRUE,
  '{"notes":["청약저축 가입자 중 1순위 미해당자 전원 해당","100% 추첨 선정 (가점 무관)","1순위 청약 마감 다음날 청약 가능","지역우선: 서울2년거주자 우선"]}',
  '{"notes":["시세 100% 분양","추첨 경쟁률에 따라 당첨 확률 낮을 수 있음"]}',
- '{"method":["온라인"],"contact":"1588-2188","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈(applyhome.co.kr) 공고 확인 후 신청"}',
+ '{"method":["온라인"],"contact":"1644-7445","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈(applyhome.co.kr) 공고 확인 후 신청"}',
+ 'https://www.applyhome.co.kr'),
+
+-- 민간분양 잔여세대 (무순위)
+('CHEONGYAK_REMNANT', '분양주택', '민간분양', '민영주택잔여세대', '청약홈', '수도권', '민간분양(아파트) 잔여세대',
+ '무주택세대구성원인 성년자 (청약통장 불필요, 소득·자산 무관)', TRUE,
+ '{"homeless_required":true,"notes":["무주택세대구성원인 성년자 (세대주 아니어도 가능)","청약통장 불필요","소득·자산 제한 없음","100% 추첨제","1·2순위 청약 후 미분양 세대 대상"]}',
+ '{"notes":["시세 100% 분양","선착순 또는 추첨 (공고별 상이)"]}',
+ '{"method":["온라인"],"contact":"1644-7445","period_type":"공고별","url":"https://www.applyhome.co.kr","period_note":"청약홈 잔여세대 공고 확인 후 신청"}',
  'https://www.applyhome.co.kr')
 
 ON CONFLICT (code) DO UPDATE SET
