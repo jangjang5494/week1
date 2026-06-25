@@ -800,7 +800,10 @@
                     </div>
                     <p class="hint">맞벌이 선택 시 소득기준이 20~70%p 완화됩니다</p>
                 </div>
+            </div>
 
+            <!-- 자녀 관련 필드: 기혼 계열 OR 한부모 선택 시 표시 -->
+            <div id="children-fields" style="display:none;">
                 <div class="form-row">
                     <div class="fg">
                         <div class="fg-label-row">
@@ -1367,6 +1370,7 @@ document.querySelectorAll('.toggle-group').forEach(group => {
             btn.classList.add('selected');
             if (group.id === 'tg-region') updateDistrictUI();
             if (group.id === 'tg-marital') updateFormVisibility();
+            if (group.id === 'tg-singleparent') updateFormVisibility();
             if (group.id === 'tg-student') updateSchoolRegionVisibility();
             if (group.id === 'tg-school-region') updateSchoolRegionVisibility();
             if (group.id === 'tg-employed') updateWorkplaceVisibility();
@@ -1379,6 +1383,13 @@ updateDistrictUI();
 function getToggle(id) {
     const btn = document.querySelector(`#${id} .toggle-btn.selected`);
     return btn ? btn.dataset.val : null;
+}
+function setToggle(id, val) {
+    const grp = document.getElementById(id);
+    if (!grp) return;
+    grp.querySelectorAll('.toggle-btn').forEach(b => {
+        b.classList.toggle('selected', b.dataset.val === val);
+    });
 }
 
 function populateSeoulGuSelect(selectId) {
@@ -1422,6 +1433,19 @@ function updateFormVisibility() {
     // 기혼 그룹 전용 필드 (STEP 3)
     const marriedFields = document.getElementById('married-fields');
     if (marriedFields) marriedFields.style.display = isMarriedGroup ? '' : 'none';
+
+    // 자녀 필드: 기혼 계열 OR 한부모 선택 시
+    const isSingleParent = getToggle('tg-singleparent') === 'yes';
+    const showChildren = isMarriedGroup || isSingleParent;
+    const childrenFields = document.getElementById('children-fields');
+    if (childrenFields) {
+        childrenFields.style.display = showChildren ? '' : 'none';
+        if (!showChildren) {
+            document.getElementById('children-count').value = '0';
+            setToggle('tg-youngchild', 'no');
+            setToggle('tg-infant', 'no');
+        }
+    }
 
     // 청년 전용 필드 (STEP 3, 39세 이하)
     const youthFields = document.getElementById('youth-fields');
@@ -7832,6 +7856,7 @@ function restoreConditions(cond) {
     }
   });
   // visibility 갱신
+  if (typeof updateFormVisibility         === 'function') updateFormVisibility();
   if (typeof updateSchoolRegionVisibility === 'function') updateSchoolRegionVisibility();
   if (typeof updateWorkplaceVisibility    === 'function') updateWorkplaceVisibility();
   if (typeof updateMaritalFields          === 'function') updateMaritalFields();
