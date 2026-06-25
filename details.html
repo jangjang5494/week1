@@ -2839,10 +2839,10 @@ function runAnalysis() {
         const r = [];
         if (!baseOk_lh) r.push('무주택 세대구성원 필요');
         const dbLj = getE('LH_LONG_JEONSE');
-        const aLimLj = seoulRes ? (dbLj.assetSeoul||64000) : (dbLj.assetGyeonggi||40800);
+        const aLimLj = seoulRes ? (dbLj.assetSeoul||66200) : (dbLj.assetGyeonggi||41700);
         const cLimLj = dbLj.car||4542;
         const aOkLj=totalAssets<=aLimLj, carOkLj=carVal<=cLimLj;
-        if (!aOkLj) r.push(`총자산 ${aLimLj}만원 이하 필요 (서울 64,000만/경기 40,800만)`);
+        if (!aOkLj) r.push(`총자산 ${aLimLj}만원 이하 필요 (서울 66,200만/경기 41,700만)`);
         if (!carOkLj) r.push(`자동차 ${cLimLj}만원 이하 필요`);
         let eligible=false, rank='';
         if (baseOk_lh && aOkLj && carOkLj && under(120)) {
@@ -4870,12 +4870,12 @@ const typeDetailData = {
         body: `
         <div class="help-section">
             <h4>어떤 주택인가요?</h4>
-            <p>신혼부부·신생아가구가 원하는 집을 구하면 LH가 전세계약을 맺고 재임대. 수도권 최대 1.3억원 지원.</p>
+            <p>신혼부부·신생아가구가 원하는 집을 구하면 LH가 전세계약을 맺고 재임대. 수도권 최대 1.45억원 지원.</p>
         </div>
         <div class="help-section">
             <h4>임대 조건</h4>
             <ul>
-                <li>지원 한도: 수도권 1.3억 / 광역시 1.0억 / 기타 9,000만원</li>
+                <li>지원 한도: 수도권 1.45억 / 광역시 1.0억 / 기타 9,000만원</li>
                 <li>본인 부담: 전세금의 2~5%</li>
                 <li>거주 기간: 최장 20년</li>
             </ul>
@@ -4902,7 +4902,7 @@ const typeDetailData = {
         <div class="help-section">
             <h4>임대 조건</h4>
             <ul>
-                <li>지원 한도: 수도권 최대 3.5억원</li>
+                <li>지원 한도: 수도권 최대 2.4억원</li>
                 <li>본인 부담: 전세금의 20%</li>
                 <li>거주 기간: 최장 14년</li>
             </ul>
@@ -5958,10 +5958,10 @@ typeDetailData['민간분양 (아파트) — 특별공급'] = {
                 <th style="padding:6px 8px;text-align:left;border-bottom:1px solid #e5e7eb;">소득</th>
             </tr></thead>
             <tbody>
-                <tr style="background:#fef9c3;"><td style="padding:5px 8px;"><strong>★ 신생아</strong></td><td style="padding:5px 8px;text-align:right;">10%</td><td style="padding:5px 8px;">우선 130% / 일반 160% / 추첨 무관</td></tr>
-                <tr><td style="padding:5px 8px;">신혼부부</td><td style="padding:5px 8px;text-align:right;">23%</td><td style="padding:5px 8px;">외벌이 140% / 맞벌이 160%</td></tr>
+                <tr style="background:#fef9c3;"><td style="padding:5px 8px;"><strong>★ 신생아</strong></td><td style="padding:5px 8px;text-align:right;">10%</td><td style="padding:5px 8px;">우선 130% / 일반 160% / 추첨 무관 (맞벌이 구분 없음)</td></tr>
+                <tr><td style="padding:5px 8px;">신혼부부</td><td style="padding:5px 8px;text-align:right;">15%</td><td style="padding:5px 8px;">우선 100%(맞벌이120%) / 일반 140%(맞벌이160%)</td></tr>
                 <tr><td style="padding:5px 8px;">다자녀</td><td style="padding:5px 8px;text-align:right;">10%</td><td style="padding:5px 8px;">제한 없음</td></tr>
-                <tr><td style="padding:5px 8px;">생애최초</td><td style="padding:5px 8px;text-align:right;">9%</td><td style="padding:5px 8px;">160% (소득세 5년 납부 필수)</td></tr>
+                <tr><td style="padding:5px 8px;">생애최초</td><td style="padding:5px 8px;text-align:right;">7%</td><td style="padding:5px 8px;">우선 130% / 일반 160% (소득세 5년 납부 필수)</td></tr>
                 <tr><td style="padding:5px 8px;">노부모부양</td><td style="padding:5px 8px;text-align:right;">3%</td><td style="padding:5px 8px;">제한 없음 (1순위 자격 필수)</td></tr>
                 <tr><td style="padding:5px 8px;">기관추천</td><td style="padding:5px 8px;text-align:right;">10%</td><td style="padding:5px 8px;">제한 없음 (추천서 필요)</td></tr>
             </tbody>
@@ -5980,8 +5980,10 @@ typeDetailData['민간분양 (아파트) — 특별공급'] = {
         <h4>신혼부부 특공 5단계 선정</h4>
         <ul>
             <li>신생아우선 25% → 신생아일반 10% → 우선공급 25% → 일반공급 10% → 추첨 30%</li>
-            <li><strong>신생아우선·일반</strong>: 공고일 기준 2년 이내 출산, 소득 100%(맞벌이 120%)</li>
+            <li><strong>신생아우선</strong>: 2년 이내 출산, 소득 100%(맞벌이 120%)</li>
+            <li><strong>신생아일반</strong>: 2년 이내 출산, 소득 140%(맞벌이 160%)</li>
             <li><strong>우선공급</strong>: 소득 100%(맞벌이 120%) 이하</li>
+            <li><strong>일반공급</strong>: 소득 140%(맞벌이 160%) 이하</li>
             <li><strong>추첨</strong>: 소득 140% 초과 + 부동산 3.31억 이하</li>
         </ul>
     </div>
@@ -6025,7 +6027,7 @@ typeDetailData['민간분양 (아파트) — 1순위'] = {
     <div class="help-section">
         <h4>당첨자 선정 방식</h4>
         <ul>
-            <li>85㎡이하 (서울): <strong>100% 가점제</strong></li>
+            <li>서울(투기과열지구): 60㎡이하 <strong>가점40%+추첨60%</strong> / 60~85㎡ <strong>가점70%+추첨30%</strong></li>
             <li>가점 항목: 무주택기간(최대 32점) + 부양가족 수(최대 35점) + 청약통장 가입기간(최대 17점) = <strong>최대 84점</strong></li>
             <li>추첨제 적용 시: 무주택 세대 75% 우선 배정</li>
         </ul>
