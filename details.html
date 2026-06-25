@@ -881,13 +881,23 @@
                 </div>
             </div>
 
-            <div class="fg">
-                <div class="fg-label-row">
-                    <label>총 자산 (만원)</label>
-                    <button class="info-btn" onclick="openHelp('total_assets')">ℹ 무엇을 합산하나요?</button>
+            <div class="form-row">
+                <div class="fg">
+                    <div class="fg-label-row">
+                        <label>총 자산 (만원)</label>
+                        <button class="info-btn" onclick="openHelp('total_assets')">ℹ 무엇을 합산하나요?</button>
+                    </div>
+                    <input type="number" id="total-assets" placeholder="예: 8000 → 8,000만원" min="0">
+                    <p class="hint">부동산(공시가) + 금융 + 자동차 합산. 부채 차감 안 함. 임대주택 심사용</p>
                 </div>
-                <input type="number" id="total-assets" placeholder="예: 8000 → 8,000만원" min="0">
-                <p class="hint">부동산(공시가) + 금융자산(예적금·주식·보험환급금) 합산. 부채는 차감하지 않음</p>
+                <div class="fg">
+                    <div class="fg-label-row">
+                        <label>순자산 (만원)</label>
+                        <button class="info-btn" onclick="openHelp('net_assets')">ℹ 총자산과 뭐가 다르나요?</button>
+                    </div>
+                    <input type="number" id="net-assets" placeholder="예: 5000 → 5,000만원" min="0">
+                    <p class="hint">총자산 − 부채(대출잔액 등). 주택도시기금 대출 심사용. 모르면 비워두세요</p>
+                </div>
             </div>
 
             <div class="form-row">
@@ -1815,6 +1825,27 @@ const helpData = {
                 <div class="help-case">희망하우징 3순위는 자동차 <strong>무소유</strong> 필수입니다.</div>
             </div>`
     },
+    net_assets: {
+        title: '순자산이란?',
+        body: `
+            <div class="help-section">
+                <h4>순자산 = 총자산 − 부채</h4>
+                <p><strong>총자산</strong>(부동산+금융+자동차 등)에서 <strong>부채</strong>(대출잔액·카드론·학자금 등)를 뺀 금액입니다.</p>
+            </div>
+            <div class="help-section">
+                <h4>어디에 쓰이나요?</h4>
+                <ul>
+                    <li>주택도시기금 대출(디딤돌·버팀목 등) 자산 심사</li>
+                    <li>구입자금: <strong>5.11억원</strong> 이하</li>
+                    <li>전세자금: <strong>3.45억원</strong> 이하</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h4>확인 방법</h4>
+                <a class="help-link" href="https://www.gov.kr" target="_blank">🔗 정부24 — 지방세 세목별 과세증명</a>
+                <p style="margin-top:0.5rem;font-size:0.83rem;">통계청 가계금융복지조사 기준 4분위 평균값이 한도입니다. 모르면 비워두면 자산 체크를 건너뜁니다.</p>
+            </div>`
+    },
     parent_income: {
         title: '부모 소득 합산 기준',
         body: `
@@ -1981,6 +2012,8 @@ function runAnalysis() {
     }
     const monthlyIncome = parseFloat(document.getElementById('income').value) || 0;
     const totalAssets   = parseFloat(document.getElementById('total-assets').value) || 0;
+    const netAssetsRaw  = document.getElementById('net-assets').value;
+    const netAssets     = netAssetsRaw !== '' ? parseFloat(netAssetsRaw) : null;
     const realEstate    = parseFloat(document.getElementById('real-estate').value) || 0;
     const carVal        = parseFloat(document.getElementById('car-value').value) || 0;
     const parentIncome   = getToggle('tg-parent-income') === 'yes';
@@ -3365,33 +3398,39 @@ function runAnalysis() {
     }
 
     // === 금융지원 ===
+    const annualInc = monthlyIncome * 12;
+    const naOk = (lim) => netAssets === null || netAssets <= lim;
+    const naMsg = (lim) => netAssets !== null && netAssets > lim ? `순자산 ${lim.toLocaleString()}만원 이하 필요 (현재 ${Math.round(netAssets).toLocaleString()}만원)` : null;
 
     // 디딤돌 대출
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
-        if (!homeless) r.push('무주택 세대주 필요');
+        if (!homeless) r.push('무주택 세대구성원 필요');
         if (!isHouseholdHead) r.push('세대주 필요');
-        const incLimit = isMarried ? 8500 : 6000;
-        if (annualIncome > incLimit) r.push(`연소득 ${incLimit}만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        const incLimit = isMarried ? 8500 : (lifeFirst || childCnt >= 2) ? 7000 : 6000;
+        const incLabel = isMarried ? '신혼 8,500' : (lifeFirst || childCnt >= 2) ? '생애최초/다자녀 7,000' : '6,000';
+        if (annualInc > incLimit) r.push(`연소득 ${incLabel}만원 이하 필요 (현재 약 ${Math.round(annualInc)}만원)`);
+        if (naMsg(51100)) r.push(naMsg(51100));
         let eligible = false, rank = '';
-        if (homeless && isHouseholdHead && annualIncome <= incLimit) {
+        if (homeless && isHouseholdHead && annualInc <= incLimit && naOk(51100)) {
             eligible = true;
-            rank = isMarried ? '신혼부부 (연소득 8,500만원 이하)' : '일반 (연소득 6,000만원 이하)';
+            rank = isMarried ? '신혼 (한도 3.2억)' : lifeFirst ? '생애최초 (한도 2.4억)' : childCnt >= 2 ? '다자녀 (한도 3.2억)' : '일반 (한도 2억)';
         }
-        add('디딤돌 대출 (주택구입)', eligible, rank, '연 2.85~4.15% / 일반 2억·신혼 3.2억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
+        add('디딤돌 대출 (주택구입)', eligible, rank, '연 2.85~4.15% / 일반 2억·생애최초 2.4억·신혼 3.2억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
     }
 
     // 신생아특례 디딤돌
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
         if (!infant) r.push('2세 이하 자녀 보유 필요 (출산 2년 이내)');
-        if (!homeless) r.push('무주택 필요');
-        if (annualIncome > 13000) r.push(`연소득 1.3억원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요');
+        const incLim = dualInc ? 20000 : 13000;
+        if (annualInc > incLim) r.push(`연소득 ${dualInc ? '2억(맞벌이)' : '1.3억'}원 이하 필요 (현재 약 ${Math.round(annualInc)}만원)`);
+        if (naMsg(51100)) r.push(naMsg(51100));
         let eligible = false, rank = '';
-        if (homeless && infant && annualIncome <= 13000) {
-            eligible = true; rank = '신생아특례 (출산 2년 이내)';
+        if (homeless && isHouseholdHead && infant && annualInc <= incLim && naOk(51100)) {
+            eligible = true; rank = dualInc ? '맞벌이 (연소득 2억 이하, 최대 4억)' : '외벌이 (연소득 1.3억 이하, 최대 4억)';
         }
         add('신생아특례 디딤돌 대출', eligible, rank, '연 1.80~4.50% / 최대 4억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
     }
@@ -3399,13 +3438,13 @@ function runAnalysis() {
     // 청년 버팀목
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
         if (!isYouth || age > 34) r.push('만 19~34세 필요');
         if (!homeless) r.push('무주택 필요');
-        if (!isHouseholdHead) r.push('세대주 필요 (단, 예비 세대주 포함)');
-        if (annualIncome > 5000) r.push(`연소득 5,000만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        if (!isHouseholdHead) r.push('세대주 필요 (예비 세대주 포함)');
+        if (annualInc > 5000) r.push(`연소득 5,000만원 이하 필요 (현재 약 ${Math.round(annualInc)}만원)`);
+        if (naMsg(34500)) r.push(naMsg(34500));
         let eligible = false, rank = '';
-        if (isYouth && age <= 34 && homeless && isHouseholdHead && annualIncome <= 5000) {
+        if (isYouth && age <= 34 && homeless && isHouseholdHead && annualInc <= 5000 && naOk(34500)) {
             eligible = true; rank = '청년 버팀목 (보증금 3억 이하, 전용 85㎡ 이하)';
         }
         add('청년 버팀목 전세자금 대출', eligible, rank, '연 2.2~3.3% / 최대 1.5억', '최장 10년', 'loan', r, '주택도시기금', 'finance');
@@ -3414,13 +3453,14 @@ function runAnalysis() {
     // 신혼부부 버팀목
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
         const grp = isNewlywedStrict;
         if (!grp) r.push('혼인 7년 이내 신혼부부·예비신혼 필요');
-        if (!homeless) r.push('무주택 필요');
-        if (annualIncome > 7500) r.push(`연소득 7,500만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요');
+        if (annualInc > 7500) r.push(`연소득 7,500만원 이하 필요 (현재 약 ${Math.round(annualInc)}만원)`);
+        if (naMsg(34500)) r.push(naMsg(34500));
         let eligible = false, rank = '';
-        if (grp && homeless && annualIncome <= 7500) {
+        if (grp && homeless && isHouseholdHead && annualInc <= 7500 && naOk(34500)) {
             eligible = true; rank = infant ? '신생아 우대 적용 가능' : '신혼부부 버팀목';
         }
         add('신혼부부 버팀목 전세자금 대출', eligible, rank, '연 1.9~3.3% / 최대 2.5억', '최장 10년', 'newlywed', r, '주택도시기금', 'finance');
@@ -3429,15 +3469,14 @@ function runAnalysis() {
     // 버팀목전세자금 (일반)
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
         if (!homeless) r.push('무주택 세대주 필요');
         if (!isHouseholdHead) r.push('세대주 필요');
         const incLim = (childCnt >= 2 ? 6000 : isNewlywedStrict ? 7500 : 5000);
-        if (annualIncome > incLim) r.push(`연소득 ${incLim}만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
-        // 청년·신혼 전용상품이 더 유리하므로 해당자는 제외
+        if (annualInc > incLim) r.push(`연소득 ${incLim.toLocaleString()}만원 이하 필요 (현재 약 ${Math.round(annualInc)}만원)`);
+        if (naMsg(34500)) r.push(naMsg(34500));
         const hasYouthProduct = isYouth && age <= 34;
         let eligible = false, rank = '';
-        if (homeless && isHouseholdHead && annualIncome <= incLim && !hasYouthProduct) {
+        if (homeless && isHouseholdHead && annualInc <= incLim && naOk(34500) && !hasYouthProduct) {
             eligible = true;
             rank = isNewlywedStrict ? '신혼 (수도권 2.5억, 금리 1.9~3.3%)' : childCnt >= 2 ? '다자녀 (수도권 2.5억)' : '일반 (수도권 1.2억)';
         }
@@ -3447,14 +3486,15 @@ function runAnalysis() {
     // 신생아특례 버팀목
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
         if (!infant) r.push('2세 이하 자녀 보유 필요 (출산 2년 이내)');
         if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요');
         const incLim = dualInc ? 20000 : 13000;
-        if (annualIncome > incLim) r.push(`연소득 ${incLim}만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        if (annualInc > incLim) r.push(`연소득 ${dualInc ? '2억(맞벌이)' : '1.3억'}원 이하 필요 (현재 약 ${Math.round(annualInc)}만원)`);
+        if (naMsg(34500)) r.push(naMsg(34500));
         let eligible = false, rank = '';
-        if (infant && homeless && annualIncome <= incLim) {
-            eligible = true; rank = dualInc ? '맞벌이 (2억 이하)' : '외벌이 (1.3억 이하)';
+        if (infant && homeless && isHouseholdHead && annualInc <= incLim && naOk(34500)) {
+            eligible = true; rank = dualInc ? '맞벌이 (연소득 2억 이하)' : '외벌이 (연소득 1.3억 이하)';
         }
         add('신생아특례 버팀목 전세자금 대출', eligible, rank, '연 1.3~4.3% / 최대 2.4억 (특례 4년)', '최장 12년', 'loan', r, '주택도시기금', 'finance');
     }
@@ -3462,13 +3502,14 @@ function runAnalysis() {
     // 청년전용 보증부월세대출
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
         if (!isYouth || age > 34) r.push('만 19~34세 필요');
-        if (!homeless) r.push('무주택 필요');
-        if (annualIncome > 5000) r.push(`연소득 5,000만원 이하 필요`);
+        if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요 (예비 세대주 포함)');
+        if (annualInc > 5000) r.push(`연소득 5,000만원 이하 필요 (현재 약 ${Math.round(annualInc)}만원)`);
+        if (naMsg(34500)) r.push(naMsg(34500));
         let eligible = false, rank = '';
-        if (isYouth && age <= 34 && homeless && annualIncome <= 5000) {
-            eligible = true; rank = '보증금 4,500만·월세금 1,200만 (월 0~1.3%)';
+        if (isYouth && age <= 34 && homeless && isHouseholdHead && annualInc <= 5000 && naOk(34500)) {
+            eligible = true; rank = '보증금 4,500만·월세금 1,200만 (월 50만 이내)';
         }
         add('청년전용 보증부월세대출', eligible, rank, '월세금 연 0% (월 20만↓) · 보증금 연 1.3%', '최장 10년', 'loan', r, '주택도시기금', 'finance');
     }
@@ -3476,13 +3517,14 @@ function runAnalysis() {
     // 주거안정월세대출
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
-        const isSocialNewbie = (age <= 35 && annualIncome <= 4000);
-        const isGeneral = annualIncome <= 5000;
-        if (!homeless) r.push('무주택 필요');
+        if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요');
+        const isSocialNewbie = (age <= 35 && annualInc <= 4000);
+        const isGeneral = annualInc <= 5000;
         if (!isSocialNewbie && !isGeneral) r.push('연소득 5,000만원 이하 필요');
+        if (naMsg(34500)) r.push(naMsg(34500));
         let eligible = false, rank = '';
-        if (homeless && (isSocialNewbie || isGeneral)) {
+        if (homeless && isHouseholdHead && (isSocialNewbie || isGeneral) && naOk(34500)) {
             eligible = true; rank = isSocialNewbie ? '우대형 연 1.3% (사회초년생·취준생)' : '일반형 연 1.8%';
         }
         add('주거안정월세대출', eligible, rank, '연 1.3~1.8% / 월 최대 60만원', '최장 10년 (생애 1회)', 'loan', r, '주택도시기금', 'finance');
@@ -3491,15 +3533,15 @@ function runAnalysis() {
     // 청년 주택드림 디딤돌 대출
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
         if (age > 39) r.push('청약 당첨 시 만 39세 이하 필요');
         if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요');
         const incLim = isNewlywedStrict ? 10000 : 7000;
-        if (annualIncome > incLim) r.push(`연소득 ${incLim}만원 이하 필요 (현재 약 ${Math.round(annualIncome)}만원)`);
+        if (annualInc > incLim) r.push(`연소득 ${isNewlywedStrict ? '1억(신혼)' : '7,000만'}원 이하 필요 (현재 약 ${Math.round(annualInc)}만원)`);
+        if (naMsg(51100)) r.push(naMsg(51100));
         r.push('청년 주택드림 청약통장 1년 이상·1천만원 이상 납입 필요');
         let eligible = false, rank = '';
-        // 통장 조건은 별도 확인 필요하므로 소득/나이 조건만 체크
-        if (age <= 39 && homeless && annualIncome <= incLim) {
+        if (age <= 39 && homeless && isHouseholdHead && annualInc <= incLim && naOk(51100)) {
             eligible = true; rank = isNewlywedStrict ? '신혼 최대 4억 (금리 2.4~4.15%)' : '미혼 최대 3억 (금리 2.4~4.15%)';
             r.length = 0; r.push('청년 주택드림 통장 1년 이상·1천만원 이상 납입 조건 별도 확인');
         }
@@ -3509,13 +3551,14 @@ function runAnalysis() {
     // 신혼부부전용 구입자금 (생애최초)
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
         if (!isNewlywedStrict) r.push('혼인 7년 이내 신혼부부·예비신혼 필요');
         if (!homeless) r.push('무주택 세대주 필요');
+        if (!isHouseholdHead) r.push('세대주 필요');
         if (!lifeFirst) r.push('생애최초 주택구입자 필요 (기금대출 이력 없음)');
-        if (annualIncome > 8500) r.push(`연소득 8,500만원 이하 필요`);
+        if (annualInc > 8500) r.push(`연소득 8,500만원 이하 필요 (현재 약 ${Math.round(annualInc)}만원)`);
+        if (naMsg(51100)) r.push(naMsg(51100));
         let eligible = false, rank = '';
-        if (isNewlywedStrict && homeless && lifeFirst && annualIncome <= 8500) {
+        if (isNewlywedStrict && homeless && isHouseholdHead && lifeFirst && annualInc <= 8500 && naOk(51100)) {
             eligible = true; rank = '신혼 생애최초 (LTV 80%, 금리 2.55~3.85%)';
         }
         add('신혼부부 구입자금 대출 (생애최초)', eligible, rank, '연 2.55~3.85% / 최대 3.2억', '최장 30년', 'newlywed', r, '주택도시기금', 'finance');
@@ -3824,7 +3867,8 @@ function runAnalysis() {
         { label: maritalLabel[marital] || marital, highlight: false },
         { label: `${hhSize}인 가구`, highlight: false },
         { label: `월소득 ${monthlyIncome}만원`, highlight: false },
-        { label: `총자산 ${totalAssets}만원`, highlight: false },
+        { label: `총자산 ${totalAssets.toLocaleString()}만원`, highlight: false },
+        ...(netAssets !== null ? [{ label: `순자산 ${Math.round(netAssets).toLocaleString()}만원`, highlight: false }] : []),
         ...(childCnt > 0 ? [{ label: `자녀 ${childCnt}명`, highlight: true }] : []),
         ...(infant ? [{ label: '신생아가구', highlight: true }] : []),
         ...(is1st ? [{ label: '우대 대상', highlight: true }] : []),
@@ -5364,7 +5408,7 @@ typeDetailData['디딤돌 대출 (주택구입)'] = {
         <h4>자격 요건</h4>
         <ul>
             <li>무주택 세대주 (민법상 성년)</li>
-            <li>연소득: 일반 6천만원 이하 / 신혼 8,500만원 이하</li>
+            <li>연소득: 일반 6천만원 / 생애최초·다자녀 7천만원 / 신혼 8,500만원 이하</li>
             <li>순자산 5.11억원 이하</li>
             <li>실거주의무: 1개월 내 전입 후 2년 이상 거주</li>
         </ul>
@@ -5402,7 +5446,7 @@ typeDetailData['신생아특례 디딤돌 대출'] = {
     <div class="help-section">
         <h4>자격 요건</h4>
         <ul>
-            <li>대출접수일 기준 2년 내 출산 (무주택 또는 1주택 대환)</li>
+            <li>대출접수일 기준 2년 내 출산 · 무주택 세대주 (1주택 대환도 가능)</li>
             <li>연소득: 1.3억원 이하 / 맞벌이 2억원 이하</li>
             <li>순자산 5.11억원 이하</li>
         </ul>
@@ -5422,8 +5466,7 @@ typeDetailData['청년 버팀목 전세자금 대출'] = {
         <ul>
             <li>2천만원 이하: 연 <strong>2.2%</strong></li>
             <li>2천~4천만원: 연 <strong>2.5%</strong></li>
-            <li>4천~6천만원: 연 <strong>2.9%</strong></li>
-            <li>6천~7,500만원(신혼): 연 <strong>3.3%</strong></li>
+            <li>4천~5천만원: 연 <strong>2.9%</strong></li>
             <li>우대: 만 25세 미만 단독세대주 -0.3%p, 중소기업 재직 -0.3%p, 전자계약 -0.1%p</li>
         </ul>
     </div>
@@ -5477,7 +5520,7 @@ typeDetailData['신혼부부 버팀목 전세자금 대출'] = {
     <div class="help-section">
         <h4>자격 요건</h4>
         <ul>
-            <li>혼인기간 7년 이내 또는 3개월 이내 결혼예정자 · 무주택</li>
+            <li>혼인기간 7년 이내 또는 3개월 이내 결혼예정자 · 무주택 세대주</li>
             <li>부부합산 연소득 7,500만원 이하 / 순자산 3.45억원 이하</li>
             <li>계약 후 3개월 이내 신청</li>
         </ul>
@@ -5652,6 +5695,7 @@ typeDetailData['청년 주택드림 디딤돌 대출'] = {
         <ul>
             <li>청약 당첨 시 만 39세 이하 · 무주택 세대주</li>
             <li>연소득: 미혼 7천만원 / 신혼 1억원 이하</li>
+            <li>순자산 5.11억원 이하</li>
             <li>⭐ <strong>청년 주택드림 청약통장 1년 이상 가입 + 1천만원 이상 납입</strong></li>
         </ul>
     </div>
@@ -7807,7 +7851,7 @@ function gatherConditions() {
     'tg-elderly-parent','tg-organ-recommend'
   ];
   const numIds = ['age','household-size','children-count','homeless-years',
-                  'seoul-years','income','total-assets','real-estate',
+                  'seoul-years','income','total-assets','net-assets','real-estate',
                   'car-value','subscription','annual-salary'];
   const selIds = ['district-city','district-gu','workplace-gu','school-gu'];
 
@@ -7842,7 +7886,7 @@ function restoreConditions(cond) {
   });
   // 숫자/텍스트 input 복원
   ['age','household-size','children-count','homeless-years','seoul-years',
-   'income','total-assets','real-estate','car-value','subscription','annual-salary'
+   'income','total-assets','net-assets','real-estate','car-value','subscription','annual-salary'
   ].forEach(id => {
     const el = document.getElementById(id);
     if (el && cond[id] !== undefined) el.value = cond[id];
