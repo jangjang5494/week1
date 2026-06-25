@@ -3271,12 +3271,12 @@ function runAnalysis() {
         }
     }
 
-    // 민간분양(아파트) 잔여세대 — 추첨제, 서울 무주택세대주
+    // 민간분양(아파트) 잔여세대 — 추첨제, 무주택세대구성원 성년자
     {
         const eligible = seoulRes && homeless;
         const r = [];
         if (!seoulRes) r.push('서울 거주 필요');
-        if (!homeless) r.push('무주택세대주 필요');
+        if (!homeless) r.push('무주택세대구성원 필요');
         add('민간분양(아파트) 잔여세대', eligible, eligible ? '100% 추첨 (청약통장 불필요)' : '', '시세 100% (분양)', '분양', 'sale-private', r, '청약홈', 'sale');
     }
 
@@ -6012,8 +6012,9 @@ typeDetailData['민간분양 (아파트) — 1순위'] = {
     <div class="help-section">
         <h4>1순위 자격 (투기과열지구 · 서울 기준)</h4>
         <ul>
-            <li>청약저축 가입 후 <strong>2년 이상 경과 + 24회 이상 납입</strong></li>
-            <li>예치금 충족: 85㎡이하 <strong>300만원</strong> / 102㎡이하 600만원 / 135㎡이하 1,000만원 / 모든면적 1,500만원</li>
+            <li>청약저축 가입 후 <strong>2년 이상 경과</strong> (투기과열지구 기준)</li>
+            <li>납입인정금액이 지역별 <strong>예치금 이상</strong>: 85㎡이하 <strong>300만원</strong> / 102㎡이하 600만원 / 135㎡이하 1,000만원 / 모든면적 1,500만원</li>
+            <li>★ 민영주택은 <strong>납입횟수 무관</strong> (24회 기준은 국민주택만 해당)</li>
         </ul>
     </div>
     <div class="help-section">
@@ -6048,12 +6049,12 @@ typeDetailData['민간분양(아파트) 잔여세대'] = {
     body: `
     <div class="help-section">
         <h4>잔여세대란?</h4>
-        <p>1·2순위 청약 후 미분양된 세대를 <strong>선착순 또는 추첨</strong>으로 공급합니다. 청약통장 없이 신청 가능하며, 서울 거주 무주택세대주라면 누구나 지원할 수 있습니다.</p>
+        <p>1·2순위 청약 후 미분양된 세대를 <strong>선착순 또는 추첨</strong>으로 공급합니다. 청약통장 없이 신청 가능하며, <strong>무주택세대구성원인 성년자</strong>라면 누구나 지원할 수 있습니다.</p>
     </div>
     <div class="help-section">
         <h4>주요 자격</h4>
         <ul>
-            <li>서울 거주 무주택세대주</li>
+            <li>무주택세대구성원인 성년자 (세대주 아니어도 가능)</li>
             <li>청약통장 불필요</li>
             <li>소득·자산 제한 없음</li>
             <li>100% 추첨제</li>
@@ -6072,7 +6073,7 @@ typeDetailData['민간분양 (아파트) — 2순위'] = {
     <div class="help-section">
         <h4>2순위에 해당하는 경우</h4>
         <ul>
-            <li>청약저축 가입 후 2년 미만 또는 24회 미만 납입</li>
+            <li>청약저축 가입 후 2년 미만 (투기과열지구 기준)</li>
             <li>예치금 기준 미충족</li>
             <li>세대주가 아닌 자</li>
             <li>5년 이내 당첨 이력 있는 세대원</li>
