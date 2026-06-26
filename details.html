@@ -3416,7 +3416,7 @@ function runAnalysis() {
             eligible = true;
             rank = isMarried ? '신혼 (한도 3.2억)' : lifeFirst ? '생애최초 (한도 2.4억)' : childCnt >= 2 ? '다자녀 (한도 3.2억)' : '일반 (한도 2억)';
         }
-        add('디딤돌 대출 (주택구입)', eligible, rank, '연 2.85~4.15% / 일반 2억·생애최초 2.4억·신혼 3.2억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
+        add('디딤돌 대출 (주택구입)', eligible, rank, '연 2.85~4.15% / 일반 2억·생애최초 2.4억·신혼 3.2억', '최장 30년', 'fin-purchase', r, '주택도시기금', 'finance');
     }
 
     // 신생아특례 디딤돌
@@ -3432,7 +3432,7 @@ function runAnalysis() {
         if (homeless && isHouseholdHead && infant && annualInc <= incLim && naOk(51100)) {
             eligible = true; rank = dualInc ? '맞벌이 (연소득 2억 이하, 최대 4억)' : '외벌이 (연소득 1.3억 이하, 최대 4억)';
         }
-        add('신생아특례 디딤돌 대출', eligible, rank, '연 1.80~4.50% / 최대 4억', '최장 30년', 'loan', r, '주택도시기금', 'finance');
+        add('신생아특례 디딤돌 대출', eligible, rank, '연 1.80~4.50% / 최대 4억', '최장 30년', 'fin-purchase', r, '주택도시기금', 'finance');
     }
 
     // 청년 버팀목
@@ -3447,7 +3447,7 @@ function runAnalysis() {
         if (isYouth && age <= 34 && homeless && isHouseholdHead && annualInc <= 5000 && naOk(34500)) {
             eligible = true; rank = '청년 버팀목 (보증금 3억 이하, 전용 85㎡ 이하)';
         }
-        add('청년 버팀목 전세자금 대출', eligible, rank, '연 2.2~3.3% / 최대 1.5억', '최장 10년', 'loan', r, '주택도시기금', 'finance');
+        add('청년 버팀목 전세자금 대출', eligible, rank, '연 2.2~3.3% / 최대 1.5억', '최장 10년', 'fin-jeonse', r, '주택도시기금', 'finance');
     }
 
     // 신혼부부 버팀목
@@ -3463,7 +3463,7 @@ function runAnalysis() {
         if (grp && homeless && isHouseholdHead && annualInc <= 7500 && naOk(34500)) {
             eligible = true; rank = infant ? '신생아 우대 적용 가능' : '신혼부부 버팀목';
         }
-        add('신혼부부 버팀목 전세자금 대출', eligible, rank, '연 1.9~3.3% / 최대 2.5억', '최장 10년', 'newlywed', r, '주택도시기금', 'finance');
+        add('신혼부부 버팀목 전세자금 대출', eligible, rank, '연 1.9~3.3% / 최대 2.5억', '최장 10년', 'fin-jeonse', r, '주택도시기금', 'finance');
     }
 
     // 버팀목전세자금 (일반)
@@ -3480,7 +3480,7 @@ function runAnalysis() {
             eligible = true;
             rank = isNewlywedStrict ? '신혼 (수도권 2.5억, 금리 1.9~3.3%)' : childCnt >= 2 ? '다자녀 (수도권 2.5억)' : '일반 (수도권 1.2억)';
         }
-        add('버팀목 전세자금 대출', eligible, rank, '연 2.5~3.5% / 수도권 1.2억', '최장 10년', 'loan', r, '주택도시기금', 'finance');
+        add('버팀목 전세자금 대출', eligible, rank, '연 2.5~3.5% / 수도권 1.2억', '최장 10년', 'fin-jeonse', r, '주택도시기금', 'finance');
     }
 
     // 신생아특례 버팀목
@@ -3496,7 +3496,7 @@ function runAnalysis() {
         if (infant && homeless && isHouseholdHead && annualInc <= incLim && naOk(34500)) {
             eligible = true; rank = dualInc ? '맞벌이 (연소득 2억 이하)' : '외벌이 (연소득 1.3억 이하)';
         }
-        add('신생아특례 버팀목 전세자금 대출', eligible, rank, '연 1.3~4.3% / 최대 2.4억 (특례 4년)', '최장 12년', 'loan', r, '주택도시기금', 'finance');
+        add('신생아특례 버팀목 전세자금 대출', eligible, rank, '연 1.3~4.3% / 최대 2.4억 (특례 4년)', '최장 12년', 'fin-jeonse', r, '주택도시기금', 'finance');
     }
 
     // 청년전용 보증부월세대출
@@ -3511,7 +3511,7 @@ function runAnalysis() {
         if (isYouth && age <= 34 && homeless && isHouseholdHead && annualInc <= 5000 && naOk(34500)) {
             eligible = true; rank = '보증금 4,500만·월세금 1,200만 (월 50만 이내)';
         }
-        add('청년전용 보증부월세대출', eligible, rank, '월세금 연 0% (월 20만↓) · 보증금 연 1.3%', '최장 10년', 'loan', r, '주택도시기금', 'finance');
+        add('청년전용 보증부월세대출', eligible, rank, '월세금 연 0% (월 20만↓) · 보증금 연 1.3%', '최장 10년', 'fin-monthly', r, '주택도시기금', 'finance');
     }
 
     // 주거안정월세대출
@@ -3527,7 +3527,7 @@ function runAnalysis() {
         if (homeless && isHouseholdHead && (isSocialNewbie || isGeneral) && naOk(34500)) {
             eligible = true; rank = isSocialNewbie ? '우대형 연 1.3% (사회초년생·취준생)' : '일반형 연 1.8%';
         }
-        add('주거안정월세대출', eligible, rank, '연 1.3~1.8% / 월 최대 60만원', '최장 10년 (생애 1회)', 'loan', r, '주택도시기금', 'finance');
+        add('주거안정월세대출', eligible, rank, '연 1.3~1.8% / 월 최대 60만원', '최장 10년 (생애 1회)', 'fin-monthly', r, '주택도시기금', 'finance');
     }
 
     // 청년 주택드림 디딤돌 대출
@@ -3545,7 +3545,7 @@ function runAnalysis() {
             eligible = true; rank = isNewlywedStrict ? '신혼 최대 4억 (금리 2.4~4.15%)' : '미혼 최대 3억 (금리 2.4~4.15%)';
             r.length = 0; r.push('청년 주택드림 통장 1년 이상·1천만원 이상 납입 조건 별도 확인');
         }
-        add('청년 주택드림 디딤돌 대출', eligible, rank, '연 2.4~4.15% / 최대 3~4억', '최장 40년', 'loan', r, '주택도시기금', 'finance');
+        add('청년 주택드림 디딤돌 대출', eligible, rank, '연 2.4~4.15% / 최대 3~4억', '최장 40년', 'fin-purchase', r, '주택도시기금', 'finance');
     }
 
     // 신혼부부전용 구입자금 (생애최초)
@@ -3561,7 +3561,7 @@ function runAnalysis() {
         if (isNewlywedStrict && homeless && isHouseholdHead && lifeFirst && annualInc <= 8500 && naOk(51100)) {
             eligible = true; rank = '신혼 생애최초 (LTV 80%, 금리 2.55~3.85%)';
         }
-        add('신혼부부 구입자금 대출 (생애최초)', eligible, rank, '연 2.55~3.85% / 최대 3.2억', '최장 30년', 'newlywed', r, '주택도시기금', 'finance');
+        add('신혼부부 구입자금 대출 (생애최초)', eligible, rank, '연 2.55~3.85% / 최대 3.2억', '최장 30년', 'fin-purchase', r, '주택도시기금', 'finance');
     }
 
     // === 주거복지 ===
@@ -3891,7 +3891,8 @@ function runAnalysis() {
 
     const catLabel = {
         youth:'청년', newlywed:'신혼·신생아', longterm:'장기전세', national:'국민·매입임대', jeonse:'전세지원',
-        'sale-general':'공공분양', 'sale-special':'특별공급', 'sale-private':'민간분양·청약', loan:'금융대출', welfare:'주거복지',
+        'sale-general':'공공분양', 'sale-special':'특별공급', 'sale-private':'민간분양·청약', loan:'금융대출',
+        'fin-purchase':'구입자금', 'fin-jeonse':'전세자금', 'fin-monthly':'월세자금', welfare:'주거복지',
         '금융지원':'금융지원', '이자지원':'이자지원', '보증료지원':'보증료지원', '주거비지원':'주거비지원', '분양주택':'공공분양',
         '예외공고':'📌 공고'
     };
@@ -5387,11 +5388,11 @@ typeDetailData['디딤돌 대출 (주택구입)'] = {
     <div class="help-section">
         <h4>금리 (연소득별)</h4>
         <ul>
-            <li>2천만원 이하: 연 <strong>2.85~3.10%</strong></li>
-            <li>2천~4천만원: 연 <strong>3.20~3.45%</strong></li>
-            <li>4천~7천만원: 연 <strong>3.55~3.80%</strong></li>
-            <li>7천~8,500만원(신혼): 연 <strong>3.90~4.15%</strong></li>
-            <li>우대금리: 신혼·생애최초 -0.2%p, 다자녀 -0.5~0.7%p, 한부모 -0.5%p</li>
+            <li>2천만원 이하: 연 <strong>2.85~3.45%</strong> (기간별)</li>
+            <li>2천~4천만원: 연 <strong>3.00~3.60%</strong></li>
+            <li>4천~7천만원: 연 <strong>3.15~3.75%</strong></li>
+            <li>7천~8,500만원(신혼): 연 <strong>3.30~3.90%</strong></li>
+            <li>우대: 생애최초·신혼 -0.2%p, 한부모 -0.5%p, 다자녀 -0.7%p, 전자계약 -0.1%p</li>
         </ul>
     </div>
     <div class="help-section">
@@ -5426,11 +5427,11 @@ typeDetailData['신생아특례 디딤돌 대출'] = {
     <div class="help-section">
         <h4>특례금리 (5년간, 연소득별)</h4>
         <ul>
-            <li>2천만원 이하: 연 <strong>1.80~2.05%</strong></li>
-            <li>4천~6천만원: 연 <strong>2.40~2.65%</strong></li>
-            <li>1억~1.3억: 연 <strong>3.20~3.50%</strong></li>
-            <li>맞벌이 1.7억~2억: 연 <strong>4.20~4.50%</strong></li>
-            <li>추가출산 자녀당 -0.2%p 우대 / 특례금리 5년 단위 연장 가능</li>
+            <li>2천만원 이하: 연 <strong>1.80~2.30%</strong> (기간별)</li>
+            <li>4천~6천만원: 연 <strong>2.20~2.70%</strong></li>
+            <li>1억~1.3억원: 연 <strong>2.80~3.30%</strong></li>
+            <li>맞벌이 1.7~2억원: 연 <strong>4.00~4.50%</strong></li>
+            <li>추가출산 자녀당 -0.2%p / 특례금리 5년 단위 연장 가능</li>
         </ul>
     </div>
     <div class="help-section">
@@ -5484,7 +5485,7 @@ typeDetailData['청년 버팀목 전세자금 대출'] = {
         <h4>자격 요건</h4>
         <ul>
             <li>만 19~34세 세대주 (예비세대주 포함) · 무주택</li>
-            <li>연소득 5천만원 이하 (신혼 7,500만원)</li>
+            <li>연소득 5천만원 이하</li>
             <li>순자산 3.45억원 이하</li>
             <li>신청기한: 잔금지급일과 전입일 중 빠른 날로부터 3개월 이내</li>
         </ul>
@@ -5502,10 +5503,11 @@ typeDetailData['신혼부부 버팀목 전세자금 대출'] = {
     <div class="help-section">
         <h4>금리 (부부합산 연소득별)</h4>
         <ul>
-            <li>2천만원 이하 / 보증금 5천만원 이하: 연 <strong>1.9%</strong></li>
-            <li>4천~6천만원: 연 <strong>2.4~2.7%</strong></li>
-            <li>6천~7,500만원: 연 <strong>2.9~3.3%</strong></li>
-            <li>우대: 자녀 1명 -0.3%p, 2명 -0.5%p, 다자녀 -0.7%p</li>
+            <li>2천만원 이하: 연 <strong>1.9~2.7%</strong> (보증금별)</li>
+            <li>2천~4천만원: 연 <strong>2.1~2.9%</strong></li>
+            <li>4천~6천만원: 연 <strong>2.3~3.1%</strong></li>
+            <li>6천~7,500만원: 연 <strong>2.5~3.3%</strong></li>
+            <li>우대: 자녀 1명 -0.3%p, 2명 -0.5%p, 다자녀 -0.7%p, 전자계약 -0.1%p</li>
         </ul>
     </div>
     <div class="help-section">
@@ -5547,7 +5549,7 @@ typeDetailData['버팀목 전세자금 대출'] = {
         <ul>
             <li>한도: 수도권 <strong>1.2억원</strong> (신혼·2자녀 이상 2.5억원)</li>
             <li>기간: 2년 (최장 10년)</li>
-            <li>대상 주택: 전용 85㎡ 이하, 보증금 수도권 <strong>3억원 이하</strong></li>
+            <li>대상 주택: 전용 85㎡ 이하, 보증금 수도권 <strong>3억원 이하</strong> (신혼 4억원)</li>
             <li>중도상환수수료 없음</li>
         </ul>
     </div>
@@ -5571,12 +5573,12 @@ typeDetailData['신생아특례 버팀목 전세자금 대출'] = {
     <div class="help-section">
         <h4>특례금리 (4년간, 연소득별)</h4>
         <ul>
-            <li>2천만원 이하 / 보증금 5천만원 이하: 연 <strong>1.3%</strong></li>
-            <li>4천~6천만원: 연 <strong>1.9~2.2%</strong></li>
-            <li>7,500만~1억원: 연 <strong>2.55%</strong></li>
-            <li>1억~1.3억원: 연 <strong>2.9%</strong></li>
-            <li>맞벌이 1.7억~2억: 연 <strong>4.0%</strong></li>
-            <li>추가출산 자녀당 -0.2%p / 전자계약 -0.1%p</li>
+            <li>5천만원 이하: 연 <strong>1.3%</strong></li>
+            <li>5천만~1억원: 연 <strong>1.7%</strong></li>
+            <li>1억~1.3억원: 연 <strong>2.1%</strong></li>
+            <li>맞벌이 1.5~1.7억원: 연 <strong>2.9%</strong></li>
+            <li>맞벌이 1.7~2억원: 연 <strong>3.3%</strong></li>
+            <li>보증금 높을수록 가산 / 추가출산 -0.2%p / 전자계약 -0.1%p</li>
         </ul>
     </div>
     <div class="help-section">
@@ -5657,7 +5659,7 @@ typeDetailData['주거안정월세대출'] = {
     <div class="help-section">
         <h4>자격 요건</h4>
         <ul>
-            <li>우대형: 만 35세 이하, 연소득 4천만원 이하 사회초년생·취업준비생</li>
+            <li>우대형: 취업 5년 이내 만 35세 이하 연소득 4천만원 이하 / 취준생(부모소득 6천만원 이하)</li>
             <li>일반형: 연소득 5천만원 이하 무주택 세대주</li>
             <li>순자산 3.45억원 이하</li>
         </ul>
@@ -5675,17 +5677,19 @@ typeDetailData['청년 주택드림 디딤돌 대출'] = {
     <div class="help-section">
         <h4>금리 (연소득별)</h4>
         <ul>
-            <li>2천만원 이하 (미혼): 연 <strong>2.40~2.70%</strong></li>
-            <li>2천~4천만원: 연 <strong>2.80~3.10%</strong></li>
-            <li>4천~7천만원: 연 <strong>3.20~3.50%</strong></li>
-            <li>신혼 7천~1억원: 연 <strong>3.55~4.15%</strong></li>
-            <li>우대: 결혼 -0.1%p, 첫째 출산 -0.5%p, 추가출산 -0.2%p</li>
+            <li>2천만원 이하 (미혼): 연 <strong>2.40~2.70%</strong> (기간별)</li>
+            <li>2천~4천만원: 연 <strong>2.70~3.00%</strong></li>
+            <li>4천~7천만원: 연 <strong>3.10~3.40%</strong></li>
+            <li>신혼 7천~8,500만원: 연 <strong>3.30~3.60%</strong></li>
+            <li>신혼 8,500만~1억원: 연 <strong>3.70~4.15%</strong></li>
+            <li>우대: 결혼 -0.1%p, 첫째 출산 -0.5%p, 추가출산 -0.2%p (최대 1%p)</li>
         </ul>
     </div>
     <div class="help-section">
         <h4>대출 조건</h4>
         <ul>
             <li>한도: 미혼 최대 <strong>3억원</strong> / 신혼 최대 <strong>4억원</strong></li>
+            <li>대상 주택: 전용 85㎡ 이하, <strong>6억원 이하</strong></li>
             <li>기간: 10·15·20·30년 (연소득 4천만원 이하는 40년 가능)</li>
             <li>LTV 70% (생애최초 80%) / 중도상환수수료 면제(~2026.12.31)</li>
         </ul>
@@ -5712,11 +5716,11 @@ typeDetailData['신혼부부 구입자금 대출 (생애최초)'] = {
     <div class="help-section">
         <h4>금리 (부부합산 연소득별)</h4>
         <ul>
-            <li>2천만원 이하: 연 <strong>2.55%</strong></li>
-            <li>2천~4천만원: 연 <strong>2.75%</strong></li>
-            <li>4천~7천만원: 연 <strong>3.25%</strong></li>
-            <li>7천~8,500만원: 연 <strong>3.85%</strong></li>
-            <li>우대: 자녀 1명 -0.3%p, 2명 -0.5%p, 다자녀 -0.7%p</li>
+            <li>2천만원 이하: 연 <strong>2.55~2.95%</strong> (기간별)</li>
+            <li>2천~4천만원: 연 <strong>2.65~3.05%</strong></li>
+            <li>4천~7천만원: 연 <strong>2.75~3.15%</strong></li>
+            <li>7천~8,500만원: 연 <strong>2.85~3.25%</strong></li>
+            <li>우대: 자녀 -0.3~0.7%p, 청약저축 -0.3~0.5%p, 전자계약 -0.1%p</li>
         </ul>
     </div>
     <div class="help-section">
