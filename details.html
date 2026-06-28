@@ -4080,10 +4080,10 @@ function runAnalysis() {
             </div>
             ${!isE&&r.reasons.length?`<div class="result-reason">⚠ ${r.reasons.join(' · ')}</div>`:''}
             ${announceHtml}
-            ${isE?`<div class="card-btn-row">
+            <div class="card-btn-row">
                 <button class="type-detail-btn" onclick="openTypeDetail('${safeName}')">📋 이 유형 상세보기</button>
-                <button class="apply-guide-btn" onclick="openApplyGuide('${safeName}')">📝 신청 가이드</button>
-            </div>`:''}
+                ${isE?`<button class="apply-guide-btn" onclick="openApplyGuide('${safeName}')">📝 신청 가이드</button>`:''}
+            </div>
             ${loanHtml}
         </div>`;
     }
