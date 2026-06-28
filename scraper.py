@@ -336,10 +336,10 @@ class SHCrawler:
         self.normal_max_pages  = normal_max_pages   # 일반 크롤링 시 최대 페이지 수
         self.normal_since_days = normal_since_days  # 일반 크롤링 시 며칠 전까지 볼지
 
-    def crawl(self, initial=False):
+    def crawl(self, initial=False, catchup=False):
         today  = date.today()
-        since  = INITIAL_SINCE if initial else today - timedelta(days=self.normal_since_days)
-        max_pages = 50 if initial else self.normal_max_pages
+        since  = INITIAL_SINCE if initial else today - timedelta(days=30 if catchup else self.normal_since_days)
+        max_pages = 50 if initial else (5 if catchup else self.normal_max_pages)
         results = []
         candidates = []
 
@@ -608,16 +608,16 @@ YOUTH_BBS   = "BMSR00015"
 YOUTH_BASE  = "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do"
 YOUTH_REF   = "https://soco.seoul.go.kr/youth/bbs/BMSR00015/list.do?menuNo=400008"
 
-def crawl_youth_housing(initial=False):
+def crawl_youth_housing(initial=False, catchup=False):
     """
     청년안심주택(역세권청년주택) 공고 크롤링.
     API는 POST + bbsId 파라미터 필요.
     날짜 필드: optn1=신청시작일, optn4=신청마감일.
     """
     today   = date.today()
-    since   = INITIAL_SINCE if initial else today - timedelta(days=1)
+    since   = INITIAL_SINCE if initial else today - timedelta(days=30 if catchup else 1)
     results = []
-    max_pages = 5 if initial else 1
+    max_pages = 5 if initial else (3 if catchup else 1)
 
     for page in range(1, max_pages + 1):
         print(f"  [청년안심주택] API p{page}...")
@@ -1253,11 +1253,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--initial", action="store_true",
                         help=f"초기 DB 구축 ({INITIAL_SINCE} 이후 전체 공고)")
+    parser.add_argument("--catchup", action="store_true",
+                        help="중간 크롤링 (5페이지, 30일 범위)")
     args = parser.parse_args()
     initial = args.initial
+    catchup = args.catchup
     today   = date.today()
 
-    print(f"{'[초기 DB 구축]' if initial else '[일반 크롤링]'} 시작: {today}")
+    mode = '[초기 DB 구축]' if initial else '[캐치업 크롤링]' if catchup else '[일반 크롤링]'
+    print(f"{mode} 시작: {today}")
     print("=" * 60)
 
     all_announcements = []
@@ -1282,19 +1286,19 @@ def main():
         view_path="/main/lay2/program/S1T294C295/www/brd/m_241/view.do",
         multi_itm_seq="1,2,4,8,16,32,64,128,256,512",
         param_name="multi_itm_seqs",
-        normal_max_pages=2,    # 오늘+전날 공고는 2페이지면 충분
-        normal_since_days=1    # 오늘 + 전날까지만
+        normal_max_pages=2,
+        normal_since_days=1
     )
-    all_announcements += sh_rental.crawl(initial)
-    all_announcements += sh_sale.crawl(initial)
-    all_announcements += sh_notice.crawl(initial)
+    all_announcements += sh_rental.crawl(initial, catchup)
+    all_announcements += sh_sale.crawl(initial, catchup)
+    all_announcements += sh_notice.crawl(initial, catchup)
 
     # ── LH ──────────────────────────────────────────────────────────────
     all_announcements += crawl_lh(mi="1026", source_key="lh_rental", initial=initial)
     all_announcements += crawl_lh(mi="1027", source_key="lh_sale",   initial=initial)
 
     # ── 청년안심주택 ────────────────────────────────────────────────────
-    all_announcements += crawl_youth_housing(initial)
+    all_announcements += crawl_youth_housing(initial, catchup)
 
     # ── 청약홈 ──────────────────────────────────────────────────────────────
     all_announcements += crawl_applyhome_apt(initial)

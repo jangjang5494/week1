@@ -6,12 +6,12 @@ on:
     - cron: '0 6 * * *'   # 매일 오후 3시 KST (UTC 06:00)
   workflow_dispatch:
     inputs:
-      initial:
-        description: '초기 DB 구축 (2026-03-01 이후 전체 크롤링)'
+      mode:
+        description: '크롤링 모드'
         required: false
-        default: 'false'
+        default: 'normal'
         type: choice
-        options: ['false', 'true']
+        options: ['normal', 'catchup', 'initial']
 
 jobs:
   crawl:
@@ -34,8 +34,11 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
-          if [ "${{ github.event.inputs.initial }}" = "true" ]; then
+          MODE="${{ github.event.inputs.mode }}"
+          if [ "$MODE" = "initial" ]; then
             python3 scraper.py --initial
+          elif [ "$MODE" = "catchup" ]; then
+            python3 scraper.py --catchup
           else
             python3 scraper.py
           fi
