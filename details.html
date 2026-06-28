@@ -3612,21 +3612,21 @@ function runAnalysis() {
 
     // === 이자지원 ===
 
-    // 서울시 청년 임차보증금 이자지원
+    // 서울시 청년 임차보증금 이자지원 (2026.6.5 소득기준 상향)
     {
         const r = [];
         const annualIncome = monthlyIncome * 12;
-        const incLimit = dualInc ? 5000 : 4000;
+        const incLimit = dualInc ? 6000 : 5000;
         if (!seoulRes) r.push('서울 거주 필요');
         if (!isYouth) r.push('만 19~39세 필요');
         if (!isHouseholdHead) r.push('세대주 필요');
         if (!homeless) r.push('무주택 필요');
-        if (annualIncome > incLimit) r.push(`연소득 ${incLimit}만원 이하 필요 (맞벌이 5,000만원)`);
+        if (annualIncome > incLimit) r.push(`연소득 ${incLimit}만원 이하 필요 (기혼 6,000만원)`);
         let eligible = false, rank = '';
         if (seoulRes && isYouth && isHouseholdHead && homeless && annualIncome <= incLimit) {
-            eligible = true; rank = '연 최대 120만원 이자 지원 (보증금 3억 이하 주택)';
+            eligible = true; rank = '서울시 이자 연 2% 지원 (보증금 3억·월세 90만 이하 주택)';
         }
-        add('서울시 청년 임차보증금 이자지원', eligible, rank, '연 최대 120만원 / 최장 10년', '이자 지원 (대출 아님)', 'welfare', r, '서울시', 'welfare');
+        add('서울시 청년 임차보증금 이자지원', eligible, rank, '대출 최대 2억 / 최장 8년', '이자 지원 (대출 아님)', 'welfare', r, '서울시', 'welfare');
     }
 
     // 서울시 신혼부부 임차보증금 이자지원
@@ -3641,7 +3641,7 @@ function runAnalysis() {
         if (seoulRes && isNewlywedStrict && homeless && annualIncome <= 13000) {
             eligible = true; rank = '연 최대 240만원 이자 지원 (보증금 7억 이하 주택)';
         }
-        add('서울시 신혼부부 임차보증금 이자지원', eligible, rank, '연 최대 240만원 / 최장 10년', '이자 지원 (대출 아님)', 'welfare', r, '서울시', 'welfare');
+        add('서울시 신혼부부 임차보증금 이자지원', eligible, rank, '연 최대 240만원 / 최장 12년', '이자 지원 (대출 아님)', 'welfare', r, '서울시', 'welfare');
     }
 
     // SH 청년안심주택 임대보증금 무이자지원
@@ -3679,13 +3679,16 @@ function runAnalysis() {
     // 서울시 신혼부부 전세보증금반환보증 보증료 지원
     {
         const r = [];
+        const annualIncome = monthlyIncome * 12;
         if (!seoulRes) r.push('서울 거주 필요');
         if (!isNewlywedStrict) r.push('혼인 7년 이내 또는 예비신혼부부 필요');
+        if (!homeless) r.push('무주택 필요');
+        if (annualIncome > 7500) r.push('부부합산 연소득 7,500만원 이하 필요');
         let eligible = false, rank = '';
-        if (seoulRes && isNewlywedStrict) {
-            eligible = true; rank = '소득·자산 기준 없음 — 전세보증보험 가입 후 신청';
+        if (seoulRes && isNewlywedStrict && homeless && annualIncome <= 7500) {
+            eligible = true; rank = 'HF 보증 가입 후 대출일 90일 이내 신청';
         }
-        add('서울시 신혼부부 보증료 지원', eligible, rank, '보증료 전액 (최대 30만원)', '1회 지원', 'welfare', r, '서울시', 'welfare');
+        add('서울시 신혼부부 보증료 지원', eligible, rank, '보증료 전액 (최대 40만원)', '1회 지원', 'welfare', r, '서울시', 'welfare');
     }
 
     // ===== Supabase 연계: 금융지원·주거비지원·이자지원·보증료지원·분양주택 =====
@@ -5832,26 +5835,27 @@ typeDetailData['서울시 청년 임차보증금 이자지원'] = {
     body: `
     <div class="help-section">
         <h4>어떤 제도인가요?</h4>
-        <p>서울시가 지원하는 <strong>전·월세 보증금 대출 이자 지원 제도</strong>입니다. 대출 원금이 아닌 <strong>이자를 서울시가 대신 내줍니다</strong> (연 최대 120만원, 최장 10년).</p>
+        <p>서울시가 지원하는 <strong>전·월세 보증금 대출 이자 지원 제도</strong>입니다. 대출 원금이 아닌 <strong>이자를 서울시가 대신 내줍니다</strong> (대출금의 연 2.0% 지원, 최장 8년).</p>
     </div>
     <div class="help-section">
         <h4>자격 요건</h4>
         <ul>
             <li>만 19~39세 서울 거주 세대주 무주택 청년</li>
-            <li>연소득 4,000만원 이하 (맞벌이 5,000만원)</li>
-            <li>보증금 3억원 이하 + 월세 70만원 이하 주택</li>
+            <li>연소득 <strong>5,000만원 이하</strong> (기혼 6,000만원) — 2026.6.5 상향</li>
+            <li>보증금 3억원 이하 + 월세 <strong>90만원</strong> 이하 주택</li>
             <li>주택도시기금 대출 이용자·공공임대 거주자 제외</li>
         </ul>
     </div>
     <div class="help-section">
         <h4>지원 내용</h4>
         <ul>
-            <li>이자 지원 한도: 연 <strong>최대 120만원</strong> (월 10만원)</li>
-            <li>지원 기간: 최장 <strong>10년</strong> (2년 단위 갱신)</li>
-            <li>본인이 임차보증금 대출을 먼저 받고, 서울시가 이자를 납부</li>
+            <li>대출한도: 최대 <strong>2억원</strong> (보증금의 90% 이내)</li>
+            <li>서울시 이자 지원: 대출금의 연 <strong>2.0%</strong></li>
+            <li>지원 기간: 최장 <strong>8년</strong> (만 40세까지)</li>
+            <li>취급은행: 하나은행</li>
         </ul>
     </div>
-    <a class="help-link" href="https://housing.seoul.go.kr" target="_blank">🔗 서울주거포털 — 이자지원 안내</a>`
+    <a class="help-link" href="https://housing.seoul.go.kr/site/main/content/sh01_040901" target="_blank">🔗 서울주거포털 — 청년 이자지원 안내</a>`
 };
 
 typeDetailData['서울시 신혼부부 임차보증금 이자지원'] = {
@@ -5859,12 +5863,12 @@ typeDetailData['서울시 신혼부부 임차보증금 이자지원'] = {
     body: `
     <div class="help-section">
         <h4>어떤 제도인가요?</h4>
-        <p>서울시가 신혼부부의 전·월세 보증금 대출 이자를 지원합니다. 연 최대 240만원, 최장 10년.</p>
+        <p>서울시가 신혼부부의 전·월세 보증금 대출 이자를 지원합니다. 연 최대 240만원, 최장 12년.</p>
     </div>
     <div class="help-section">
         <h4>자격 요건</h4>
         <ul>
-            <li>혼인 7년 이내 또는 예비신혼부부 (3개월 이내 결혼예정)</li>
+            <li>혼인 7년 이내 또는 예비신혼부부 (6개월 이내 결혼예정)</li>
             <li>서울 거주 무주택 세대</li>
             <li>부부합산 연소득 <strong>1억3천만원 이하</strong></li>
             <li>보증금 7억원 이하 주택·오피스텔 (공공주택 제외)</li>
@@ -5873,12 +5877,13 @@ typeDetailData['서울시 신혼부부 임차보증금 이자지원'] = {
     <div class="help-section">
         <h4>지원 내용</h4>
         <ul>
-            <li>이자 지원 한도: 연 <strong>최대 240만원</strong> (월 20만원)</li>
-            <li>지원 기간: 최장 <strong>10년</strong></li>
-            <li>신생아 출산 시 지원금 추가 확대 가능</li>
+            <li>대출한도: 최대 <strong>3억원</strong> (보증금의 90% 이내)</li>
+            <li>이자 지원 한도: 연 <strong>최대 240만원</strong></li>
+            <li>지원 기간: 최장 <strong>12년</strong> (자녀수에 따라 차등)</li>
+            <li>취급은행: 신한·국민·하나은행</li>
         </ul>
     </div>
-    <a class="help-link" href="https://housing.seoul.go.kr" target="_blank">🔗 서울주거포털 — 신혼부부 이자지원 안내</a>`
+    <a class="help-link" href="https://housing.seoul.go.kr/site/main/content/sh01_0400800" target="_blank">🔗 서울주거포털 — 신혼부부 이자지원 안내</a>`
 };
 
 typeDetailData['SH 청년안심주택 임대보증금 무이자지원'] = {
@@ -5892,14 +5897,15 @@ typeDetailData['SH 청년안심주택 임대보증금 무이자지원'] = {
         <h4>자격 요건</h4>
         <ul>
             <li>청년안심주택 신규 입주 예정자 전용 (기존 거주자 해당 없음)</li>
-            <li>청년: 도시근로자 월평균소득 100% 이하 / 자산 2.54억 이하</li>
-            <li>신혼: 도시근로자 월평균소득 120% 이하 / 자산 3.37억 이하</li>
+            <li>청년: 도시근로자 월평균소득 100% 이하 / 자산 <strong>2.73억</strong> 이하</li>
+            <li>신혼: 도시근로자 월평균소득 120% 이하 / 자산 <strong>3.45억</strong> 이하</li>
         </ul>
     </div>
     <div class="help-section">
         <h4>지원 내용</h4>
         <ul>
-            <li>임대보증금 전액 <strong>무이자 대출</strong></li>
+            <li>보증금 1억 초과: <strong>30%</strong> 지원 / 1억 이하: <strong>50%</strong> 지원</li>
+            <li>청년 최대 <strong>4,500만원</strong> / 신혼 최대 <strong>6,000만원</strong> 무이자</li>
             <li>입주 계약 체결 시 SH공사에서 안내</li>
         </ul>
     </div>
@@ -6190,22 +6196,24 @@ typeDetailData['서울시 신혼부부 보증료 지원'] = {
     body: `
     <div class="help-section">
         <h4>어떤 제도인가요?</h4>
-        <p>신혼부부가 <strong>전세보증보험(전세보증금반환보증)</strong>에 가입할 때 내야 하는 보증료를 서울시가 전액 지원합니다. 최대 30만원.</p>
+        <p>서울시 신혼부부 임차보증금 이자지원 <strong>신규 대출자</strong>가 전세보증금반환보증(HF)에 가입할 때 내는 보증료를 서울시가 지원합니다. 최대 <strong>40만원</strong>.</p>
     </div>
     <div class="help-section">
         <h4>자격 요건</h4>
         <ul>
             <li>혼인 7년 이내 또는 예비신혼부부</li>
-            <li>서울 거주 (소득·자산 기준 없음)</li>
-            <li>전세보증금반환보증 가입 필수 (HUG·SGI·HF 中 택1)</li>
-            <li>보증서 발급일로부터 <strong>90일 이내</strong> 신청</li>
+            <li>서울 거주 무주택</li>
+            <li>부부합산 연소득 <strong>7,500만원 이하</strong></li>
+            <li>임차보증금 <strong>3억원 이하</strong> 주택</li>
+            <li>한국주택금융공사(<strong>HF</strong>) 보증 가입 필수</li>
+            <li>대출 신규일로부터 <strong>90일 이내</strong> 신청</li>
         </ul>
     </div>
     <div class="help-section">
         <h4>왜 보증보험에 가입해야 하나요?</h4>
         <p>집주인이 전세금을 돌려주지 못할 때 보증기관이 대신 지급해주는 보험입니다. 보증료는 보통 보증금의 0.1~0.2% 수준.</p>
     </div>
-    <a class="help-link" href="https://housing.seoul.go.kr" target="_blank">🔗 서울주거포털 — 보증료 지원 안내</a>`
+    <a class="help-link" href="https://housing.seoul.go.kr/site/main/content/sh01_0400811" target="_blank">🔗 서울주거포털 — 신혼부부 보증료 지원 안내</a>`
 };
 
 // ===== 유형별 신청 가이드 =====
@@ -7330,15 +7338,15 @@ const applyGuideData = {
                     <div class="guide-doc-item">통장 사본</div>
                 </div>
             </div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>심사 → 이자 지원</h4><p>서울시 심사 후 선정. 매월 이자 납부액 기준으로 연 최대 120만원 한도 내 지원. 2년 단위 갱신.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>심사 → 이자 지원</h4><p>서울시 심사 후 선정. 대출금의 연 2.0% 이자 지원. 최장 8년 (만 40세까지).</p></div></div>
         </div>
-        <a class="help-link" href="https://housing.seoul.go.kr" target="_blank">🔗 서울주거포털</a>`
+        <a class="help-link" href="https://housing.seoul.go.kr/site/main/content/sh01_040901" target="_blank">🔗 서울주거포털</a>`
     },
     '서울시 신혼부부 임차보증금 이자지원': {
         title: '서울시 신혼부부 임차보증금 이자지원 신청 가이드',
         body: `
         <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>임차보증금 대출 먼저 실행</h4><p>은행 또는 주택도시기금에서 임차보증금 대출을 먼저 받습니다. 보증금 7억원 이하 주택만 해당.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>임차보증금 대출 먼저 실행</h4><p>신한·국민·하나은행에서 임차보증금 대출을 먼저 받습니다. 보증금 7억원 이하 주택만 해당.</p></div></div>
             <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>서울주거포털 또는 주민센터 신청</h4><p>서울주거포털(housing.seoul.go.kr) 온라인 신청 또는 동주민센터 방문.</p>
                 <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
                     <div class="guide-doc-item">주민등록등본 (세대 전원)</div>
@@ -7349,9 +7357,9 @@ const applyGuideData = {
                     <div class="guide-doc-item">통장 사본</div>
                 </div>
             </div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>심사 → 이자 지원</h4><p>선정 후 연 최대 240만원 한도로 이자 지원. 출산 시 추가 혜택 가능.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>심사 → 이자 지원</h4><p>선정 후 연 최대 240만원 한도로 이자 지원. 최장 12년 (자녀수 따라 차등). 출산 시 추가 혜택 가능.</p></div></div>
         </div>
-        <a class="help-link" href="https://housing.seoul.go.kr" target="_blank">🔗 서울주거포털</a>`
+        <a class="help-link" href="https://housing.seoul.go.kr/site/main/content/sh01_0400800" target="_blank">🔗 서울주거포털</a>`
     },
     'SH 청년안심주택 임대보증금 무이자지원': {
         title: 'SH 청년안심주택 임대보증금 무이자지원 신청 가이드',
@@ -7473,19 +7481,20 @@ const applyGuideData = {
         title: '서울시 신혼부부 전세보증금반환보증 보증료 지원 신청 가이드',
         body: `
         <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>전세보증보험 가입</h4><p>HUG(주택도시보증공사)·SGI서울보증·HF(한국주택금융공사) 중 한 곳에서 전세보증금반환보증에 먼저 가입합니다.</p><p class="hint">보증서 발급일로부터 <strong>90일 이내</strong>에 신청해야 합니다.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>서울주거포털 온라인 신청</h4><p>서울주거포털(housing.seoul.go.kr)에서 온라인 신청.</p>
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>HF 전세보증보험 가입</h4><p>한국주택금융공사(<strong>HF</strong>)에서 전세보증금반환보증에 먼저 가입합니다. 서울시 신혼부부 임차보증금 이자지원 신규 대출자 전용.</p><p class="hint">대출 신규일로부터 <strong>90일 이내</strong>에 신청해야 합니다.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>서울주거포털 온라인 신청</h4><p>서울주거포털(housing.seoul.go.kr)에서 온라인 신청 또는 관할 구청 방문.</p>
                 <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
-                    <div class="guide-doc-item">혼인관계증명서</div>
+                    <div class="guide-doc-item">금융거래확인서</div>
+                    <div class="guide-doc-item">임차보증금반환보증서</div>
+                    <div class="guide-doc-item">보증료 영수증</div>
                     <div class="guide-doc-item">주민등록등본</div>
-                    <div class="guide-doc-item">전세보증보험 보증서 사본</div>
-                    <div class="guide-doc-item">보증료 납부 영수증</div>
+                    <div class="guide-doc-item">등기사항전부증명서</div>
                     <div class="guide-doc-item">통장 사본</div>
                 </div>
             </div></div>
-            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>심사 → 보증료 환급</h4><p>서울시 심사 후 납부한 보증료 전액(최대 30만원) 통장으로 입금.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>심사 → 보증료 환급</h4><p>서울시 심사 후 납부한 보증료 전액(최대 <strong>40만원</strong>) 통장으로 입금. 생애 1회.</p></div></div>
         </div>
-        <a class="help-link" href="https://housing.seoul.go.kr" target="_blank">🔗 서울주거포털</a>`
+        <a class="help-link" href="https://housing.seoul.go.kr/site/main/content/sh01_0400811" target="_blank">🔗 서울주거포털</a>`
     },
     'SH 사회주택': {
         title: 'SH 사회주택 신청 가이드',

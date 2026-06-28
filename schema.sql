@@ -1278,9 +1278,9 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 
 -- 서울시 청년 임차보증금 이자지원
 ('SEOUL_YOUTH_JEONSE_INTEREST', '이자지원', '이자지원', '임차보증금이자', '서울시', '서울', '서울시 청년 임차보증금 이자지원',
- '만19~39세 서울거주 연소득 4천만원 이하 무주택세대주', FALSE,
- '{"age_min":19,"age_max":39,"homeless_required":true,"is_household_head":true,"region_required":"서울","income_type":"절대금액(연소득)","income_abs":40000000,"income_abs_married":50000000,"notes":["취업준비생: 근로1년이상 또는 부모소득7천만이하","보증금 3억이하·월세 70만이하 주택","주택도시기금대출이용자·공공임대거주자 제외"]}',
- '{"loan_limit":200000000,"loan_pct":90,"interest_min":1.0,"interest_max":1.0,"period_years":8,"once_per_life":true,"deposit_limit":300000000}',
+ '만19~39세 서울거주 연소득 5천만원 이하 무주택세대주', FALSE,
+ '{"age_min":19,"age_max":39,"homeless_required":true,"is_household_head":true,"region_required":"서울","income_type":"절대금액(연소득)","income_abs":50000000,"income_abs_married":60000000,"notes":["2026.6.5 소득기준 상향: 미혼5천→기혼6천만원","취업준비생: 근로1년이상 또는 부모소득7천만이하","보증금 3억이하·월세 90만이하 주택","주택도시기금대출이용자·공공임대거주자 제외"]}',
+ '{"loan_limit":200000000,"loan_pct":90,"interest_rate_support":2.0,"period_years":8,"once_per_life":true,"deposit_limit":300000000}',
  '{"method":["온라인","방문"],"url":"https://housing.seoul.go.kr","contact":"02-120","period_type":"수시","bank":["하나은행"]}',
  'https://housing.seoul.go.kr'),
 
@@ -1288,7 +1288,7 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 ('SEOUL_NEWLYWED_JEONSE_INTEREST', '이자지원', '이자지원', '임차보증금이자', '서울시', '서울', '서울시 신혼부부 임차보증금 이자지원',
  '혼인7년이내 신혼부부 부부합산 1.3억 이하 무주택', FALSE,
  '{"marital_status":["신혼(7년이내)","예비신혼"],"homeless_required":true,"region_required":"서울","income_type":"절대금액(연소득)","income_abs_married":130000000,"marriage_years_max":7,"notes":["보증금 7억이하 주택·오피스텔","공공주택(LH·SH) 입주자·불법건축물 제외"]}',
- '{"loan_limit":300000000,"loan_pct":90,"interest_min":1.0,"interest_max":4.5,"period_years":10,"once_per_life":true,"deposit_limit":700000000}',
+ '{"loan_limit":300000000,"loan_pct":90,"interest_min":1.0,"interest_max":4.5,"period_years":12,"once_per_life":true,"deposit_limit":700000000}',
  '{"method":["온라인","방문"],"url":"https://housing.seoul.go.kr","contact":"02-120","period_type":"수시","bank":["국민","하나","신한"]}',
  'https://housing.seoul.go.kr')
 ON CONFLICT (code) DO UPDATE SET
@@ -1309,8 +1309,8 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- 서울시 청년안심주택 임대보증금 무이자 지원
 ('SH_SAFETY_DEPOSIT_SUPPORT', '이자지원', '이자지원', '임대보증금무이자', 'SH', '서울', 'SH 청년안심주택 임대보증금 무이자지원',
  '청년안심주택 신규 입주예정자', FALSE,
- '{"region_required":"서울","income_type":"도시근로자월평균","income_pct":120,"notes":["청년안심주택 신규 입주예정자 전용","청년: 도시근로자 100%·자산2.54억 이하","신혼: 도시근로자 120%·자산3.37억 이하"]}',
- '{"loan_limit":45000000,"interest_min":0,"interest_max":0,"notes":["보증금 1억초과: 30%지원","보증금 1억이하: 50%지원","최대 4,500만원 무이자"]}',
+ '{"region_required":"서울","income_type":"도시근로자월평균","income_pct":120,"notes":["청년안심주택 신규 입주예정자 전용","청년: 도시근로자 100%·자산2.73억 이하","신혼: 도시근로자 120%·자산3.45억 이하"]}',
+ '{"loan_limit_youth":45000000,"loan_limit_newlywed":60000000,"interest_min":0,"interest_max":0,"notes":["보증금 1억초과: 30%지원","보증금 1억이하: 50%지원","청년 최대 4,500만원·신혼 최대 6,000만원 무이자"]}',
  '{"method":["방문"],"contact":"02-793-0761","period_type":"수시","period_note":"입주예정일 3주전까지 종합지원센터 방문"}',
  'https://soco.seoul.go.kr')
 ON CONFLICT (code) DO UPDATE SET
@@ -1381,9 +1381,9 @@ INSERT INTO programs (code, category, subcategory, program_type, institution, re
 -- 서울시 신혼부부 전세보증금반환보증 보증료 지원
 ('SEOUL_NEWLYWED_GUARANTEE', '보증료지원', '보증료지원', '보증료지원', '서울시', '서울', '서울시 신혼부부 전세보증금반환보증 보증료 지원',
  '서울 거주 혼인7년이내 신혼부부 (보증 가입자)', FALSE,
- '{"marital_status":["신혼(7년이내)","예비신혼"],"region_required":"서울","marriage_years_max":7,"notes":["소득·자산 기준 없음","전세보증금반환보증 가입 필수","보증서 발급일로부터 90일 이내 신청"]}',
- '{"total_max":300000,"once_per_life":true,"notes":["중앙정부 보증료 지원과 별도 추가 지원","일회성"]}',
- '{"method":["방문","전화"],"contact":"02-120","period_type":"수시","period_note":"다산콜센터 02-120 또는 서울시 주택정책과 02-2133-7026"}',
+ '{"marital_status":["신혼(7년이내)","예비신혼"],"region_required":"서울","marriage_years_max":7,"homeless_required":true,"income_type":"절대금액(연소득)","income_abs_married":75000000,"deposit_limit":300000000,"notes":["부부합산 연소득 7,500만원 이하","임차보증금 3억원 이하 주택","서울시 신혼부부 임차보증금 이자지원 신규 대출자","한국주택금융공사(HF) 보증만 가능","대출 신규일로부터 90일 이내 신청","등록임대사업자 주택 임차인 제외"]}',
+ '{"total_max":400000,"once_per_life":true,"notes":["납부 보증료 전액 (최대 40만원 한도)","2025.3.31 이후 가입자 기준","일회성"]}',
+ '{"method":["방문","온라인"],"url":"https://housing.seoul.go.kr","contact":"02-2133-1200","period_type":"수시","period_note":"서울 전세종합지원센터 02-2133-1200~8"}',
  'https://housing.seoul.go.kr')
 
 ON CONFLICT (code) DO UPDATE SET
