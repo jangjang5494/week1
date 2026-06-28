@@ -158,6 +158,19 @@
         [data-theme="dark"] .apply-guide-btn { background: #052e16; color: #4ade80; }
         [data-theme="dark"] .apply-guide-btn:hover { background: #14532d; }
 
+        /* 대출 연결 */
+        .loan-link-box { margin-top: 0.7rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 0.6rem 0.85rem; }
+        .loan-link-msg { font-size: 0.8rem; color: #854d0e; display: block; line-height: 1.5; }
+        .loan-link-items { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.45rem; }
+        .loan-link-item { font-size: 0.75rem; font-weight: 600; color: #4f46e5; background: #ede9fe; border-radius: 6px; padding: 0.25rem 0.6rem; cursor: pointer; border: none; transition: background 0.15s; }
+        .loan-link-item:hover { background: #c7d2fe; }
+        [data-theme="dark"] .loan-link-box { background: #422006; border-color: #92400e; }
+        [data-theme="dark"] .loan-link-msg { color: #fcd34d; }
+        [data-theme="dark"] .loan-link-item { background: #1e1b4b; color: #a5b4fc; }
+        [data-theme="dark"] .loan-link-item:hover { background: #312e81; }
+        .highlight-pulse { animation: pulse-hl 1.8s ease-out; }
+        @keyframes pulse-hl { 0%{box-shadow:0 0 0 0 rgba(79,70,229,0.5)} 40%{box-shadow:0 0 0 6px rgba(79,70,229,0.25)} 100%{box-shadow:none} }
+
         /* 신청 가이드 모달 전용 스타일 */
         .guide-step { display: flex; gap: 0.8rem; margin-bottom: 1rem; }
         .guide-step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary-color,#4f46e5); color:#fff; font-size:0.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:0.1rem; }
@@ -1199,6 +1212,18 @@ function switchResultTab(tab) {
     ['active','inactive','ineligible'].forEach(t => {
         document.getElementById(`rt-panel-${t}`).style.display = t === tab ? '' : 'none';
     });
+}
+
+// ===== 대출 연결 카드 스크롤 =====
+function scrollToCard(name) {
+    _currentCatFilter = 'ALL';
+    document.querySelectorAll('#cat-filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'ALL'));
+    filterResults('ALL');
+    switchResultTab('active');
+    setTimeout(() => {
+        const el = document.querySelector(`[data-card-name="${CSS.escape(name)}"]`);
+        if (el) { el.scrollIntoView({ behavior:'smooth', block:'center' }); el.classList.add('highlight-pulse'); setTimeout(()=>el.classList.remove('highlight-pulse'),2000); }
+    }, 100);
 }
 
 // ===== 기관별 / 카테고리 필터 =====
@@ -3900,6 +3925,71 @@ function runAnalysis() {
         '예외공고':'📌 공고'
     };
 
+    // ===== 임대주택 ↔ 대출 연결 매핑 =====
+    const loanLink = {
+        // 전세임대 — 기관 대납 (본인 부담 소액)
+        '기존주택 전세임대':          { msg:'💡 보증금 95%를 SH가 지원합니다 (본인 5% 부담, 연 1~2% 이자)' },
+        '신혼·신생아 전세임대 Ⅰ형':  { msg:'💡 보증금 95%를 SH가 지원합니다 (본인 5% 부담)' },
+        '신혼·신생아 전세임대 Ⅱ형':  { msg:'💰 보증금 20% 본인 부담 — 전세대출 병행 가능', linkCat:'fin-jeonse' },
+        '전세임대형 든든주택':        { msg:'💰 보증금 20% 본인 부담 — 전세대출 병행 가능', linkCat:'fin-jeonse' },
+        'LH 기존주택 전세임대':      { msg:'💡 수도권 1.3억 LH가 지원합니다 (본인 2~5% 부담)' },
+        'LH 청년전세임대':           { msg:'💡 수도권 1.2억 LH가 지원합니다 (본인 부담 200만원)' },
+        'LH 신혼·신생아 전세임대 Ⅰ형':{ msg:'💡 수도권 1.45억 LH가 지원합니다 (본인 2~5% 부담)' },
+        'LH 신혼·신생아 전세임대 Ⅱ형':{ msg:'💰 수도권 2.4억 LH 지원 — 본인 20% 부담, 전세대출 병행 가능', linkCat:'fin-jeonse' },
+        'LH 다자녀 전세임대':        { msg:'💡 수도권 1.55억 LH가 지원합니다 (본인 2% 부담)' },
+
+        // 매입임대 — 보증금 소액
+        '청년 매입임대주택':          { msg:'💡 보증금 소액 (100~200만원) — 월세 부담은 아래 대출 활용 가능', linkCat:'fin-monthly' },
+        '일반 매입임대주택':          { msg:'💡 보증금 소액 (수백만원)' },
+        '신혼·신생아 매입임대 Ⅰ형':  { msg:'💡 보증금 소액' },
+        '신혼·신생아 매입임대 Ⅱ형':  { msg:'💡 보증금 중간 수준' },
+        '희망하우징':                 { msg:'💡 보증금 없음 — 월 7~14만원 월세만 부담' },
+        '장기미임대':                 { msg:'💡 보증금 소액' },
+        'LH 영구임대':               { msg:'💡 보증금 소액 (수십~수백만원)' },
+        'LH 청년 매입임대':          { msg:'💡 보증금 소액 (100~200만원) — 월세 부담은 아래 대출 활용 가능', linkCat:'fin-monthly' },
+        'LH 일반 매입임대':          { msg:'💡 보증금 소액' },
+        'LH 다자녀 매입임대':        { msg:'💡 보증금 소액' },
+        'LH 기숙사형 매입임대':      { msg:'💡 보증금 소액 (수십만원)' },
+        'LH 집주인 임대주택':        { msg:'💰 보증금 시세 약 85% — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'LH 신혼·신생아 매입임대 Ⅰ형':{ msg:'💡 보증금 소액' },
+        'LH 신혼·신생아 매입임대 Ⅱ형':{ msg:'💡 보증금 중간 수준' },
+
+        // 청년안심주택 — 전용 무이자 지원 + 전세대출
+        'SH 청년안심주택 공공임대':   { msg:'💰 전용 무이자 보증금 지원 프로그램 있음', link:['SH 청년안심주택 임대보증금 무이자지원'], linkCat:'fin-jeonse' },
+        'SH 청년안심주택 민간임대':   { msg:'💰 전용 무이자 보증금 지원 프로그램 있음', link:['SH 청년안심주택 임대보증금 무이자지원'], linkCat:'fin-jeonse' },
+
+        // 건설형 임대 — 보증금 큼, 전세대출 활용
+        '장기전세주택 (시프트)':      { msg:'💰 보증금 수억원 (시세 80%) — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        '미리내집 (장기전세2)':       { msg:'💰 보증금 수억원 (시세 80%) — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        '국민임대주택':               { msg:'💰 보증금 수천만원 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'SH 행복주택':               { msg:'💰 보증금 수천만원~1억 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'SH 공공·주거환경임대주택':   { msg:'💰 보증금 수천만원 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'SH 재개발임대주택 (일반공급)':{ msg:'💰 보증금 수천만원 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'SH 도시형생활주택':         { msg:'💰 보증금 수천만원 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'SH 사회주택':               { msg:'💰 보증금 수천만원 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'LH 통합공공임대':           { msg:'💰 보증금 수천만~수억원 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'LH 국민임대':               { msg:'💰 보증금 수천만원 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'LH 행복주택':               { msg:'💰 보증금 수천만원~1억 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'LH 5·10·50년 공공임대':     { msg:'💰 보증금 수천만~수억원 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'LH 장기전세주택':           { msg:'💰 보증금 수억원 (시세 80%) — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        'LH 든든전세주택':           { msg:'💰 보증금 수억원 (시세 90%) — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+
+        // 분양 — 구입자금 대출
+        'SH 공공분양':               { msg:'💰 분양가 시세 80~85% — 구입자금 대출 활용 가능', linkCat:'fin-purchase' },
+        'SH 나눔형 공공분양':        { msg:'💰 분양가 시세 70~80% (이익공유형) — 구입자금 대출 활용 가능', linkCat:'fin-purchase' },
+        'SH 토지임대부 분양주택':    { msg:'💰 토지비 제외 저렴 분양 — 구입자금 대출 활용 가능', linkCat:'fin-purchase' },
+        'LH 공공분양':               { msg:'💰 분양가 시세 80~85% — 구입자금 대출 활용 가능', linkCat:'fin-purchase' },
+        'LH 신혼희망타운':           { msg:'💰 전용 주담대 연 1.3~1.6% (최대 4억) + 구입자금 대출', linkCat:'fin-purchase' },
+        '민간분양 (아파트) — 특별공급':{ linkCat:'fin-purchase' },
+        '민간분양 (아파트) — 1순위':  { linkCat:'fin-purchase' },
+        '민간분양 (아파트) — 2순위':  { linkCat:'fin-purchase' },
+        '민간분양(아파트) 잔여세대':  { linkCat:'fin-purchase' },
+        '오피스텔 청약':             { linkCat:'fin-purchase' },
+        '도시형생활주택 청약':       { linkCat:'fin-purchase' },
+        '민간임대 청약':             { msg:'💰 공고별 임대보증금 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+        '공공지원민간임대 청약':     { msg:'💰 시세 이하 보증금 — 전세대출 활용 가능', linkCat:'fin-jeonse' },
+    };
+
     function card(r, isE) {
         const rc = r.rank.includes('1순위')?'rank-1':r.rank.includes('2순위')?'rank-2':r.rank.includes('3순위')?'rank-3':isE?'rank-ok':'rank-na';
         const safeName = r.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
@@ -3962,7 +4052,23 @@ function runAnalysis() {
             }
         }
 
-        return `<div class="result-card ${isE?'':'ineligible'}" data-inst="${r.inst}" data-cat-group="${r.catGroup}">
+        // 대출 연결 생성
+        let loanHtml = '';
+        if (isE) {
+            const ll = loanLink[r.name];
+            if (ll) {
+                const linkedNames = [];
+                if (ll.link) ll.link.forEach(n => { if (results.find(x => x.name === n && x.eligible)) linkedNames.push(n); });
+                if (ll.linkCat) results.filter(x => x.category === ll.linkCat && x.eligible && !linkedNames.includes(x.name)).forEach(x => linkedNames.push(x.name));
+                const msgHtml = ll.msg ? `<span class="loan-link-msg">${ll.msg}</span>` : '';
+                const itemsHtml = linkedNames.map(n => `<button class="loan-link-item" onclick="scrollToCard('${n.replace(/'/g,"\\'")}')">${n}</button>`).join('');
+                if (msgHtml || itemsHtml) {
+                    loanHtml = `<div class="loan-link-box">${msgHtml}${itemsHtml?`<div class="loan-link-items">${itemsHtml}</div>`:''}</div>`;
+                }
+            }
+        }
+
+        return `<div class="result-card ${isE?'':'ineligible'}" data-inst="${r.inst}" data-cat-group="${r.catGroup}" data-card-name="${r.name.replace(/"/g,'&quot;')}">
             <div class="result-card-header">
                 <div class="result-card-name">${instBadge}${r.name}</div>
                 ${r.rank?`<span class="rank-badge ${rc}">${r.rank}</span>`:''}
@@ -3978,6 +4084,7 @@ function runAnalysis() {
                 <button class="type-detail-btn" onclick="openTypeDetail('${safeName}')">📋 이 유형 상세보기</button>
                 <button class="apply-guide-btn" onclick="openApplyGuide('${safeName}')">📝 신청 가이드</button>
             </div>`:''}
+            ${loanHtml}
         </div>`;
     }
 
