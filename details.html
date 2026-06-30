@@ -1295,14 +1295,26 @@ function switchResultTab(tab) {
 
 // ===== 대출 연결 카드 스크롤 =====
 function scrollToCard(name) {
+    _currentFilter = 'ALL';
     _currentCatFilter = 'ALL';
+    document.querySelectorAll('#filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.inst === 'ALL'));
     document.querySelectorAll('#cat-filter-tabs .filter-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'ALL'));
     filterResults('ALL');
-    switchResultTab('active');
+    const escaped = CSS.escape(name);
+    let found = false;
+    for (const tab of ['active','inactive','ineligible']) {
+        const panel = document.getElementById(`rt-panel-${tab}`);
+        if (panel && panel.querySelector(`[data-card-name="${escaped}"]`)) {
+            switchResultTab(tab);
+            found = true;
+            break;
+        }
+    }
+    if (!found) switchResultTab('active');
     setTimeout(() => {
-        const el = document.querySelector(`[data-card-name="${CSS.escape(name)}"]`);
+        const el = document.querySelector(`[data-card-name="${escaped}"]`);
         if (el) { el.scrollIntoView({ behavior:'smooth', block:'center' }); el.classList.add('highlight-pulse'); setTimeout(()=>el.classList.remove('highlight-pulse'),2000); }
-    }, 100);
+    }, 150);
 }
 
 // ===== 기관별 / 카테고리 필터 =====
