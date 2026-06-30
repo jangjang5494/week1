@@ -418,79 +418,6 @@
             .strategy-narrative p { font-size: 0.84rem; }
         }
 
-        /* ===== 만약에 시뮬레이터 ===== */
-        .sim-toggle-btn {
-            display: block; width: 100%; margin-top: 0.5rem;
-            padding: 0.7rem; border: 1.5px solid #f59e0b; border-radius: 10px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #fff; font-size: 0.92rem; font-weight: 700;
-            cursor: pointer; transition: opacity 0.2s;
-        }
-        .sim-toggle-btn:hover { opacity: 0.88; }
-        .sim-panel {
-            background: var(--card-bg, #fff); border-radius: 14px;
-            padding: 1.2rem 1.3rem; margin-bottom: 1rem;
-            border: 1.5px solid #fde68a;
-            box-shadow: 0 2px 12px rgba(245,158,11,0.1);
-            animation: fadeSlideIn 0.35s ease;
-        }
-        .sim-header { font-size: 1rem; font-weight: 800; color: #d97706; margin-bottom: 0.3rem; }
-        .sim-desc { font-size: 0.82rem; color: var(--text-muted, #6b7280); margin-bottom: 1rem; }
-        .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 1rem; }
-        .sim-field { display: flex; flex-direction: column; gap: 0.2rem; }
-        .sim-field span { font-size: 0.78rem; font-weight: 600; color: var(--text-color, #374151); }
-        .sim-field select, .sim-field input {
-            padding: 0.4rem 0.5rem; border: 1px solid #d1d5db; border-radius: 8px;
-            font-size: 0.84rem; background: var(--card-bg, #fff); color: var(--text-color, #111);
-        }
-        .sim-run-btn {
-            width: 100%; padding: 0.7rem; border: none; border-radius: 10px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #fff; font-size: 0.92rem; font-weight: 700; cursor: pointer;
-        }
-        .sim-run-btn:hover { opacity: 0.88; }
-        .sim-result {
-            background: var(--card-bg, #fff); border-radius: 14px;
-            padding: 1.2rem 1.3rem; margin-bottom: 1rem;
-            border: 1.5px solid #a5b4fc;
-            box-shadow: 0 2px 12px rgba(79,70,229,0.08);
-            animation: fadeSlideIn 0.35s ease;
-        }
-        .sim-result-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;
-        }
-        .sim-result-header > span { font-size: 1rem; font-weight: 800; color: var(--primary-color, #4f46e5); }
-        .sim-restore-btn {
-            padding: 0.35rem 0.8rem; border: 1.5px solid #4f46e5; border-radius: 8px;
-            background: transparent; color: #4f46e5; font-size: 0.8rem; font-weight: 600; cursor: pointer;
-        }
-        .sim-restore-btn:hover { background: #eef2ff; }
-        .sim-diff-summary { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--text-color, #111); }
-        .sim-diff-item {
-            display: flex; align-items: center; gap: 0.5rem;
-            padding: 0.4rem 0; font-size: 0.84rem; border-bottom: 1px solid #f3f4f6;
-        }
-        .sim-diff-item:last-child { border-bottom: none; }
-        .sim-badge-new { background: #dcfce7; color: #15803d; border-radius: 5px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-weight: 700; }
-        .sim-badge-up { background: #dbeafe; color: #1d4ed8; border-radius: 5px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-weight: 700; }
-        .sim-badge-lost { background: #fee2e2; color: #dc2626; border-radius: 5px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-weight: 700; }
-        .sim-badge-down { background: #fef3c7; color: #92400e; border-radius: 5px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-weight: 700; }
-        .sim-diff-name { flex: 1; color: var(--text-color, #374151); cursor: pointer; }
-        .sim-diff-name:hover { text-decoration: underline; }
-        .sim-diff-detail { font-size: 0.78rem; color: var(--text-muted, #6b7280); }
-        [data-theme="dark"] .sim-panel { border-color: #92400e; background: var(--card-bg); }
-        [data-theme="dark"] .sim-header { color: #fbbf24; }
-        [data-theme="dark"] .sim-field select, [data-theme="dark"] .sim-field input { background: var(--card-bg); border-color: #4b5563; color: #f9fafb; }
-        [data-theme="dark"] .sim-result { border-color: #4338ca; background: var(--card-bg); }
-        [data-theme="dark"] .sim-restore-btn { border-color: #6d28d9; color: #a78bfa; }
-        [data-theme="dark"] .sim-restore-btn:hover { background: #1e1b4b; }
-        [data-theme="dark"] .sim-diff-item { border-color: #374151; }
-        @media(max-width:500px) {
-            .sim-grid { grid-template-columns: 1fr; }
-            .sim-panel { padding: 1rem; }
-        }
-
         /* ===== 전략 보기 버튼 + 내러티브 ===== */
         .strategy-toggle-btn {
             display: block; width: 100%; margin-top: 0.8rem;
@@ -1273,57 +1200,6 @@
             <div class="summary-title">분석 조건 요약</div>
             <div class="summary-chips" id="summary-chips"></div>
             <button id="strategy-btn" class="strategy-toggle-btn" style="display:none;" onclick="toggleStrategy()">🧭 나만의 주거 전략 보기</button>
-            <button id="sim-btn" class="sim-toggle-btn" style="display:none;" onclick="toggleSimulator()">🔮 만약에…?</button>
-        </div>
-
-        <!-- 시뮬레이터 패널 -->
-        <div id="sim-panel" class="sim-panel" style="display:none;">
-            <div class="sim-header">🔮 조건을 바꿔보세요</div>
-            <div class="sim-desc">아래 조건을 변경하면 결과가 어떻게 달라지는지 비교해 드립니다.</div>
-            <div class="sim-grid">
-                <label class="sim-field">
-                    <span>결혼 상태</span>
-                    <select id="sim-marital"><option value="">현재 유지</option><option value="single">미혼</option><option value="newlywed">신혼 (7년이내)</option><option value="married">기혼 (7년초과)</option></select>
-                </label>
-                <label class="sim-field">
-                    <span>자녀 수</span>
-                    <select id="sim-children"><option value="">현재 유지</option><option value="0">0명</option><option value="1">1명</option><option value="2">2명</option><option value="3">3명</option></select>
-                </label>
-                <label class="sim-field">
-                    <span>영유아 (2세이하)</span>
-                    <select id="sim-infant"><option value="">현재 유지</option><option value="yes">있음</option><option value="no">없음</option></select>
-                </label>
-                <label class="sim-field">
-                    <span>월소득 (만원)</span>
-                    <input type="number" id="sim-income" placeholder="현재 유지" min="0" step="10">
-                </label>
-                <label class="sim-field">
-                    <span>무주택 기간 (년)</span>
-                    <input type="number" id="sim-homeless-yrs" placeholder="현재 유지" min="0" max="50">
-                </label>
-                <label class="sim-field">
-                    <span>청약저축 납입 (회)</span>
-                    <input type="number" id="sim-sub-count" placeholder="현재 유지" min="0">
-                </label>
-                <label class="sim-field">
-                    <span>생애최초 주택</span>
-                    <select id="sim-lifefirst"><option value="">현재 유지</option><option value="yes">예</option><option value="no">아니오</option></select>
-                </label>
-                <label class="sim-field">
-                    <span>세대주 여부</span>
-                    <select id="sim-househead"><option value="">현재 유지</option><option value="yes">예</option><option value="no">아니오</option></select>
-                </label>
-            </div>
-            <button class="sim-run-btn" onclick="runSimulation()">비교하기</button>
-        </div>
-
-        <!-- 시뮬레이션 결과 비교 -->
-        <div id="sim-result" class="sim-result" style="display:none;">
-            <div class="sim-result-header">
-                <span>🔮 시뮬레이션 결과</span>
-                <button class="sim-restore-btn" onclick="restoreOriginal()">원래 결과로 돌아가기</button>
-            </div>
-            <div id="sim-diff"></div>
         </div>
 
         <!-- 전략 내러티브 -->
@@ -2439,175 +2315,6 @@ function generatePurchaseStrategy(eligible, strengths, userVars) {
     return { special, general, bestLoan, savingsTip };
 }
 
-// ===== 만약에 시뮬레이터 =====
-let _simOriginalResults = null;
-let _simOriginalFormSnap = null;
-let _simActive = false;
-
-function getFormSnapshot() {
-    const snap = {};
-    const toggleIds = ['tg-marital','tg-youngchild','tg-infant','tg-lifefirst','tg-househead',
-        'tg-homeless','tg-region','tg-dualinc','tg-student','tg-employed','tg-jobseeker',
-        'tg-recipient','tg-nearlow','tg-singleparent','tg-disabled','tg-veteran'];
-    toggleIds.forEach(id => snap['_t_'+id] = getToggle(id));
-    const inputIds = ['age','monthly-income','household-size','children-count','homeless-years',
-        'seoul-years','sub-count','total-assets','car-value','marriage-years'];
-    inputIds.forEach(id => { const el = document.getElementById(id); if (el) snap['_i_'+id] = el.value; });
-    return snap;
-}
-
-function restoreFormSnapshot(snap) {
-    Object.keys(snap).forEach(k => {
-        if (k.startsWith('_t_')) { const id = k.slice(3); if (snap[k] !== null) setToggle(id, snap[k]); }
-        else if (k.startsWith('_i_')) { const id = k.slice(3); const el = document.getElementById(id); if (el) el.value = snap[k]; }
-    });
-}
-
-function toggleSimulator() {
-    const panel = document.getElementById('sim-panel');
-    const btn = document.getElementById('sim-btn');
-    if (panel.style.display === 'none') {
-        panel.style.display = '';
-        btn.textContent = '🔮 시뮬레이터 접기';
-        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-        panel.style.display = 'none';
-        btn.textContent = '🔮 만약에…?';
-    }
-}
-
-function runSimulation() {
-    if (!_simOriginalFormSnap) _simOriginalFormSnap = getFormSnapshot();
-    if (!_simOriginalResults) _simOriginalResults = [...(_strategyResults || [])];
-
-    const overrides = {};
-    const simMarital = document.getElementById('sim-marital').value;
-    const simChildren = document.getElementById('sim-children').value;
-    const simInfant = document.getElementById('sim-infant').value;
-    const simIncome = document.getElementById('sim-income').value;
-    const simHomelessYrs = document.getElementById('sim-homeless-yrs').value;
-    const simSubCount = document.getElementById('sim-sub-count').value;
-    const simLifeFirst = document.getElementById('sim-lifefirst').value;
-    const simHouseHead = document.getElementById('sim-househead').value;
-
-    if (simMarital) setToggle('tg-marital', simMarital);
-    if (simChildren !== '') document.getElementById('children-count').value = simChildren;
-    if (simInfant) setToggle('tg-youngchild', simInfant);
-    if (simIncome) document.getElementById('monthly-income').value = simIncome;
-    if (simHomelessYrs) document.getElementById('homeless-years').value = simHomelessYrs;
-    if (simSubCount) document.getElementById('sub-count').value = simSubCount;
-    if (simLifeFirst) setToggle('tg-lifefirst', simLifeFirst);
-    if (simHouseHead) setToggle('tg-househead', simHouseHead);
-
-    // 자녀 변경 시 가구원수 자동 조정
-    if (simChildren !== '' || simMarital) {
-        const m = simMarital || getToggle('tg-marital');
-        const c = simChildren !== '' ? parseInt(simChildren) : parseInt(document.getElementById('children-count').value) || 0;
-        const base = (m === 'single') ? 1 : 2;
-        document.getElementById('household-size').value = base + c;
-    }
-
-    _simActive = true;
-    runAnalysis();
-
-    const newResults = _strategyResults || [];
-    const diff = computeSimDiff(_simOriginalResults, newResults);
-    renderSimDiff(diff, _simOriginalResults.length, newResults.length);
-
-    document.getElementById('sim-panel').style.display = 'none';
-    document.getElementById('sim-btn').textContent = '🔮 만약에…?';
-}
-
-function computeSimDiff(original, simulated) {
-    const changes = [];
-    const origMap = {};
-    original.forEach(r => { origMap[r.name] = r; });
-    const simMap = {};
-    simulated.forEach(r => { simMap[r.name] = r; });
-
-    simulated.forEach(r => {
-        const orig = origMap[r.name];
-        if (!orig) return;
-        if (r.eligible && !orig.eligible) {
-            changes.push({ type: 'new', name: r.name, inst: r.inst, detail: r.rank || '신청 가능', catGroup: r.catGroup });
-        } else if (!r.eligible && orig.eligible) {
-            changes.push({ type: 'lost', name: r.name, inst: r.inst, detail: '자격 상실', catGroup: r.catGroup });
-        } else if (r.eligible && orig.eligible && r.rank !== orig.rank) {
-            const improved = isRankBetter(r.rank, orig.rank);
-            changes.push({
-                type: improved ? 'up' : 'down', name: r.name, inst: r.inst,
-                detail: `${orig.rank || '기본'} → ${r.rank || '기본'}`, catGroup: r.catGroup
-            });
-        }
-    });
-
-    changes.sort((a, b) => {
-        const order = { new: 0, up: 1, down: 2, lost: 3 };
-        return (order[a.type] ?? 9) - (order[b.type] ?? 9);
-    });
-    return changes;
-}
-
-function isRankBetter(newRank, oldRank) {
-    const score = r => {
-        if (!r) return 0;
-        if (r.includes('우선공급')) return 5;
-        if (r.includes('1순위')) return 4;
-        if (r.includes('특별공급') || r.includes('특공')) return 3;
-        if (r.includes('2순위')) return 2;
-        if (r.includes('3순위')) return 1;
-        return 0;
-    };
-    return score(newRank) > score(oldRank);
-}
-
-function renderSimDiff(changes, origCount, newCount) {
-    const el = document.getElementById('sim-result');
-    const diffEl = document.getElementById('sim-diff');
-    const origEligible = _simOriginalResults.filter(r => r.eligible).length;
-    const newEligible = (_strategyResults || []).filter(r => r.eligible).length;
-    const delta = newEligible - origEligible;
-    const deltaStr = delta > 0 ? `<span style="color:#15803d;font-weight:800;">+${delta}개</span>` :
-                     delta < 0 ? `<span style="color:#dc2626;font-weight:800;">${delta}개</span>` :
-                     '<span style="color:#6b7280;">변화 없음</span>';
-
-    let html = `<div class="sim-diff-summary">적격 유형: ${origEligible}개 → ${newEligible}개 (${deltaStr})</div>`;
-
-    if (changes.length === 0) {
-        html += `<p style="font-size:0.85rem;color:var(--text-muted);text-align:center;padding:1rem 0;">조건을 변경해도 적격 유형에 변화가 없습니다.</p>`;
-    } else {
-        const badgeMap = { new: '새로 적격', up: '순위 상승', down: '순위 하락', lost: '자격 상실' };
-        const badgeCls = { new: 'sim-badge-new', up: 'sim-badge-up', down: 'sim-badge-down', lost: 'sim-badge-lost' };
-        changes.forEach(c => {
-            html += `<div class="sim-diff-item">
-                <span class="${badgeCls[c.type]}">${badgeMap[c.type]}</span>
-                <span class="sim-diff-name" onclick="scrollToCard('${c.name.replace(/'/g,"\\'")}')">
-                    ${c.name} <small style="color:var(--text-muted)">(${c.inst})</small>
-                </span>
-                <span class="sim-diff-detail">${c.detail}</span>
-            </div>`;
-        });
-    }
-
-    diffEl.innerHTML = html;
-    el.style.display = '';
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function restoreOriginal() {
-    if (_simOriginalFormSnap) {
-        restoreFormSnapshot(_simOriginalFormSnap);
-        _simActive = false;
-        runAnalysis();
-        _simOriginalFormSnap = null;
-        _simOriginalResults = null;
-    }
-    document.getElementById('sim-result').style.display = 'none';
-    // 시뮬레이터 입력값 초기화
-    ['sim-marital','sim-children','sim-infant','sim-lifefirst','sim-househead'].forEach(id => document.getElementById(id).value = '');
-    ['sim-income','sim-homeless-yrs','sim-sub-count'].forEach(id => document.getElementById(id).value = '');
-}
-
 function toggleStrategy() {
     const sec = document.getElementById('strategy-section');
     const btn = document.getElementById('strategy-btn');
@@ -2756,8 +2463,6 @@ function renderStrategy(results, u) {
     btn.style.display = '';
     btn.textContent = '🧭 나만의 주거 전략 보기';
     section.style.display = 'none';
-    const simBtn = document.getElementById('sim-btn');
-    if (simBtn) simBtn.style.display = '';
 }
 
 // ===== Analysis Engine =====
@@ -4931,11 +4636,7 @@ function restart() {
     document.getElementById('results').style.display='none';
     document.getElementById('strategy-section').style.display='none';
     const sb = document.getElementById('strategy-btn'); if(sb) sb.style.display='none';
-    const simb = document.getElementById('sim-btn'); if(simb) simb.style.display='none';
-    document.getElementById('sim-panel').style.display='none';
-    document.getElementById('sim-result').style.display='none';
     _strategyResults = null; _strategyUser = null; _strategyPriority = 'cost';
-    _simOriginalResults = null; _simOriginalFormSnap = null; _simActive = false;
     _activeCards = []; _inactiveCards = []; _ineligibleCards = [];
     _currentFilter = 'ALL';
     _currentCatFilter = 'ALL';
