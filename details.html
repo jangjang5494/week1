@@ -413,7 +413,93 @@
 
             /* 필터 탭 */
             .filter-tab { font-size: 0.78rem; padding: 0.35rem 0.7rem; }
+            /* 전략 블록 모바일 */
+            .strategy-block { padding: 0.9rem 1rem; }
+            .strategy-rec { padding: 0.6rem 0.8rem; }
+            .strategy-rec-name { font-size: 0.85rem; }
+            .strategy-rec-reasons { margin-left: 1.6rem; }
         }
+
+        /* ===== 전략 추천 ===== */
+        .strategy-block {
+            background: var(--card-bg, #fff);
+            border-radius: 14px; padding: 1.2rem 1.3rem;
+            margin-bottom: 1rem;
+            border: 1.5px solid #c7d2fe;
+            box-shadow: 0 2px 12px rgba(79,70,229,0.08);
+        }
+        .strategy-header {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 0.8rem; font-size: 1rem; font-weight: 800;
+            color: var(--primary-color, #4f46e5);
+        }
+        .strategy-strengths {
+            display: flex; flex-wrap: wrap; gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+        .strategy-strength-chip {
+            background: #ede9fe; color: #5b21b6;
+            border-radius: 6px; padding: 0.25rem 0.6rem;
+            font-size: 0.78rem; font-weight: 600;
+            cursor: help;
+        }
+        .strategy-rec {
+            background: #f0fdf4; border-left: 3px solid #22c55e;
+            border-radius: 0 10px 10px 0;
+            padding: 0.8rem 1rem; margin-bottom: 0.6rem;
+        }
+        .strategy-rec-header {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 0.3rem;
+        }
+        .strategy-rec-rank {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #fff; border-radius: 50%;
+            width: 1.5rem; height: 1.5rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
+        }
+        .strategy-rec-name { font-weight: 700; font-size: 0.92rem; color: var(--text-color, #111); }
+        .strategy-rec-reasons {
+            font-size: 0.82rem; color: #374151;
+            margin: 0.3rem 0 0 2rem; line-height: 1.6;
+        }
+        .strategy-rec-loan {
+            margin: 0.4rem 0 0 2rem;
+            background: #fffbeb; border: 1px solid #fde68a;
+            border-radius: 8px; padding: 0.4rem 0.7rem;
+            font-size: 0.78rem; color: #92400e;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            cursor: pointer;
+        }
+        .strategy-rec-loan:hover { background: #fef3c7; }
+        .strategy-tip {
+            background: #ede9fe; border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.8rem; color: #5b21b6;
+            margin-top: 0.5rem; line-height: 1.6;
+        }
+        .strategy-purchase-group { margin-bottom: 0.7rem; }
+        .strategy-purchase-label {
+            font-size: 0.78rem; font-weight: 700;
+            color: #6b7280; text-transform: uppercase;
+            letter-spacing: 0.03em; margin-bottom: 0.3rem;
+        }
+        .strategy-purchase-items { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+        .strategy-purchase-chip {
+            background: #f0fdf4; color: #15803d;
+            border-radius: 6px; padding: 0.25rem 0.6rem;
+            font-size: 0.78rem; font-weight: 600; cursor: pointer;
+        }
+        .strategy-purchase-chip:hover { background: #dcfce7; }
+        [data-theme="dark"] .strategy-block { border-color: #4338ca; background: var(--card-bg); }
+        [data-theme="dark"] .strategy-strength-chip { background: #2e1065; color: #c4b5fd; }
+        [data-theme="dark"] .strategy-rec { background: #052e16; border-color: #166534; }
+        [data-theme="dark"] .strategy-rec-name { color: #f9fafb; }
+        [data-theme="dark"] .strategy-rec-reasons { color: #d1d5db; }
+        [data-theme="dark"] .strategy-rec-loan { background: #422006; border-color: #92400e; color: #fcd34d; }
+        [data-theme="dark"] .strategy-tip { background: #2e1065; color: #c4b5fd; }
+        [data-theme="dark"] .strategy-purchase-chip { background: #052e16; color: #86efac; }
     </style>
 <!-- ── Google Analytics ── -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F0C83JFCH3"></script>
@@ -658,7 +744,7 @@
                     <button class="toggle-btn" data-val="married">기혼 (7년 초과)</button>
                     <button class="toggle-btn" data-val="divorced">이혼 / 사별</button>
                 </div>
-                <p class="hint">신혼 7년 = 혼인신고일 기준. 예비신혼 = 공고일 기준 6개월 이내 결혼 예정</p>
+                <p class="hint">신혼 7년 = 혼인신고일 기준. 예비신혼 = 혼인 계획 중 (입주 전 혼인신고 필수)</p>
             </div>
 
             <div class="fg" id="marriage-years-field" style="display:none;">
@@ -1106,6 +1192,21 @@
         <div class="summary-card" id="summary-card">
             <div class="summary-title">분석 조건 요약</div>
             <div class="summary-chips" id="summary-chips"></div>
+        </div>
+
+        <!-- 전략 추천 -->
+        <div id="strategy-section" style="display:none;">
+            <div class="strategy-strengths" id="strategy-strengths"></div>
+            <div id="strategy-rental" class="strategy-block" style="display:none;">
+                <div class="strategy-header">🏠 임대 전략 추천</div>
+                <div id="strategy-rental-recs"></div>
+                <div id="strategy-rental-tip" class="strategy-tip" style="display:none;"></div>
+            </div>
+            <div id="strategy-purchase" class="strategy-block" style="display:none;">
+                <div class="strategy-header">🏗️ 주택구입 전략</div>
+                <div id="strategy-purchase-recs"></div>
+                <div id="strategy-purchase-tip" class="strategy-tip" style="display:none;"></div>
+            </div>
         </div>
 
         <!-- 카테고리 필터 탭 -->
@@ -1986,6 +2087,72 @@ let URBAN100 = [4576036, 6452897, 8168429, 8802202, 9326985, 9906263, 10485541];
 // 기준중위소득 100% (원) — 2026년 기준
 let MID100   = [2564238, 4199292, 5359036, 6494738, 7556719, 8555952, 9515150];
 
+// ===== 전략 추천 메타데이터 =====
+const strategyMeta = {
+    // === SH 임대주택 ===
+    '장기전세주택 (시프트)':       { rentPct:80, maxYears:20, pairLoan:'fin-jeonse', bestFor:['homeless5yr','newlywed','seoulLong','veteran'] },
+    '미리내집 (장기전세2)':        { rentPct:80, maxYears:10, pairLoan:'fin-jeonse', bestFor:['newlywed','lifeFirst'] },
+    '국민임대주택':                { rentPct:60, maxYears:30, pairLoan:'fin-jeonse', bestFor:['lowIncome','recipient'] },
+    '일반 매입임대주택':           { rentPct:50, maxYears:20, pairLoan:'fin-monthly', bestFor:['recipient','lowIncome'] },
+    '청년 매입임대주택':           { rentPct:30, maxYears:10, pairLoan:'fin-monthly', bestFor:['youth','recipient','student'] },
+    '신혼·신생아 매입임대 Ⅰ형':   { rentPct:40, maxYears:20, pairLoan:'fin-monthly', bestFor:['newlywed','infant','recipient'] },
+    '신혼·신생아 매입임대 Ⅱ형':   { rentPct:70, maxYears:20, pairLoan:'fin-jeonse', bestFor:['newlywed','infant'] },
+    '장기미임대':                  { rentPct:50, maxYears:20, pairLoan:'fin-jeonse', bestFor:['recipient','lowIncome'] },
+    '희망하우징':                  { rentPct:15, maxYears:6,  pairLoan:null,          bestFor:['student'] },
+    'SH 행복주택':                 { rentPct:70, maxYears:14, pairLoan:'fin-jeonse', bestFor:['youth','newlywed','student'] },
+    '기존주택 전세임대':           { rentPct:5,  maxYears:20, pairLoan:null,          bestFor:['recipient','lowIncome'] },
+    '신혼·신생아 전세임대 Ⅰ형':   { rentPct:5,  maxYears:20, pairLoan:null,          bestFor:['newlywed','infant','recipient'] },
+    '신혼·신생아 전세임대 Ⅱ형':   { rentPct:15, maxYears:20, pairLoan:null,          bestFor:['newlywed','infant'] },
+    '전세임대형 든든주택':         { rentPct:10, maxYears:20, pairLoan:null,          bestFor:['newlywed','lowIncome'] },
+    'SH 청년안심주택 공공임대':    { rentPct:85, maxYears:10, pairLoan:'fin-jeonse', bestFor:['youth','newlywed','seoulLong'] },
+    'SH 청년안심주택 민간임대':    { rentPct:95, maxYears:8,  pairLoan:'fin-jeonse', bestFor:['youth'] },
+    'SH 공공·주거환경임대주택':    { rentPct:50, maxYears:50, pairLoan:'fin-jeonse', bestFor:['lowIncome','recipient'] },
+    'SH 재개발임대주택 (일반공급)':{ rentPct:50, maxYears:50, pairLoan:'fin-jeonse', bestFor:['lowIncome','recipient'] },
+    'SH 도시형생활주택':           { rentPct:85, maxYears:6,  pairLoan:'fin-jeonse', bestFor:['youth','student'] },
+    'SH 사회주택':                 { rentPct:80, maxYears:10, pairLoan:'fin-jeonse', bestFor:['youth'] },
+    // === LH 임대주택 ===
+    'LH 통합공공임대':             { rentPct:55, maxYears:30, pairLoan:'fin-jeonse', bestFor:['lowIncome','recipient','newlywed'] },
+    'LH 국민임대':                 { rentPct:60, maxYears:30, pairLoan:'fin-jeonse', bestFor:['lowIncome','recipient'] },
+    'LH 5·10·50년 공공임대':       { rentPct:50, maxYears:50, pairLoan:'fin-jeonse', bestFor:['lowIncome','recipient'] },
+    'LH 영구임대':                 { rentPct:30, maxYears:50, pairLoan:'fin-monthly', bestFor:['recipient'] },
+    'LH 행복주택':                 { rentPct:70, maxYears:14, pairLoan:'fin-jeonse', bestFor:['youth','newlywed','student','infant'] },
+    'LH 청년 매입임대':            { rentPct:40, maxYears:6,  pairLoan:'fin-monthly', bestFor:['youth','recipient'] },
+    'LH 신혼·신생아 매입임대 Ⅰ형': { rentPct:40, maxYears:20, pairLoan:'fin-monthly', bestFor:['newlywed','infant','recipient'] },
+    'LH 신혼·신생아 매입임대 Ⅱ형': { rentPct:70, maxYears:20, pairLoan:'fin-jeonse', bestFor:['newlywed','infant'] },
+    'LH 든든전세주택':             { rentPct:90, maxYears:8,  pairLoan:'fin-jeonse', bestFor:['youth','newlywed'] },
+    'LH 기존주택 전세임대':        { rentPct:5,  maxYears:20, pairLoan:null,          bestFor:['recipient','lowIncome'] },
+    'LH 청년전세임대':             { rentPct:5,  maxYears:6,  pairLoan:null,          bestFor:['youth','recipient'] },
+    'LH 장기전세주택':             { rentPct:80, maxYears:20, pairLoan:'fin-jeonse', bestFor:['homeless5yr','newlywed'] },
+    'LH 기숙사형 매입임대':        { rentPct:40, maxYears:6,  pairLoan:null,          bestFor:['student','youth'] },
+    'LH 집주인 임대주택':          { rentPct:85, maxYears:6,  pairLoan:'fin-jeonse', bestFor:['youth','newlywed'] },
+    'LH 신혼·신생아 전세임대 Ⅰ형': { rentPct:5,  maxYears:20, pairLoan:null,          bestFor:['newlywed','infant','recipient'] },
+    'LH 신혼·신생아 전세임대 Ⅱ형': { rentPct:15, maxYears:20, pairLoan:null,          bestFor:['newlywed','infant'] },
+    'LH 다자녀 전세임대':          { rentPct:5,  maxYears:20, pairLoan:null,          bestFor:['children','recipient'] },
+    'LH 일반 매입임대':            { rentPct:40, maxYears:20, pairLoan:'fin-monthly', bestFor:['recipient','lowIncome'] },
+    'LH 다자녀 매입임대':          { rentPct:40, maxYears:20, pairLoan:'fin-monthly', bestFor:['children','recipient'] },
+    // === 분양 ===
+    'SH 공공분양':                            { pricePct:80,  pairLoan:'fin-purchase', bestFor:['newlywed','lifeFirst','children'] },
+    'SH 나눔형 공공분양':                     { pricePct:70,  pairLoan:'fin-purchase', bestFor:['youth','lifeFirst','newlywed'] },
+    'SH 토지임대부 분양주택':                 { pricePct:65,  pairLoan:'fin-purchase', bestFor:['youth','lifeFirst'] },
+    'LH 공공분양':                            { pricePct:80,  pairLoan:'fin-purchase', bestFor:['newlywed','lifeFirst','children'] },
+    'LH 신혼희망타운':                        { pricePct:80,  pairLoan:'fin-purchase', bestFor:['newlywed','infant','lifeFirst'] },
+    '민간분양 (아파트) — 특별공급':           { pricePct:100, pairLoan:'fin-purchase', bestFor:['newlywed','lifeFirst','infant','children'] },
+    '민간분양 (아파트) — 1순위':              { pricePct:100, pairLoan:'fin-purchase', bestFor:['highSavings','seoulLong'] },
+    '민간분양 (아파트) — 2순위':              { pricePct:100, pairLoan:'fin-purchase', bestFor:[] },
+    '민간분양(아파트) 잔여세대':              { pricePct:100, pairLoan:'fin-purchase', bestFor:[] },
+    // === 대출 ===
+    '디딤돌 대출 (주택구입)':           { rateMin:2.85, rateMax:4.15, loanMax:25000, loanType:'purchase' },
+    '신생아특례 디딤돌 대출':           { rateMin:1.80, rateMax:4.50, loanMax:50000, loanType:'purchase' },
+    '청년 주택드림 디딤돌 대출':        { rateMin:2.20, rateMax:3.60, loanMax:25000, loanType:'purchase' },
+    '신혼부부 구입자금 대출 (생애최초)':{ rateMin:2.65, rateMax:3.95, loanMax:40000, loanType:'purchase' },
+    '청년 버팀목 전세자금 대출':        { rateMin:1.50, rateMax:2.10, loanMax:10000, loanType:'jeonse' },
+    '신혼부부 버팀목 전세자금 대출':    { rateMin:1.50, rateMax:2.30, loanMax:25000, loanType:'jeonse' },
+    '버팀목 전세자금 대출':             { rateMin:2.10, rateMax:2.90, loanMax:12000, loanType:'jeonse' },
+    '신생아특례 버팀목 전세자금 대출':  { rateMin:1.30, rateMax:4.30, loanMax:30000, loanType:'jeonse' },
+    '청년전용 보증부월세대출':          { rateMin:0,    rateMax:1.30, loanMax:1200,  loanType:'monthly' },
+    '주거안정월세대출':                 { rateMin:1.30, rateMax:1.80, loanMax:960,   loanType:'monthly' },
+};
+
 function incomeLimit(pct, size) {
     const idx = Math.min(size, 7) - 1;
     const base = URBAN100[idx];
@@ -1997,6 +2164,186 @@ function midLimit(pct, size, person1pct, person2pct) {
     if (size === 1 && person1pct) base = MID100[0] * (person1pct / 100);
     if (size === 2 && person2pct) base = MID100[1] * (person2pct / 100);
     return base;
+}
+
+// ===== 전략 추천 엔진 =====
+function detectStrengths(u) {
+    const s = [];
+    if (u.isYouth) s.push({ tag:'youth', label:'청년 (만 19~39세)', tip:'청년 전용 임대 유형 + 청년 버팀목·보증부월세 대출 활용 가능' });
+    if (u.isStudent) s.push({ tag:'student', label:'대학(원)생', tip:'희망하우징(월 7~14만원), 행복주택 대학생형 신청 가능' });
+    if (u.isNewlywedStrict) s.push({ tag:'newlywed', label:'신혼부부', tip:'신혼 전용 매입·전세임대 + 특별공급 우선 + 신혼 버팀목 확대' });
+    if (u.infant) s.push({ tag:'infant', label:'신생아 가구', tip:'신생아특례 대출(연 1.8%~), 분양 우선공급, 행복주택 신생아우선' });
+    if (u.under && u.under(50)) s.push({ tag:'lowIncome', label:'저소득 (50% 이하)', tip:'영구·국민·매입임대 1순위, 시세 30% 수준 임대료' });
+    if (u.isRecipient || u.isNearLow || u.singleParent) s.push({ tag:'recipient', label:'우대 대상', tip:'대부분 유형 1순위 + 가점 최고점 + 시세 30% 임대료' });
+    if (u.homelessYrs >= 5) s.push({ tag:'homeless5yr', label:`무주택 ${u.homelessYrs}년`, tip:'장기전세 가점 유리, 시프트·미리내집 우선' });
+    if (u.seoulRes && u.seoulYrs >= 5) s.push({ tag:'seoulLong', label:`서울 ${u.seoulYrs}년 거주`, tip:'청년안심주택 가점 최대 3점, 국민임대·장기전세 가점 유리' });
+    if (u.lifeFirst) s.push({ tag:'lifeFirst', label:'생애최초 주택', tip:'분양 생애최초 특별공급 + 디딤돌 한도 상향' });
+    if (u.childCnt >= 2) s.push({ tag:'children', label:`자녀 ${u.childCnt}명`, tip:'분양 다자녀 특공, 다자녀 전세임대, 디딤돌 한도 상향' });
+    if (u.subCount >= 24) s.push({ tag:'highSavings', label:`청약 ${u.subCount}회 납입`, tip:'민간분양 1순위 자격, 공공분양 가점 유리' });
+    if (u.disabled) s.push({ tag:'disabled', label:'장애인', tip:'특별공급 + 가점 가산 + 영구임대 우선' });
+    if (u.veteran) s.push({ tag:'veteran', label:'국가유공자', tip:'장기전세 등 특별공급 자격' });
+    return s;
+}
+
+function scoreForStrategy(r, meta, strengthTags) {
+    if (!meta) return 0;
+    let score = 0;
+    const pct = meta.rentPct ?? meta.pricePct ?? 80;
+    score += (100 - pct) * 0.35;
+    const rank = r.rank || '';
+    if (rank.includes('1순위') || rank.includes('우선공급')) score += 30;
+    else if (rank.includes('특별공급') || rank.includes('특공')) score += 24;
+    else if (rank.includes('2순위')) score += 16;
+    else if (rank.includes('3순위')) score += 8;
+    else if (r.eligible) score += 12;
+    if (meta.maxYears) score += Math.min(meta.maxYears, 30) * 0.67;
+    if (meta.bestFor) {
+        const matches = meta.bestFor.filter(t => strengthTags.has(t));
+        score += Math.min(matches.length * 5, 15);
+    }
+    return Math.round(score * 10) / 10;
+}
+
+function findBestLoan(meta, eligibleLoans) {
+    if (!meta || !meta.pairLoan) return null;
+    const cats = { 'fin-jeonse':'jeonse', 'fin-purchase':'purchase', 'fin-monthly':'monthly' };
+    const targetType = cats[meta.pairLoan];
+    if (!targetType) return null;
+    const candidates = eligibleLoans.filter(l => {
+        const lm = strategyMeta[l.name];
+        return lm && lm.loanType === targetType;
+    });
+    if (candidates.length === 0) return null;
+    candidates.sort((a, b) => {
+        const ma = strategyMeta[a.name] || {}, mb = strategyMeta[b.name] || {};
+        const diff = (ma.rateMin ?? 99) - (mb.rateMin ?? 99);
+        return diff !== 0 ? diff : (mb.loanMax || 0) - (ma.loanMax || 0);
+    });
+    return candidates[0];
+}
+
+function generateRentalStrategy(eligible, strengths) {
+    const tags = new Set(strengths.map(s => s.tag));
+    const rentals = eligible.filter(r => r.catGroup === 'rental' && strategyMeta[r.name]);
+    if (rentals.length === 0) return null;
+    const loans = eligible.filter(r => r.catGroup === 'finance');
+    const scored = rentals.map(r => {
+        const meta = strategyMeta[r.name];
+        const score = scoreForStrategy(r, meta, tags);
+        const reasons = [];
+        if (meta.rentPct <= 10) reasons.push(`보증금의 ${meta.rentPct}%만 부담 (기관이 나머지 지원)`);
+        else if (meta.rentPct <= 40) reasons.push(`시세 ${meta.rentPct}%의 매우 저렴한 임대료`);
+        else if (meta.rentPct <= 60) reasons.push(`시세 ${meta.rentPct}%의 저렴한 임대료`);
+        else if (meta.rentPct <= 80) reasons.push(`시세 ${meta.rentPct}% 수준`);
+        if (meta.maxYears >= 20) reasons.push(`최장 ${meta.maxYears}년 안정 거주`);
+        else if (meta.maxYears >= 10) reasons.push(`최장 ${meta.maxYears}년 거주`);
+        const rank = r.rank;
+        if (rank.includes('1순위')) reasons.push('현재 1순위 자격');
+        else if (rank.includes('우선공급')) reasons.push('우선공급 대상');
+        const bestLoan = findBestLoan(meta, loans);
+        return { result: r, meta, score, reasons, bestLoan };
+    }).sort((a, b) => b.score - a.score);
+    const top3 = scored.slice(0, 3);
+    let tip = null;
+    if (top3[0]?.meta?.rentPct <= 10) tip = '전세임대는 기관이 보증금 대부분을 부담하므로 별도 대출이 거의 필요 없습니다.';
+    else if (top3.every(t => t.meta.rentPct >= 80)) tip = '임대료가 높은 유형 위주입니다. 소득이 낮아지면 국민·매입임대 등 저렴한 유형도 가능합니다.';
+    return { recommendations: top3, tip };
+}
+
+function generatePurchaseStrategy(eligible, strengths, userVars) {
+    const tags = new Set(strengths.map(s => s.tag));
+    const sales = eligible.filter(r => r.catGroup === 'sale' && strategyMeta[r.name]);
+    const purchaseLoans = eligible.filter(r => {
+        const m = strategyMeta[r.name];
+        return m && m.loanType === 'purchase';
+    });
+    if (sales.length === 0 && purchaseLoans.length === 0) return null;
+    const special = [], general = [];
+    sales.forEach(r => {
+        const rank = r.rank || '';
+        if (rank.includes('특별공급') || rank.includes('특공') || rank.includes('우선공급')) special.push(r);
+        else general.push(r);
+    });
+    let bestLoan = null;
+    if (purchaseLoans.length > 0) {
+        purchaseLoans.sort((a, b) => {
+            const ma = strategyMeta[a.name] || {}, mb = strategyMeta[b.name] || {};
+            return (ma.rateMin ?? 99) - (mb.rateMin ?? 99);
+        });
+        bestLoan = purchaseLoans[0];
+    }
+    let savingsTip = null;
+    const sc = userVars.subCount || 0;
+    if (sc < 6) savingsTip = `현재 청약저축 ${sc}회입니다. 최소 6회 이상 납입해야 공공분양·특별공급 신청이 가능합니다.`;
+    else if (sc < 12) savingsTip = `현재 ${sc}회 납입 — 12회 이상이면 생애최초 특공 가능, 24회면 민간분양 1순위입니다.`;
+    else if (sc < 24) savingsTip = `현재 ${sc}회 납입 — 24회(2년) 채우면 서울 민간분양 1순위 자격이 됩니다.`;
+    return { special, general, bestLoan, savingsTip };
+}
+
+function renderStrategy(results, u) {
+    const section = document.getElementById('strategy-section');
+    if (!section) return;
+    const eligible = results.filter(r => r.eligible);
+    if (eligible.length === 0) { section.style.display = 'none'; return; }
+    const strengths = detectStrengths(u);
+    const strengthsEl = document.getElementById('strategy-strengths');
+    strengthsEl.innerHTML = strengths.length > 0
+        ? strengths.map(s => `<span class="strategy-strength-chip" title="${s.tip}">✦ ${s.label}</span>`).join('')
+        : '';
+    const rental = generateRentalStrategy(eligible, strengths);
+    const rentalBlock = document.getElementById('strategy-rental');
+    if (rental && rental.recommendations.length > 0) {
+        rentalBlock.style.display = '';
+        document.getElementById('strategy-rental-recs').innerHTML = rental.recommendations.map((rec, i) => {
+            const lm = rec.bestLoan ? strategyMeta[rec.bestLoan.name] : null;
+            const loanHtml = rec.bestLoan && lm
+                ? `<div class="strategy-rec-loan" onclick="scrollToCard('${rec.bestLoan.name.replace(/'/g,"\\'")}')">💰 최적 대출: ${rec.bestLoan.name} (연 ${lm.rateMin}%~)</div>`
+                : (rec.meta.pairLoan === null ? '<div class="strategy-rec-loan" style="border-color:#86efac;background:#f0fdf4;color:#15803d;">✓ 보증금 대부분 기관 부담 — 별도 대출 불필요</div>' : '');
+            return `<div class="strategy-rec">
+                <div class="strategy-rec-header">
+                    <span class="strategy-rec-rank">${i+1}</span>
+                    <span class="strategy-rec-name">${rec.result.name}</span>
+                    <span class="inst-badge inst-${rec.result.inst==='LH'?'lh':'sh'}">${rec.result.inst}</span>
+                </div>
+                <div class="strategy-rec-reasons">${rec.reasons.map(r => '• ' + r).join('<br>')}<br>• 현재: ${rec.result.rank || '신청 가능'}</div>
+                ${loanHtml}
+            </div>`;
+        }).join('');
+        const tipEl = document.getElementById('strategy-rental-tip');
+        if (rental.tip) { tipEl.style.display = ''; tipEl.textContent = '💡 ' + rental.tip; }
+        else tipEl.style.display = 'none';
+    } else { rentalBlock.style.display = 'none'; }
+    const purchase = generatePurchaseStrategy(eligible, strengths, u);
+    const purchaseBlock = document.getElementById('strategy-purchase');
+    if (purchase) {
+        purchaseBlock.style.display = '';
+        let html = '';
+        if (purchase.special.length > 0) {
+            html += `<div class="strategy-purchase-group"><div class="strategy-purchase-label">특별공급 자격</div><div class="strategy-purchase-items">${
+                purchase.special.map(r => `<span class="strategy-purchase-chip" onclick="scrollToCard('${r.name.replace(/'/g,"\\'")}')">${r.name.replace(/—.*/, '').trim()}</span>`).join('')
+            }</div></div>`;
+        }
+        if (purchase.general.length > 0) {
+            html += `<div class="strategy-purchase-group"><div class="strategy-purchase-label">일반공급</div><div class="strategy-purchase-items">${
+                purchase.general.map(r => `<span class="strategy-purchase-chip" onclick="scrollToCard('${r.name.replace(/'/g,"\\'")}')">${r.name.replace(/—.*/, '').trim()} ${r.rank ? '('+r.rank.split('·')[0].trim()+')' : ''}</span>`).join('')
+            }</div></div>`;
+        }
+        if (purchase.bestLoan) {
+            const lm = strategyMeta[purchase.bestLoan.name];
+            html += `<div class="strategy-rec" style="border-color:#f59e0b;background:#fffbeb;">
+                <div class="strategy-rec-header">
+                    <span class="strategy-rec-rank" style="background:linear-gradient(135deg,#f59e0b,#d97706);">💰</span>
+                    <span class="strategy-rec-name">최적 구입 대출: ${purchase.bestLoan.name}</span>
+                </div>
+                <div class="strategy-rec-reasons">• 금리 연 ${lm?lm.rateMin:'?'}~${lm?lm.rateMax:'?'}% · 한도 최대 ${lm?Math.round(lm.loanMax/10000):'?'}억원<br>• ${purchase.bestLoan.rank || purchase.bestLoan.rent}</div>
+            </div>`;
+        }
+        document.getElementById('strategy-purchase-recs').innerHTML = html;
+        const tipEl = document.getElementById('strategy-purchase-tip');
+        if (purchase.savingsTip) { tipEl.style.display = ''; tipEl.textContent = '💡 ' + purchase.savingsTip; }
+        else tipEl.style.display = 'none';
+    } else { purchaseBlock.style.display = 'none'; }
+    section.style.display = (rental || purchase) ? '' : 'none';
 }
 
 // ===== Analysis Engine =====
@@ -3604,35 +3951,40 @@ function runAnalysis() {
         add('주거급여', eligible, rank, '지역·가구원수별 지급기준액', '수급기간 유지', 'welfare', r, '국토교통부', 'welfare');
     }
 
-    // 서울 청년 월세 지원
+    // 서울 청년 월세 지원 (2026년 개편: 기준중위소득 기반)
     {
         const r = [];
-        const annualIncome = monthlyIncome * 12;
+        const above48 = incWon > midLimit(48, hhSize);
+        const below150 = incWon <= midLimit(150, hhSize);
+        const qualifiedType = !isMarried || isNewlywedStrict || singleParent;
         if (!seoulRes) r.push('서울 거주 필요');
         if (!isYouth) r.push('만 19~39세 필요');
-        if (isMarried) r.push('미혼 필요 (예외: 이혼·사별)');
-        if (annualIncome > 4000) r.push('연소득 4,000만원 이하 필요');
-        if (totalAssets > 34400) r.push('총자산 34,400만원 이하 필요');
+        if (!qualifiedType) r.push('1인 가구·한부모·신혼부부 대상 (일반 기혼 제외)');
+        if (!above48) r.push(`소득 기준중위 48% 초과 필요 (주거급여 대상자 제외)`);
+        if (!below150) r.push(`소득 기준중위 150% 이하 필요 (${hhSize}인 약 ${Math.round(midLimit(150, hhSize)/10000)}만원/월)`);
+        if (totalAssets > 13000) r.push('일반재산 1억3,000만원 이하 필요');
+        if (carVal >= 2500) r.push('자동차 시가표준액 2,500만원 미만 필요');
+        if (isRecipient) r.push('국민기초생활수급자(생계·의료·주거급여) 제외');
         let eligible = false, rank = '';
-        if (seoulRes && isYouth && !isMarried && annualIncome <= 4000 && totalAssets <= 34400) {
-            eligible = true; rank = '월 최대 20만원 (최장 12개월)';
+        if (seoulRes && isYouth && qualifiedType && above48 && below150 && totalAssets <= 13000 && carVal < 2500 && !isRecipient) {
+            eligible = true; rank = '월 최대 20만원 (최장 12개월, 생애 1회)';
         }
-        add('서울 청년 월세 지원', eligible, rank, '월 최대 20만원', '최장 12개월', 'welfare', r, 'SH', 'welfare');
+        add('서울 청년 월세 지원', eligible, rank, '월 최대 20만원', '최장 12개월 (생애 1회)', 'welfare', r, 'SH', 'welfare');
     }
 
-    // 청년 월세 한시 지원 (국토부)
+    // 청년 월세 지원 (국토부) — 2026년 상시 사업 전환
     {
         const r = [];
         if (!isYouth || age > 34) r.push('만 19~34세 필요');
-        if (isMarried) r.push('독립 거주 미혼 단독세대 필요');
-        // 청년가구 기준중위소득 60% 이하 (2026년 1인 약 154만원/월)
+        if (isMarried) r.push('부모와 별도 거주 무주택 청년 필요');
         const incOk = underMid(60);
         if (!incOk) r.push(`소득 기준중위 60% 이하 필요 (${hhSize}인 약 ${Math.round(midLimit(60, hhSize)/10000)}만원/월)`);
+        if (totalAssets > 12200) r.push('청년가구 자산 1억2,200만원 이하 필요');
         let eligible = false, rank = '';
-        if (isYouth && age <= 34 && !isMarried && incOk) {
+        if (isYouth && age <= 34 && !isMarried && incOk && totalAssets <= 12200) {
             eligible = true; rank = '월 최대 20만원 (최장 24개월, 생애 1회)';
         }
-        add('청년 월세 한시 지원 (국토부)', eligible, rank, '월 최대 20만원 × 24개월', '최대 480만원', 'welfare', r, '국토교통부', 'welfare');
+        add('청년 월세 지원 (국토부)', eligible, rank, '월 최대 20만원 × 24개월', '최대 480만원', 'welfare', r, '국토교통부', 'welfare');
     }
 
     // === 이자지원 ===
@@ -3909,6 +4261,14 @@ function runAnalysis() {
         .map(s => `<span class="summary-chip${s.highlight ? ' highlight' : ''}">${s.label}</span>`)
         .join('');
 
+    // 전략 추천
+    renderStrategy(results, {
+        age, seoulRes, seoulYrs, homelessYrs, isNewlywedStrict, isMarried,
+        childCnt, infant, isStudent, isJobSeeker, isRecipient, isNearLow,
+        singleParent, disabled, veteran, lifeFirst, subCount, monthlyIncome,
+        hhSize, dualInc, incWon, isYouth, isHouseholdHead, under
+    });
+
     // 필터 초기화
     _currentFilter = 'ALL';
     _currentCatFilter = 'ALL';
@@ -4155,6 +4515,7 @@ function restart() {
     document.querySelectorAll('.step-panel').forEach(p => { p.style.display=''; });
     document.getElementById('step-indicator').style.display='';
     document.getElementById('results').style.display='none';
+    document.getElementById('strategy-section').style.display='none';
     _activeCards = []; _inactiveCards = []; _ineligibleCards = [];
     _currentFilter = 'ALL';
     _currentCatFilter = 'ALL';
@@ -5864,7 +6225,7 @@ typeDetailData['주거급여'] = {
         <h4>지원 내용</h4>
         <ul>
             <li><strong>임차가구 (월세 지원)</strong>: 실제 임차료 기준, 지역·가구원수별 기준 임차료 이하 지원</li>
-            <li>서울 기준 임차료 (2026년): 1인 <strong>33.2만원</strong> / 2인 37.2만원 / 3인 44.3만원 / 4인 51.4만원</li>
+            <li>서울 기준 임차료 (2026년): 1인 <strong>36.9만원</strong> / 2인 41.4만원 / 3인 49.2만원 / 4인 57.1만원</li>
             <li><strong>자가가구 (수선비 지원)</strong>: 경보수 457만원 / 중보수 849만원 / 대보수 1,241만원</li>
         </ul>
     </div>
@@ -5885,44 +6246,48 @@ typeDetailData['서울 청년 월세 지원'] = {
     body: `
     <div class="help-section">
         <h4>어떤 제도인가요?</h4>
-        <p>서울시(SH공사)가 지원하는 <strong>청년 월세 보조 사업</strong>입니다. 월 최대 20만원씩 최장 12개월 (총 최대 240만원) 지원합니다.</p>
+        <p>서울시가 지원하는 <strong>청년 월세 보조 사업</strong>입니다. 월 최대 20만원씩 최장 12개월 (총 최대 240만원, <strong>생애 1회</strong>) 지원합니다.</p>
     </div>
     <div class="help-section">
         <h4>자격 요건</h4>
         <ul>
-            <li>만 19~39세 서울 거주 미혼 청년 (이혼·사별 예외)</li>
-            <li>연소득 4,000만원 이하</li>
-            <li>총자산 34,400만원 이하</li>
-            <li>보증금 5,000만원 이하 + 월세 60만원 이하 주택 거주</li>
-            <li>단독 거주 (1~2인 가구)</li>
+            <li>만 19~39세 서울 거주 청년 (군 복무기간 최대 3세 연장)</li>
+            <li>소득인정액 기준중위소득 <strong>48% 초과 ~ 150% 이하</strong></li>
+            <li>1인 기준 약 123만원 초과 ~ 약 385만원/월 이하 (2026년)</li>
+            <li>일반재산 <strong>1억3,000만원</strong> 이하 (토지·건축물·보증금·차량 합산)</li>
+            <li>자동차 시가표준액 <strong>2,500만원 미만</strong></li>
+            <li>보증금 8,000만원 이하 + 월세 60만원 이하 주택 거주</li>
+            <li>대상: 1인 가구·한부모가족·신혼부부(청년 모두)·전세사기피해자</li>
         </ul>
     </div>
     <div class="help-section">
         <h4>주의 사항</h4>
         <ul>
-            <li>국토부 청년 월세 한시 지원과 중복 신청 불가</li>
-            <li>주거급여 수급자 등 타 유사 지원 수혜자 제외</li>
-            <li>연 1회 모집 공고 — 서울청년포털·다산콜(120) 확인</li>
+            <li><strong>생애 1회</strong>만 지원 가능</li>
+            <li>국민기초생활수급자(생계·의료·주거급여) 제외</li>
+            <li>국토부 청년 월세 지원과 중복 수혜 불가</li>
+            <li>공공임대주택 거주자 제외 (민간임대는 가능)</li>
+            <li>연 1회 모집 (15,000명 추첨) — 서울주거포털 공고 확인</li>
         </ul>
     </div>
-    <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울청년포털</a>`
+    <a class="help-link" href="https://housing.seoul.go.kr/site/main/content/sh01_060513" target="_blank">🔗 서울주거포털 — 청년월세지원</a>`
 };
 
-typeDetailData['청년 월세 한시 지원 (국토부)'] = {
-    title: '청년 월세 한시 지원 (국토교통부)',
+typeDetailData['청년 월세 지원 (국토부)'] = {
+    title: '청년 월세 지원 (국토교통부)',
     body: `
     <div class="help-section">
         <h4>어떤 제도인가요?</h4>
-        <p>국토교통부 한시 사업으로, 월 최대 20만원씩 최대 24개월 (생애 1회, 총 최대 480만원) 지원합니다.</p>
+        <p>국토교통부 <strong>상시 사업</strong>으로, 월 최대 20만원씩 최대 24개월 (생애 1회, 총 최대 480만원) 지원합니다. 2026년부터 한시→상시 사업으로 전환되었습니다.</p>
     </div>
     <div class="help-section">
         <h4>자격 요건</h4>
         <ul>
-            <li>만 19~34세 독립 거주 미혼 청년 (단독세대주 또는 세대원)</li>
+            <li>만 19~34세 부모와 별도 거주 무주택 청년</li>
             <li>청년가구 소득: 기준중위소득 <strong>60% 이하</strong> (2026년 1인 약 154만원/월)</li>
             <li>원가구(부모+청년) 소득: 기준중위소득 100% 이하</li>
-            <li>청년독립가구 자산 1.22억원 이하 / 원가구 자산 4.7억원 이하</li>
-            <li>월세 60만원 이하 주택 (보증금 5,000만원 이하)</li>
+            <li>청년독립가구 자산 <strong>1억2,200만원</strong> 이하 / 원가구 자산 4억7,000만원 이하</li>
+            <li>월세 <strong>70만원</strong> 이하 주택 (보증금 5,000만원 이하)</li>
         </ul>
     </div>
     <div class="help-section">
@@ -5930,7 +6295,7 @@ typeDetailData['청년 월세 한시 지원 (국토부)'] = {
         <ul>
             <li><strong>생애 1회</strong>만 지원 (이력 있으면 불가)</li>
             <li>서울시 청년 월세 지원과 중복 수혜 불가</li>
-            <li>한시 사업 — LH청약플러스에서 모집 공고 확인</li>
+            <li>상시 신청 가능 — LH청약플러스·복지로에서 신청</li>
         </ul>
     </div>
     <a class="help-link" href="https://apply.lh.or.kr" target="_blank">🔗 LH청약플러스 — 청년 월세 지원 신청</a>`
@@ -5957,8 +6322,9 @@ typeDetailData['서울시 청년 임차보증금 이자지원'] = {
         <h4>지원 내용</h4>
         <ul>
             <li>대출한도: 최대 <strong>2억원</strong> (보증금의 90% 이내)</li>
-            <li>서울시 이자 지원: 대출금의 연 <strong>2.0%</strong></li>
+            <li>서울시 이자 지원: 대출금의 연 <strong>2.0%</strong> (본인 부담 약 1%)</li>
             <li>지원 기간: 최장 <strong>8년</strong> (만 40세까지)</li>
+            <li><strong>생애최초 1회만</strong> 지원 가능 (전액상환 후 재신청 불가)</li>
             <li>취급은행: 하나은행</li>
         </ul>
     </div>
@@ -7398,8 +7764,8 @@ const applyGuideData = {
         title: '서울 청년 월세 지원 신청 가이드',
         body: `
         <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>모집 공고 확인</h4><p>서울청년포털(youth.seoul.go.kr) 또는 서울시 홈페이지에서 모집 시기 확인. 연 1회 내외 모집.</p><p class="hint">다산콜(120) 문의로 최신 모집 일정 확인 가능.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 신청</h4><p>서울청년포털 또는 서울주거포털(housing.seoul.go.kr)에서 온라인 신청. 공인인증서 또는 간편인증 필요.</p>
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>모집 공고 확인</h4><p>서울주거포털(housing.seoul.go.kr)에서 모집 시기 확인. 연 1회 모집 (15,000명 추첨).</p><p class="hint">다산콜(120) 문의로 최신 모집 일정 확인 가능.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>온라인 신청</h4><p>서울주거포털(housing.seoul.go.kr)에서 온라인 신청. 공인인증서 또는 간편인증 필요.</p>
                 <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
                     <div class="guide-doc-item">주민등록등본</div>
                     <div class="guide-doc-item">임대차계약서 사본 (보증금·월세 확인)</div>
@@ -7409,14 +7775,14 @@ const applyGuideData = {
             </div></div>
             <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-body"><h4>심사 → 지원금 지급</h4><p>서류 심사 후 선정. 매월 최대 20만원 통장 입금. 계속 거주 확인 조건.</p></div></div>
         </div>
-        <a class="help-link" href="https://youth.seoul.go.kr" target="_blank">🔗 서울청년포털</a>`
+        <a class="help-link" href="https://housing.seoul.go.kr/site/main/content/sh01_060513" target="_blank">🔗 서울주거포털 — 청년월세지원</a>`
     },
-    '청년 월세 한시 지원 (국토부)': {
-        title: '청년 월세 한시 지원 (국토부) 신청 가이드',
+    '청년 월세 지원 (국토부)': {
+        title: '청년 월세 지원 (국토부) 신청 가이드',
         body: `
         <div class="help-section">
-            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>모집 공고 및 자격 확인</h4><p>LH청약플러스(apply.lh.or.kr) 또는 마이홈포털에서 모집 공고 확인. 생애 1회 제한 — 기존 수혜 이력 확인 필수.</p></div></div>
-            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>LH청약플러스 온라인 신청</h4><p>apply.lh.or.kr → 주거복지 → 청년 월세 한시 지원 신청.</p>
+            <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-body"><h4>자격 확인</h4><p>LH청약플러스(apply.lh.or.kr) 또는 복지로에서 자격 확인. 생애 1회 제한 — 기존 수혜 이력 확인 필수. 상시 신청 가능.</p></div></div>
+            <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-body"><h4>LH청약플러스 온라인 신청</h4><p>apply.lh.or.kr → 주거복지 → 청년 월세 지원 신청.</p>
                 <div class="guide-docs"><div class="guide-docs-title">주요 서류</div>
                     <div class="guide-doc-item">주민등록등본 (청년 단독 세대)</div>
                     <div class="guide-doc-item">임대차계약서 사본</div>
