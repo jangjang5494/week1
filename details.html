@@ -413,93 +413,63 @@
 
             /* 필터 탭 */
             .filter-tab { font-size: 0.78rem; padding: 0.35rem 0.7rem; }
-            /* 전략 블록 모바일 */
-            .strategy-block { padding: 0.9rem 1rem; }
-            .strategy-rec { padding: 0.6rem 0.8rem; }
-            .strategy-rec-name { font-size: 0.85rem; }
-            .strategy-rec-reasons { margin-left: 1.6rem; }
+            /* 전략 내러티브 모바일 */
+            .strategy-narrative { padding: 1rem 1.1rem; }
+            .strategy-narrative p { font-size: 0.84rem; }
         }
 
-        /* ===== 전략 추천 ===== */
-        .strategy-block {
+        /* ===== 전략 보기 버튼 + 내러티브 ===== */
+        .strategy-toggle-btn {
+            display: block; width: 100%; margin-top: 0.8rem;
+            padding: 0.7rem; border: 1.5px solid #7c3aed; border-radius: 10px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: #fff; font-size: 0.92rem; font-weight: 700;
+            cursor: pointer; transition: opacity 0.2s;
+        }
+        .strategy-toggle-btn:hover { opacity: 0.88; }
+        .strategy-narrative {
             background: var(--card-bg, #fff);
-            border-radius: 14px; padding: 1.2rem 1.3rem;
+            border-radius: 14px; padding: 1.4rem 1.5rem;
             margin-bottom: 1rem;
             border: 1.5px solid #c7d2fe;
             box-shadow: 0 2px 12px rgba(79,70,229,0.08);
+            animation: fadeSlideIn 0.35s ease;
         }
-        .strategy-header {
-            display: flex; align-items: center; gap: 0.5rem;
-            margin-bottom: 0.8rem; font-size: 1rem; font-weight: 800;
+        @keyframes fadeSlideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+        .strategy-narrative h3 {
+            font-size: 1rem; font-weight: 800; margin: 1.2rem 0 0.5rem;
             color: var(--primary-color, #4f46e5);
         }
-        .strategy-strengths {
-            display: flex; flex-wrap: wrap; gap: 0.4rem;
-            margin-bottom: 1rem;
+        .strategy-narrative h3:first-child { margin-top: 0; }
+        .strategy-narrative p {
+            font-size: 0.88rem; line-height: 1.75; color: var(--text-color, #374151);
+            margin: 0 0 0.6rem;
         }
-        .strategy-strength-chip {
-            background: #ede9fe; color: #5b21b6;
-            border-radius: 6px; padding: 0.25rem 0.6rem;
-            font-size: 0.78rem; font-weight: 600;
-            cursor: help;
+        .strategy-narrative strong { color: var(--text-color, #111); }
+        .strategy-narrative .s-highlight {
+            background: #ede9fe; color: #5b21b6; border-radius: 4px;
+            padding: 0.1rem 0.4rem; font-weight: 700; font-size: 0.84rem;
+            white-space: nowrap;
         }
-        .strategy-rec {
+        .strategy-narrative .s-loan-tag {
+            background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px;
+            padding: 0.15rem 0.5rem; font-size: 0.82rem; color: #92400e;
+            font-weight: 600; cursor: pointer; white-space: nowrap;
+        }
+        .strategy-narrative .s-loan-tag:hover { background: #fef3c7; }
+        .strategy-narrative .s-tip {
             background: #f0fdf4; border-left: 3px solid #22c55e;
-            border-radius: 0 10px 10px 0;
-            padding: 0.8rem 1rem; margin-bottom: 0.6rem;
+            border-radius: 0 8px 8px 0; padding: 0.6rem 0.9rem;
+            font-size: 0.84rem; color: #15803d; margin: 0.6rem 0;
+            line-height: 1.6;
         }
-        .strategy-rec-header {
-            display: flex; align-items: center; gap: 0.5rem;
-            margin-bottom: 0.3rem;
-        }
-        .strategy-rec-rank {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: #fff; border-radius: 50%;
-            width: 1.5rem; height: 1.5rem;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
-        }
-        .strategy-rec-name { font-weight: 700; font-size: 0.92rem; color: var(--text-color, #111); }
-        .strategy-rec-reasons {
-            font-size: 0.82rem; color: #374151;
-            margin: 0.3rem 0 0 2rem; line-height: 1.6;
-        }
-        .strategy-rec-loan {
-            margin: 0.4rem 0 0 2rem;
-            background: #fffbeb; border: 1px solid #fde68a;
-            border-radius: 8px; padding: 0.4rem 0.7rem;
-            font-size: 0.78rem; color: #92400e;
-            display: inline-flex; align-items: center; gap: 0.3rem;
-            cursor: pointer;
-        }
-        .strategy-rec-loan:hover { background: #fef3c7; }
-        .strategy-tip {
-            background: #ede9fe; border-radius: 8px;
-            padding: 0.6rem 0.8rem;
-            font-size: 0.8rem; color: #5b21b6;
-            margin-top: 0.5rem; line-height: 1.6;
-        }
-        .strategy-purchase-group { margin-bottom: 0.7rem; }
-        .strategy-purchase-label {
-            font-size: 0.78rem; font-weight: 700;
-            color: #6b7280; text-transform: uppercase;
-            letter-spacing: 0.03em; margin-bottom: 0.3rem;
-        }
-        .strategy-purchase-items { display: flex; flex-wrap: wrap; gap: 0.3rem; }
-        .strategy-purchase-chip {
-            background: #f0fdf4; color: #15803d;
-            border-radius: 6px; padding: 0.25rem 0.6rem;
-            font-size: 0.78rem; font-weight: 600; cursor: pointer;
-        }
-        .strategy-purchase-chip:hover { background: #dcfce7; }
-        [data-theme="dark"] .strategy-block { border-color: #4338ca; background: var(--card-bg); }
-        [data-theme="dark"] .strategy-strength-chip { background: #2e1065; color: #c4b5fd; }
-        [data-theme="dark"] .strategy-rec { background: #052e16; border-color: #166534; }
-        [data-theme="dark"] .strategy-rec-name { color: #f9fafb; }
-        [data-theme="dark"] .strategy-rec-reasons { color: #d1d5db; }
-        [data-theme="dark"] .strategy-rec-loan { background: #422006; border-color: #92400e; color: #fcd34d; }
-        [data-theme="dark"] .strategy-tip { background: #2e1065; color: #c4b5fd; }
-        [data-theme="dark"] .strategy-purchase-chip { background: #052e16; color: #86efac; }
+        [data-theme="dark"] .strategy-toggle-btn { border-color: #6d28d9; }
+        [data-theme="dark"] .strategy-narrative { border-color: #4338ca; background: var(--card-bg); }
+        [data-theme="dark"] .strategy-narrative p { color: #d1d5db; }
+        [data-theme="dark"] .strategy-narrative strong { color: #f9fafb; }
+        [data-theme="dark"] .strategy-narrative .s-highlight { background: #2e1065; color: #c4b5fd; }
+        [data-theme="dark"] .strategy-narrative .s-loan-tag { background: #422006; border-color: #92400e; color: #fcd34d; }
+        [data-theme="dark"] .strategy-narrative .s-tip { background: #052e16; border-color: #166534; color: #86efac; }
     </style>
 <!-- ── Google Analytics ── -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F0C83JFCH3"></script>
@@ -1192,21 +1162,12 @@
         <div class="summary-card" id="summary-card">
             <div class="summary-title">분석 조건 요약</div>
             <div class="summary-chips" id="summary-chips"></div>
+            <button id="strategy-btn" class="strategy-toggle-btn" style="display:none;" onclick="toggleStrategy()">🧭 나만의 주거 전략 보기</button>
         </div>
 
-        <!-- 전략 추천 -->
-        <div id="strategy-section" style="display:none;">
-            <div class="strategy-strengths" id="strategy-strengths"></div>
-            <div id="strategy-rental" class="strategy-block" style="display:none;">
-                <div class="strategy-header">🏠 임대 전략 추천</div>
-                <div id="strategy-rental-recs"></div>
-                <div id="strategy-rental-tip" class="strategy-tip" style="display:none;"></div>
-            </div>
-            <div id="strategy-purchase" class="strategy-block" style="display:none;">
-                <div class="strategy-header">🏗️ 주택구입 전략</div>
-                <div id="strategy-purchase-recs"></div>
-                <div id="strategy-purchase-tip" class="strategy-tip" style="display:none;"></div>
-            </div>
+        <!-- 전략 내러티브 -->
+        <div id="strategy-section" class="strategy-narrative" style="display:none;">
+            <div id="strategy-content"></div>
         </div>
 
         <!-- 카테고리 필터 탭 -->
@@ -2280,70 +2241,114 @@ function generatePurchaseStrategy(eligible, strengths, userVars) {
     return { special, general, bestLoan, savingsTip };
 }
 
+function toggleStrategy() {
+    const sec = document.getElementById('strategy-section');
+    const btn = document.getElementById('strategy-btn');
+    if (sec.style.display === 'none') {
+        sec.style.display = '';
+        btn.textContent = '🧭 전략 접기';
+        sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        sec.style.display = 'none';
+        btn.textContent = '🧭 나만의 주거 전략 보기';
+    }
+}
+
 function renderStrategy(results, u) {
+    const btn = document.getElementById('strategy-btn');
     const section = document.getElementById('strategy-section');
-    if (!section) return;
+    if (!btn || !section) return;
     const eligible = results.filter(r => r.eligible);
-    if (eligible.length === 0) { section.style.display = 'none'; return; }
+    if (eligible.length === 0) { btn.style.display = 'none'; section.style.display = 'none'; return; }
+
     const strengths = detectStrengths(u);
-    const strengthsEl = document.getElementById('strategy-strengths');
-    strengthsEl.innerHTML = strengths.length > 0
-        ? strengths.map(s => `<span class="strategy-strength-chip" title="${s.tip}">✦ ${s.label}</span>`).join('')
-        : '';
     const rental = generateRentalStrategy(eligible, strengths);
-    const rentalBlock = document.getElementById('strategy-rental');
-    if (rental && rental.recommendations.length > 0) {
-        rentalBlock.style.display = '';
-        document.getElementById('strategy-rental-recs').innerHTML = rental.recommendations.map((rec, i) => {
-            const lm = rec.bestLoan ? strategyMeta[rec.bestLoan.name] : null;
-            const loanHtml = rec.bestLoan && lm
-                ? `<div class="strategy-rec-loan" onclick="scrollToCard('${rec.bestLoan.name.replace(/'/g,"\\'")}')">💰 최적 대출: ${rec.bestLoan.name} (연 ${lm.rateMin}%~)</div>`
-                : (rec.meta.pairLoan === null ? '<div class="strategy-rec-loan" style="border-color:#86efac;background:#f0fdf4;color:#15803d;">✓ 보증금 대부분 기관 부담 — 별도 대출 불필요</div>' : '');
-            return `<div class="strategy-rec">
-                <div class="strategy-rec-header">
-                    <span class="strategy-rec-rank">${i+1}</span>
-                    <span class="strategy-rec-name">${rec.result.name}</span>
-                    <span class="inst-badge inst-${rec.result.inst==='LH'?'lh':'sh'}">${rec.result.inst}</span>
-                </div>
-                <div class="strategy-rec-reasons">${rec.reasons.map(r => '• ' + r).join('<br>')}<br>• 현재: ${rec.result.rank || '신청 가능'}</div>
-                ${loanHtml}
-            </div>`;
-        }).join('');
-        const tipEl = document.getElementById('strategy-rental-tip');
-        if (rental.tip) { tipEl.style.display = ''; tipEl.textContent = '💡 ' + rental.tip; }
-        else tipEl.style.display = 'none';
-    } else { rentalBlock.style.display = 'none'; }
     const purchase = generatePurchaseStrategy(eligible, strengths, u);
-    const purchaseBlock = document.getElementById('strategy-purchase');
+    if (!rental && !purchase) { btn.style.display = 'none'; section.style.display = 'none'; return; }
+
+    let html = '';
+
+    // 강점 소개
+    if (strengths.length > 0) {
+        const labels = strengths.map(s => `<span class="s-highlight">${s.label}</span>`);
+        html += `<h3>🔍 나의 주거 경쟁력</h3>`;
+        html += `<p>입력하신 조건을 분석한 결과, ${labels.join(', ')} 등의 강점이 있습니다. 이를 바탕으로 가장 유리한 주거 전략을 안내드립니다.</p>`;
+    }
+
+    // 임대 전략
+    if (rental && rental.recommendations.length > 0) {
+        html += `<h3>🏠 임대주택 전략</h3>`;
+        const recs = rental.recommendations;
+        recs.forEach((rec, i) => {
+            const m = rec.meta;
+            const nm = `<strong>${rec.result.name}</strong>`;
+            const inst = rec.result.inst;
+            let para = '';
+            if (i === 0) para += `가장 추천드리는 유형은 ${nm} (${inst})입니다. `;
+            else if (i === 1) para += `그 다음으로는 ${nm} (${inst})을 추천드립니다. `;
+            else para += `${nm} (${inst})도 좋은 선택지입니다. `;
+
+            if (m.rentPct <= 10) para += `보증금의 ${m.rentPct}%만 부담하면 되고 나머지는 기관이 지원합니다. `;
+            else if (m.rentPct <= 40) para += `시세의 ${m.rentPct}% 수준으로 매우 저렴합니다. `;
+            else if (m.rentPct <= 60) para += `시세의 ${m.rentPct}% 수준으로 저렴한 편입니다. `;
+            else para += `시세의 ${m.rentPct}% 수준입니다. `;
+
+            if (m.maxYears >= 20) para += `최장 ${m.maxYears}년까지 안정적으로 거주할 수 있어 장기 계획에 유리합니다. `;
+            else if (m.maxYears >= 6) para += `최장 ${m.maxYears}년 거주 가능합니다. `;
+
+            const rank = rec.result.rank || '';
+            if (rank.includes('1순위')) para += `현재 <span class="s-highlight">1순위</span> 자격이므로 경쟁에서 유리합니다. `;
+            else if (rank.includes('우선공급')) para += `<span class="s-highlight">우선공급</span> 대상이라 당첨 확률이 높습니다. `;
+
+            const lm = rec.bestLoan ? strategyMeta[rec.bestLoan.name] : null;
+            if (rec.bestLoan && lm) {
+                para += `여기에 <span class="s-loan-tag" onclick="scrollToCard('${rec.bestLoan.name.replace(/'/g,"\\'")}')">💰 ${rec.bestLoan.name} (연 ${lm.rateMin}%~)</span>을 함께 활용하면 보증금 부담을 더 줄일 수 있습니다.`;
+            } else if (m.pairLoan === null) {
+                para += `이 유형은 보증금 대부분을 기관이 부담하므로 별도 대출이 거의 필요 없습니다.`;
+            }
+
+            html += `<p>${para}</p>`;
+        });
+
+        if (rental.tip) html += `<div class="s-tip">💡 ${rental.tip}</div>`;
+    }
+
+    // 주택구입 전략
     if (purchase) {
-        purchaseBlock.style.display = '';
-        let html = '';
+        html += `<h3>🏗️ 주택 구입 전략</h3>`;
+        let para = '';
+
         if (purchase.special.length > 0) {
-            html += `<div class="strategy-purchase-group"><div class="strategy-purchase-label">특별공급 자격</div><div class="strategy-purchase-items">${
-                purchase.special.map(r => `<span class="strategy-purchase-chip" onclick="scrollToCard('${r.name.replace(/'/g,"\\'")}')">${r.name.replace(/—.*/, '').trim()}</span>`).join('')
-            }</div></div>`;
+            const names = purchase.special.map(r => `<strong>${r.name.replace(/—.*/, '').trim()}</strong>`);
+            para += `청약을 통한 주택 구입 시, ${names.join(', ')} 등 <span class="s-highlight">특별공급</span> 자격이 있습니다. 특별공급은 일반공급보다 경쟁률이 낮아 당첨 확률이 높으므로 적극 활용하시길 권합니다. `;
         }
+
         if (purchase.general.length > 0) {
-            html += `<div class="strategy-purchase-group"><div class="strategy-purchase-label">일반공급</div><div class="strategy-purchase-items">${
-                purchase.general.map(r => `<span class="strategy-purchase-chip" onclick="scrollToCard('${r.name.replace(/'/g,"\\'")}')">${r.name.replace(/—.*/, '').trim()} ${r.rank ? '('+r.rank.split('·')[0].trim()+')' : ''}</span>`).join('')
-            }</div></div>`;
+            const names = purchase.general.map(r => {
+                const short = r.name.replace(/—.*/, '').trim();
+                const rk = r.rank ? r.rank.split('·')[0].trim() : '';
+                return `<strong>${short}</strong>${rk ? ' ('+rk+')' : ''}`;
+            });
+            if (purchase.special.length > 0) para += `일반공급으로는 ${names.join(', ')}에 신청 가능합니다. `;
+            else para += `${names.join(', ')}에 일반공급으로 신청 가능합니다. `;
         }
+
+        if (para) html += `<p>${para}</p>`;
+
         if (purchase.bestLoan) {
             const lm = strategyMeta[purchase.bestLoan.name];
-            html += `<div class="strategy-rec" style="border-color:#f59e0b;background:#fffbeb;">
-                <div class="strategy-rec-header">
-                    <span class="strategy-rec-rank" style="background:linear-gradient(135deg,#f59e0b,#d97706);">💰</span>
-                    <span class="strategy-rec-name">최적 구입 대출: ${purchase.bestLoan.name}</span>
-                </div>
-                <div class="strategy-rec-reasons">• 금리 연 ${lm?lm.rateMin:'?'}~${lm?lm.rateMax:'?'}% · 한도 최대 ${lm?Math.round(lm.loanMax/10000):'?'}억원<br>• ${purchase.bestLoan.rank || purchase.bestLoan.rent}</div>
-            </div>`;
+            if (lm) {
+                html += `<p>구입 자금 대출로는 <span class="s-loan-tag" onclick="scrollToCard('${purchase.bestLoan.name.replace(/'/g,"\\'")}')">💰 ${purchase.bestLoan.name}</span>이 가장 유리합니다. 금리 연 ${lm.rateMin}~${lm.rateMax}%, 최대 ${Math.round(lm.loanMax/10000)}억원까지 가능합니다.</p>`;
+            }
         }
-        document.getElementById('strategy-purchase-recs').innerHTML = html;
-        const tipEl = document.getElementById('strategy-purchase-tip');
-        if (purchase.savingsTip) { tipEl.style.display = ''; tipEl.textContent = '💡 ' + purchase.savingsTip; }
-        else tipEl.style.display = 'none';
-    } else { purchaseBlock.style.display = 'none'; }
-    section.style.display = (rental || purchase) ? '' : 'none';
+
+        if (purchase.savingsTip) html += `<div class="s-tip">💡 ${purchase.savingsTip}</div>`;
+    }
+
+    document.getElementById('strategy-content').innerHTML = html;
+    btn.style.display = '';
+    btn.textContent = '🧭 나만의 주거 전략 보기';
+    section.style.display = 'none';
 }
 
 // ===== Analysis Engine =====
@@ -4516,6 +4521,7 @@ function restart() {
     document.getElementById('step-indicator').style.display='';
     document.getElementById('results').style.display='none';
     document.getElementById('strategy-section').style.display='none';
+    const sb = document.getElementById('strategy-btn'); if(sb) sb.style.display='none';
     _activeCards = []; _inactiveCards = []; _ineligibleCards = [];
     _currentFilter = 'ALL';
     _currentCatFilter = 'ALL';
