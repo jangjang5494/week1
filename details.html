@@ -474,6 +474,26 @@
         .strategy-narrative .s-type-card .s-inst-etc { background: #6b7280; }
         [data-theme="dark"] .strategy-narrative .s-type-card { background: #1e1b4b; border-color: #4338ca; color: #a5b4fc; }
         [data-theme="dark"] .strategy-narrative .s-type-card:hover { background: #312e81; }
+        .strategy-priority-picker { margin-bottom: 1.2rem; }
+        .strategy-priority-label {
+            font-size: 0.9rem; font-weight: 700; color: var(--text-color, #374151);
+            margin-bottom: 0.5rem;
+        }
+        .strategy-priority-options { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+        .strategy-priority-btn {
+            padding: 0.45rem 0.9rem; border: 1.5px solid #d1d5db; border-radius: 8px;
+            background: var(--card-bg, #fff); color: var(--text-color, #374151);
+            font-size: 0.84rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .strategy-priority-btn:hover { border-color: #7c3aed; color: #7c3aed; }
+        .strategy-priority-btn.active {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: #fff; border-color: #7c3aed;
+        }
+        [data-theme="dark"] .strategy-priority-btn { border-color: #4b5563; background: var(--card-bg); color: #d1d5db; }
+        [data-theme="dark"] .strategy-priority-btn:hover { border-color: #8b5cf6; color: #a78bfa; }
+        [data-theme="dark"] .strategy-priority-btn.active { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; border-color: #6d28d9; }
         .strategy-narrative .s-tip {
             background: #f0fdf4; border-left: 3px solid #22c55e;
             border-radius: 0 8px 8px 0; padding: 0.6rem 0.9rem;
@@ -1184,6 +1204,14 @@
 
         <!-- 전략 내러티브 -->
         <div id="strategy-section" class="strategy-narrative" style="display:none;">
+            <div class="strategy-priority-picker">
+                <div class="strategy-priority-label">무엇이 가장 중요한가요?</div>
+                <div class="strategy-priority-options">
+                    <button class="strategy-priority-btn active" data-priority="cost" onclick="setStrategyPriority('cost')">💰 저렴함</button>
+                    <button class="strategy-priority-btn" data-priority="stability" onclick="setStrategyPriority('stability')">🏠 오래 거주</button>
+                    <button class="strategy-priority-btn" data-priority="chance" onclick="setStrategyPriority('chance')">🎯 당첨확률</button>
+                </div>
+            </div>
             <div id="strategy-content"></div>
         </div>
 
@@ -2175,23 +2203,40 @@ function detectStrengths(u) {
     return s;
 }
 
+let _strategyPriority = 'cost';
+let _strategyResults = null;
+let _strategyUser = null;
+
+const STRATEGY_WEIGHTS = {
+    cost:      { cost: 0.50, rank: 0.20, stability: 0.15, match: 0.15 },
+    stability: { cost: 0.20, rank: 0.15, stability: 0.50, match: 0.15 },
+    chance:    { cost: 0.15, rank: 0.50, stability: 0.20, match: 0.15 },
+};
+
 function scoreForStrategy(r, meta, strengthTags) {
     if (!meta) return 0;
+    const w = STRATEGY_WEIGHTS[_strategyPriority] || STRATEGY_WEIGHTS.cost;
     let score = 0;
     const pct = meta.rentPct ?? meta.pricePct ?? 80;
-    score += (100 - pct) * 0.35;
+    score += (100 - pct) * w.cost;
     const rank = r.rank || '';
-    if (rank.includes('1순위') || rank.includes('우선공급')) score += 30;
-    else if (rank.includes('특별공급') || rank.includes('특공')) score += 24;
-    else if (rank.includes('2순위')) score += 16;
-    else if (rank.includes('3순위')) score += 8;
-    else if (r.eligible) score += 12;
-    if (meta.maxYears) score += Math.min(meta.maxYears, 30) * 0.67;
+    if (rank.includes('1순위') || rank.includes('우선공급')) score += 50 * w.rank;
+    else if (rank.includes('특별공급') || rank.includes('특공')) score += 40 * w.rank;
+    else if (rank.includes('2순위')) score += 26 * w.rank;
+    else if (rank.includes('3순위')) score += 14 * w.rank;
+    else if (r.eligible) score += 20 * w.rank;
+    if (meta.maxYears) score += Math.min(meta.maxYears, 30) * (w.stability / 0.20) * 0.67;
     if (meta.bestFor) {
         const matches = meta.bestFor.filter(t => strengthTags.has(t));
-        score += Math.min(matches.length * 5, 15);
+        score += Math.min(matches.length * 5, 15) * (w.match / 0.15);
     }
     return Math.round(score * 10) / 10;
+}
+
+function setStrategyPriority(p) {
+    _strategyPriority = p;
+    document.querySelectorAll('.strategy-priority-btn').forEach(b => b.classList.toggle('active', b.dataset.priority === p));
+    if (_strategyResults && _strategyUser) buildStrategyNarrative();
 }
 
 function findBestLoan(meta, eligibleLoans) {
@@ -2283,32 +2328,26 @@ function toggleStrategy() {
     }
 }
 
-function renderStrategy(results, u) {
-    const btn = document.getElementById('strategy-btn');
-    const section = document.getElementById('strategy-section');
-    if (!btn || !section) return;
+function buildStrategyNarrative() {
+    const results = _strategyResults, u = _strategyUser;
+    if (!results || !u) return;
     const eligible = results.filter(r => r.eligible);
-    if (eligible.length === 0) { btn.style.display = 'none'; section.style.display = 'none'; return; }
-
     const strengths = detectStrengths(u);
     const rental = generateRentalStrategy(eligible, strengths);
     const purchase = generatePurchaseStrategy(eligible, strengths, u);
-    if (!rental && !purchase) { btn.style.display = 'none'; section.style.display = 'none'; return; }
 
+    const priorityLabel = { cost: '저렴함', stability: '거주 안정성', chance: '당첨확률' }[_strategyPriority];
     let html = '';
 
-    // 강점 소개
     if (strengths.length > 0) {
         const labels = strengths.map(s => `<span class="s-highlight">${s.label}</span>`);
         html += `<h3>🔍 나의 주거 경쟁력</h3>`;
-        html += `<p>입력하신 조건을 분석한 결과, ${labels.join(', ')} 등의 강점이 있습니다. 이를 바탕으로 가장 유리한 주거 전략을 안내드립니다.</p>`;
+        html += `<p>입력하신 조건을 분석한 결과, ${labels.join(', ')} 등의 강점이 있습니다. <strong>${priorityLabel}</strong>을 우선으로 가장 유리한 전략을 안내드립니다.</p>`;
     }
 
-    // 임대 전략
     if (rental && rental.recommendations.length > 0) {
         html += `<h3>🏠 임대주택 전략</h3>`;
-        const recs = rental.recommendations;
-        recs.forEach((rec, i) => {
+        rental.recommendations.forEach((rec, i) => {
             const m = rec.meta;
             const instCls = rec.result.inst === 'SH' ? 's-inst-sh' : rec.result.inst === 'LH' ? 's-inst-lh' : 's-inst-etc';
             const nm = `<span class="s-type-card" onclick="scrollToCard('${rec.result.name.replace(/'/g,"\\'")}')">${rec.result.name} <span class="s-inst ${instCls}">${rec.result.inst}</span></span>`;
@@ -2335,18 +2374,14 @@ function renderStrategy(results, u) {
             } else if (m.pairLoan === null) {
                 para += `이 유형은 보증금 대부분을 기관이 부담하므로 별도 대출이 거의 필요 없습니다.`;
             }
-
             html += `<p>${para}</p>`;
         });
-
         if (rental.tip) html += `<div class="s-tip">💡 ${rental.tip}</div>`;
     }
 
-    // 주택구입 전략
     if (purchase) {
         html += `<h3>🏗️ 주택 구입 전략</h3>`;
         let para = '';
-
         if (purchase.special.length > 0) {
             const names = purchase.special.map(r => {
                 const short = r.name.replace(/—.*/, '').trim();
@@ -2355,7 +2390,6 @@ function renderStrategy(results, u) {
             });
             para += `청약을 통한 주택 구입 시, ${names.join(' ')} 등 <span class="s-highlight">특별공급</span> 자격이 있습니다. 특별공급은 일반공급보다 경쟁률이 낮아 당첨 확률이 높으므로 적극 활용하시길 권합니다. `;
         }
-
         if (purchase.general.length > 0) {
             const names = purchase.general.map(r => {
                 const short = r.name.replace(/—.*/, '').trim();
@@ -2366,20 +2400,30 @@ function renderStrategy(results, u) {
             if (purchase.special.length > 0) para += `일반공급으로는 ${names.join(' ')}에 신청 가능합니다. `;
             else para += `${names.join(' ')}에 일반공급으로 신청 가능합니다. `;
         }
-
         if (para) html += `<p>${para}</p>`;
-
         if (purchase.bestLoan) {
             const lm = strategyMeta[purchase.bestLoan.name];
-            if (lm) {
-                html += `<p>구입 자금 대출로는 <span class="s-loan-tag" onclick="scrollToCard('${purchase.bestLoan.name.replace(/'/g,"\\'")}')">💰 ${purchase.bestLoan.name}</span>이 가장 유리합니다. 금리 연 ${lm.rateMin}~${lm.rateMax}%, 최대 ${Math.round(lm.loanMax/10000)}억원까지 가능합니다.</p>`;
-            }
+            if (lm) html += `<p>구입 자금 대출로는 <span class="s-loan-tag" onclick="scrollToCard('${purchase.bestLoan.name.replace(/'/g,"\\'")}')">💰 ${purchase.bestLoan.name}</span>이 가장 유리합니다. 금리 연 ${lm.rateMin}~${lm.rateMax}%, 최대 ${Math.round(lm.loanMax/10000)}억원까지 가능합니다.</p>`;
         }
-
         if (purchase.savingsTip) html += `<div class="s-tip">💡 ${purchase.savingsTip}</div>`;
     }
 
     document.getElementById('strategy-content').innerHTML = html;
+}
+
+function renderStrategy(results, u) {
+    const btn = document.getElementById('strategy-btn');
+    const section = document.getElementById('strategy-section');
+    if (!btn || !section) return;
+    const eligible = results.filter(r => r.eligible);
+    if (eligible.length === 0) { btn.style.display = 'none'; section.style.display = 'none'; return; }
+
+    _strategyResults = results;
+    _strategyUser = u;
+    _strategyPriority = 'cost';
+    document.querySelectorAll('.strategy-priority-btn').forEach(b => b.classList.toggle('active', b.dataset.priority === 'cost'));
+
+    buildStrategyNarrative();
     btn.style.display = '';
     btn.textContent = '🧭 나만의 주거 전략 보기';
     section.style.display = 'none';
@@ -4556,6 +4600,7 @@ function restart() {
     document.getElementById('results').style.display='none';
     document.getElementById('strategy-section').style.display='none';
     const sb = document.getElementById('strategy-btn'); if(sb) sb.style.display='none';
+    _strategyResults = null; _strategyUser = null; _strategyPriority = 'cost';
     _activeCards = []; _inactiveCards = []; _ineligibleCards = [];
     _currentFilter = 'ALL';
     _currentCatFilter = 'ALL';
