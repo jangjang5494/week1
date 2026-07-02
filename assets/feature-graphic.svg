@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4f46e5"/>
+      <stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="500" fill="url(#bg)"/>
+
+  <!-- 집 아이콘 -->
+  <g transform="translate(160, 130) scale(0.45)" opacity="0.15">
+    <path d="M240 20 L460 200 L420 200 L420 440 L280 440 L280 300 L200 300 L200 440 L60 440 L60 200 L20 200 Z" fill="white"/>
+  </g>
+
+  <!-- 메인 텍스트 -->
+  <text x="512" y="175" text-anchor="middle" font-family="'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif" font-size="64" font-weight="800" fill="white">내집구독</text>
+
+  <!-- 서브 텍스트 -->
+  <text x="512" y="240" text-anchor="middle" font-family="'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif" font-size="26" font-weight="600" fill="rgba(255,255,255,0.9)">서울 청년 주거지원 통합 분석 플랫폼</text>
+
+  <!-- 구분선 -->
+  <rect x="412" y="270" width="200" height="2" rx="1" fill="rgba(255,255,255,0.4)"/>
+
+  <!-- 태그들 -->
+  <rect x="220" y="300" width="120" height="38" rx="19" fill="rgba(255,255,255,0.15)"/>
+  <text x="280" y="325" text-anchor="middle" font-family="'Pretendard', sans-serif" font-size="16" font-weight="600" fill="white">임대주택</text>
+
+  <rect x="360" y="300" width="100" height="38" rx="19" fill="rgba(255,255,255,0.15)"/>
+  <text x="410" y="325" text-anchor="middle" font-family="'Pretendard', sans-serif" font-size="16" font-weight="600" fill="white">청약</text>
+
+  <rect x="480" y="300" width="100" height="38" rx="19" fill="rgba(255,255,255,0.15)"/>
+  <text x="530" y="325" text-anchor="middle" font-family="'Pretendard', sans-serif" font-size="16" font-weight="600" fill="white">대출</text>
+
+  <rect x="600" y="300" width="120" height="38" rx="19" fill="rgba(255,255,255,0.15)"/>
+  <text x="660" y="325" text-anchor="middle" font-family="'Pretendard', sans-serif" font-size="16" font-weight="600" fill="white">주거복지</text>
+
+  <!-- 하단 문구 -->
+  <text x="512" y="395" text-anchor="middle" font-family="'Pretendard', sans-serif" font-size="20" font-weight="500" fill="rgba(255,255,255,0.7)">LH · SH · 청약홈 · 주택도시기금 69가지 자격 분석</text>
+</svg>
