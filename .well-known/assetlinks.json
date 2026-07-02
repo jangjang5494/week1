@@ -1,8 +1,8 @@
 [{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "org.homesubscribe.twa",
-        "sha256_cert_fingerprints": ["1F:CD:55:CF:32:46:E4:D7:3B:EB:AA:BC:9B:30:65:E8:C0:C6:B6:D3:73:FC:65:95:27:D3:F8:93:41:B1:83:CC"]
-      }
-    }]
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "org.homesubscribe.app",
+    "sha256_cert_fingerprints": ["55:55:69:7B:0F:E6:36:A1:3F:9F:F0:D9:76:96:5C:E6:F7:21:6B:1F:44:44:F8:27:1D:42:A5:BC:0C:68:0C:51"]
+  }
+}]
