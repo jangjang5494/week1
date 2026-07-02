@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>계정 삭제 — 내집구독</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard','Segoe UI',sans-serif;color:#111;background:#fff;line-height:1.8;padding:2rem 1rem;display:flex;justify-content:center;}
+.container{max-width:520px;width:100%;}
+a.back{display:inline-block;margin-bottom:1.5rem;font-size:.9rem;color:#4f46e5;text-decoration:none;font-weight:600;}
+a.back:hover{text-decoration:underline;}
+h1{font-size:1.4rem;font-weight:800;margin-bottom:.5rem;}
+p{font-size:.9rem;color:#374151;margin-bottom:1rem;}
+.warn{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:1rem;margin:1.5rem 0;font-size:.85rem;color:#991b1b;}
+.warn strong{display:block;margin-bottom:.3rem;}
+ul{padding-left:1.25rem;margin:.5rem 0 1.5rem;font-size:.85rem;color:#374151;}
+li{margin-bottom:.3rem;}
+.form-group{margin-bottom:1rem;}
+.form-group label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.3rem;}
+.form-group input{width:100%;padding:.7rem;border:1.5px solid #d1d5db;border-radius:8px;font-size:.9rem;}
+.form-group input:focus{outline:none;border-color:#4f46e5;}
+.btn-delete{width:100%;padding:.8rem;border:none;border-radius:10px;background:#dc2626;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.btn-delete:hover{opacity:.85;}
+.btn-delete:disabled{opacity:.5;cursor:default;}
+.msg{margin-top:1rem;padding:.75rem;border-radius:8px;font-size:.85rem;display:none;}
+.msg.error{display:block;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
+.msg.success{display:block;background:#f0fdf4;color:#15803d;border:1px solid #86efac;}
+.contact{margin-top:2rem;padding-top:1.5rem;border-top:1px solid #e5e7eb;font-size:.85rem;color:#6b7280;}
+.contact a{color:#4f46e5;}
+</style>
+</head>
+<body>
+<div class="container">
+<a class="back" href="/">← 내집구독 홈으로</a>
+<h1>계정 삭제</h1>
+<p>내집구독 계정과 관련 데이터를 삭제할 수 있습니다.</p>
+
+<div class="warn">
+<strong>계정을 삭제하면 다음 데이터가 영구적으로 삭제됩니다:</strong>
+• 계정 정보 (이메일, 프로필)<br>
+• 저장된 분석 조건<br>
+• 모든 관련 데이터<br><br>
+삭제된 데이터는 복구할 수 없습니다.
+</div>
+
+<p>계정 삭제를 원하시면 가입한 이메일과 비밀번호를 입력해주세요.</p>
+
+<div class="form-group">
+<label>이메일</label>
+<input type="email" id="del-email" placeholder="가입한 이메일 주소">
+</div>
+<div class="form-group">
+<label>비밀번호</label>
+<input type="password" id="del-pw" placeholder="비밀번호">
+</div>
+
+<button class="btn-delete" id="del-btn" onclick="deleteAccount()">계정 영구 삭제</button>
+<div class="msg" id="del-msg"></div>
+
+<div class="contact">
+<p>Google 소셜 로그인으로 가입한 경우 또는 직접 삭제가 어려운 경우<br>
+<a href="mailto:wjdgns5494@gmail.com">wjdgns5494@gmail.com</a>으로 삭제를 요청해주세요.<br>
+요청 후 72시간 이내에 처리됩니다.</p>
+</div>
+</div>
+
+<script>
+const SB_URL='https://ajgurlfgifvicvxsxzqh.supabase.co';
+const SB_KEY='sb_publishable_VWYME33r2PPoiBgyA5Zsxw_6bW7Hh_5';
+
+async function deleteAccount(){
+  const email=document.getElementById('del-email').value.trim();
+  const pw=document.getElementById('del-pw').value;
+  const msg=document.getElementById('del-msg');
+  const btn=document.getElementById('del-btn');
+  msg.className='msg';msg.style.display='none';
+
+  if(!email||!pw){msg.textContent='이메일과 비밀번호를 입력해주세요.';msg.className='msg error';return;}
+  if(!confirm('정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')){return;}
+
+  btn.disabled=true;btn.textContent='삭제 처리 중...';
+  try{
+    const loginRes=await fetch(`${SB_URL}/auth/v1/token?grant_type=password`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY},
+      body:JSON.stringify({email,password:pw})
+    });
+    if(!loginRes.ok){throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.');}
+    const session=await loginRes.json();
+
+    await fetch(`${SB_URL}/rest/v1/user_conditions?user_id=eq.${session.user.id}`,{
+      method:'DELETE',
+      headers:{'apikey':SB_KEY,'Authorization':`Bearer ${session.access_token}`}
+    });
+
+    msg.textContent='계정 삭제 요청이 접수되었습니다. 72시간 이내에 완전히 삭제됩니다. 이메일(wjdgns5494@gmail.com)로 삭제 확인을 보내드립니다.';
+    msg.className='msg success';
+    localStorage.removeItem('njg_auth_session');
+  }catch(e){
+    msg.textContent=e.message||'삭제 처리 중 오류가 발생했습니다.';
+    msg.className='msg error';
+  }
+  btn.disabled=false;btn.textContent='계정 영구 삭제';
+}
+</script>
+</body>
+</html>
