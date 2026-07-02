@@ -7,8 +7,8 @@ URL: https://homesubscribe.org
 ## 주요 페이지
 
 - [홈](https://homesubscribe.org/): 서비스 소개 및 자격 분석 진입점
-- [자격 분석](https://homesubscribe.org/details.html): 4단계 조건 입력(나이·거주지·소득·자산) → 신청 가능한 주거지원 유형 자동 판단
-- [FAQ](https://homesubscribe.org/faq.html): 서울·경기 청년 주거지원 자주 묻는 질문 종합
+- [자격 분석](https://homesubscribe.org/details): 4단계 조건 입력(나이·거주지·소득·자산) → 신청 가능한 주거지원 유형 자동 판단
+- [FAQ](https://homesubscribe.org/faq): 서울·경기 청년 주거지원 자주 묻는 질문 종합
 
 ## 서비스 핵심 기능
 
