@@ -1,0 +1,21 @@
+name: Test GH Access
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test gh.or.kr accessibility
+        run: |
+          echo "=== Testing gh.or.kr ==="
+          curl -sI --connect-timeout 10 --max-time 15 https://www.gh.or.kr/gh/index.do || echo "FAILED: www.gh.or.kr"
+
+          echo ""
+          echo "=== Testing apply.gh.or.kr ==="
+          curl -sI --connect-timeout 10 --max-time 15 https://apply.gh.or.kr/ || echo "FAILED: apply.gh.or.kr"
+
+          echo ""
+          echo "=== GitHub Actions server location ==="
+          curl -s https://ipinfo.io/json || true
