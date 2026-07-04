@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>내집구독 — 수도권 청년 주거정보</title>
+    <link>https://homesubscribe.org</link>
+    <description>수도권 청년 맞춤형 주거 정보 통합 플랫폼. SH·LH 임대주택, 청약, 대출, 지원금 자격을 한 번에 분석합니다.</description>
+    <language>ko</language>
+    <lastBuildDate>Fri, 04 Jul 2026 00:00:00 +0900</lastBuildDate>
+    <atom:link href="https://homesubscribe.org/rss.xml" rel="self" type="application/rss+xml"/>
+
+    <item>
+      <title>수도권 청년 주거지원 자격 분석</title>
+      <link>https://homesubscribe.org/details</link>
+      <description>나이·소득·자산·거주지 4가지만 입력하면 SH·LH 임대주택, 청약, 전세대출, 지원금까지 69가지 주거지원을 한 번에 분석합니다.</description>
+      <pubDate>Fri, 04 Jul 2026 00:00:00 +0900</pubDate>
+      <guid>https://homesubscribe.org/details</guid>
+    </item>
+
+    <item>
+      <title>자주 묻는 질문 (FAQ)</title>
+      <link>https://homesubscribe.org/faq</link>
+      <description>내집구독 서비스 이용 방법, 자격 분석 기준, 공고 매칭 등 자주 묻는 질문과 답변을 정리했습니다.</description>
+      <pubDate>Sun, 13 Apr 2026 00:00:00 +0900</pubDate>
+      <guid>https://homesubscribe.org/faq</guid>
+    </item>
+
+    <item>
+      <title>내집구독 — 수도권 청년 주거정보 플랫폼</title>
+      <link>https://homesubscribe.org</link>
+      <description>서울·경기 청년을 위한 임대주택·청약·대출·지원금 정보를 한 곳에서. SH·LH 28가지 유형 자격을 1분 만에 확인하세요.</description>
+      <pubDate>Wed, 02 Jul 2026 00:00:00 +0900</pubDate>
+      <guid>https://homesubscribe.org</guid>
+    </item>
+  </channel>
+</rss>
