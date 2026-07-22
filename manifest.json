@@ -2,8 +2,8 @@
   "name": "내집구독",
   "short_name": "내집구독",
   "description": "서울·경기 2030 청년을 위한 주거지원 통합 분석 플랫폼",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/week1/",
+  "scope": "/week1/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
@@ -11,25 +11,25 @@
   "lang": "ko",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "/week1/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-192.png",
+      "src": "/week1/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/week1/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/week1/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
