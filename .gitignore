@@ -1,1 +1,5 @@
 firebase-debug.log
+blog/
+signing.keystore
+upload_certificate.pem
+node_modules/
